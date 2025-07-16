@@ -16,3 +16,6 @@ function theme_register_menus() {
     register_nav_menu('header-menu', __('Header Menu'));
 }
 add_action('init', 'theme_register_menus');
+add_shortcode('xserver_gallery_full', function () {
+    // full code as I gave earlier (FTP connect, folder list, image loop)
+});
