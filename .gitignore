@@ -1,6 +1,14 @@
-*.log
-node_modules/
-.sass-cache/
-.DS_Store
-.env
-html/
+# Ignore everything
+*
+
+# Except theme files
+!html/
+!html/wp-content/
+!html/wp-content/themes/
+!html/wp-content/themes/678studio/
+!html/wp-content/themes/678studio/**
+
+# Keep important files
+!.gitignore
+!README.md
+!CLAUDE.md

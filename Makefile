@@ -2,7 +2,7 @@
 
 # デフォルトターゲット
 help:
-	@echo "🌸 egao-photo-app WordPress開発環境 🌸"
+	@echo "🎨 678studio WordPress開発環境 🎨"
 	@echo ""
 	@echo "利用可能なコマンド:"
 	@echo "  make up          - 環境を起動"
@@ -121,7 +121,7 @@ wp:
 db-backup:
 	@echo "💾 データベースをバックアップ中..."
 	@mkdir -p db-backup
-	@docker-compose exec db mysqldump -u wp_user -ppassword db_local > db-backup/backup-$(shell date +%Y%m%d_%H%M%S).sql
+	@docker-compose exec db mysqldump -u wp_user -ppassword wordpress_678 > db-backup/backup-$(shell date +%Y%m%d_%H%M%S).sql
 	@echo "✅ バックアップ完了: db-backup/"
 
 # データベースのリストア
@@ -129,7 +129,7 @@ db-restore:
 	@echo "📥 最新のバックアップからリストア中..."
 	@latest=$$(ls -t db-backup/*.sql | head -1); \
 	if [ -n "$$latest" ]; then \
-		docker-compose exec -T db mysql -u wp_user -ppassword db_local < $$latest; \
+		docker-compose exec -T db mysql -u wp_user -ppassword wordpress_678 < $$latest; \
 		echo "✅ リストア完了: $$latest"; \
 	else \
 		echo "❌ バックアップファイルが見つかりません"; \

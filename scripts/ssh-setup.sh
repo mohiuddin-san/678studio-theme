@@ -2,8 +2,8 @@
 # SSH認証セットアップスクリプト
 
 # 設定 - プロジェクト専用SSHキー（本番サーバー設定後に変更）
-SSH_KEY_PATH="$HOME/.ssh/egao-photo-app_rsa"
-SSH_PASSPHRASE="EgaoPhotoApp2024!"
+SSH_KEY_PATH="$HOME/.ssh/678studio_rsa"
+SSH_PASSPHRASE="678Studio2024!"
 
 # カラー設定
 GREEN='\033[0;32m'
@@ -38,7 +38,7 @@ if [ ! -f "$SSH_KEY_PATH" ]; then
 fi
 
 # SSHキーが既に追加されているかチェック
-if ssh-add -l | grep -q "egao-photo-app_rsa"; then
+if ssh-add -l | grep -q "678studio_rsa"; then
     echo -e "${GREEN}✅ SSHキーは既に追加されています${NC}"
 else
     echo "🔑 SSHキーを追加中..."

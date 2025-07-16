@@ -4,10 +4,10 @@
 set -e
 
 # 設定（本番サーバー設定後に変更）
-REMOTE_HOST="egao-photo-app"                         # SSH設定のHost名
-REMOTE_PATH="/path/to/egao-photo-app/wordpress"      # 本番WordPressパス
+REMOTE_HOST="678studio"                              # SSH設定のHost名
+REMOTE_PATH="/path/to/678studio/wordpress"           # 本番WordPressパス
 SSH_PORT="22"                                        # SSHポート
-SSH_KEY="$HOME/.ssh/egao-photo-app_rsa"              # SSHキーパス
+SSH_KEY="$HOME/.ssh/678studio_rsa"                   # SSHキーパス
 
 # カラー設定
 GREEN='\033[0;32m'

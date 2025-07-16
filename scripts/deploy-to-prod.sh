@@ -4,12 +4,12 @@
 set -e  # エラー時に停止
 
 # 設定（本番サーバー設定後に変更）
-REMOTE_HOST="egao-photo-app"                         # SSH設定のHost名
-REMOTE_PATH="/path/to/egao-photo-app/wordpress"      # 本番WordPressパス
+REMOTE_HOST="678studio"                              # SSH設定のHost名
+REMOTE_PATH="/path/to/678studio/wordpress"           # 本番WordPressパス
 LOCAL_URL="http://localhost:8080"                    # ローカルURL
-PROD_URL="https://egao-photo-app.com"                # 本番URL（ドメイン設定後に変更）
+PROD_URL="https://678studio.com"                     # 本番URL（ドメイン設定後に変更）
 SSH_PORT="22"                                        # SSHポート
-SSH_KEY="$HOME/.ssh/egao-photo-app_rsa"              # SSHキーパス
+SSH_KEY="$HOME/.ssh/678studio_rsa"                   # SSHキーパス
 
 # カラー設定
 GREEN='\033[0;32m'
@@ -30,4 +30,3 @@ echo -e "${RED}❌ デプロイを中止しました（本番サーバー未設�
 exit 1
 
 # 以下は本番サーバー設定後に有効化されるデプロイ処理のテンプレート
-# 実際のデプロイロジックは egao-salon プロジェクトから移植予定
