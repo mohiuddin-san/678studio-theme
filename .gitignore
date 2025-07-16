@@ -1,14 +1,21 @@
-# Ignore everything
-*
+# OS files
+.DS_Store
+Thumbs.db
 
-# Except theme files
-!html/
-!html/wp-content/
-!html/wp-content/themes/
-!html/wp-content/themes/678studio/
-!html/wp-content/themes/678studio/**
+# IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
 
-# Keep important files
-!.gitignore
-!README.md
-!CLAUDE.md
+# Development files
+.env
+docker-compose.yml
+Makefile
+scripts/
+html/
+db-backup/
+design/
+About_wordpress.md
+readme.md
+CLAUDE.md

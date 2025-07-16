@@ -1,0 +1,23 @@
+/*
+Theme Name: 678 Studio
+Description: A custom WordPress theme for 678 studio photography website
+Version: 1.0
+Author: 678 Studio Team
+*/
+
+body {
+	font-family: sans-serif;
+	margin: 0;
+	padding: 0;
+}
+h1 {
+	color: #333;
+	font-size: 24px;
+	font-weight: bold;
+	text-align: center;
+	margin-top: 20px;
+	margin-bottom: 20px;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
