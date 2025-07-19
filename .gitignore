@@ -8,14 +8,53 @@ Thumbs.db
 *.sublime-project
 *.sublime-workspace
 
-# Development files
+# Development environment files
 .env
 docker-compose.yml
 Makefile
-scripts/
-html/
 db-backup/
-design/
 About_wordpress.md
-readme.md
-CLAUDE.md
+README_SCSS.md
+
+# WordPress installation (exclude core WordPress files)
+html/
+!html/wp-content/
+html/wp-content/*
+!html/wp-content/themes/
+html/wp-content/themes/*
+!html/wp-content/themes/678studio/
+
+# WordPress debug and upload files
+html/wp-content/debug-logs/
+html/wp-content/uploads/
+html/wp-content/upgrade/
+html/wp-content/debug.log
+
+# Theme development files to exclude
+html/wp-content/themes/678studio/node_modules/
+html/wp-content/themes/678studio/package-lock.json
+html/wp-content/themes/678studio/dist/
+html/wp-content/themes/678studio/style.css.map
+html/wp-content/themes/678studio/README_SCSS.md
+
+# SCSS compilation outputs (keep source files)
+html/wp-content/themes/678studio/style.css
+
+# Design files
+design/
+
+# Deployment scripts (sensitive)
+scripts/
+
+# Project root dependencies
+node_modules/
+package.json
+gulpfile.js
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+*~

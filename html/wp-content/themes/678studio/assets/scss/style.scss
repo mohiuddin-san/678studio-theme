@@ -1,0 +1,16 @@
+// Main SCSS entry point
+@use 'base/variables' as v;
+@use 'base/mixins' as m;
+@use 'base/reset';
+@use 'components/common';
+@use 'components/header';
+@use 'components/navigation';
+@use 'components/camera-button';
+
+// Sections
+@use 'sections/hero';
+@use 'sections/user-count';
+@use 'sections/media-slider';
+
+// Pages
+@use 'pages/home';
