@@ -9,7 +9,6 @@
 
 	&__container {
 		margin: 0 auto;
-		padding: 0 20px;
 	}
 
 	&__heading {
@@ -37,19 +36,29 @@
 
 	&__item {
 		flex-shrink: 0;
-		padding: 0 m.fs(15);
+		margin-right: m.fs(20); // カード間のスペース
 		box-sizing: border-box;
 		display: flex;
 		flex-direction: column;
 		width: m.fs(386);
+		background: #a5c3cf; // デフォルト色（1番目）
+
+		// 2番目のカード（2, 5, 8, 11...）
+		&:nth-child(3n + 2) {
+			background: #c0d5dd;
+		}
+
+		// 3番目のカード（3, 6, 9, 12...）
+		&:nth-child(3n + 3) {
+			background: #cad5d9;
+		}
 	}
 
 	// 画像ボックス
 	&__image-box {
 		width: 100%;
 		height: m.fs(140);
-		background: v.$media;
-		border-radius: 12px 12px 0 0;
+		background: transparent; // 親のbackgroundを継承
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -67,8 +76,7 @@
 	// テキストボックス
 	&__text-box {
 		width: 100%;
-		background: rgba(0, 0, 0, 0.1);
-		border-radius: 0 0 12px 12px;
+		background: transparent; // 親のbackgroundを継承
 		padding: m.fs(15) m.fs(16);
 		display: flex;
 		flex-direction: column;
@@ -76,7 +84,7 @@
 		align-items: center;
 		text-align: center;
 		box-sizing: border-box;
-		min-height: m.fs(80); // 最小高さを設定
+		min-height: m.fs(86); // 最小高さを設定
 	}
 
 	&__title {
@@ -106,108 +114,15 @@
 		text-overflow: ellipsis;
 	}
 
-	// Navigation buttons
-	&__nav {
-		position: absolute;
-		top: 50%;
-		transform: translateY(-50%);
-		width: m.fs(40);
-		height: m.fs(40);
-		background-color: #ffffff;
-		border: 1px solid #ddd;
-		border-radius: 50%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		cursor: pointer;
-		transition: all 0.3s ease;
-		z-index: 2;
-
-		&:hover {
-			background-color: v.$text-number;
-			border-color: v.$text-number;
-			color: #ffffff;
-		}
-
-		&--prev {
-			left: 0;
-		}
-
-		&--next {
-			right: 0;
-		}
-
-		svg {
-			width: m.fs(20);
-			height: m.fs(20);
-		}
-	}
-
-	// Dots indicator
-	&__dots {
-		display: flex;
-		justify-content: center;
-		gap: m.fs(8);
-	}
-
-	&__dot {
-		width: m.fs(10);
-		height: m.fs(10);
-		border-radius: 50%;
-		background-color: #ddd;
-		border: none;
-		cursor: pointer;
-		transition: all 0.3s ease;
-		padding: 0;
-
-		&:hover {
-			background-color: #999;
-		}
-
-		&--active {
-			background-color: v.$text-number;
-			width: m.fs(30);
-			border-radius: 5px;
-		}
-	}
-
-	// Tablet styles
-	@media (max-width: 1024px) {
-		&__slider {
-			margin: 0 m.fs(50);
-		}
+	// Auto-scroll slider styling
+	&__slider {
+		overflow: hidden;
+		width: 100%;
 	}
 
 	// Mobile styles
 	@media (max-width: 768px) {
 		padding: m.fs(60) 0;
-
-		&__heading {
-			font-size: m.fs(28, 0.6);
-			margin-bottom: m.fs(30);
-		}
-
-		&__slider {
-			margin: 0;
-		}
-
-		&__nav {
-			width: m.fs(35);
-			height: m.fs(35);
-
-			&--prev {
-				left: 10px;
-			}
-
-			&--next {
-				right: 10px;
-			}
-
-			svg {
-				width: m.fs(16);
-				height: m.fs(16);
-			}
-		}
 
 		&__item {
 			padding: 0 m.fs(10);
@@ -268,19 +183,6 @@
 
 		&__subtitle {
 			font-size: m.fs(10, 0.8);
-		}
-
-		&__dots {
-			gap: m.fs(6);
-		}
-
-		&__dot {
-			width: m.fs(8);
-			height: m.fs(8);
-
-			&--active {
-				width: m.fs(24);
-			}
 		}
 	}
 }
