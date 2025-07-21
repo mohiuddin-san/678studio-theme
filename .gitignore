@@ -1,3 +1,20 @@
+# Node.js dependencies
+node_modules/
+package-lock.json
+
+# Build outputs
+dist/
+*.css.map
+
+# Logs and debug files
+*.log
+debug-logs/
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
 # OS files
 .DS_Store
 Thumbs.db
@@ -8,53 +25,30 @@ Thumbs.db
 *.sublime-project
 *.sublime-workspace
 
-# Development environment files
+# WordPress related
+wp-config.php
+wp-content/uploads/
+wp-content/cache/
+
+# Environment files
 .env
+.env.local
+
+# Backup files
+*.bak
+*.backup
+db-backup/
+
+# Development files
 docker-compose.yml
 Makefile
-db-backup/
+CLAUDE.md
+GITHUB_PUSH_COMMANDS.md
 About_wordpress.md
-README_SCSS.md
-
-# WordPress installation (exclude core WordPress files)
-html/
-!html/wp-content/
-html/wp-content/*
-!html/wp-content/themes/
-html/wp-content/themes/*
-!html/wp-content/themes/678studio/
-
-# WordPress debug and upload files
-html/wp-content/debug-logs/
-html/wp-content/uploads/
-html/wp-content/upgrade/
-html/wp-content/debug.log
-
-# Theme development files to exclude
-html/wp-content/themes/678studio/node_modules/
-html/wp-content/themes/678studio/package-lock.json
-html/wp-content/themes/678studio/dist/
-html/wp-content/themes/678studio/style.css.map
-html/wp-content/themes/678studio/README_SCSS.md
-
-# SCSS compilation outputs (keep source files)
-html/wp-content/themes/678studio/style.css
-
-# Design files
+.claude/
 design/
-
-# Deployment scripts (sensitive)
+html/
 scripts/
 
-# Project root dependencies
-node_modules/
-package.json
-gulpfile.js
-
-# Log files
-*.log
-
-# Temporary files
-*.tmp
-*.temp
-*~
+# Compiled CSS should be tracked
+# style.css
