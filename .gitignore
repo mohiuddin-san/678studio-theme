@@ -1,6 +1,22 @@
-*.log
-node_modules/
-.sass-cache/
+# OS files
 .DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Development files
 .env
 https:
+docker-compose.yml
+Makefile
+scripts/
+html/
+db-backup/
+design/
+About_wordpress.md
+readme.md
+CLAUDE.md
