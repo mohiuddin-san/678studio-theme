@@ -39,16 +39,20 @@ wp-content/cache/
 *.backup
 db-backup/
 
-# Development files
-docker-compose.yml
-Makefile
+# Development files (exclude these)
 CLAUDE.md
 GITHUB_PUSH_COMMANDS.md
 About_wordpress.md
 .claude/
 design/
-html/
 scripts/
+
+# WordPress uploads and cache (exclude these from html/)
+html/wp-content/uploads/
+html/wp-content/cache/
+html/wp-content/upgrade/
+html/debug-logs/
+html/debug.log
 
 # Compiled CSS should be tracked
 # style.css
