@@ -1,0 +1,69 @@
+// Options Section - About Page Specific
+// =============================================================================
+
+@use '../../base/mixins' as m;
+@use '../../base/variables' as v;
+
+.options-section {
+	width: 100%;
+	margin-right: m.fs(160, 0.6);
+	padding-top: m.fs(60, 0.6);
+	padding-bottom: m.fs(60, 0.6);
+
+	&__container {
+		margin: 0 auto;
+		padding: m.fs(54, 0.6) m.fs(160, 0.4);
+		margin: m.fs(80, 0.6) m.fs(160, 0.6);
+		text-align: center;
+		background: #f8f4e6;
+	}
+
+	// ヘッダーエリア
+	&__header {
+		margin-bottom: m.fs(60, 0.5);
+	}
+
+	&__icon {
+		margin-bottom: m.fs(20, 0.4);
+		display: flex;
+		justify-content: center;
+	}
+
+	&__sun-icon {
+		width: m.fs(95.6, 0.6);
+		height: m.fs(60, 0.5);
+	}
+
+	&__title {
+		font-size: m.fs(32, 0.6);
+		font-weight: 600;
+		color: #333;
+		font-family: v.$ja-sans;
+	}
+
+	// コンテンツエリア（テキスト表示）
+	&__content {
+		margin-bottom: m.fs(60, 0.5);
+	}
+
+	&__text-row {
+		display: flex;
+		justify-content: center;
+		gap: m.fs(20, 0.4);
+		margin-bottom: m.fs(20, 0.4);
+		flex-wrap: wrap;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	&__text {
+		// タグスタイルではなく、シンプルなテキストスタイル
+		font-size: m.fs(18, 0.5);
+		font-weight: 400;
+		color: #333;
+		font-family: v.$ja-sans;
+		line-height: 1.6;
+	}
+}

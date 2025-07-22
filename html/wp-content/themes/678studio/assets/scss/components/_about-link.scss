@@ -1,0 +1,54 @@
+// About Link Section Component Styles
+// =============================================================================
+
+@use '../base/mixins' as m;
+@use '../base/variables' as v;
+
+.about-link {
+	width: 100%;
+	padding: m.fs(85.32, 0.5) 0;
+
+	&__container {
+		margin: 0 auto;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: m.fs(60, 0.5);
+	}
+
+	&__title-area {
+		text-align: center;
+	}
+
+	&__title {
+		font-family: v.$ja;
+		font-size: m.fs(32, 0.6);
+		font-weight: 400;
+		color: #333;
+		line-height: 1.4;
+		margin: 0;
+	}
+
+	// Navigation Buttons
+	&__nav {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: m.fs(40, 0.5);
+		flex-wrap: wrap;
+	}
+
+	// Description Area
+	&__description {
+		text-align: center;
+	}
+
+	&__text {
+		font-family: v.$ja-sans;
+		font-size: m.fs(20);
+		font-weight: 400;
+		color: v.$main-color;
+		line-height: 2;
+		margin: 0;
+	}
+}

@@ -1,0 +1,19 @@
+// Home Page Styles
+@use '../base/variables' as v;
+@use '../base/mixins' as m;
+
+.page-home {
+    // Page-specific styles
+}
+
+// Hero section styles are in sections/_hero.scss
+
+.intro-section {
+    padding: v.$spacing-xl 0;
+
+    &__content {
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: center;
+    }
+}

@@ -1,0 +1,55 @@
+# Node.js dependencies
+node_modules/
+package-lock.json
+
+# Build outputs
+dist/
+*.css.map
+
+# Logs and debug files
+*.log
+debug-logs/
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# WordPress related (only exclude specific files/dirs)
+wp-config.php
+wp-content/uploads/
+wp-content/cache/
+wp-content/upgrade/
+wp-content/backup-db/
+
+# Environment files
+.env
+.env.local
+
+# Backup files
+*.bak
+*.backup
+db-backup/
+
+# Development files
+docker-compose.yml
+Makefile
+CLAUDE.md
+GITHUB_PUSH_COMMANDS.md
+About_wordpress.md
+.claude/
+design/
+scripts/
+
+# Compiled CSS should be tracked
+# style.css

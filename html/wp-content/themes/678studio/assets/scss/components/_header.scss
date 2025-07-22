@@ -1,0 +1,25 @@
+@use '../base/variables' as v;
+@use '../base/mixins' as m;
+
+// Header Component
+.header {
+	&__container {
+		margin: 0 auto;
+		padding: m.fs(20) m.fs(80);
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+}
+
+// Branding Component
+.branding {
+	&__logo {
+		display: block;
+	}
+
+	&__image {
+		height: auto;
+		max-height: m.fs(80);
+	}
+}

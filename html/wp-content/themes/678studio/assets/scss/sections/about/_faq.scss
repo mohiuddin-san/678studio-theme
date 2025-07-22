@@ -1,0 +1,119 @@
+// FAQ Section - About Page Specific
+// =============================================================================
+
+@use '../../base/mixins' as m;
+@use '../../base/variables' as v;
+
+.faq-section {
+	width: 100%;
+	margin-right: m.fs(160, 0.6);
+	padding-top: m.fs(60, 0.6);
+	padding-bottom: m.fs(60, 0.6);
+
+	&__container {
+		margin: 0 auto;
+		padding: m.fs(54, 0.6) m.fs(160, 0.2);
+		margin: m.fs(80, 0.6) m.fs(160, 0.6);
+		text-align: center;
+		background: #f8f4e6;
+	}
+
+	// ヘッダーエリア
+	&__header {
+		margin-bottom: m.fs(60, 0.5);
+	}
+
+	&__icon {
+		margin-bottom: m.fs(20, 0.4);
+		display: flex;
+		justify-content: center;
+	}
+
+	&__sun-icon {
+		width: m.fs(95.6, 0.6);
+		height: m.fs(60, 0.5);
+	}
+
+	&__title {
+		font-size: m.fs(32, 0.6);
+		font-weight: 600;
+		color: #333;
+		font-family: v.$ja-sans;
+	}
+
+	// FAQリストエリア
+	&__list {
+		display: flex;
+		flex-direction: column;
+		gap: m.fs(20, 0.4);
+		text-align: left;
+		padding-bottom: m.fs(50);
+	}
+}
+
+// FAQアイテム
+.faq-item {
+	background: #fff;
+	border-radius: m.fs(8, 0.4);
+	overflow: hidden;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+	&__question {
+		padding: m.fs(24, 0.5) m.fs(32, 0.5);
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		cursor: pointer;
+		transition: background-color 0.3s ease;
+		user-select: none;
+
+		&:hover {
+			background-color: #f9f9f9;
+		}
+	}
+
+	&__q-text {
+		font-size: m.fs(25, 0.5);
+		font-weight: 400;
+		color: #333;
+		font-family: v.$ja;
+		line-height: 1.6;
+		letter-spacing: 0.05em;
+		flex: 1;
+		margin-right: m.fs(16, 0.4);
+	}
+
+	&__icon {
+		width: m.fs(24, 0.4);
+		height: m.fs(24, 0.4);
+		flex-shrink: 0;
+		transition: transform 0.3s ease;
+	}
+
+	&__answer {
+		overflow: hidden;
+		height: 0;
+		opacity: 0;
+	}
+
+	&__a-content {
+		padding: 0 m.fs(32, 0.5) m.fs(24, 0.5);
+		border-top: 1px solid #eee;
+	}
+
+	&__a-text {
+		font-size: m.fs(16);
+		color: #666;
+		font-family: v.$ja-sans;
+		line-height: 1.8;
+		margin: m.fs(24, 0.5) 0 0;
+	}
+
+	// 開いた状態
+	&.is-open {
+		.faq-item__answer {
+			height: auto;
+			opacity: 1;
+		}
+	}
+}

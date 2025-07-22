@@ -1,0 +1,75 @@
+// Breadcrumb Component Styles
+// =============================================================================
+
+@use '../base/mixins' as m;
+@use '../base/variables' as v;
+
+.breadcrumb {
+	width: 100%;
+	padding: m.fs(20, 0.5) 0;
+
+	&__container {
+		max-width: m.fs(1440);
+		margin: 0 auto;
+		padding: 0 m.fs(20, 0.5);
+	}
+
+	&__list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: m.fs(8, 0.4);
+	}
+
+	&__item {
+		display: flex;
+		align-items: center;
+		gap: m.fs(8, 0.4);
+	}
+
+	&__link {
+		font-family: v.$ja-sans;
+		font-size: m.fs(14, 0.5);
+		font-weight: 400;
+		color: #666;
+		text-decoration: none;
+		transition: color 0.3s ease;
+
+		&:hover {
+			color: #333;
+			text-decoration: underline;
+		}
+	}
+
+	&__current {
+		font-family: v.$ja-sans;
+		font-size: m.fs(14, 0.5);
+		font-weight: 400;
+		color: #333;
+	}
+
+	&__separator {
+		font-family: v.$ja-sans;
+		font-size: m.fs(14, 0.5);
+		color: #999;
+		margin: 0 m.fs(4, 0.3);
+	}
+
+	// Responsive Design
+	@media (max-width: 768px) {
+		padding: m.fs(16, 0.5) 0;
+
+		&__container {
+			padding: 0 m.fs(16, 0.5);
+		}
+
+		&__link,
+		&__current,
+		&__separator {
+			font-size: m.fs(12, 0.5);
+		}
+	}
+}

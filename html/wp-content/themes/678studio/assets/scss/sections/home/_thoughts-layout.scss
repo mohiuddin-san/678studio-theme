@@ -1,0 +1,70 @@
+// Thoughts Layout Section - Simple 3 Boxes Test
+// =============================================================================
+
+@use '../../base/mixins' as m;
+@use '../../base/variables' as v;
+
+.thoughts-layout-section {
+	width: 100%;
+	margin-bottom: m.fs(100, 0.8);
+
+	// メインコンテナ
+	&__container {
+		width: 100%;
+		overflow: visible;
+	}
+
+	// 大きなwrapper - CSS Grid使用
+	&__wrapper {
+		width: 100%;
+		padding-right: m.fs(80, 0.5);
+		display: grid;
+		grid-template-columns: repeat(18, 1fr);
+		grid-template-rows: repeat(17, m.fs(50, 0.5)) // 50px×17個
+			m.fs(25, 0.5); // 25px×1個
+		gap: 0; // 隙間なし
+	}
+
+	// Box 1（グレー）
+	&__box-1 {
+		grid-column: 1 / 12; // 1〜11列
+		grid-row: 1 / 16; // 1〜15行目（50px×15 = 750px）
+		background: #c4c4c4;
+		color: white;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 10;
+	}
+
+	// Box 2（ベージュ）- 重なりを表現
+	&__box-2 {
+		grid-column: 6 / 19; // 6〜18列（Box1と重なる）
+		grid-row: 2 / 17; // 2〜16行目（50px×15 = 750px）
+		background: #fcf6de;
+		color: #333;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-weight: bold;
+		z-index: -10;
+	}
+
+	// Box 3（白）
+	&__box-3 {
+		grid-column: 12 / 19; // 12〜18列
+		grid-row: 7 / 19; // 7〜18行目（7行目から最後まで）
+		margin-top: m.fs(25, 0.5); // 7.5行目を表現するため25px下げる
+		background: #fff;
+		color: #333;
+		font-weight: bold;
+		z-index: 10;
+	}
+
+	&__inner {
+		width: m.fs(448, 0.7);
+		height: m.fs(505, 0.5);
+		padding-left: m.fs(32, 0.5);
+		padding-top: m.fs(32, 0.5);
+	}
+}

@@ -1,0 +1,79 @@
+/**
+ * Contact & Booking Section Component
+ * お問い合わせ・ご予約セクション
+ */
+
+@use '../base/mixins' as m;
+@use '../base/variables' as v;
+
+.contact-booking {
+	padding: m.fs(80, 0.5) 0;
+	background: #ffffff;
+	position: relative;
+	z-index: 10; // Ensure section is above other elements
+
+	&__container {
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 0 m.fs(20, 0.5);
+	}
+
+	&__header {
+		text-align: center;
+		margin-bottom: m.fs(60, 0.5);
+	}
+
+	&__label {
+		margin-bottom: m.fs(64, 0.5);
+
+		&-text {
+			display: inline-block;
+			background: #3f3f3f;
+			color: #ffffff;
+			font-size: m.fs(14, 0.5);
+			font-family: v.$ja-sans;
+			font-weight: 400;
+			padding: m.fs(16, 0.5) m.fs(24, 0.5);
+			letter-spacing: 0.05em;
+			text-transform: uppercase;
+		}
+	}
+
+	&__title {
+		font-size: m.fs(39.06, 0.5);
+		font-weight: 700;
+		color: #333333;
+		margin-bottom: m.fs(32, 0.5);
+		line-height: 1.4;
+		letter-spacing: 0.1em;
+
+		@media (max-width: 768px) {
+			font-size: m.fs(28, 0.5);
+		}
+	}
+
+	&__description {
+		font-size: m.fs(16);
+		color: v.$main-color;
+		font-family: v.$ja-sans;
+		line-height: 1.6;
+		margin: 0;
+	}
+
+	&__buttons {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: m.fs(40, 0.5);
+		flex-wrap: wrap;
+
+		@media (max-width: 768px) {
+			gap: m.fs(24, 0.5);
+			flex-direction: column;
+		}
+	}
+
+	&__button {
+		// ボタンコンテナのスタイル（必要に応じて）
+	}
+}

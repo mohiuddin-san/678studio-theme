@@ -1,0 +1,85 @@
+// About Page Styles
+// =============================================================================
+
+@use '../base/mixins' as m;
+@use '../base/variables' as v;
+
+.about-page {
+	width: 100%;
+}
+
+// About FV Section (Specific to About page only)
+.about-fv {
+	width: 100%;
+	background: white;
+
+	// Container
+	&__container {
+		width: 100%;
+		margin: 0 auto;
+		display: grid;
+		grid-template-columns: 1fr m.fs(856, 0.5);
+		grid-template-rows: 1fr;
+		gap: 0;
+		align-items: center;
+	}
+
+	// Content Area (Left)
+	&__content {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		padding-left: m.fs(80, 0.5);
+		padding-right: m.fs(40, 0.5);
+	}
+
+	&__text {
+		max-width: m.fs(480, 0.7);
+	}
+
+	// Title Section Component overrides
+	&__title-section {
+		.title-section__title {
+			.thoughts-title {
+				font-family: v.$ja;
+				font-size: m.fs(48, 0.6);
+				font-weight: 400;
+				color: #333;
+				line-height: 1.3;
+				margin-bottom: m.fs(24, 0.5);
+
+				.about-fv__subtitle {
+					display: block;
+					margin-top: m.fs(8, 0.4);
+				}
+			}
+		}
+
+		.title-section__content {
+			.thoughts-text {
+				font-family: v.$ja-sans;
+				font-size: m.fs(18, 0.5);
+				font-weight: 400;
+				color: #666;
+				line-height: 1.7;
+				margin: 0;
+			}
+		}
+	}
+
+	// Image Area (Right)
+	&__image {
+		width: 100%;
+		height: 100%;
+		overflow: hidden;
+		position: relative;
+	}
+
+	&__image-img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: center;
+		display: block;
+	}
+}

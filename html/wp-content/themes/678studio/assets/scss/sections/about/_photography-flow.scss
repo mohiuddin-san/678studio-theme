@@ -1,0 +1,150 @@
+// Photography Flow Section - About Page Specific
+// =============================================================================
+
+@use '../../base/mixins' as m;
+@use '../../base/variables' as v;
+
+.photography-flow-section {
+	width: 100%;
+	padding: m.fs(72, 0.6) 0;
+
+	&__container {
+		margin: 0 m.fs(224, 0.4);
+		padding-top: m.fs(72, 0.6);
+		padding-bottom: m.fs(72, 0.6);
+		background: #e9edf0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		position: relative;
+		z-index: 0;
+	}
+
+	// ヘッダーエリア
+	&__header {
+		text-align: center;
+		margin-bottom: m.fs(60, 0.5);
+	}
+
+	&__label {
+		display: inline-block;
+		background: v.$main-color;
+		color: white;
+		padding: m.fs(8, 0.4) m.fs(24, 0.4);
+		margin-bottom: m.fs(32, 0.5);
+		font-size: m.fs(14, 0.4);
+		font-family: v.$en;
+		font-weight: 500;
+		letter-spacing: 0.05em;
+	}
+
+	&__label-text {
+		// label内のテキスト用
+	}
+
+	&__title {
+		font-size: m.fs(28, 0.6);
+		font-weight: 600;
+		color: v.$main-color;
+		font-family: v.$ja;
+		letter-spacing: m.fs(1);
+		margin: 0;
+	}
+
+	// カードエリア（縦並び）
+	&__cards {
+		width: calc(100% + m.fs(128, 0.5));
+		display: flex;
+		flex-direction: column;
+		gap: m.fs(40, 0.5);
+	}
+}
+
+// フローカード
+.flow-card {
+	display: flex;
+	align-items: center;
+	background: #fff;
+	border-radius: m.fs(10, 0.5);
+	padding: m.fs(43, 0.5) m.fs(38, 0.5);
+	overflow: visible;
+	position: relative;
+	z-index: 1;
+	box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+	gap: m.fs(32, 0.5);
+
+	&__image {
+		flex-shrink: 0;
+		width: m.fs(392, 0.6);
+		height: m.fs(250, 0.6);
+		border-radius: m.fs(8, 0.4);
+		overflow: hidden;
+
+		&-img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+	}
+
+	&__content {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		gap: m.fs(16, 0.4);
+		padding: m.fs(8, 0.3) 0;
+	}
+
+	&__header {
+		display: flex;
+		align-items: center;
+		gap: m.fs(16, 0.4);
+	}
+
+	&__number {
+		display: flex;
+		align-items: center;
+		gap: m.fs(8, 0.4);
+
+		&-icon {
+			width: m.fs(57, 0.4);
+			height: m.fs(57, 0.4);
+			flex-shrink: 0;
+		}
+
+		&-text {
+			font-size: m.fs(61.04, 0.6);
+			font-weight: 400;
+			color: v.$main-color;
+			font-family: v.$ja;
+			line-height: 1;
+		}
+	}
+
+	&__badge {
+		display: inline-block;
+		background: #a5c3cf;
+		color: white;
+		padding: m.fs(6) m.fs(16);
+		font-size: m.fs(14);
+		font-family: v.$ja-sans;
+		font-weight: 500;
+		width: fit-content;
+	}
+
+	&__underline {
+		width: 100%;
+		margin: m.fs(8, 0.3) 0;
+		object-fit: contain;
+		object-position: left center;
+	}
+
+	&__description {
+		font-size: m.fs(16);
+		color: #333;
+		line-height: 1.8;
+		font-family: v.$ja-sans;
+		margin: 0;
+		text-align: left;
+	}
+}
