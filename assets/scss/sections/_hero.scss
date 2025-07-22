@@ -1,0 +1,62 @@
+// Hero Section
+@use '../base/variables' as v;
+@use '../base/mixins' as m;
+
+.hero-section {
+	position: relative;
+	width: 100%;
+	overflow: hidden;
+
+	&__image-container {
+		position: relative;
+		width: 100%;
+	}
+
+	&__image {
+		width: 100%;
+		height: 100%;
+		object-fit: contain;
+		display: block;
+	}
+
+	&__title-image {
+		width: m.fs(285, 0.6);
+		position: absolute;
+		top: m.fs(90, 0.6);
+		left: m.fs(150, 0.6);
+		z-index: 2;
+	}
+
+	&__title-svg {
+		width: 100%;
+		height: 100%;
+		display: block;
+	}
+
+	&__content {
+		position: absolute;
+		bottom: m.fs(100, 0.6);
+		right: m.fs(96, 0.6);
+		text-align: center;
+		color: #fff;
+		z-index: 2;
+		width: m.fs(305);
+		padding: 0 m.fs(20);
+	}
+
+	&__title {
+		font-family: v.$ja;
+		font-size: m.fs(48);
+		font-weight: 700;
+		margin-bottom: m.fs(24);
+		line-height: 1.2;
+	}
+
+	&__subtitle {
+		font-family: v.$ja;
+		font-size: m.fs(20);
+		font-weight: 400;
+		margin-bottom: m.fs(48);
+		line-height: 1.6;
+	}
+}

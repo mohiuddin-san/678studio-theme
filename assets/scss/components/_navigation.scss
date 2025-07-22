@@ -1,0 +1,39 @@
+// Navigation Component
+@use '../base/variables' as v;
+@use '../base/mixins' as m;
+
+.navigation {
+	&__menu {
+		display: flex;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		gap: m.fs(40);
+	}
+
+	&__item {
+		// Navigation item styles
+	}
+
+	&__link {
+		font-family: v.$ja;
+		display: block;
+		color: v.$text-color;
+		text-decoration: none;
+		font-weight: 400;
+		transition: color 0.3s ease;
+
+		&:hover {
+			color: v.$brand-red;
+		}
+
+		&:focus {
+			outline: 2px solid v.$brand-blue;
+			outline-offset: 2px;
+		}
+	}
+
+	&__item--current &__link {
+		color: v.$brand-red;
+	}
+}

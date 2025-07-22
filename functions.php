@@ -1,10 +1,14 @@
 <?php
+/**
+ * 678 Studio Theme Functions
+ */
+
 // === FTP Constants ===
 if (!defined('FTP_HOST')) define('FTP_HOST', 'sv504.xbiz.ne.jp');
 if (!defined('FTP_USER')) define('FTP_USER', 'xb592942');
 if (!defined('FTP_PASS')) define('FTP_PASS', 'rv9e09e2');
-if (!defined('XSERVER_GALLERY_BASE')) define('XSERVER_GALLERY_BASE', '/sugamo-navi.com/public_html/gallery/');
-if (!defined('XSERVER_GALLERY_URL')) define('XSERVER_GALLERY_URL', 'https://sugamo-navi.com/gallery/');
+if (!defined('GALLERY_BASE_PATH')) define('GALLERY_BASE_PATH', '/sugamo-navi.com/public_html/gallery/');
+if (!defined('GALLERY_BASE_URL')) define('GALLERY_BASE_URL', 'https://sugamo-navi.com/gallery/');
 
 // === Language Translations ===
 function get_translations($lang = 'en') {
@@ -54,7 +58,7 @@ function get_translations($lang = 'en') {
             'select_language' => '言語を選択:'
         ]
     ];
-    return $translations[$lang] ?? $translations['en']; // Default to English if language not found
+    return $translations[$lang] ?? $translations['en'];
 }
 
 // === Add Admin Menu ===
@@ -72,7 +76,6 @@ add_action('admin_menu', function() {
 
 // === Admin Upload Page ===
 function ftp_gallery_upload_page() {
-    // Get or save selected language
     $lang = isset($_POST['gallery_language']) ? sanitize_text_field($_POST['gallery_language']) : get_option('ftp_gallery_language', 'en');
     if (isset($_POST['gallery_language']) && check_admin_referer('ftp_gallery_nonce')) {
         update_option('ftp_gallery_language', $lang);
@@ -84,6 +87,7 @@ function ftp_gallery_upload_page() {
         $category = sanitize_text_field($_POST['gallery_category']);
         $new_category = sanitize_text_field($_POST['new_category']);
         $category = !empty($new_category) ? $new_category : $category;
+        
         if (empty($category)) {
             echo '<div class="error"><p>' . esc_html($translations['category_error']) . '</p></div>';
             return;
@@ -98,7 +102,7 @@ function ftp_gallery_upload_page() {
         }
         ftp_pasv($ftp, true);
 
-        $remote_path = XSERVER_GALLERY_BASE . $category;
+        $remote_path = GALLERY_BASE_PATH . $category;
         $folders = explode('/', $remote_path);
         $path = '';
         foreach ($folders as $folder) {
@@ -133,16 +137,17 @@ function ftp_gallery_upload_page() {
         ftp_close($ftp);
     }
 
-    // Fetch existing categories from Xserver
     $ftp = ftp_connect(FTP_HOST);
     $existing_categories = [];
     if ($ftp && ftp_login($ftp, FTP_USER, FTP_PASS)) {
         ftp_pasv($ftp, true);
-        $items = ftp_nlist($ftp, XSERVER_GALLERY_BASE);
-        foreach ($items as $item) {
-            $name = basename($item);
-            if ($name !== '.' && $name !== '..') {
-                $existing_categories[] = $name;
+        $items = ftp_nlist($ftp, GALLERY_BASE_PATH);
+        if ($items) {
+            foreach ($items as $item) {
+                $name = basename($item);
+                if ($name !== '.' && $name !== '..') {
+                    $existing_categories[] = $name;
+                }
             }
         }
         ftp_close($ftp);
@@ -186,36 +191,29 @@ function ftp_gallery_upload_page() {
     <?php
 }
 
-// === Helper: Fetch Category List from Xserver FTP ===
-function get_xserver_gallery_categories() {
+// === Helper: Fetch Category List from FTP ===
+function get_gallery_categories() {
     $ftp = ftp_connect(FTP_HOST);
     if (!$ftp || !ftp_login($ftp, FTP_USER, FTP_PASS)) return [];
     ftp_pasv($ftp, true);
-    $items = ftp_nlist($ftp, XSERVER_GALLERY_BASE);
+    $items = ftp_nlist($ftp, GALLERY_BASE_PATH);
     ftp_close($ftp);
 
     $categories = [];
-    foreach ($items as $item) {
-        $name = basename($item);
-        if ($name !== '.' && $name !== '..') {
-            $categories[] = $name;
+    if ($items) {
+        foreach ($items as $item) {
+            $name = basename($item);
+            if ($name !== '.' && $name !== '..') {
+                $categories[] = $name;
+            }
         }
     }
     return $categories;
 }
 
-// === Helper: Guess images inside a category (image1.jpg - image10.jpg) ===
-function guess_images_in_category($category) {
-    $base = XSERVER_GALLERY_URL . $category . '/';
-    $images = [];
-    for ($i = 1; $i <= 10; $i++) {
-        $name = "image{$i}.jpg";
-        $images[] = $base . $name;
-    }
-    return $images;
-}
-
-add_shortcode('xserver_gallery_display', function () {
+// === Gallery Shortcode ===
+add_shortcode('ftp_gallery', function($atts) {
+    $atts = shortcode_atts(['category' => '', 'limit' => ''], $atts);
     $lang = get_option('ftp_gallery_language', 'en');
     $translations = get_translations($lang);
 
@@ -224,72 +222,217 @@ add_shortcode('xserver_gallery_display', function () {
         return '<div style="color:red; font-size:20px; background:yellow; padding:15px; border:2px solid red;">' . sprintf(esc_html($translations['ftp_failed']), date('Y-m-d H:i:s')) . '</div>';
     }
     ftp_pasv($ftp, true);
-
-    $categories = ftp_nlist($ftp, XSERVER_GALLERY_BASE);
-    if (!$categories) {
-        ftp_close($ftp);
-        return '<div style="color:red; font-size:20px; background:yellow; padding:15px; border:2px solid red;">' . sprintf(esc_html($translations['no_files']), XSERVER_GALLERY_BASE, date('Y-m-d H:i:s')) . '</div>';
-    }
-
-    $output = '<div class="xserver-gallery-wrapper">';
-    $output .= '<h2>' . esc_html($translations['gallery_title']) . '</h2><ul style="list-style:none;">';
-    $output .= '<p style="color:blue; font-size:16px;">' . sprintf(esc_html($translations['found_categories']), count($categories)) . '</p>';
-
-    foreach ($categories as $category_path) {
-        $category = basename($category_path);
-        if (in_array($category, ['.', '..'])) continue;
-
-        $output .= '<li style="margin: 10px 0;"><h3>' . esc_html($category) . '</h3><div style="display:flex; flex-wrap:wrap; gap:10px;">';
-
-        $files = ftp_nlist($ftp, $category_path);
-        if ($files && is_array($files)) {
-            $output .= '<p style="color:blue; font-size:16px;">' . sprintf(esc_html($translations['found_files']), count($files), esc_html($category)) . '</p>';
-            foreach ($files as $file) {
-                if (preg_match('/\.(jpg|jpeg|png|gif)$/i', $file)) {
-                    $image_name = basename($file);
-                    $img_url = XSERVER_GALLERY_URL . $category . '/' . $image_name;
-                    $output .= '<img src="' . esc_url($img_url) . '" alt="' . esc_attr($image_name) . '" style="max-width:200px; height:auto; border:1px solid #ccc; padding:5px;">';
-                } else {
-                    $output .= '<p style="color:orange; font-size:14px;">' . sprintf(esc_html($translations['skip_non_image']), esc_html(basename($file))) . '</p>';
+    
+    $categories = ftp_nlist($ftp, GALLERY_BASE_PATH);
+    $images_by_category = [];
+    
+    if ($categories) {
+        foreach ($categories as $category_path) {
+            $category = basename($category_path);
+            if (in_array($category, ['.', '..'])) continue;
+            if ($atts['category'] && $atts['category'] !== $category) continue;
+            
+            $files = ftp_nlist($ftp, $category_path);
+            if ($files && is_array($files)) {
+                $images = [];
+                foreach ($files as $file) {
+                    if (preg_match('/\.(jpg|jpeg|png|gif|webp)$/i', $file)) {
+                        $image_name = basename($file);
+                        $img_url = GALLERY_BASE_URL . $category . '/' . $image_name;
+                        $images[] = ['url' => $img_url, 'name' => $image_name];
+                    }
+                }
+                if (!empty($images)) {
+                    if ($atts['limit']) {
+                        $images = array_slice($images, 0, intval($atts['limit']));
+                    }
+                    $images_by_category[$category] = $images;
                 }
             }
-        } else {
-            $output .= '<div style="color:red; font-size:20px; background:yellow; padding:15px; border:2px solid red;">' . sprintf(esc_html($translations['no_files']), esc_html($category), date('Y-m-d H:i:s')) . '</div>';
         }
+    }
+    ftp_close($ftp);
+    
+    ob_start();
+    ?>
+    <div class="gallery-shortcode">
+        <?php if (empty($images_by_category)): ?>
+            <div style="color:red; font-size:20px; background:yellow; padding:15px; border:2px solid red;">
+                <?php echo sprintf(esc_html($translations['no_files']), GALLERY_BASE_PATH, date('Y-m-d H:i:s')); ?>
+            </div>
+        <?php else: ?>
+            <?php foreach ($images_by_category as $category => $images): ?>
+                <div class="gallery-category">
+                    <h3><?php echo esc_html($category); ?></h3>
+                    <div class="gallery-grid">
+                        <?php foreach ($images as $image): ?>
+                            <div class="gallery-item">
+                                <img src="<?php echo esc_url($image['url']); ?>" alt="<?php echo esc_attr($image['name']); ?>">
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    <?php
+    return ob_get_clean();
+});
 
-        $output .= '</div></li>';
+// Initialize WordPress Debug Logger
+require_once get_template_directory() . '/lib/debug-logger.php';
+
+// Load custom post types
+require_once get_template_directory() . '/inc/post-types/media-achievements.php';
+
+// Load ACF configurations
+require_once get_template_directory() . '/inc/acf/media-achievements.php';
+
+// Enqueue styles and scripts
+function theme_678studio_styles() {
+    $version = WP_DEBUG ? filemtime(get_stylesheet_directory() . '/style.css') : '1.0.0';
+    wp_enqueue_style('678studio-style', get_stylesheet_uri(), [], $version);
+
+    if (is_page_template('page-gallery.php')) {
+        $js_version = WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/gallery.js') : '1.0.0';
+        wp_enqueue_script('678studio-gallery', 
+            get_template_directory_uri() . '/assets/js/gallery.js', 
+            [], $js_version, true);
     }
 
-    ftp_close($ftp);
-    $output .= '</ul></div>';
-
-    return $output;
-});
-/**
- * 678 Studio functions and definitions
- *
- * @package 678Studio
- * @version 1.0
- */
-
-// Load theme CSS and JS
-function theme_enqueue_assets() {
-    wp_enqueue_style('678studio-style', get_template_directory_uri() . '/style.css');
+    if (is_front_page() || is_home()) {
+        wp_enqueue_script('gsap', 
+            'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js', 
+            [], '3.12.2', true);
+        wp_enqueue_script('gsap-draggable', 
+            'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/Draggable.min.js', 
+            ['gsap'], '3.12.2', true);
+        $slider_version = WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/modules/media-slider.js') : '1.0.0';
+        wp_enqueue_script('media-slider', 
+            get_template_directory_uri() . '/assets/js/modules/media-slider.js', 
+            ['gsap', 'gsap-draggable'], $slider_version, true);
+    }
 }
-add_action('wp_enqueue_scripts', 'theme_enqueue_assets');
+add_action('wp_enqueue_scripts', 'theme_678studio_styles');
 
-// Add theme support
+// Enqueue debug scripts
+function theme_678studio_debug_scripts() {
+    if (WP_DEBUG || (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG)) {
+        wp_enqueue_script('wp-debug-logger', 
+            get_template_directory_uri() . '/assets/js/debug-logger.js', 
+            ['jquery'], '1.0.0', true);
+        wp_localize_script('wp-debug-logger', 'wpDebugAjax', [
+            'ajaxurl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('wp_debug_nonce')
+        ]);
+    }
+}
+add_action('wp_enqueue_scripts', 'theme_678studio_debug_scripts');
+
+// Theme support
 add_theme_support('title-tag');
 add_theme_support('post-thumbnails');
 add_theme_support('menus');
 
-// Register menu
-function theme_register_menus() {
-    register_nav_menu('header-menu', __('Header Menu', '678studio'));
+// Register navigation menu
+function theme_678studio_menus() {
+    register_nav_menus(array(
+        'header' => 'Header Menu'
+    ));
+}
+add_action('init', 'theme_678studio_menus');
+
+// Development: Disable caching for faster development
+if (WP_DEBUG) {
+    define('WP_CACHE', false);
+    add_action('wp_head', function() {
+        echo '<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">' . "\n";
+        echo '<meta http-equiv="Pragma" content="no-cache">' . "\n";
+        echo '<meta http-equiv="Expires" content="0">' . "\n";
+    });
+    add_filter('script_loader_src', 'remove_script_version', 15, 1);
+    add_filter('style_loader_src', 'remove_script_version', 15, 1);
 }
 
-add_action('init', 'theme_register_menus');
-add_shortcode('xserver_gallery_full', function () {
-    // full code as I gave earlier (FTP connect, folder list, image loop)
+function remove_script_version($src) {
+    if (strpos($src, '678studio-style') === false) {
+        $parts = explode('?ver', $src);
+        return $parts[0];
+    }
+    return $src;
+}
+
+// AJAX handler for JavaScript debug logs
+add_action('wp_ajax_wp_debug_log_js', 'handle_js_debug_logs');
+add_action('wp_ajax_nopriv_wp_debug_log_js', 'handle_js_debug_logs');
+
+function handle_js_debug_logs() {
+    if (!wp_verify_nonce($_POST['nonce'], 'wp_debug_nonce')) {
+        wp_die('Security check failed');
+    }
+    $logs = json_decode(stripslashes($_POST['logs']), true);
+    if (!is_array($logs)) {
+        wp_send_json_error('Invalid log data');
+        return;
+    }
+    $log_dir = WP_CONTENT_DIR . '/debug-logs/';
+    if (!file_exists($log_dir)) {
+        wp_mkdir_p($log_dir);
+    }
+    $log_file = $log_dir . 'js-debug-' . date('Y-m-d') . '.log';
+    foreach ($logs as $log) {
+        if (is_array($log)) {
+            $formatted_log = json_encode($log, JSON_UNESCAPED_UNICODE) . "\n";
+            file_put_contents($log_file, $formatted_log, FILE_APPEND | LOCK_EX);
+        }
+    }
+    wp_send_json_success('Logs saved successfully');
+}
+
+// WordPress debug integration hooks
+add_action('wp_loaded', function() {
+    wp_log_info('WordPress fully loaded', [
+        'theme' => get_template(),
+        'active_plugins' => get_option('active_plugins'),
+        'user_count' => count_users()['total_users']
+    ]);
 });
-add_action('init', 'theme_register_menus');
+
+add_action('template_redirect', function() {
+    global $template;
+    if (isset($template)) {
+        WordPressDebugLogger::getInstance()->trackTemplate($template, 'main');
+    }
+});
+
+add_action('wp_die_handler', function($message, $title, $args) {
+    wp_log_error('WordPress die called', [
+        'message' => $message,
+        'title' => $title,
+        'args' => $args
+    ]);
+});
+
+add_filter('log_query_custom_data', function($query_data, $query) {
+    if (isset($query_data['query_time']) && $query_data['query_time'] > 0.1) {
+        wp_log_warn('Slow database query detected', [
+            'query' => $query,
+            'execution_time' => $query_data['query_time']
+        ]);
+    }
+    return $query_data;
+}, 10, 2);
+
+add_action('wp_login', function($user_login, $user) {
+    wp_log_info('User login', [
+        'user_login' => $user_login,
+        'user_id' => $user->ID,
+        'user_roles' => $user->roles
+    ]);
+}, 10, 2);
+
+add_action('wp_logout', function($user_id) {
+    wp_log_info('User logout', [
+        'user_id' => $user_id
+    ]);
+});
+?>

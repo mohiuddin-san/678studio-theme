@@ -1,0 +1,98 @@
+// Plan Section Layout
+// =============================================================================
+
+@use '../base/mixins' as m;
+@use '../base/variables' as v;
+
+.plan-section {
+	width: 100%;
+	margin-top: m.fs(120, 0.5);
+
+	&__container {
+		width: 100%;
+		max-width: m.fs(1440);
+		margin: 0 auto;
+		display: grid;
+		grid-template-columns: 1fr m.fs(720, 0.5);
+		grid-template-rows: m.fs(400, 0.5);
+		gap: 0;
+		position: relative;
+	}
+
+	.plan-box {
+		&--1 {
+			grid-column: 2;
+			grid-row: 1;
+			position: relative;
+			z-index: 2;
+
+			.plan-box__image {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+			}
+		}
+
+		&--2 {
+			grid-column: 1 / -1;
+			grid-row: 1;
+			background: #f5e9e0;
+			z-index: 1;
+		}
+
+		&--3 {
+			grid-column: 1;
+			grid-row: 1;
+			display: flex;
+			align-items: center;
+			z-index: 2;
+			padding-left: m.fs(200, 0.5);
+
+			.plan-box__content {
+				display: flex;
+				flex-direction: column;
+				gap: m.fs(24);
+			}
+
+			.plan-box__label {
+				margin-bottom: m.fs(32);
+			}
+
+			.plan-box__title {
+				font-family: 'Noto Sans JP', sans-serif;
+				font-size: m.fs(32);
+				font-weight: 500;
+				line-height: 1.5;
+				color: #3f3f3f;
+				margin: 0;
+			}
+
+			.plan-box__text {
+				font-family: 'Noto Sans JP', sans-serif;
+				font-size: m.fs(16);
+				font-weight: 400;
+				line-height: 1.8;
+				color: #3f3f3f;
+				margin: 0;
+			}
+
+			.plan-box__button {
+				margin-top: m.fs(16);
+			}
+		}
+	}
+}
+
+// Plan Label Component
+.plan-label {
+	display: inline-block;
+	background: #3f3f3f;
+	color: #fff;
+	padding: m.fs(8) m.fs(24);
+	font-family: 'Oswald', sans-serif;
+	font-size: m.fs(16);
+	font-weight: 400;
+	line-height: 1;
+	text-transform: uppercase;
+	letter-spacing: m.fs(2);
+}

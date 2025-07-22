@@ -1,0 +1,32 @@
+{
+  "name": "678studio-theme",
+  "version": "1.0.0",
+  "description": "678 Studio WordPress theme with SCSS compilation",
+  "main": "gulpfile.js",
+  "scripts": {
+    "dev": "gulp",
+    "build": "gulp build",
+    "watch": "gulp watch",
+    "sass": "gulp sass",
+    "wp-logs:analyze": "node ../../../scripts/analyze-wp-logs.js",
+    "wp-logs:errors": "node ../../../scripts/analyze-wp-logs.js --level ERROR",
+    "wp-logs:summary": "node ../../../scripts/analyze-wp-logs.js --hours 1",
+    "wp-logs:component": "node ../../../scripts/analyze-wp-logs.js --component",
+    "wp-logs:cleanup": "node ../../../scripts/analyze-wp-logs.js --cleanup"
+  },
+  "keywords": ["wordpress", "theme", "scss", "gulp", "678studio"],
+  "author": "678 Studio Team",
+  "license": "MIT",
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-sass": "^5.1.0",
+    "sass": "^1.69.0",
+    "gulp-autoprefixer": "^8.0.0",
+    "gulp-sourcemaps": "^3.0.0",
+    "gulp-clean-css": "^4.3.0",
+    "gulp-rename": "^2.0.0",
+    "browser-sync": "^2.29.3",
+    "gulp-plumber": "^1.2.1",
+    "gulp-notify": "^4.0.0"
+  }
+}

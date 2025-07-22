@@ -1,31 +1,23 @@
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
+
 <head>
-	<meta charset="<?php bloginfo( 'charset' ); ?>">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="profile" href="https://gmpg.org/xfn/11">
-	<?php wp_head(); ?>
+  <meta charset="<?php bloginfo('charset'); ?>">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <?php wp_head(); ?>
 </head>
 
 <body <?php body_class(); ?>>
-<?php wp_body_open(); ?>
-<div id="page" class="site">
-	<header id="masthead" class="site-header">
-		<div class="site-branding">
-			<h1 class="site-title">
-				<a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home">
-					<?php bloginfo( 'name' ); ?>
-				</a>
-			</h1>
-			<p class="site-description"><?php bloginfo( 'description' ); ?></p>
-		</div>
+  <?php wp_body_open(); ?>
 
-		<nav id="site-navigation" class="main-navigation">
-			<?php
-			wp_nav_menu( array(
-				'theme_location' => 'header-menu',
-				'menu_id'        => 'primary-menu',
-			) );
-			?>
-		</nav>
-	</header>
+  <header class="header" role="banner">
+    <div class="header__container">
+      <div class="branding">
+        <div class="branding__logo">
+          <img src="<?php echo get_template_directory_uri(); ?>/assets/images/logo.svg" alt="<?php bloginfo('name'); ?>"
+            class="branding__image">
+        </div>
+      </div>
+      <?php get_template_part('template-parts/header/navigation'); ?>
+    </div>
+  </header>
