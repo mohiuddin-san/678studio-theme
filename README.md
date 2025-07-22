@@ -158,6 +158,42 @@ This theme is developed for 678 Studio. All rights reserved.
 - **PHP**: Server-side logic
 - **JavaScript**: Client-side interactions
 
+## 📬 Developer Notes
+
+### For mohi-san
+
+**Store Detail Page Development Status:**
+
+Currently, the store detail functionality is implemented using a **test page template** rather than the standard `single-store.php` approach:
+
+- **Test URL**: `http://localhost:8080/store-detail-test/`
+- **Template**: `page-store-detail.php` (Page Template: "Store Detail Test")
+- **Reason**: Using a page template allows for immediate browser testing and design iteration without requiring custom post types or database setup
+
+**Current Implementation:**
+```
+✅ Store Hero Section (image + title + category tag)
+✅ Breadcrumb Navigation (with SVG underlines)  
+✅ Basic Information Section (with underline-store.svg)
+✅ Responsive SCSS styling
+✅ Header navigation integration
+```
+
+**Next Steps:**
+1. Complete additional sections (gallery, access, staff, etc.)
+2. Convert to proper `single-store.php` template with dynamic data
+3. Set up custom post type for stores if needed
+4. Migrate content from test page to production template
+
+**Files Created:**
+- `page-store-detail.php` - Test template for development
+- `single-store.php` - Ready for production implementation  
+- `archive-store.php` - Store listing page
+- `page-stores.php` - Store listing test page
+- `assets/scss/pages/_single-store.scss` - Store-specific styling
+
+The test page approach allows for faster development and design validation before implementing the final dynamic solution.
+
 ---
 
 *For detailed development documentation, see the `.claude/docs/` directory in the project root.*
