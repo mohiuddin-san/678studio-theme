@@ -1,0 +1,27 @@
+.studio-container { max-width: 900px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; }
+.studio-header { text-align: center; margin-bottom: 20px; }
+.studio-header nav a { color: #0073aa; }
+.studio-content h2 { text-align: center; margin-bottom: 15px; }
+.action-buttons { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
+.btn-inquiry, .btn-reserve { padding: 12px 25px; background: #f9e4b7; border: none; border-radius: 5px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+.btn-inquiry i, .btn-reserve i { font-size: 16px; }
+.shop-selector { margin-bottom: 20px; }
+.shop-selector select { width: 100%; padding: 12px; border-radius: 5px; border: 1px solid #ccc; }
+.studio-gallery { display: flex; gap: 20px; margin-bottom: 20px; }
+.gallery-image { max-width: 50%; border-radius: 5px; }
+.studio-info { flex: 1; background: #f9e4b7; padding: 15px; border-radius: 5px; }
+.studio-info table { width: 100%; border-collapse: collapse; }
+.studio-info table th, .studio-info table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+.studio-info table th { background: #fff; }
+.pricing-plans { display: flex; justify-content: space-between; gap: 20px; }
+.plan-card { background: #f9e4b7; padding: 15px; border-radius: 5px; width: 48%; text-align: center; }
+.studio-footer { text-align: center; margin-top: 20px; color: #666; }
+
+.booking-container { max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; }
+.booking-container h1 { text-align: center; margin-bottom: 20px; }
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; margin-bottom: 5px; color: #333; }
+.form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+.form-group textarea { resize: vertical; }
+.submit-btn { display: block; width: 100%; padding: 12px; background: #0073aa; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+.submit-btn:hover { background: #005d8a; }
