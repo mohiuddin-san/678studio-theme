@@ -28,6 +28,7 @@
 // Pages
 @use 'pages/home';
 @use 'pages/about' as about-page;
+@use 'pages/single-store';
 
 // About Page Sections
 @use 'sections/about/memorial-photography';

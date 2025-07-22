@@ -13,10 +13,10 @@
   <header class="header" role="banner">
     <div class="header__container">
       <div class="branding">
-        <div class="branding__logo">
+        <a href="<?php echo esc_url(home_url('/')); ?>" class="branding__logo">
           <img src="<?php echo get_template_directory_uri(); ?>/assets/images/logo.svg" alt="<?php bloginfo('name'); ?>"
             class="branding__image">
-        </div>
+        </a>
       </div>
       <?php get_template_part('template-parts/header/navigation'); ?>
     </div>

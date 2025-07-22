@@ -6,7 +6,8 @@
 
 .breadcrumb {
 	width: 100%;
-	padding: m.fs(20, 0.5) 0;
+	padding: m.fs(16, 0.5) 0;
+	border-bottom: 1px solid #eee;
 
 	&__container {
 		max-width: m.fs(1440);

@@ -6,6 +6,11 @@
 
 .about-page {
 	width: 100%;
+
+	// About Page Breadcrumb - Bottom border only
+	.breadcrumb {
+		border-bottom: 1px solid #eee;
+	}
 }
 
 // About FV Section (Specific to About page only)
