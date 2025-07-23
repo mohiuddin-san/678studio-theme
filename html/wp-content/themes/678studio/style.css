@@ -2038,7 +2038,6 @@ img {
   display: -ms-flexbox;
   display: flex;
   padding: calc(8px + (12) * (100vw - 768px) / (672)) 0;
-  border-bottom: 1px solid #eee;
 }
 .single-store .store-basic-info__item:last-child {
   border-bottom: none;
@@ -2184,7 +2183,6 @@ img {
 }
 .single-store .store-gallery {
   padding: calc(40px + (40) * (100vw - 768px) / (672)) 0;
-  background: #f9f9f9;
 }
 .single-store .store-gallery__container {
   max-width: 1200px;
@@ -2210,7 +2208,6 @@ img {
 }
 .single-store .store-gallery__item {
   background: white;
-  border-radius: calc(3.2px + (4.8) * (100vw - 768px) / (672));
   overflow: hidden;
   -webkit-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -2270,8 +2267,6 @@ img {
 }
 .single-store .store-access__map-placeholder {
   background: #f0f0f0;
-  border: 2px dashed #ccc;
-  border-radius: calc(3.2px + (4.8) * (100vw - 768px) / (672));
   padding: calc(30px + (30) * (100vw - 768px) / (672));
   text-align: center;
   color: #666;
@@ -2434,6 +2429,234 @@ img {
     gap: calc(8px + (12) * (100vw - 768px) / (672));
   }
 }
+.single-store .store-gallery {
+  padding: calc(40px + (40) * (100vw - 768px) / (672)) 0;
+  overflow: hidden;
+}
+.single-store .store-gallery__slider {
+  width: 100%;
+  overflow: hidden;
+  cursor: -webkit-grab;
+  cursor: grab;
+  padding-top: calc(29.6px + (10.4) * (100vw - 768px) / (672));
+}
+.single-store .store-gallery__slider:active {
+  cursor: -webkit-grabbing;
+  cursor: grabbing;
+}
+.single-store .store-gallery__track {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  gap: calc(10px + (10) * (100vw - 768px) / (672));
+}
+.single-store .store-gallery__item {
+  -webkit-box-flex: 0;
+  -ms-flex: 0 0 auto;
+  flex: 0 0 auto;
+  width: calc(240px + (60) * (100vw - 768px) / (672));
+  height: calc(320px + (80) * (100vw - 768px) / (672));
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+}
+.single-store .store-gallery__item img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+  object-fit: cover;
+  -webkit-transition: -webkit-transform 0.3s ease;
+  transition: -webkit-transform 0.3s ease;
+  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, -webkit-transform 0.3s ease;
+}
+.single-store .store-gallery__item:hover img {
+  -webkit-transform: scale(1.05);
+  transform: scale(1.05);
+}
+.single-store .store-gallery__item:hover .store-gallery__overlay {
+  opacity: 1;
+}
+.single-store .store-gallery__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  opacity: 0;
+  -webkit-transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.single-store .store-gallery__icon {
+  width: calc(48px + (12) * (100vw - 768px) / (672));
+  height: calc(48px + (12) * (100vw - 768px) / (672));
+}
+
+.lightbox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  display: none;
+}
+.lightbox--active {
+  display: block;
+  -webkit-animation: fadeIn 0.3s ease;
+  animation: fadeIn 0.3s ease;
+}
+.lightbox__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+}
+.lightbox__content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  padding: calc(30px + (30) * (100vw - 768px) / (672));
+}
+.lightbox__image {
+  max-width: 90%;
+  max-height: 90%;
+  width: auto;
+  height: auto;
+  -o-object-fit: contain;
+  object-fit: contain;
+  -webkit-animation: zoomIn 0.3s ease;
+  animation: zoomIn 0.3s ease;
+}
+@media (min-width: 768px) {
+  .lightbox__image {
+    min-width: 600px;
+    min-height: 400px;
+  }
+}
+@media (min-width: 1200px) {
+  .lightbox__image {
+    min-width: 800px;
+    min-height: 600px;
+  }
+}
+.lightbox__close {
+  position: absolute;
+  top: calc(10px + (10) * (100vw - 768px) / (672));
+  right: calc(10px + (10) * (100vw - 768px) / (672));
+  width: calc(40px + (10) * (100vw - 768px) / (672));
+  height: calc(40px + (10) * (100vw - 768px) / (672));
+  background-color: rgba(0, 0, 0, 0.5);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease;
+}
+.lightbox__close:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+.lightbox__close svg {
+  width: calc(19.2px + (4.8) * (100vw - 768px) / (672));
+  height: calc(19.2px + (4.8) * (100vw - 768px) / (672));
+}
+
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@-webkit-keyframes zoomIn {
+  from {
+    -webkit-transform: scale(0.8);
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes zoomIn {
+  from {
+    -webkit-transform: scale(0.8);
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.single-store .store-access {
+  padding: calc(40px + (40) * (100vw - 768px) / (672)) 0;
+  background-color: #f8f8f8;
+}
+.single-store .store-access__map {
+  margin-top: calc(30px + (30) * (100vw - 768px) / (672));
+  overflow: hidden;
+}
+.single-store .store-access__map iframe {
+  width: 100%;
+  height: calc(320px + (80) * (100vw - 768px) / (672));
+  border: none;
+}
+.single-store .store-access__station {
+  margin-top: calc(15px + (15) * (100vw - 768px) / (672));
+  text-align: left;
+}
+.single-store .store-access__station-text {
+  font-size: calc(9px + (9) * (100vw - 768px) / (672));
+  color: #333;
+  margin: 0;
+  font-weight: 500;
+}
+
 .memorial-photography {
   width: 100%;
   padding: calc(40px + (40) * (100vw - 768px) / (672)) 0;
