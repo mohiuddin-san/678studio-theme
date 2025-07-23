@@ -1,0 +1,88 @@
+// Footer Component Styles
+// =============================================================================
+
+@use '../base/mixins' as m;
+@use '../base/variables' as v;
+
+.footer {
+	width: 100%;
+	padding-top: m.fs(128, 0.5);
+
+	// Navigation Section (Top)
+	&__nav-section {
+		background-color: #e9edf0;
+		padding: m.fs(60, 0.5) 0;
+	}
+
+	// Copyright Section (Bottom)
+	&__copyright-section {
+		background-color: #fff;
+		padding: m.fs(44, 0.5) 0;
+	}
+
+	// Container
+	&__container {
+		width: 100%;
+		max-width: m.fs(1440);
+		margin: 0 auto;
+		padding: 0 m.fs(20, 0.5);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: m.fs(40, 0.5);
+	}
+
+	// Logo
+	&__logo {
+		font-size: m.fs(24, 0.5);
+		font-weight: 600;
+		color: #333;
+		text-align: center;
+	}
+
+	// Navigation
+	&__nav {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: m.fs(20, 0.5);
+		font-family: v.$ja-sans;
+		font-weight: 400;
+	}
+
+	&__nav-row {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: m.fs(40, 0.5);
+
+		&--primary {
+			gap: m.fs(40, 0.5);
+		}
+
+		&--secondary {
+			gap: m.fs(40, 0.5);
+		}
+	}
+
+	&__nav-link {
+		font-size: m.fs(16, 0.5);
+		color: #333;
+		text-decoration: none;
+		transition: color 0.3s ease;
+
+		&:hover {
+			color: #666;
+		}
+	}
+
+	// Copyright
+	&__copyright {
+		font-family: v.$ja-sans;
+		font-size: m.fs(14, 0.5);
+		color: #a5c3cf;
+		text-align: center;
+		margin: 0;
+		letter-spacing: m.fs(2, 0.5);
+	}
+}

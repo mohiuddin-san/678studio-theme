@@ -1,0 +1,79 @@
+// Recommend Section - こんな方におすすめ
+// =============================================================================
+
+@use '../../base/mixins' as m;
+@use '../../base/variables' as v;
+
+.recommend-section {
+	width: 100%;
+	margin-right: m.fs(160, 0.6);
+	padding-top: m.fs(60, 0.6);
+	padding-bottom: m.fs(60, 0.6);
+
+	&__container {
+		margin: 0 auto;
+		padding: m.fs(54, 0.6) m.fs(160, 0.4);
+		margin: m.fs(80, 0.6) m.fs(160, 0.6);
+		text-align: center;
+		background: #f8f4e6;
+	}
+
+	// ヘッダーエリア
+	&__header {
+		margin-bottom: m.fs(60, 0.5);
+	}
+
+	&__icon {
+		margin-bottom: m.fs(20, 0.4);
+		display: flex;
+		justify-content: center;
+	}
+
+	&__sun-icon {
+		width: m.fs(95.6, 0.6);
+		height: m.fs(60, 0.5);
+	}
+
+	&__title {
+		font-size: m.fs(32, 0.6);
+		font-weight: 600;
+		color: #333;
+		font-family: v.$ja-sans;
+	}
+
+	// タグエリア
+	&__tags {
+		margin-bottom: m.fs(60, 0.5);
+	}
+
+	&__tag-row {
+		display: flex;
+		justify-content: center;
+		gap: m.fs(20, 0.4);
+		margin-bottom: m.fs(20, 0.4);
+		flex-wrap: wrap;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	&__tag {
+		min-width: m.fs(128, 0.5);
+		background: #fff;
+		color: v.$main-color;
+		padding: m.fs(12, 0.5) m.fs(24, 0.5);
+		border-radius: m.fs(50, 0.4);
+		border: 1px solid v.$main-color;
+		font-size: m.fs(16, 0.4);
+		font-weight: 500;
+		font-family: v.$ja-sans;
+		white-space: nowrap;
+	}
+
+	// ボタンエリア
+	&__button {
+		display: flex;
+		justify-content: center;
+	}
+}
