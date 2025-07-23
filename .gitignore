@@ -39,13 +39,13 @@ wp-content/cache/
 *.backup
 db-backup/
 
-# Development files (exclude these)
-CLAUDE.md
-GITHUB_PUSH_COMMANDS.md
-About_wordpress.md
-.claude/
-design/
-scripts/
+# Development files (exclude these from remote but keep locally)
+# CLAUDE.md
+# GITHUB_PUSH_COMMANDS.md
+# About_wordpress.md
+# .claude/
+# design/
+# scripts/
 
 # WordPress uploads and cache (exclude these from html/)
 html/wp-content/uploads/
