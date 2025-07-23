@@ -82,6 +82,86 @@ get_header();
     </div>
   </section>
 
+  <!-- Gallery Section -->
+  <section class="store-gallery">
+    <div class="store-gallery__container">
+      <h2 class="store-gallery__heading">
+        ギャラリー
+        <img class="store-gallery__underline" src="<?php echo get_template_directory_uri(); ?>/assets/images/underline-store.svg" alt="">
+      </h2>
+      
+      <div class="store-gallery__slider-container">
+        <div class="store-gallery__slider" id="gallery-slider">
+          <div class="store-gallery__slide">
+            <img src="<?php echo get_template_directory_uri(); ?>/assets/images/gallery-1.png" alt="ギャラリー画像1" class="store-gallery__image">
+          </div>
+          <div class="store-gallery__slide">
+            <img src="<?php echo get_template_directory_uri(); ?>/assets/images/gallery_003.png" alt="ギャラリー画像2" class="store-gallery__image">
+          </div>
+          <div class="store-gallery__slide">
+            <img src="<?php echo get_template_directory_uri(); ?>/assets/images/plan-1.jpg" alt="ギャラリー画像3" class="store-gallery__image">
+          </div>
+          <div class="store-gallery__slide">
+            <img src="<?php echo get_template_directory_uri(); ?>/assets/images/about-1.jpg" alt="ギャラリー画像4" class="store-gallery__image">
+          </div>
+          <div class="store-gallery__slide">
+            <img src="<?php echo get_template_directory_uri(); ?>/assets/images/about-2.jpg" alt="ギャラリー画像5" class="store-gallery__image">
+          </div>
+        </div>
+        
+        <div class="store-gallery__controls">
+          <button class="store-gallery__prev" id="gallery-prev">‹</button>
+          <button class="store-gallery__next" id="gallery-next">›</button>
+        </div>
+        
+        <div class="store-gallery__indicators" id="gallery-indicators">
+          <button class="store-gallery__indicator active" data-slide="0"></button>
+          <button class="store-gallery__indicator" data-slide="1"></button>
+          <button class="store-gallery__indicator" data-slide="2"></button>
+          <button class="store-gallery__indicator" data-slide="3"></button>
+          <button class="store-gallery__indicator" data-slide="4"></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Access Section -->
+  <section class="store-access">
+    <div class="store-access__container">
+      <h2 class="store-access__heading">
+        アクセス
+        <img class="store-access__underline" src="<?php echo get_template_directory_uri(); ?>/assets/images/underline-store.svg" alt="">
+      </h2>
+      
+      <div class="store-access__content">
+        <div class="store-access__info">
+          <div class="store-access__address">
+            <h3 class="store-access__address-title">住所</h3>
+            <p class="store-access__address-text">〒150-0001 東京都豊島区巣鴨1-2-3</p>
+          </div>
+          
+          <div class="store-access__transport">
+            <h3 class="store-access__transport-title">交通アクセス</h3>
+            <p class="store-access__transport-text">JR渋谷駅より徒歩5分</p>
+          </div>
+        </div>
+        
+        <div class="store-access__map">
+          <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3241.5263892573147!2d139.70153731582045!3d35.6617773802019!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x60188ca96aa1dd7b%3A0x67c9b0a1cefbe82a!2z5p2x5Lqs6YO95riL6LC35Yy66J2j55Sw!5e0!3m2!1sja!2sjp!4v1642567890123!5m2!1sja!2sjp" 
+            width="100%" 
+            height="300" 
+            style="border:0;" 
+            allowfullscreen="" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade"
+            class="store-access__map-iframe">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <?php

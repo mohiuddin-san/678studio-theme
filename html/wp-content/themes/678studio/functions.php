@@ -59,6 +59,20 @@ function theme_678studio_styles() {
             get_template_directory_uri() . '/assets/js/components/faq-accordion.js', 
             ['gsap'], $faq_version, true);
     }
+    
+    // Enqueue GSAP and gallery slider on store detail pages
+    if (is_page_template('page-store-detail.php') || is_page('store-detail-test')) {
+        // GSAP Core
+        wp_enqueue_script('gsap', 
+            'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js', 
+            [], '3.12.2', true);
+        
+        // Gallery Slider Script
+        $gallery_slider_version = WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/gallery-slider.js') : '1.0.0';
+        wp_enqueue_script('gallery-slider', 
+            get_template_directory_uri() . '/assets/js/gallery-slider.js', 
+            ['gsap'], $gallery_slider_version, true);
+    }
 }
 add_action('wp_enqueue_scripts', 'theme_678studio_styles');
 
