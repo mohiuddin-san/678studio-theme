@@ -9,6 +9,14 @@
 		margin: 0;
 		padding: 0;
 		gap: m.fs(40, 0.5);
+
+		// モバイル対応 - フルスクリーン用
+		@include m.mq(md) {
+			flex-direction: column;
+			gap: 0;
+			padding: m.fsm(40) 0;
+			width: 100%;
+		}
 	}
 
 	&__item {
@@ -23,6 +31,14 @@
 		text-decoration: none;
 		font-weight: 400;
 		transition: color 0.3s ease;
+
+		// モバイル対応 - フルスクリーン用
+		@include m.mq(md) {
+			font-size: m.fsm(20);
+			padding: m.fsm(20) m.fsm(20);
+			text-align: center;
+			font-weight: 500;
+		}
 
 		&:hover {
 			color: v.$brand-red;
