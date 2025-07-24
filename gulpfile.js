@@ -94,8 +94,21 @@ function initBrowserSync() {
 
 // Watch task
 function watchFiles() {
-  gulp.watch(paths.scss.watch, compileSCSS);
+  // SCSS watch with verbose logging
+  const watcher = gulp.watch(paths.scss.watch, compileSCSS);
+  
+  watcher.on('change', function(path) {
+    console.log('File changed: ' + path);
+  });
+  
+  watcher.on('add', function(path) {
+    console.log('File added: ' + path);
+  });
+  
+  // PHP watch
   gulp.watch(paths.php.watch).on('change', browserSync.reload);
+  
+  // JS watch
   gulp.watch(paths.js.watch).on('change', browserSync.reload);
 }
 
