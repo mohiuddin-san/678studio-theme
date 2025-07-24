@@ -19,6 +19,12 @@ function theme_678studio_styles() {
     
     wp_enqueue_style('678studio-style', get_stylesheet_uri(), [], $version);
     
+    // Enqueue header script for mobile menu
+    $header_version = WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/header.js') : '1.0.0';
+    wp_enqueue_script('678studio-header', 
+        get_template_directory_uri() . '/assets/js/header.js', 
+        [], $header_version, true);
+    
     // Enqueue gallery script on gallery pages
     if (is_page_template('page-gallery.php')) {
         $js_version = WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/gallery.js') : '1.0.0';

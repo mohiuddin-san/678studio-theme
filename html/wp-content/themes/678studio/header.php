@@ -18,6 +18,21 @@
             class="branding__image">
         </a>
       </div>
-      <?php get_template_part('template-parts/header/navigation'); ?>
+      
+      <!-- デスクトップナビゲーション -->
+      <div class="header__navigation-desktop">
+        <?php get_template_part('template-parts/header/navigation'); ?>
+      </div>
+      
+      <!-- モバイルハンバーガーボタン -->
+      <button class="header__hamburger" aria-label="メニューを開く" aria-expanded="false">
+        <span class="header__hamburger-line"></span>
+        <span class="header__hamburger-line"></span>
+      </button>
+      
+      <!-- モバイルナビゲーション -->
+      <div class="header__navigation-mobile">
+        <?php get_template_part('template-parts/header/navigation'); ?>
+      </div>
     </div>
   </header>
