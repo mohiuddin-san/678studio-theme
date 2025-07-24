@@ -40,7 +40,7 @@
       ]); ?>
     </div>
 
-    <h2 class="contact-title">選択店舗</h2>
+    <h2 class="contact-title">選択店舗確認</h2>
 
     <div class="contact-search">
       <select class="contact-select">
@@ -68,7 +68,10 @@
         <h1>ご予約</h1>
         <img src="<?php echo get_template_directory_uri(); ?>/assets/images/underline.svg" alt=""
          class="user-count-section__line" />
-        <p>予約方法を選択してください。2つの方法からお選びいただけます</p>
+         <div class="text-block">
+        <p class= "titel">予約方法選択</p>
+        <p class= "subtitle">予約方法を選択してください。2つの方法からお選びいただけます</p>
+        </div>
         <div class="schedule-options">
             <div class="option-card">
                 <h2>オンライン予約（推奨）</h2>
@@ -78,7 +81,10 @@
                     <li>自動返信で申込内容を確認</li>
                     <li>24時間以内にスタッフから連絡</li>
                 </ul>
-                <button>オンライン予約 →</button>
+                <button class="custom-button">
+  オンライン予約 <span class="icon">🏠</span>
+</button>
+                
             </div>
             <div class="option-card">
                 <h2>お電話での予約</h2>
@@ -184,6 +190,7 @@
         </div>
 
         <button type="submit">送信</button>
+        
     </div>
   </div>
 </section>

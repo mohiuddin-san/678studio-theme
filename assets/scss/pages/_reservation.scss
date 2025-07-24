@@ -3,7 +3,7 @@
 
 $primary-color: #f5e8c7;
 $text-color: #547E8F;
-$border-color: #ccc;
+$border-color: #547E8F;
 $highlight-color: #007bff;
 
 .contact-section {
@@ -56,6 +56,7 @@ $highlight-color: #007bff;
     padding: m.fs(44);
     background-color: #fff;
     border: 1px solid $border-color;
+    align-items: center;
     border-radius: m.fs(8);
 
     .user-count-section__line {
@@ -96,12 +97,19 @@ $highlight-color: #007bff;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23547E8F' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
         background-repeat: no-repeat;
         background-position: right m.fs(10) center;
+
+        option {
+          font-size: m.fs(20);
+          color: $border-color;
+        }
       }
+
     }
 
     .contact-details {
+      margin-top: m.fs(80);
       display: flex;
-      gap: m.fs(24);
+      gap: m.fs(80);
       border: 1px solid $border-color;
       border-radius: m.fs(8);
       padding: m.fs(25);
@@ -128,27 +136,51 @@ $highlight-color: #007bff;
           font-size: m.fs(18);
           margin-bottom: m.fs(16);
           text-align: center;
+          color: $border-color;
         }
 
         table {
           width: 100%;
           height: m.fs(327);
-          border-collapse: collapse;
+          border-collapse: separate;
+          border-spacing: 0;
           margin-top: m.fs(45);
+          border: 1px solid $border-color;
+          border-radius: m.fs(3);
+          overflow: hidden;
 
           td {
             padding: m.fs(8);
             border: 1px solid $border-color;
-            border-radius: m.fs(3);
             font-family: v.$ja;
             font-size: m.fs(14);
+            color: $border-color;
+            text-align: center;
+          }
+
+          tr:first-child td:first-child {
+            border-top-left-radius: m.fs(3);
+          }
+
+          tr:first-child td:last-child {
+            border-top-right-radius: m.fs(3);
+          }
+
+          tr:last-child td:first-child {
+            border-bottom-left-radius: m.fs(3);
+          }
+
+          tr:last-child td:last-child {
+            border-bottom-right-radius: m.fs(3);
           }
         }
+
       }
     }
   }
 
   .schedule-container {
+    margin-top: m.fs(80);
     max-width: 100%;
     margin: 0 auto;
     padding: m.fs(20);
@@ -157,40 +189,72 @@ $highlight-color: #007bff;
     h1 {
       margin-top: m.fs(40);
       text-align: center;
-      color: $text-color;
-      padding-bottom: m.fs(10);
+      color: #3F3F3F;
+      font-family: v.$ja;
+      ;
+      font-size: m.fs(39);
+      margin-bottom: m.fs(44);
     }
 
-    p {
-      margin-top: m.fs(10);
+    .text-block {
+      margin-top: m.fs(88);
+      margin-bottom: m.fs(80);
       text-align: center;
+      font-family: v.$ja;
       color: $text-color;
+
+    }
+
+    .big-text {
+      font-size: m.fs(25);
+    }
+
+    .small-text {
+      padding-top: m.fs(40);
+      font-size: m.fs(15);
     }
 
     .schedule-options {
       display: flex;
-      justify-content: space-between;
+      justify-content:space-around;
+      align-items: center;
       margin-top: m.fs(20);
 
       .option-card {
-        background-color: $primary-color;
+        background-color: #FCF6DE;
         padding: m.fs(20);
         border-radius: m.fs(10);
-        width: 45%;
+        width: 30%;
         box-shadow: 0 m.fs(2) m.fs(5) rgba(0, 0, 0, 0.1);
 
         h2 {
+          margin-top: m.fs(40);
           color: $text-color;
-          margin-bottom: m.fs(10);
+          margin-bottom: m.fs(60);
+          text-align: center;
+          font-family: v.$ja;
+          font-size: m.fs(25);
         }
 
         ul {
           list-style-type: none;
           padding: 0;
           color: $text-color;
+          margin-bottom: m.fs(40);
 
           li {
             margin-bottom: m.fs(10);
+            &:nth-child(1)::after,
+            &:nth-child(2)::after,
+            &:nth-child(3)::after {
+              content: "";
+              display: block;
+              width: 100%;
+              height: 1px;
+              background-color: $text-color;
+              margin-top: m.fs(30);
+              margin-bottom: m.fs(30);
+            }
           }
         }
 
@@ -214,13 +278,16 @@ $highlight-color: #007bff;
 
   .form-container {
     max-width: 100%;
-    margin: 0 auto;
+    margin-top: m.fs(120);
     padding: m.fs(20);
     font-family: v.$ja;
 
     h1 {
+      margin-bottom: m.fs(60);
       text-align: center;
       color: $text-color;
+      font-family: v.$ja;
+      font-size: m.fs(25);
     }
 
     button {
@@ -243,12 +310,12 @@ $highlight-color: #007bff;
   .dropdown-field,
   .textarea-field,
   .confirmation-field {
-    margin-bottom: m.fs(15);
+    margin-bottom: m.fs(35);
 
     label {
       display: block;
       color: $text-color;
-      margin-bottom: m.fs(5);
+      margin-bottom: m.fs(15);
     }
 
     input,
@@ -259,6 +326,12 @@ $highlight-color: #007bff;
       border: 1px solid $border-color;
       border-radius: m.fs(5);
       box-sizing: border-box;
+
+      &::placeholder {
+      color: #9CBECD;        // プレースホルダーの色
+      font-size: 14px;       // プレースホルダーの文字サイズ
+      font-family: 'Noto Sans JP', medium;
+    }
     }
 
     textarea {
@@ -274,7 +347,8 @@ $highlight-color: #007bff;
       cursor: pointer;
 
       &::-ms-expand {
-        display: none; /* Hide default arrow in IE */
+        display: none;
+        /* Hide default arrow in IE */
       }
     }
   }
@@ -295,6 +369,65 @@ $highlight-color: #007bff;
         margin-right: m.fs(5);
         vertical-align: middle;
       }
+    }
+  }
+}
+
+
+.custom-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  background-color: #4a6bff;
+  color: white;
+  font-family: 'Arial', sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  
+  // The main button text
+  .button-text {
+    margin-right: 10px;
+    z-index: 2;
+  }
+  
+  // The icon
+  .button-icon {
+    width: 20px;
+    height: 20px;
+    z-index: 2;
+    // You can replace this with your actual icon
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  
+  // The angled border effect
+  &::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    width: calc(100% + 10px);
+    height: calc(100% + 10px);
+    border: 2px solid #4a6bff;
+    transform: rotate(0deg);
+    z-index: 1;
+    pointer-events: none;
+    transition: all 0.3s ease;
+  }
+  
+  &:hover {
+    background-color: #3a5bef;
+    
+    &::before {
+      transform: rotate(45deg);
+      border-color: #3a5bef;
     }
   }
 }
