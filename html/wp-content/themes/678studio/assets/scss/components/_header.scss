@@ -1,7 +1,7 @@
 @use '../base/variables' as v;
 @use '../base/mixins' as m;
 
-// Header Component
+// Header Component - PCはそのまま
 .header {
 	&__container {
 		margin: 0 auto;
@@ -9,6 +9,72 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		position: relative;
+
+		// スマホのみ
+		@include m.mq(md) {
+			padding: m.fsm(20) m.fsm(20) m.fsm(10);
+			justify-content: center;
+		}
+	}
+
+	// デスクトップナビ - スマホで隠す
+	&__navigation-desktop {
+		@include m.mq(md) {
+			display: none;
+		}
+	}
+
+	// スマホのハンバーガーボタン
+	&__hamburger {
+		display: none;
+
+		@include m.mq(md) {
+			display: block;
+			position: absolute;
+			right: m.fsm(20);
+			top: 50%;
+			transform: translateY(-50%);
+			width: m.fsm(40);
+			height: m.fsm(40);
+			background: none;
+			border: none;
+			cursor: pointer;
+			padding: m.fsm(8);
+			z-index: 10000; // 最前面に配置
+		}
+	}
+
+	// ハンバーガーの線
+	&__hamburger-line {
+		@include m.mq(md) {
+			display: block;
+			width: m.fsm(24);
+			height: m.fsm(1.2);
+			background: #000;
+			margin: m.fsm(4) 0;
+			transition: 0.3s;
+			position: relative;
+		}
+	}
+
+	// フルスクリーンメニュー
+	&__navigation-mobile {
+		display: none;
+
+		&.is-open {
+			@include m.mq(md) {
+				display: block;
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100vw;
+				height: 100vh;
+				background: white;
+				z-index: 9999;
+				padding-top: m.fsm(100);
+			}
+		}
 	}
 }
 
@@ -16,10 +82,40 @@
 .branding {
 	&__logo {
 		display: block;
+
+		@include m.mq(md) {
+			margin: 0 auto;
+		}
 	}
 
 	&__image {
 		height: auto;
 		max-height: m.fs(50);
+
+		@include m.mq(md) {
+			max-height: m.fsm(40);
+		}
+	}
+}
+
+// ×アニメーション - 2本線での×表示
+@include m.mq(md) {
+	.header.is-open .header__hamburger-line {
+		background: #000 !important;
+		display: block !important;
+		opacity: 1 !important;
+		position: absolute !important;
+		top: 50% !important;
+		left: 0 !important;
+		transform-origin: center center !important;
+		margin: 0 !important;
+	}
+
+	.header.is-open .header__hamburger-line:first-child {
+		transform: translateY(-50%) rotate(45deg) !important;
+	}
+
+	.header.is-open .header__hamburger-line:last-child {
+		transform: translateY(-50%) rotate(-45deg) !important;
 	}
 }
