@@ -1,0 +1,300 @@
+@use '../base/variables' as v;
+@use '../base/mixins' as m;
+
+$primary-color: #f5e8c7;
+$text-color: #547E8F;
+$border-color: #ccc;
+$highlight-color: #007bff;
+
+.contact-section {
+  background-color: #E9EDF0;
+  width: 100%;
+  padding-left: m.fs(120);
+  padding-right: m.fs(120);
+
+  .contact-header-container {
+    background-color: #fff;
+    padding: m.fs(16) 0;
+    text-align: center;
+    margin-bottom: m.fs(16);
+
+    .contact-header {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: m.fs(16);
+
+      .thoughts-label {
+        color: #fff;
+        text-decoration: none;
+        font-family: v.$ja;
+        font-size: m.fs(16);
+        font-weight: 500;
+        background-color: #000; // Assuming thoughts-label uses black background
+        padding: m.fs(10) m.fs(20);
+        width: 264px; // Matches your earlier width
+        height: 60px; // Matches your earlier height
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
+
+  .contact-main-text {
+    padding: m.fs(16) 0;
+    color: #333;
+    margin-bottom: m.fs(24);
+
+    p {
+      font-family: v.$ja;
+      font-size: m.fs(14);
+    }
+  }
+
+  .contact-content {
+    padding: m.fs(44);
+    background-color: #fff;
+    border: 1px solid $border-color;
+    border-radius: m.fs(8);
+
+    .user-count-section__line {
+      width: 100%;
+      height: m.fs(4);
+      margin-bottom: m.fs(24);
+    }
+
+    .contact-buttons {
+      display: flex;
+      gap: m.fs(16);
+      justify-content: center;
+      margin-bottom: m.fs(24);
+    }
+
+    .contact-title {
+      font-family: v.$ja;
+      font-size: m.fs(16);
+      font-weight: 300;
+      margin-top: m.fs(100);
+      margin-bottom: m.fs(26);
+      color: $text-color;
+      text-align: center;
+    }
+
+    .contact-search {
+      margin-bottom: m.fs(24);
+
+      .contact-select {
+        width: 100%;
+        height: m.fs(50);
+        padding: m.fs(12) m.fs(16);
+        font-family: v.$ja;
+        font-size: m.fs(14);
+        border: 1px solid $border-color;
+        border-radius: m.fs(4);
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23547E8F' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right m.fs(10) center;
+      }
+    }
+
+    .contact-details {
+      display: flex;
+      gap: m.fs(24);
+      border: 1px solid $border-color;
+      border-radius: m.fs(8);
+      padding: m.fs(25);
+
+      .contact-image {
+        width: m.fs(490);
+        height: m.fs(400);
+        flex: 1;
+        overflow: hidden;
+
+        img {
+          width: 100%;
+          height: 100%;
+          display: block;
+          object-fit: cover;
+        }
+      }
+
+      .contact-info {
+        flex: 1;
+
+        h3 {
+          font-family: v.$ja;
+          font-size: m.fs(18);
+          margin-bottom: m.fs(16);
+          text-align: center;
+        }
+
+        table {
+          width: 100%;
+          height: m.fs(327);
+          border-collapse: collapse;
+          margin-top: m.fs(45);
+
+          td {
+            padding: m.fs(8);
+            border: 1px solid $border-color;
+            border-radius: m.fs(3);
+            font-family: v.$ja;
+            font-size: m.fs(14);
+          }
+        }
+      }
+    }
+  }
+
+  .schedule-container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: m.fs(20);
+    font-family: v.$ja;
+
+    h1 {
+      margin-top: m.fs(40);
+      text-align: center;
+      color: $text-color;
+      padding-bottom: m.fs(10);
+    }
+
+    p {
+      margin-top: m.fs(10);
+      text-align: center;
+      color: $text-color;
+    }
+
+    .schedule-options {
+      display: flex;
+      justify-content: space-between;
+      margin-top: m.fs(20);
+
+      .option-card {
+        background-color: $primary-color;
+        padding: m.fs(20);
+        border-radius: m.fs(10);
+        width: 45%;
+        box-shadow: 0 m.fs(2) m.fs(5) rgba(0, 0, 0, 0.1);
+
+        h2 {
+          color: $text-color;
+          margin-bottom: m.fs(10);
+        }
+
+        ul {
+          list-style-type: none;
+          padding: 0;
+          color: $text-color;
+
+          li {
+            margin-bottom: m.fs(10);
+          }
+        }
+
+        button {
+          background-color: $text-color;
+          color: white;
+          border: none;
+          padding: m.fs(10) m.fs(20);
+          border-radius: m.fs(5);
+          cursor: pointer;
+          width: 100%;
+          text-align: center;
+
+          &:hover {
+            background-color: darken($text-color, 10%);
+          }
+        }
+      }
+    }
+  }
+
+  .form-container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: m.fs(20);
+    font-family: v.$ja;
+
+    h1 {
+      text-align: center;
+      color: $text-color;
+    }
+
+    button {
+      background-color: $highlight-color;
+      color: white;
+      border: none;
+      padding: m.fs(10) m.fs(20);
+      border-radius: m.fs(5);
+      cursor: pointer;
+      width: 100%;
+      margin-top: m.fs(10);
+
+      &:hover {
+        background-color: darken($highlight-color, 10%);
+      }
+    }
+  }
+
+  .input-field,
+  .dropdown-field,
+  .textarea-field,
+  .confirmation-field {
+    margin-bottom: m.fs(15);
+
+    label {
+      display: block;
+      color: $text-color;
+      margin-bottom: m.fs(5);
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: m.fs(10);
+      border: 1px solid $border-color;
+      border-radius: m.fs(5);
+      box-sizing: border-box;
+    }
+
+    textarea {
+      height: m.fs(100);
+      resize: vertical;
+    }
+
+    select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23547E8F' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right m.fs(10) center;
+      cursor: pointer;
+
+      &::-ms-expand {
+        display: none; /* Hide default arrow in IE */
+      }
+    }
+  }
+
+  .confirmation-field {
+    width: 100%;
+    padding: m.fs(10);
+    border: 1px solid $border-color;
+    border-radius: m.fs(5);
+    text-align: center;
+    margin-bottom: m.fs(20);
+
+    label {
+      color: $text-color;
+      font-size: m.fs(14);
+
+      input[type="checkbox"] {
+        margin-right: m.fs(5);
+        vertical-align: middle;
+      }
+    }
+  }
+}
