@@ -22,8 +22,12 @@
 @use 'sections/home/about';
 @use 'sections/home/recommend';
 @use 'sections/home/studio-search';
+@use 'sections/home/thoughts-layout-mobile';
+@use 'sections/home/about-mobile';
 @use 'sections/home/gallery';
+@use 'sections/home/gallery-mobile';
 @use 'sections/home/plan';
+@use 'sections/home/plan-mobile';
 
 // Pages
 @use 'pages/home';

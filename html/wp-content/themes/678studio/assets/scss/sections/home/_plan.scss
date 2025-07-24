@@ -7,6 +7,11 @@
 .plan-section {
 	width: 100%;
 	margin-top: m.fs(120, 0.5);
+	
+	// モバイルでは非表示
+	@include m.mq(md) {
+		display: none;
+	}
 
 	&__container {
 		width: 100%;

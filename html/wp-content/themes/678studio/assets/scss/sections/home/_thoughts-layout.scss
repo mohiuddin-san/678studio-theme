@@ -8,6 +8,11 @@
 	width: 100%;
 	margin-bottom: m.fs(100, 0.8);
 
+	// モバイルでは非表示
+	@include m.mq(md) {
+		display: none;
+	}
+
 	// メインコンテナ
 	&__container {
 		width: 100%;
