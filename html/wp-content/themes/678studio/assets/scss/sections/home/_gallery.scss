@@ -7,6 +7,11 @@
 .gallery-section {
 	width: 100%;
 
+	// モバイルでは非表示
+	@include m.mq(md) {
+		display: none;
+	}
+
 	&__container {
 		width: 100%;
 		display: grid;

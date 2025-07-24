@@ -1,0 +1,113 @@
+// Gallery Mobile Section - Flexbox Vertical Layout
+// =============================================================================
+
+@use '../../base/mixins' as m;
+@use '../../base/variables' as v;
+
+.gallery-mobile {
+	width: 100%;
+	padding: m.fsm(40) m.fsm(20);
+	margin-bottom: m.fsm(80);
+	overflow: hidden;
+
+	// デスクトップでは非表示
+	display: none;
+
+	@include m.mq(md) {
+		display: block;
+	}
+
+	&__container {
+		width: 100%;
+		max-width: 100%;
+	}
+
+	&__content {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: m.fsm(30);
+		width: 100%;
+		padding: m.fsm(20) m.fsm(20) m.fsm(40);
+		position: relative;
+
+		&::after {
+			content: '';
+			position: absolute;
+			background: #fcf6de;
+			width: 100%;
+			height: calc(100% - #{m.fsm(40)});
+			top: m.fsm(40);
+			right: m.fsm(-4);
+			z-index: 0;
+		}
+
+		> * {
+			position: relative;
+			z-index: 1;
+		}
+	}
+
+	&__image {
+		width: 100%;
+		order: 1;
+		margin-bottom: m.fsm(10);
+		display: flex;
+		justify-content: flex-start;
+
+		img {
+			width: 90%;
+			height: auto;
+			object-fit: cover;
+		}
+	}
+
+	&__title {
+		width: 100%;
+		order: 2;
+		padding: m.fsm(20) 0;
+	}
+
+	&__button {
+		width: 100%;
+		order: 3;
+		display: flex;
+		justify-content: center;
+		margin-top: m.fsm(10);
+	}
+}
+
+// Gallery Mobile用のtitle-sectionカスタムスタイル
+.gallery-mobile-title-section {
+	width: 100%;
+	padding: 0;
+	gap: m.fsm(12);
+	text-align: left;
+
+	.title-section__label {
+		font-family: 'Oswald', sans-serif;
+		font-size: m.fsm(14);
+		font-weight: 400;
+		color: #333;
+		text-transform: uppercase;
+		letter-spacing: m.fsm(2);
+		margin-bottom: m.fsm(8);
+	}
+
+	.title-section__title {
+		font-family: v.$ja;
+		font-size: m.fsm(28);
+		font-weight: 400;
+		color: #333;
+		line-height: 1.4;
+		margin-bottom: m.fsm(12);
+	}
+
+	.title-section__content {
+		font-family: v.$ja-sans;
+		font-size: m.fsm(16);
+		font-weight: 400;
+		color: #666;
+		line-height: 1.6;
+	}
+}

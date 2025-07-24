@@ -85,4 +85,57 @@
 		margin: 0;
 		letter-spacing: m.fs(2, 0.5);
 	}
+
+	// Mobile Responsive
+	@include m.mq(md) {
+		padding-top: m.fsm(80);
+
+		// Navigation Section
+		&__nav-section {
+			padding: m.fsm(40) 0;
+		}
+
+		// Copyright Section
+		&__copyright-section {
+			padding: m.fsm(30) 0;
+		}
+
+		// Container
+		&__container {
+			padding: 0 m.fsm(20);
+			gap: m.fsm(30);
+		}
+
+		// Logo
+		&__logo {
+			font-size: m.fsm(20);
+		}
+
+		// Navigation
+		&__nav {
+			gap: m.fsm(16);
+		}
+
+		&__nav-row {
+			gap: m.fsm(20);
+			
+			&--primary {
+				gap: m.fsm(20);
+			}
+
+			&--secondary {
+				gap: m.fsm(20);
+			}
+		}
+
+		&__nav-link {
+			font-size: m.fsm(14);
+		}
+
+		// Copyright
+		&__copyright {
+			font-size: m.fsm(12);
+			letter-spacing: m.fsm(1);
+		}
+	}
 }

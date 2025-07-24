@@ -8,6 +8,11 @@
 .about-section {
 	width: 100%;
 
+	// モバイルでは非表示
+	@include m.mq(md) {
+		display: none;
+	}
+
 	// Padding制御のinner wrapper
 	&__container {
 		width: 100%;

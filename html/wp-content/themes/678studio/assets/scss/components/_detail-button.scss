@@ -69,6 +69,37 @@
 		white-space: nowrap;
 	}
 
+	// モバイル対応
+	@include m.mq(md) {
+		padding: m.fsm(8) m.fsm(20);
+		gap: m.fsm(6);
+		border-radius: m.fsm(8);
+		min-width: m.fsm(160);
+
+		&::before {
+			top: m.fsm(4);
+			left: m.fsm(4);
+			right: m.fsm(-4);
+			bottom: m.fsm(-4);
+			border-radius: m.fsm(8);
+			min-width: m.fsm(160);
+		}
+
+		&__content {
+			gap: m.fsm(6);
+		}
+
+		&__icon {
+			width: m.fsm(14);
+			height: m.fsm(14);
+		}
+
+		&__text {
+			font-size: m.fsm(14);
+			letter-spacing: m.fsm(0.5);
+		}
+	}
+
 	// (1) お問い合わせはこちら
 	&--contact {
 		&::before {
