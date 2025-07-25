@@ -4042,6 +4042,484 @@ br.sp-only {
   font-weight: 500;
 }
 
+.contact-section {
+  background-color: #E9EDF0;
+  width: 100%;
+  padding-left: calc(88.8px + (31.2) * (100vw - 768px) / (672));
+  padding-right: calc(88.8px + (31.2) * (100vw - 768px) / (672));
+}
+.contact-section .contact-header-container {
+  background-color: #fff;
+  padding: calc(11.84px + (4.16) * (100vw - 768px) / (672)) 0;
+  text-align: center;
+  margin-bottom: calc(11.84px + (4.16) * (100vw - 768px) / (672));
+}
+.contact-section .contact-header-container .contact-header {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  margin-top: calc(11.84px + (4.16) * (100vw - 768px) / (672));
+}
+.contact-section .contact-header-container .contact-header .thoughts-label {
+  color: #fff;
+  text-decoration: none;
+  font-family: "Noto Serif JP", serif;
+  font-size: calc(11.84px + (4.16) * (100vw - 768px) / (672));
+  font-weight: 500;
+  background-color: #000;
+  padding: calc(7.4px + (2.6) * (100vw - 768px) / (672)) calc(14.8px + (5.2) * (100vw - 768px) / (672));
+  width: 264px;
+  height: 60px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+.contact-section .main-title {
+  width: 100%;
+  text-align: center;
+  margin-top: calc(44.4px + (15.6) * (100vw - 768px) / (672));
+  margin-bottom: calc(74px + (26) * (100vw - 768px) / (672));
+  font-family: "Noto Serif JP", serif;
+  font-size: calc(28.86px + (10.14) * (100vw - 768px) / (672));
+  color: #333;
+}
+.contact-section .contact-main-text {
+  padding: calc(11.84px + (4.16) * (100vw - 768px) / (672)) 0;
+  color: #333;
+  margin-bottom: calc(17.76px + (6.24) * (100vw - 768px) / (672));
+}
+.contact-section .contact-main-text p {
+  font-family: "Noto Serif JP", serif;
+  font-size: calc(10.36px + (3.64) * (100vw - 768px) / (672));
+}
+.contact-section .contact-content {
+  padding: calc(32.56px + (11.44) * (100vw - 768px) / (672));
+  background-color: #fff;
+  border: 1px solid #547E8F;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  border-radius: calc(5.92px + (2.08) * (100vw - 768px) / (672));
+}
+.contact-section .contact-content .h1 {
+  text-align: center;
+}
+.contact-section .contact-content .user-count-section__line {
+  width: 100%;
+  height: calc(2.96px + (1.04) * (100vw - 768px) / (672));
+  margin-bottom: calc(17.76px + (6.24) * (100vw - 768px) / (672));
+}
+.contact-section .contact-content .contact-buttons {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  gap: calc(11.84px + (4.16) * (100vw - 768px) / (672));
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  margin-bottom: calc(17.76px + (6.24) * (100vw - 768px) / (672));
+}
+.contact-section .contact-content .contact-title {
+  font-family: "Noto Serif JP", serif;
+  font-size: calc(11.84px + (4.16) * (100vw - 768px) / (672));
+  font-weight: 300;
+  margin-top: calc(74px + (26) * (100vw - 768px) / (672));
+  margin-bottom: calc(19.24px + (6.76) * (100vw - 768px) / (672));
+  color: #547E8F;
+  text-align: center;
+}
+.contact-section .contact-content .contact-search {
+  margin-bottom: calc(17.76px + (6.24) * (100vw - 768px) / (672));
+}
+.contact-section .contact-content .contact-search .contact-select {
+  width: 100%;
+  height: calc(37px + (13) * (100vw - 768px) / (672));
+  padding: calc(8.88px + (3.12) * (100vw - 768px) / (672)) calc(11.84px + (4.16) * (100vw - 768px) / (672));
+  font-family: "Noto Serif JP", serif;
+  font-size: calc(10.36px + (3.64) * (100vw - 768px) / (672));
+  border: 1px solid #547E8F;
+  border-radius: calc(2.96px + (1.04) * (100vw - 768px) / (672));
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23547E8F' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right calc(7.4px + (2.6) * (100vw - 768px) / (672)) center;
+}
+.contact-section .contact-content .contact-search .contact-select option {
+  font-size: calc(14.8px + (5.2) * (100vw - 768px) / (672));
+  color: #547E8F;
+}
+.contact-section .contact-content .contact-details {
+  margin-top: calc(59.2px + (20.8) * (100vw - 768px) / (672));
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  gap: calc(59.2px + (20.8) * (100vw - 768px) / (672));
+  border: 1px solid #547E8F;
+  border-radius: calc(5.92px + (2.08) * (100vw - 768px) / (672));
+  padding: calc(18.5px + (6.5) * (100vw - 768px) / (672));
+}
+.contact-section .contact-content .contact-details .contact-image {
+  width: calc(362.6px + (127.4) * (100vw - 768px) / (672));
+  height: calc(296px + (104) * (100vw - 768px) / (672));
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  overflow: hidden;
+}
+.contact-section .contact-content .contact-details .contact-image img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  -o-object-fit: cover;
+  object-fit: cover;
+}
+.contact-section .contact-content .contact-details .contact-info {
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+}
+.contact-section .contact-content .contact-details .contact-info h3 {
+  font-family: "Noto Serif JP", serif;
+  font-size: calc(13.32px + (4.68) * (100vw - 768px) / (672));
+  margin-bottom: calc(11.84px + (4.16) * (100vw - 768px) / (672));
+  text-align: center;
+  color: #547E8F;
+}
+.contact-section .contact-content .contact-details .contact-info table {
+  width: 100%;
+  height: calc(241.98px + (85.02) * (100vw - 768px) / (672));
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: calc(33.3px + (11.7) * (100vw - 768px) / (672));
+  border: 1px solid #547E8F;
+  border-radius: calc(2.22px + (0.78) * (100vw - 768px) / (672));
+  overflow: hidden;
+}
+.contact-section .contact-content .contact-details .contact-info table td {
+  padding: calc(5.92px + (2.08) * (100vw - 768px) / (672));
+  border: 1px solid #547E8F;
+  font-family: "Noto Serif JP", serif;
+  font-size: calc(10.36px + (3.64) * (100vw - 768px) / (672));
+  color: #547E8F;
+  text-align: center;
+}
+.contact-section .contact-content .contact-details .contact-info table tr:first-child td:first-child {
+  border-top-left-radius: calc(2.22px + (0.78) * (100vw - 768px) / (672));
+}
+.contact-section .contact-content .contact-details .contact-info table tr:first-child td:last-child {
+  border-top-right-radius: calc(2.22px + (0.78) * (100vw - 768px) / (672));
+}
+.contact-section .contact-content .contact-details .contact-info table tr:last-child td:first-child {
+  border-bottom-left-radius: calc(2.22px + (0.78) * (100vw - 768px) / (672));
+}
+.contact-section .contact-content .contact-details .contact-info table tr:last-child td:last-child {
+  border-bottom-right-radius: calc(2.22px + (0.78) * (100vw - 768px) / (672));
+}
+.contact-section .schedule-container {
+  margin-top: calc(59.2px + (20.8) * (100vw - 768px) / (672));
+  max-width: 100%;
+  margin: 0 auto;
+  padding: calc(14.8px + (5.2) * (100vw - 768px) / (672));
+  font-family: "Noto Serif JP", serif;
+}
+.contact-section .schedule-container h1 {
+  margin-top: calc(29.6px + (10.4) * (100vw - 768px) / (672));
+  text-align: center;
+  color: #3F3F3F;
+  font-family: "Noto Serif JP", serif;
+  font-size: calc(28.86px + (10.14) * (100vw - 768px) / (672));
+  margin-bottom: calc(32.56px + (11.44) * (100vw - 768px) / (672));
+}
+.contact-section .schedule-container .text-block {
+  margin-top: calc(65.12px + (22.88) * (100vw - 768px) / (672));
+  margin-bottom: calc(59.2px + (20.8) * (100vw - 768px) / (672));
+  text-align: center;
+  font-family: "Noto Serif JP", serif;
+  color: #547E8F;
+}
+.contact-section .schedule-container .big-text {
+  font-size: calc(18.5px + (6.5) * (100vw - 768px) / (672));
+}
+.contact-section .schedule-container .small-text {
+  padding-top: calc(29.6px + (10.4) * (100vw - 768px) / (672));
+  font-size: calc(11.1px + (3.9) * (100vw - 768px) / (672));
+}
+.contact-section .schedule-container .schedule-options {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: distribute;
+  justify-content: space-around;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  margin-top: calc(14.8px + (5.2) * (100vw - 768px) / (672));
+}
+.contact-section .schedule-container .schedule-options .option-card {
+  background-color: #FCF6DE;
+  padding: calc(14.8px + (5.2) * (100vw - 768px) / (672));
+  border-radius: calc(7.4px + (2.6) * (100vw - 768px) / (672));
+  width: 60%;
+  -webkit-box-shadow: 0 calc(1.48px + (0.52) * (100vw - 768px) / (672)) calc(3.7px + (1.3) * (100vw - 768px) / (672)) rgba(0, 0, 0, 0.1);
+  box-shadow: 0 calc(1.48px + (0.52) * (100vw - 768px) / (672)) calc(3.7px + (1.3) * (100vw - 768px) / (672)) rgba(0, 0, 0, 0.1);
+}
+.contact-section .schedule-container .schedule-options .option-card h2 {
+  margin-top: calc(29.6px + (10.4) * (100vw - 768px) / (672));
+  color: #547E8F;
+  margin-bottom: calc(44.4px + (15.6) * (100vw - 768px) / (672));
+  text-align: center;
+  font-family: "Noto Serif JP", serif;
+  font-size: calc(18.5px + (6.5) * (100vw - 768px) / (672));
+}
+.contact-section .schedule-container .schedule-options .option-card ul {
+  list-style-type: none;
+  padding: 0;
+  color: #547E8F;
+  margin-bottom: calc(29.6px + (10.4) * (100vw - 768px) / (672));
+}
+.contact-section .schedule-container .schedule-options .option-card ul li {
+  margin-bottom: calc(7.4px + (2.6) * (100vw - 768px) / (672));
+}
+.contact-section .schedule-container .schedule-options .option-card ul li:nth-child(1)::after, .contact-section .schedule-container .schedule-options .option-card ul li:nth-child(2)::after, .contact-section .schedule-container .schedule-options .option-card ul li:nth-child(3)::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 1px;
+  background-color: #547E8F;
+  margin-top: calc(22.2px + (7.8) * (100vw - 768px) / (672));
+  margin-bottom: calc(22.2px + (7.8) * (100vw - 768px) / (672));
+}
+.contact-section .schedule-container .schedule-options .option-card button {
+  background-color: #547E8F;
+  color: white;
+  border: none;
+  padding: calc(7.4px + (2.6) * (100vw - 768px) / (672)) calc(14.8px + (5.2) * (100vw - 768px) / (672));
+  border-radius: calc(3.7px + (1.3) * (100vw - 768px) / (672));
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+}
+.contact-section .schedule-container .schedule-options .option-card button:hover {
+  background-color: rgb(65.127753304, 97.6916299559, 110.872246696);
+}
+.contact-section .form-container {
+  max-width: 100%;
+  margin-top: calc(88.8px + (31.2) * (100vw - 768px) / (672));
+  padding: calc(14.8px + (5.2) * (100vw - 768px) / (672));
+  font-family: "Noto Serif JP", serif;
+}
+.contact-section .form-container h1 {
+  margin-bottom: calc(44.4px + (15.6) * (100vw - 768px) / (672));
+  text-align: center;
+  color: #547E8F;
+  font-family: "Noto Serif JP", serif;
+  font-size: calc(18.5px + (6.5) * (100vw - 768px) / (672));
+}
+.contact-section .form-container button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: calc(7.4px + (2.6) * (100vw - 768px) / (672)) calc(14.8px + (5.2) * (100vw - 768px) / (672));
+  border-radius: calc(3.7px + (1.3) * (100vw - 768px) / (672));
+  cursor: pointer;
+  width: 100%;
+  margin-top: calc(7.4px + (2.6) * (100vw - 768px) / (672));
+}
+.contact-section .form-container button:hover {
+  background-color: rgb(0, 98.4, 204);
+}
+.contact-section .input-field,
+.contact-section .dropdown-field,
+.contact-section .textarea-field,
+.contact-section .confirmation-field {
+  margin-bottom: calc(25.9px + (9.1) * (100vw - 768px) / (672));
+}
+.contact-section .input-field label,
+.contact-section .dropdown-field label,
+.contact-section .textarea-field label,
+.contact-section .confirmation-field label {
+  display: block;
+  color: #547E8F;
+  margin-bottom: calc(11.1px + (3.9) * (100vw - 768px) / (672));
+}
+.contact-section .input-field input,
+.contact-section .input-field select,
+.contact-section .input-field textarea,
+.contact-section .dropdown-field input,
+.contact-section .dropdown-field select,
+.contact-section .dropdown-field textarea,
+.contact-section .textarea-field input,
+.contact-section .textarea-field select,
+.contact-section .textarea-field textarea,
+.contact-section .confirmation-field input,
+.contact-section .confirmation-field select,
+.contact-section .confirmation-field textarea {
+  width: 100%;
+  height: calc(44.4px + (15.6) * (100vw - 768px) / (672));
+  padding: calc(7.4px + (2.6) * (100vw - 768px) / (672));
+  border: 1px solid #547E8F;
+  border-radius: calc(3.7px + (1.3) * (100vw - 768px) / (672));
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.contact-section .input-field input::-webkit-input-placeholder, .contact-section .input-field select::-webkit-input-placeholder, .contact-section .input-field textarea::-webkit-input-placeholder, .contact-section .dropdown-field input::-webkit-input-placeholder, .contact-section .dropdown-field select::-webkit-input-placeholder, .contact-section .dropdown-field textarea::-webkit-input-placeholder, .contact-section .textarea-field input::-webkit-input-placeholder, .contact-section .textarea-field select::-webkit-input-placeholder, .contact-section .textarea-field textarea::-webkit-input-placeholder, .contact-section .confirmation-field input::-webkit-input-placeholder, .contact-section .confirmation-field select::-webkit-input-placeholder, .contact-section .confirmation-field textarea::-webkit-input-placeholder {
+  color: #9CBECD;
+  font-size: 14px;
+  font-family: "Noto Sans JP", medium;
+}
+.contact-section .input-field input::-moz-placeholder, .contact-section .input-field select::-moz-placeholder, .contact-section .input-field textarea::-moz-placeholder, .contact-section .dropdown-field input::-moz-placeholder, .contact-section .dropdown-field select::-moz-placeholder, .contact-section .dropdown-field textarea::-moz-placeholder, .contact-section .textarea-field input::-moz-placeholder, .contact-section .textarea-field select::-moz-placeholder, .contact-section .textarea-field textarea::-moz-placeholder, .contact-section .confirmation-field input::-moz-placeholder, .contact-section .confirmation-field select::-moz-placeholder, .contact-section .confirmation-field textarea::-moz-placeholder {
+  color: #9CBECD;
+  font-size: 14px;
+  font-family: "Noto Sans JP", medium;
+}
+.contact-section .input-field input:-ms-input-placeholder, .contact-section .input-field select:-ms-input-placeholder, .contact-section .input-field textarea:-ms-input-placeholder, .contact-section .dropdown-field input:-ms-input-placeholder, .contact-section .dropdown-field select:-ms-input-placeholder, .contact-section .dropdown-field textarea:-ms-input-placeholder, .contact-section .textarea-field input:-ms-input-placeholder, .contact-section .textarea-field select:-ms-input-placeholder, .contact-section .textarea-field textarea:-ms-input-placeholder, .contact-section .confirmation-field input:-ms-input-placeholder, .contact-section .confirmation-field select:-ms-input-placeholder, .contact-section .confirmation-field textarea:-ms-input-placeholder {
+  color: #9CBECD;
+  font-size: 14px;
+  font-family: "Noto Sans JP", medium;
+}
+.contact-section .input-field input::-ms-input-placeholder, .contact-section .input-field select::-ms-input-placeholder, .contact-section .input-field textarea::-ms-input-placeholder, .contact-section .dropdown-field input::-ms-input-placeholder, .contact-section .dropdown-field select::-ms-input-placeholder, .contact-section .dropdown-field textarea::-ms-input-placeholder, .contact-section .textarea-field input::-ms-input-placeholder, .contact-section .textarea-field select::-ms-input-placeholder, .contact-section .textarea-field textarea::-ms-input-placeholder, .contact-section .confirmation-field input::-ms-input-placeholder, .contact-section .confirmation-field select::-ms-input-placeholder, .contact-section .confirmation-field textarea::-ms-input-placeholder {
+  color: #9CBECD;
+  font-size: 14px;
+  font-family: "Noto Sans JP", medium;
+}
+.contact-section .input-field input::placeholder,
+.contact-section .input-field select::placeholder,
+.contact-section .input-field textarea::placeholder,
+.contact-section .dropdown-field input::placeholder,
+.contact-section .dropdown-field select::placeholder,
+.contact-section .dropdown-field textarea::placeholder,
+.contact-section .textarea-field input::placeholder,
+.contact-section .textarea-field select::placeholder,
+.contact-section .textarea-field textarea::placeholder,
+.contact-section .confirmation-field input::placeholder,
+.contact-section .confirmation-field select::placeholder,
+.contact-section .confirmation-field textarea::placeholder {
+  color: #9CBECD;
+  font-size: 14px;
+  font-family: "Noto Sans JP", medium;
+}
+.contact-section .input-field textarea,
+.contact-section .dropdown-field textarea,
+.contact-section .textarea-field textarea,
+.contact-section .confirmation-field textarea {
+  height: calc(111px + (39) * (100vw - 768px) / (672));
+  resize: vertical;
+}
+.contact-section .input-field select,
+.contact-section .dropdown-field select,
+.contact-section .textarea-field select,
+.contact-section .confirmation-field select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23547E8F' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right calc(7.4px + (2.6) * (100vw - 768px) / (672)) center;
+  cursor: pointer;
+}
+.contact-section .input-field select::-ms-expand,
+.contact-section .dropdown-field select::-ms-expand,
+.contact-section .textarea-field select::-ms-expand,
+.contact-section .confirmation-field select::-ms-expand {
+  display: none;
+  /* Hide default arrow in IE */
+}
+.contact-section .confirmation-field-check {
+  width: 100%;
+  padding: calc(7.4px + (2.6) * (100vw - 768px) / (672));
+  border: 1px solid #547E8F;
+  border-radius: calc(3.7px + (1.3) * (100vw - 768px) / (672));
+  text-align: center;
+  margin-bottom: calc(44.4px + (15.6) * (100vw - 768px) / (672));
+}
+.contact-section .confirmation-field-check label {
+  color: #547E8F;
+  font-size: calc(10.36px + (3.64) * (100vw - 768px) / (672));
+}
+.contact-section .confirmation-field-check label input[type=checkbox] {
+  margin-right: calc(3.7px + (1.3) * (100vw - 768px) / (672));
+  vertical-align: middle;
+}
+
+.confirmation-field-level label {
+  display: block;
+  color: #547E8F;
+  margin-top: calc(11.1px + (3.9) * (100vw - 768px) / (672));
+}
+
+.custom-button {
+  position: relative;
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  padding: 12px 24px;
+  background-color: #4a6bff;
+  color: white;
+  font-family: "Arial", sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+}
+.custom-button .button-text {
+  margin-right: 10px;
+  z-index: 2;
+}
+.custom-button .button-icon {
+  width: 20px;
+  height: 20px;
+  z-index: 2;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.custom-button::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  width: calc(100% + 10px);
+  height: calc(100% + 10px);
+  border: 2px solid #4a6bff;
+  -webkit-transform: rotate(0deg);
+  transform: rotate(0deg);
+  z-index: 1;
+  pointer-events: none;
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+}
+.custom-button:hover {
+  background-color: #3a5bef;
+}
+.custom-button:hover::before {
+  -webkit-transform: rotate(45deg);
+  transform: rotate(45deg);
+  border-color: #3a5bef;
+}
+
 .memorial-photography {
   width: 100%;
   padding: calc(40px + (40) * (100vw - 768px) / (672)) 0;
@@ -4815,4 +5293,3 @@ br.sp-only {
   height: auto;
   opacity: 1;
 }
-/*# sourceMappingURL=style.css.map */
