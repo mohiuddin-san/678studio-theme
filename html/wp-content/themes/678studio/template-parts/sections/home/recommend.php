@@ -22,14 +22,14 @@
         <div class="recommend-section__tag">60代（還暦）</div>
         <div class="recommend-section__tag">70代（古希）</div>
         <div class="recommend-section__tag">80代（傘寿）</div>
-        <div class="recommend-section__tag">遺影写真</div>
+        <div class="recommend-section__tag">90代（卒寿）</div>
       </div>
       <!-- 2行目 -->
       <div class="recommend-section__tag-row">
-        <div class="recommend-section__tag">60代（還暦）</div>
-        <div class="recommend-section__tag">70代（古希）</div>
-        <div class="recommend-section__tag">80代（傘寿）</div>
         <div class="recommend-section__tag">遺影写真</div>
+        <div class="recommend-section__tag">記念撮影</div>
+        <div class="recommend-section__tag">家族写真</div>
+        <div class="recommend-section__tag">プロフィール写真</div>
       </div>
     </div>
   </div>

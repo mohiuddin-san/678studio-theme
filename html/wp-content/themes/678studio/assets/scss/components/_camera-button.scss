@@ -17,6 +17,15 @@
 	transition: all 0.3s ease;
 	position: relative;
 
+	// モバイル対応
+	@include m.mq(md) {
+		width: m.fsm(280);
+		height: m.fsm(52);
+		padding: m.fsm(16) m.fsm(32);
+		border-radius: m.fsm(12);
+		gap: m.fsm(8);
+	}
+
 	&::before {
 		content: '';
 		position: absolute;
@@ -27,6 +36,15 @@
 		background: #fff;
 		border-radius: m.fs(15);
 		z-index: -1;
+
+		// モバイル対応
+		@include m.mq(md) {
+			top: m.fsm(5);
+			left: m.fsm(5);
+			right: m.fsm(-5);
+			bottom: m.fsm(-5);
+			border-radius: m.fsm(12);
+		}
 	}
 
 	&:hover {
@@ -45,12 +63,23 @@
 		display: flex;
 		align-items: center;
 		gap: 10px;
+
+		// モバイル対応
+		@include m.mq(md) {
+			gap: m.fsm(8);
+		}
 	}
 
 	&__icon {
 		width: 21px;
 		height: 18px;
 		flex-shrink: 0;
+
+		// モバイル対応
+		@include m.mq(md) {
+			width: m.fsm(18);
+			height: m.fsm(15);
+		}
 	}
 
 	&__text {
@@ -64,6 +93,12 @@
 		text-decoration: none;
 		transition: color 0.3s ease;
 		white-space: nowrap;
+
+		// モバイル対応
+		@include m.mq(md) {
+			font-size: m.fsm(16);
+			letter-spacing: m.fsm(2);
+		}
 	}
 
 	// 青い背景バリエーション
@@ -162,7 +197,7 @@
 		border: 1px solid v.$main-color !important;
 
 		&::before {
-			background: #F5E2CF !important;
+			background: #f5e2cf !important;
 		}
 
 		&:hover {
@@ -186,7 +221,7 @@
 		height: auto !important;
 
 		&::before {
-			background: #F5E2CF !important;
+			background: #f5e2cf !important;
 			border-radius: m.fs(10, 0.5) !important;
 		}
 
@@ -209,7 +244,7 @@
 		border: 1px solid v.$main-color;
 
 		&::before {
-			background: #F5E2CF !important;
+			background: #f5e2cf !important;
 		}
 
 		&:hover {
