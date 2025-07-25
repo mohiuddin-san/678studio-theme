@@ -1,4 +1,4 @@
-// About Mobile Section - Flexbox Vertical Layout
+// About Mobile Section - Flexbox Vertical Layout with Service Cards
 // =============================================================================
 
 @use '../../base/mixins' as m;
@@ -6,7 +6,7 @@
 
 .about-mobile {
 	width: 100%;
-	padding: m.fsm(40) m.fsm(20);
+	padding: m.fsm(40) 0;
 	margin-bottom: m.fsm(80);
 	overflow: hidden;
 
@@ -31,15 +31,18 @@
 		padding: m.fsm(20) m.fsm(20) m.fsm(40);
 		position: relative;
 
+		// PC版に合わせた背景ボックス - 最初のカードの半分から開始
 		&::after {
 			content: '';
 			position: absolute;
-			background: #f5e9e0;
-			width: 100%;
-			height: calc(100% - #{m.fsm(40)});
-			top: m.fsm(40);
-			right: m.fsm(-4);
+			width: calc(100% + #{m.fsm(20)});
+			// titleセクション高さ + gap + 最初のカードの半分から開始
+			// title(約80px) + gap(30px) + カード半分(100px) = 約210px
+			height: calc(100% - #{m.fsm(210)});
+			top: m.fsm(210); // titleセクション + gap + カードの半分の位置
+			left: m.fsm(-10);
 			z-index: 0;
+			background: #f5e2cf; // PC版と統一（薄いベージュ）
 		}
 
 		> * {
@@ -48,32 +51,17 @@
 		}
 	}
 
-	&__image {
-		width: 100%;
-		order: 1;
-		margin-bottom: m.fsm(10);
-		display: flex;
-		justify-content: flex-start;
-
-		img {
-			width: 90%;
-			height: auto;
-			object-fit: cover;
-		}
-	}
-
 	&__title {
 		width: 100%;
-		order: 2;
 		padding: m.fsm(20) 0;
+		background: #fff;
 	}
 
-	&__button {
+	&__cards {
 		width: 100%;
-		order: 3;
 		display: flex;
-		justify-content: center;
-		margin-top: m.fsm(10);
+		flex-direction: column;
+		gap: m.fsm(24);
 	}
 }
 
@@ -81,7 +69,7 @@
 .about-mobile-title-section {
 	width: 100%;
 	padding: 0;
-	gap: m.fsm(12);
+	gap: m.fsm(20);
 	text-align: left;
 
 	.title-section__label {
@@ -94,20 +82,90 @@
 		margin-bottom: m.fsm(8);
 	}
 
-	.title-section__title {
+	.title-section__title-text {
 		font-family: v.$ja;
 		font-size: m.fsm(28);
 		font-weight: 400;
 		color: #333;
-		line-height: 1.4;
-		margin-bottom: m.fsm(12);
+		line-height: 1.8;
+		letter-spacing: m.fsm(2);
 	}
 
 	.title-section__content {
-		font-family: v.$ja-sans;
-		font-size: m.fsm(16);
-		font-weight: 400;
-		color: #666;
-		line-height: 1.6;
+		.thoughts-text {
+			font-family: v.$ja-sans;
+			font-size: m.fsm(16);
+			font-weight: 400;
+			color: #666;
+			line-height: 1.6;
+			letter-spacing: m.fsm(1);
+		}
+	}
+}
+
+// モバイル専用カードコンポーネント - PC版スタイル継承 + flexboxで画像上、content下
+.about-mobile-card {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	background: #fff; // PC版と統一
+	overflow: hidden;
+
+	&__image {
+		width: 100%;
+		height: m.fsm(200);
+		overflow: hidden;
+
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover; // PC版と統一
+			display: block;
+			// iOS Safari画像回転対策
+			image-orientation: none;
+			-webkit-transform: none;
+			transform: none;
+			-webkit-backface-visibility: hidden;
+			backface-visibility: hidden;
+		}
+	}
+
+	&__content {
+		flex: 1;
+		padding: m.fsm(16) m.fsm(16); // PC版参考の padding
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		gap: m.fsm(8); // PC版参考のgap
+	}
+
+	&__tag {
+		margin-bottom: m.fsm(12); // PC版と統一
+		font-family: v.$ja-sans; // PC版と統一
+		letter-spacing: 0.05em; // PC版と統一
+		background: #a5c3cf; // PC版と統一（薄いブルーグレー）
+		color: #fff; // PC版と統一
+		padding: m.fsm(4) m.fsm(12); // PC版と統一
+		font-size: m.fsm(16); // PC版と統一
+		font-weight: 600; // PC版と統一
+		display: inline-block; // PC版と統一
+		width: fit-content; // PC版と統一
+	}
+
+	&__text {
+		font-size: m.fsm(16); // PC版と統一
+		line-height: 1.6; // PC版と統一
+		color: #333; // PC版と統一
+		font-family: v.$ja-sans; // デフォルトフォント
+	}
+
+	// カードバリアント（PC版継承）
+	&--hairmake {
+	}
+
+	&--shooting {
+	}
+
+	&--experience {
 	}
 }

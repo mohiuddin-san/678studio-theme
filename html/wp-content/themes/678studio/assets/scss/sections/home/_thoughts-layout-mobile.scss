@@ -6,8 +6,7 @@
 
 .thoughts-layout-mobile {
 	width: 100%;
-	padding: m.fsm(40) m.fsm(20);
-	margin-bottom: m.fsm(80);
+	padding: m.fsm(40) m.fsm(20) m.fsm(40) 0;
 	overflow: hidden;
 
 	// デスクトップでは非表示
@@ -28,7 +27,7 @@
 		align-items: flex-start;
 		gap: m.fsm(30);
 		width: 100%;
-		padding: m.fsm(20) m.fsm(20) m.fsm(40);
+		padding: m.fsm(20) m.fsm(20) m.fsm(40) 0;
 		position: relative;
 
 		&::after {
@@ -50,7 +49,7 @@
 	&__title {
 		width: 100%;
 		order: 1;
-		padding: m.fsm(20) 0;
+		padding: m.fsm(20);
 	}
 
 	&__image {
