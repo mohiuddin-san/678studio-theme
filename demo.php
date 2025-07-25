@@ -3,7 +3,7 @@
 Template Name: Studio Reservation
 */
 get_header(); ?>
-<form id="inquiry-form" action="?page_id=19">
+
 <link rel="stylesheet" href="<?php echo get_template_directory_uri(); ?>/assets/css/reservation.css">
 <div class="studio-container">
     <div class="studio-header">
