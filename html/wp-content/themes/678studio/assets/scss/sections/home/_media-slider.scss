@@ -7,6 +7,10 @@
 	padding: 0 0 m.fs(80) 0;
 	overflow: hidden;
 
+	@include m.mq(md) {
+		padding: 0 0 m.fsm(40) 0;
+	}
+
 	&__container {
 		margin: 0 auto;
 	}
@@ -19,11 +23,19 @@
 		margin-bottom: m.fs(50);
 		line-height: 1.6;
 		font-family: v.$ja-sans;
+
+		@include m.mq(md) {
+			font-size: m.fsm(24);
+		}
 	}
 
 	&__wrapper {
 		position: relative;
 		margin-bottom: m.fs(40);
+
+		@include m.mq(md) {
+			margin-bottom: m.fsm(20);
+		}
 	}
 
 	&__slider {
@@ -42,6 +54,11 @@
 		flex-direction: column;
 		width: m.fs(386);
 		background: #a5c3cf; // デフォルト色（1番目）
+
+		@include m.mq(md) {
+			margin-right: m.fsm(20);
+			width: m.fsm(280);
+		}
 
 		// 2番目のカード（2, 5, 8, 11...）
 		&:nth-child(3n + 2) {
@@ -65,6 +82,11 @@
 		padding: m.fs(15);
 		box-sizing: border-box;
 
+		@include m.mq(md) {
+			height: m.fsm(120);
+			padding: m.fsm(12);
+		}
+
 		img {
 			width: 100%;
 			height: auto;
@@ -85,6 +107,11 @@
 		text-align: center;
 		box-sizing: border-box;
 		min-height: m.fs(86); // 最小高さを設定
+
+		@include m.mq(md) {
+			padding: m.fsm(15) m.fsm(16);
+			min-height: m.fsm(70);
+		}
 	}
 
 	&__title {
@@ -99,6 +126,10 @@
 		-webkit-box-orient: vertical;
 		overflow: hidden;
 		text-overflow: ellipsis;
+
+		@include m.mq(md) {
+			font-size: m.fsm(15);
+		}
 	}
 
 	&__subtitle {
@@ -112,77 +143,15 @@
 		-webkit-box-orient: vertical;
 		overflow: hidden;
 		text-overflow: ellipsis;
+
+		@include m.mq(md) {
+			font-size: m.fsm(12);
+		}
 	}
 
 	// Auto-scroll slider styling
 	&__slider {
 		overflow: hidden;
 		width: 100%;
-	}
-
-	// Mobile styles
-	@media (max-width: 768px) {
-		padding: m.fs(60) 0;
-
-		&__item {
-			padding: 0 m.fs(10);
-			width: 280px;
-		}
-
-		&__image-box {
-			height: m.fs(120);
-			padding: m.fs(12);
-
-			img {
-				max-height: 100%;
-			}
-		}
-
-		&__text-box {
-			padding: m.fs(12) m.fs(12);
-			min-height: m.fs(70);
-		}
-
-		&__title {
-			font-size: m.fs(15, 0.8);
-		}
-
-		&__subtitle {
-			font-size: m.fs(12, 0.8);
-		}
-	}
-
-	@media (max-width: 480px) {
-		padding: m.fs(40) 0;
-
-		&__heading {
-			font-size: m.fs(24, 0.6);
-		}
-
-		&__item {
-			width: 240px;
-		}
-
-		&__image-box {
-			height: m.fs(100);
-			padding: m.fs(10);
-
-			img {
-				max-height: 100%;
-			}
-		}
-
-		&__text-box {
-			padding: m.fs(10) m.fs(10);
-			min-height: m.fs(60);
-		}
-
-		&__title {
-			font-size: m.fs(13, 0.8);
-		}
-
-		&__subtitle {
-			font-size: m.fs(10, 0.8);
-		}
 	}
 }
