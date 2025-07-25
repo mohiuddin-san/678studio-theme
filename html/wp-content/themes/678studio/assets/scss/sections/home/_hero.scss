@@ -7,6 +7,24 @@
 	width: 100%;
 	overflow: hidden;
 
+	// PC Hero (default - desktop)
+	&__pc {
+		display: block;
+
+		@include m.mq(md) {
+			display: none;
+		}
+	}
+
+	// SP Hero (mobile only)
+	&__sp {
+		display: none;
+
+		@include m.mq(md) {
+			display: block;
+		}
+	}
+
 	&__image-container {
 		position: relative;
 		width: 100%;
@@ -58,5 +76,62 @@
 		font-weight: 400;
 		margin-bottom: m.fs(48);
 		line-height: 1.6;
+	}
+
+	// Mobile specific grid layout
+	&__mobile-grid {
+		display: grid;
+		grid-template-columns: m.fsm(186) m.fsm(237) 1fr;
+		grid-template-rows: m.fsm(369) m.fsm(271) 1fr;
+		width: 100%;
+		height: auto;
+		overflow: hidden;
+	}
+
+	&__mobile-item {
+		&--1 {
+			grid-column: 1 / -1;
+			grid-row: 1 / -1;
+			overflow: hidden;
+
+			img {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				display: block;
+			}
+		}
+
+		&--2 {
+			grid-column: 2 / 3;
+			grid-row: 2 / 3;
+			position: relative;
+
+			img {
+				width: 100%;
+				height: 100%;
+				object-fit: contain;
+				display: block;
+			}
+		}
+	}
+
+	// Mobile specific adjustments
+	@include m.mq(md) {
+		&__image-container {
+			position: relative;
+			height: 100vh;
+		}
+
+		&__image {
+			object-fit: cover;
+			height: 100%;
+		}
+
+		&__title-image {
+			width: m.fsm(200);
+			top: m.fsm(50);
+			left: m.fsm(30);
+		}
 	}
 }

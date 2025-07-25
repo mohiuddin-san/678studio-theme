@@ -70,35 +70,18 @@ $breakpoints: (
 
 /**
  * 768px以下（モバイル）専用のレスポンシブサイズ関数
- * 320px以下でも同じ比率で縮小し続ける
+ * 比率を維持して画面幅に比例してスケール
  * 
- * @param {Number} $size-380 - 380pxでの基準サイズ
- * @param {Number} $ratio-320 - 320pxでの比率（デフォルト0.84）
- * @param {Number} $ratio-767 - 767pxでの比率（デフォルト1.6）
- * @return {String} - 計算されたcalc()式
+ * @param {Number} $size-480 - 480pxでの基準サイズ
+ * @return {String} - 計算されたvw値
  */
-@function fsm($size-380, $ratio-320: 0.84, $ratio-767: 1.6) {
-	// ビューポート範囲
-	$min-vw: 320;
-	$max-vw: 767;
-
-	$size-320: $size-380 * $ratio-320;
-	$size-767: $size-380 * $ratio-767;
-
-	// 320px以下では同じ比率で縮小（100vw / 320）
-	// 320px〜767pxでは通常のcalc計算
-	// 767px以上では$size-767で固定
-	@return min(
-		#{$size-767}px,
-		max(
-			calc(#{$size-320} * (100vw / 320)),
-			calc(
-				#{$size-320}px + (#{$size-767 - $size-320}) *
-					((100vw - #{$min-vw}px) / (#{$max-vw - $min-vw}))
-			)
-		)
-	);
+@function fsm($size-480) {
+	// 480pxを基準として画面幅の割合を計算
+	$vw-ratio: math.div($size-480, 480) * 100;
+	// 360px以下では段階的に縮小、それ以上では比率維持
+	@return clamp(#{$size-480 * 0.6}px, #{$vw-ratio}vw, #{$size-480 * 1.8}px);
 }
+
 
 // Flexbox center mixin
 @mixin flex-center {

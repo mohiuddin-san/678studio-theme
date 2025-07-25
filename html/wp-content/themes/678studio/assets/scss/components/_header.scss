@@ -64,7 +64,9 @@
 
 		&.is-open {
 			@include m.mq(md) {
-				display: block;
+				display: flex;
+				align-items: center;
+				justify-content: center;
 				position: fixed;
 				top: 0;
 				left: 0;
@@ -72,7 +74,6 @@
 				height: 100vh;
 				background: white;
 				z-index: 9999;
-				padding-top: m.fsm(100);
 			}
 		}
 	}
