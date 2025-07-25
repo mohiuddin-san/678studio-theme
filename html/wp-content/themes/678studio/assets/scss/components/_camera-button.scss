@@ -220,9 +220,20 @@
 		padding: m.fs(12, 0.4) m.fs(24, 0.5) !important;
 		height: auto !important;
 
+		// モバイル対応
+		@include m.mq(md) {
+			border-radius: m.fsm(8) !important;
+			padding: m.fsm(14) m.fsm(20) !important;
+		}
+
 		&::before {
 			background: #f5e2cf !important;
 			border-radius: m.fs(10, 0.5) !important;
+
+			// モバイル対応
+			@include m.mq(md) {
+				border-radius: m.fsm(8) !important;
+			}
 		}
 
 		&:hover {
@@ -232,6 +243,11 @@
 		.camera-button__text {
 			color: v.$main-color;
 			font-size: m.fs(16, 0.5) !important;
+
+			// モバイル対応
+			@include m.mq(md) {
+				font-size: m.fsm(16) !important;
+			}
 		}
 
 		&:hover .camera-button__text {
