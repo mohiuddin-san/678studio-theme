@@ -21,7 +21,7 @@
 
   <!-- Content Section -->
   <div class="contact-content">
-    <img src="<?php echo get_template_directory_uri(); ?>/assets/images/underline.svg" alt=""
+    <img src="<?php echo get_template_directory_uri(); ?>/assets/images/underline-store.svg" alt=""
       class="user-count-section__line" />
     <div class="contact-buttons">
       <?php get_template_part('template-parts/components/camera-button', null, [
@@ -66,7 +66,7 @@
 
     <div class="schedule-container">
         <h1>ご予約</h1>
-        <img src="<?php echo get_template_directory_uri(); ?>/assets/images/underline.svg" alt=""
+        <img src="<?php echo get_template_directory_uri(); ?>/assets/images/underline-store.svg" alt=""
          class="user-count-section__line" />
          <div class="text-block">
         <p class= "titel">予約方法選択</p>
@@ -74,26 +74,7 @@
         </div>
         <div class="schedule-options">
             <div class="option-card">
-                <h2>オンライン予約（推奨）</h2>
-                <ul>
-                    <li>24時間いつでも申込可能</li>
-                    <li>ゆっくり考えながら入力できる</li>
-                    <li>自動返信で申込内容を確認</li>
-                    <li>24時間以内にスタッフから連絡</li>
-                </ul>
-                <button class="custom-button">
-  オンライン予約 <span class="icon">🏠</span>
-</button>
-                
-            </div>
-            <div class="option-card">
                 <h2>お電話での予約</h2>
-                <ul>
-                    <li>すぐに相談・質問ができる</li>
-                    <li>詳しい説明を聞ける</li>
-                    <li>その場で日程調整可能</li>
-                    <li>不安をすぐに解消</li>
-                </ul>
                 <button>お電話での予約 →</button>
             </div>
         </div>
@@ -112,20 +93,6 @@
         </div>
 
         <div class="input-field">
-            <label for="phone">電話番号 (必須)</label>
-            <input type="text" id="phone" name="phone" placeholder="例: 03-1234-5678">
-        </div>
-
-        <div class="dropdown-field">
-            <label for="method">ご希望の予約方法 (必須)</label>
-            <select id="method" name="method">
-                <option value="online">選択してください</option>
-                <option value="online">オンライン</option>
-                <option value="phone">お電話</option>
-            </select>
-        </div>
-
-        <div class="input-field">
             <label for="contact">お電話番号 (必須)</label>
             <input type="text" id="contact" name="contact" placeholder="例: 03-1234-5678">
         </div>
@@ -134,46 +101,20 @@
             <label for="email">メールアドレス (任意)</label>
             <input type="email" id="email" name="email" placeholder="例: hanako@example.com">
         </div>
+ <div class="input-field">
+  <label for="reservation_date">撮影希望日（必須）</label>
+  <input type="date" id="reservation_date" name="reservation_date" required>
+</div>
 
-        <h1>ご希望内容</h1>
+<div class="input-field">
+  <label for="reservation_time_from">開始時間（From）</label>
+  <input type="time" id="reservation_time_from" name="reservation_time_from" min="09:00" max="18:00" required>
+</div>
 
-        <div class="input-field">
-            <label for="reservation">ご希望プラン (任意)</label>
-            <select id="reservation" name="reservation">
-                <option value="">選択してください</option>
-                <option value="plan1">プラン1</option>
-                <option value="plan2">プラン2</option>
-            </select>
-        </div>
-
-        <div class="input-field">
-            <label for="period">ご希望期間 (任意)</label>
-            <select id="period" name="period">
-                <option value="">選択してください</option>
-                <option value="1month">1ヶ月</option>
-                <option value="3months">3ヶ月</option>
-            </select>
-        </div>
-
-        <div class="input-field">
-            <label for="time">ご希望時間 (任意)</label>
-            <select id="time" name="time">
-                <option value="">選択してください</option>
-                <option value="morning">午前</option>
-                <option value="afternoon">午後</option>
-            </select>
-        </div>
-        <div class="textarea-field">
-            <textarea id="notes" name="notes" placeholder="詳細欄"></textarea>
-        </div>
-        <div class="input-field">
-            <label for="area">ご希望エリア (任意)</label>
-            <select id="area" name="area">
-                <option value="">選択してください</option>
-                <option value="tokyo">東京</option>
-                <option value="osaka">大阪</option>
-            </select>
-        </div>
+<div class="input-field">
+  <label for="reservation_time_to">終了時間（To）</label>
+  <input type="time" id="reservation_time_to" name="reservation_time_to" min="09:00" max="20:00" required>
+</div>
 
         <div class="textarea-field">
             <label for="notes">詳細相談内容</label>
@@ -183,13 +124,26 @@
 ・以前他の写真館で満足できませんでした。"></textarea>
         </div>
 
-        <div class="confirmation-field">
+
+
+        <div class="confirmation-field-level">
+            <label for="notes">確認事項</label>
+            <label for="notes">必須確認項目</label>
+        </div>
+        <div class="confirmation-field-check">
             <label>
                 <input type="checkbox" name="agreement"> 個人情報の取り扱いについて同意する
             </label>
         </div>
 
-        <button type="submit">送信</button>
+        <div class="contact-buttons">
+      <?php get_template_part('template-parts/components/camera-button', null, [
+          'text' => 'お問い合わせ',
+          'url' => home_url('/search'),
+          'class' => 'hero-section__button',
+          'bg_color' => 'reservation',
+          'icon' => 'home'
+      ]); ?>
         
     </div>
   </div>
