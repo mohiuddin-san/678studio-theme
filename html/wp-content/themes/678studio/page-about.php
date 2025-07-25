@@ -7,8 +7,8 @@ get_header();
 ?>
 
 <main class="main-content about-page">
-  <!-- About FV Section -->
-  <section class="about-fv">
+  <!-- About FV Section (Desktop) -->
+  <section class="about-fv pc">
     <div class="about-fv__container">
 
       <!-- Text Content -->
@@ -46,6 +46,24 @@ get_header();
           class="about-fv__image-img">
       </div>
 
+    </div>
+  </section>
+
+  <!-- About FV Section (Mobile) -->
+  <section class="about-mobile-fv sp">
+    <div class="about-mobile-fv__container">
+      <!-- Grid Layout Container -->
+      <div class="about-mobile-fv__grid">
+        <!-- Item 1 -->
+        <div class="about-mobile-fv__item1">
+          <img src="<?php echo get_template_directory_uri(); ?>/assets/images/about-fv-sp.jpg" alt="ロクナナハチ撮影とは？">
+        </div>
+
+        <!-- Item 2 -->
+        <div class="about-mobile-fv__item2">
+          <img src="<?php echo get_template_directory_uri(); ?>/assets/images/sp-about-fv-text.svg" alt="ロクナナハチ撮影とは？">
+        </div>
+      </div>
     </div>
   </section>
 
