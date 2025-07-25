@@ -19,11 +19,13 @@ function theme_678studio_styles() {
     
     wp_enqueue_style('678studio-style', get_stylesheet_uri(), [], $version);
     
-    // Enqueue header script for mobile menu
-    $header_version = WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/header.js') : '1.0.0';
-    wp_enqueue_script('678studio-header', 
-        get_template_directory_uri() . '/assets/js/header.js', 
-        [], $header_version, true);
+    // Enqueue header script for mobile menu (only on frontend)
+    if (!is_admin()) {
+        $header_version = WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/header.js') : '1.0.0';
+        wp_enqueue_script('678studio-header', 
+            get_template_directory_uri() . '/assets/js/header.js', 
+            [], $header_version, true);
+    }
     
     // Enqueue gallery script on gallery pages
     if (is_page_template('page-gallery.php')) {
@@ -105,7 +107,9 @@ add_theme_support('menus');
 // Development: Disable caching for faster development
 if (WP_DEBUG) {
     // Disable WordPress caching
-    define('WP_CACHE', false);
+    if (!defined('WP_CACHE')) {
+        define('WP_CACHE', false);
+    }
     
     // Add no-cache headers
     add_action('wp_head', function() {
@@ -276,6 +280,24 @@ function get_gallery_translations($lang = 'en') {
         ]
     ];
     return $translations[$lang] ?? $translations['en'];
+}
+
+// === Gallery FTP Configuration ===
+// Define these constants in wp-config.php for production
+if (!defined('GALLERY_FTP_HOST')) {
+    define('GALLERY_FTP_HOST', 'example.com');
+}
+if (!defined('GALLERY_FTP_USER')) {
+    define('GALLERY_FTP_USER', 'username');
+}
+if (!defined('GALLERY_FTP_PASS')) {
+    define('GALLERY_FTP_PASS', 'password');
+}
+if (!defined('GALLERY_BASE_PATH')) {
+    define('GALLERY_BASE_PATH', '/public_html/gallery/');
+}
+if (!defined('GALLERY_BASE_URL')) {
+    define('GALLERY_BASE_URL', 'https://example.com/gallery/');
 }
 
 // === Add Gallery Admin Menu ===
