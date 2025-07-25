@@ -39,10 +39,10 @@
 
 		// モバイル対応
 		@include m.mq(md) {
-			top: m.fsm(5);
-			left: m.fsm(5);
-			right: m.fsm(-5);
-			bottom: m.fsm(-5);
+			top: m.fsm(7);
+			left: m.fsm(7);
+			right: m.fsm(-7);
+			bottom: m.fsm(-7);
 			border-radius: m.fsm(12);
 		}
 	}
@@ -195,6 +195,10 @@
 	&--detail {
 		border-radius: m.fs(6, 0.5) !important;
 		border: 1px solid v.$main-color !important;
+
+		@include m.mq(md) {
+			border-radius: m.fsm(12) !important;
+		}
 
 		&::before {
 			background: #f5e2cf !important;
