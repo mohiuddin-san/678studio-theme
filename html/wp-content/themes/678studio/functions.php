@@ -518,3 +518,30 @@ add_action('init', function() {
     wp_log_info('WordPress debug logger initialized');
     wp_log_debug('FAQ Debug Test', ['message' => 'Debug system is working', 'timestamp' => current_time('mysql')]);
 });
+
+
+function enqueue_reservation_script() {
+    // Check if the current page slug is 'studio-reservation'
+    if (is_page('studio-reservation')) {
+        wp_enqueue_script(
+            'reservation-script',
+            get_template_directory_uri() . '/assets/js/reservation.js',
+            array(), // Add dependencies if needed
+            null,
+            true // Load in footer
+        );
+    }
+}
+function enqueue_inquery_script() {
+    // Check if the current page slug is 'studio-reservation'
+    if (is_page('studio-inquery')) {
+        wp_enqueue_script(
+            'reservation-script',
+            get_template_directory_uri() . '/assets/js/reservation.js',
+            array(), // Add dependencies if needed
+            null,
+            true // Load in footer
+        );
+    }
+}
+add_action('wp_enqueue_scripts', 'enqueue_inquery_script');
