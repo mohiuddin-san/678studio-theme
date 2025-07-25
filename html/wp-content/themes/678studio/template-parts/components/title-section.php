@@ -99,9 +99,16 @@ if (!empty($custom_class)) {
   <?php endif; ?>
 
   <div class="title-section__title">
-    <?php get_template_part('template-parts/components/thoughts-title', null, [
-              'title' => $title_text
-          ]); ?>
+    <h2 class="title-section__title-text">
+      <?php 
+      // タイトルテキストを<br>で分割して各行に下線を追加
+      $lines = explode('<br>', $title_text);
+      foreach ($lines as $index => $line) {
+        if ($index > 0) echo "\n      ";
+        echo '<span class="title-section__title-line">' . trim($line) . '<img class="title-section__title-underline" src="' . get_template_directory_uri() . '/assets/images/underline.svg" alt=""></span>';
+      }
+      ?>
+    </h2>
   </div>
 
   <?php if (!empty($content_text)): ?>
