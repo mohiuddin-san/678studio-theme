@@ -1319,6 +1319,11 @@ img {
   padding: 0 0 calc(59.2px + (20.8) * (100vw - 768px) / (672)) 0;
   overflow: hidden;
 }
+@media (max-width: 767px) {
+  .media-slider-section {
+    padding: 0 0 clamp(24px, 8.3333333333vw, 72px) 0;
+  }
+}
 .media-slider-section__container {
   margin: 0 auto;
 }
@@ -1331,9 +1336,19 @@ img {
   line-height: 1.6;
   font-family: "Noto Sans JP", sans-serif;
 }
+@media (max-width: 767px) {
+  .media-slider-section__heading {
+    font-size: clamp(14.4px, 5vw, 43.2px);
+  }
+}
 .media-slider-section__wrapper {
   position: relative;
   margin-bottom: calc(29.6px + (10.4) * (100vw - 768px) / (672));
+}
+@media (max-width: 767px) {
+  .media-slider-section__wrapper {
+    margin-bottom: clamp(12px, 4.1666666667vw, 36px);
+  }
 }
 .media-slider-section__track {
   display: -webkit-box;
@@ -1358,6 +1373,12 @@ img {
   width: calc(285.64px + (100.36) * (100vw - 768px) / (672));
   background: #a5c3cf;
 }
+@media (max-width: 767px) {
+  .media-slider-section__item {
+    margin-right: clamp(12px, 4.1666666667vw, 36px);
+    width: clamp(168px, 58.3333333333vw, 504px);
+  }
+}
 .media-slider-section__item:nth-child(3n+2) {
   background: #c0d5dd;
 }
@@ -1380,6 +1401,12 @@ img {
   padding: calc(11.1px + (3.9) * (100vw - 768px) / (672));
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
+}
+@media (max-width: 767px) {
+  .media-slider-section__image-box {
+    height: clamp(72px, 25vw, 216px);
+    padding: clamp(7.2px, 2.5vw, 21.6px);
+  }
 }
 .media-slider-section__image-box img {
   width: 100%;
@@ -1410,6 +1437,12 @@ img {
   box-sizing: border-box;
   min-height: calc(63.64px + (22.36) * (100vw - 768px) / (672));
 }
+@media (max-width: 767px) {
+  .media-slider-section__text-box {
+    padding: clamp(9px, 3.125vw, 27px) clamp(9.6px, 3.3333333333vw, 28.8px);
+    min-height: clamp(42px, 14.5833333333vw, 126px);
+  }
+}
 .media-slider-section__title {
   font-size: calc(10.8px + (7.2) * (100vw - 768px) / (672));
   font-weight: 600;
@@ -1423,6 +1456,11 @@ img {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+@media (max-width: 767px) {
+  .media-slider-section__title {
+    font-size: clamp(9px, 3.125vw, 27px);
+  }
+}
 .media-slider-section__subtitle {
   font-size: calc(10.4px + (2.6) * (100vw - 768px) / (672));
   color: #ffffff;
@@ -1435,63 +1473,14 @@ img {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+@media (max-width: 767px) {
+  .media-slider-section__subtitle {
+    font-size: clamp(7.2px, 2.5vw, 21.6px);
+  }
+}
 .media-slider-section__slider {
   overflow: hidden;
   width: 100%;
-}
-@media (max-width: 768px) {
-  .media-slider-section {
-    padding: calc(44.4px + (15.6) * (100vw - 768px) / (672)) 0;
-  }
-  .media-slider-section__item {
-    padding: 0 calc(7.4px + (2.6) * (100vw - 768px) / (672));
-    width: 280px;
-  }
-  .media-slider-section__image-box {
-    height: calc(88.8px + (31.2) * (100vw - 768px) / (672));
-    padding: calc(8.88px + (3.12) * (100vw - 768px) / (672));
-  }
-  .media-slider-section__image-box img {
-    max-height: 100%;
-  }
-  .media-slider-section__text-box {
-    padding: calc(8.88px + (3.12) * (100vw - 768px) / (672)) calc(8.88px + (3.12) * (100vw - 768px) / (672));
-    min-height: calc(51.8px + (18.2) * (100vw - 768px) / (672));
-  }
-  .media-slider-section__title {
-    font-size: calc(12px + (3) * (100vw - 768px) / (672));
-  }
-  .media-slider-section__subtitle {
-    font-size: calc(9.6px + (2.4) * (100vw - 768px) / (672));
-  }
-}
-@media (max-width: 480px) {
-  .media-slider-section {
-    padding: calc(29.6px + (10.4) * (100vw - 768px) / (672)) 0;
-  }
-  .media-slider-section__heading {
-    font-size: calc(14.4px + (9.6) * (100vw - 768px) / (672));
-  }
-  .media-slider-section__item {
-    width: 240px;
-  }
-  .media-slider-section__image-box {
-    height: calc(74px + (26) * (100vw - 768px) / (672));
-    padding: calc(7.4px + (2.6) * (100vw - 768px) / (672));
-  }
-  .media-slider-section__image-box img {
-    max-height: 100%;
-  }
-  .media-slider-section__text-box {
-    padding: calc(7.4px + (2.6) * (100vw - 768px) / (672)) calc(7.4px + (2.6) * (100vw - 768px) / (672));
-    min-height: calc(44.4px + (15.6) * (100vw - 768px) / (672));
-  }
-  .media-slider-section__title {
-    font-size: calc(10.4px + (2.6) * (100vw - 768px) / (672));
-  }
-  .media-slider-section__subtitle {
-    font-size: calc(8px + (2) * (100vw - 768px) / (672));
-  }
 }
 
 .thoughts-layout-section {
