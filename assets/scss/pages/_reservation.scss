@@ -27,19 +27,32 @@ $highlight-color: #007bff;
       .thoughts-label {
         color: #fff;
         text-decoration: none;
-        font-family: v.$ja;
+        font-family: v.$ja; // Ensure v.$ja is defined in your _variables.scss
         font-size: m.fs(16);
         font-weight: 500;
-        background-color: #000; // Assuming thoughts-label uses black background
+        background-color: #000;
         padding: m.fs(10) m.fs(20);
-        width: 264px; // Matches your earlier width
-        height: 60px; // Matches your earlier height
+        width: 264px;
+        height: 60px;
         display: flex;
         align-items: center;
         justify-content: center;
       }
     }
+
+
   }
+
+  .main-title {
+    width: 100%;
+    text-align: center;
+    margin-top: m.fs(60);
+    margin-bottom: m.fs(100);
+    font-family: v.$ja;
+    font-size: m.fs(39);
+    color: #333;
+  }
+
 
   .contact-main-text {
     padding: m.fs(16) 0;
@@ -58,6 +71,10 @@ $highlight-color: #007bff;
     border: 1px solid $border-color;
     align-items: center;
     border-radius: m.fs(8);
+
+    .h1 {
+      text-align: center;
+    }
 
     .user-count-section__line {
       width: 100%;
@@ -216,7 +233,7 @@ $highlight-color: #007bff;
 
     .schedule-options {
       display: flex;
-      justify-content:space-around;
+      justify-content: space-around;
       align-items: center;
       margin-top: m.fs(20);
 
@@ -224,7 +241,7 @@ $highlight-color: #007bff;
         background-color: #FCF6DE;
         padding: m.fs(20);
         border-radius: m.fs(10);
-        width: 30%;
+        width: 60%;
         box-shadow: 0 m.fs(2) m.fs(5) rgba(0, 0, 0, 0.1);
 
         h2 {
@@ -244,6 +261,7 @@ $highlight-color: #007bff;
 
           li {
             margin-bottom: m.fs(10);
+
             &:nth-child(1)::after,
             &:nth-child(2)::after,
             &:nth-child(3)::after {
@@ -322,20 +340,20 @@ $highlight-color: #007bff;
     select,
     textarea {
       width: 100%;
+      height: m.fs(60);
       padding: m.fs(10);
       border: 1px solid $border-color;
       border-radius: m.fs(5);
       box-sizing: border-box;
 
       &::placeholder {
-      color: #9CBECD;        // プレースホルダーの色
-      font-size: 14px;       // プレースホルダーの文字サイズ
-      font-family: 'Noto Sans JP', medium;
+        color: #9CBECD; // プレースホルダーの色
+        font-size: 14px; // プレースホルダーの文字サイズ
+        font-family: 'Noto Sans JP', medium;
+      }
     }
-    }
-
     textarea {
-      height: m.fs(100);
+      height: m.fs(150);
       resize: vertical;
     }
 
@@ -353,18 +371,17 @@ $highlight-color: #007bff;
     }
   }
 
-  .confirmation-field {
+  .confirmation-field-check {
     width: 100%;
     padding: m.fs(10);
     border: 1px solid $border-color;
     border-radius: m.fs(5);
     text-align: center;
-    margin-bottom: m.fs(20);
+    margin-bottom: m.fs(60);
 
     label {
       color: $text-color;
       font-size: m.fs(14);
-
       input[type="checkbox"] {
         margin-right: m.fs(5);
         vertical-align: middle;
@@ -372,7 +389,13 @@ $highlight-color: #007bff;
     }
   }
 }
-
+.confirmation-field-level{
+  label {
+      display: block;
+      color: $text-color;
+      margin-top: m.fs(15);
+    }
+}
 
 .custom-button {
   position: relative;
@@ -389,13 +412,13 @@ $highlight-color: #007bff;
   cursor: pointer;
   overflow: hidden;
   transition: all 0.3s ease;
-  
+
   // The main button text
   .button-text {
     margin-right: 10px;
     z-index: 2;
   }
-  
+
   // The icon
   .button-icon {
     width: 20px;
@@ -406,7 +429,7 @@ $highlight-color: #007bff;
     background-repeat: no-repeat;
     background-position: center;
   }
-  
+
   // The angled border effect
   &::before {
     content: '';
@@ -421,10 +444,10 @@ $highlight-color: #007bff;
     pointer-events: none;
     transition: all 0.3s ease;
   }
-  
+
   &:hover {
     background-color: #3a5bef;
-    
+
     &::before {
       transform: rotate(45deg);
       border-color: #3a5bef;
