@@ -10,28 +10,56 @@
 	padding-top: m.fs(60, 0.6);
 	padding-bottom: m.fs(60, 0.6);
 
+	// モバイル対応
+	@include m.mq(md) {
+		margin-right: 0;
+		padding: m.fsm(40) 0;
+	}
+
 	&__container {
 		margin: 0 auto;
 		padding: m.fs(54, 0.6) m.fs(160, 0.4);
 		margin: m.fs(80, 0.6) m.fs(160, 0.6);
 		text-align: center;
 		background: #f8f4e6;
+
+		// モバイル対応
+		@include m.mq(md) {
+			margin: m.fsm(20) m.fsm(20) m.fsm(40);
+			padding: m.fsm(40) m.fsm(20);
+		}
 	}
 
 	// ヘッダーエリア
 	&__header {
 		margin-bottom: m.fs(60, 0.5);
+
+		// モバイル対応
+		@include m.mq(md) {
+			margin-bottom: m.fsm(40);
+		}
 	}
 
 	&__icon {
 		margin-bottom: m.fs(20, 0.4);
 		display: flex;
 		justify-content: center;
+
+		// モバイル対応
+		@include m.mq(md) {
+			margin-bottom: m.fsm(16);
+		}
 	}
 
 	&__sun-icon {
 		width: m.fs(95.6, 0.6);
 		height: m.fs(60, 0.5);
+
+		// モバイル対応
+		@include m.mq(md) {
+			width: m.fsm(72);
+			height: m.fsm(45);
+		}
 	}
 
 	&__title {
@@ -39,11 +67,24 @@
 		font-weight: 600;
 		color: #333;
 		font-family: v.$ja-sans;
+
+		// モバイル対応
+		@include m.mq(md) {
+			font-size: m.fsm(24);
+		}
 	}
 
 	// タグエリア
 	&__tags {
 		margin-bottom: m.fs(60, 0.5);
+
+		// モバイル対応 - 2列グリッドレイアウト
+		@include m.mq(md) {
+			margin-bottom: m.fsm(40);
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: m.fsm(12);
+		}
 	}
 
 	&__tag-row {
@@ -54,6 +95,14 @@
 		flex-wrap: wrap;
 
 		&:last-child {
+			margin-bottom: 0;
+		}
+
+		// モバイル対応 - グリッドセル内で縦並び
+		@include m.mq(md) {
+			display: flex;
+			flex-direction: column;
+			gap: m.fsm(12);
 			margin-bottom: 0;
 		}
 	}
@@ -69,11 +118,25 @@
 		font-weight: 500;
 		font-family: v.$ja-sans;
 		white-space: nowrap;
+
+		// モバイル対応
+		@include m.mq(md) {
+			min-width: auto;
+			padding: m.fsm(12) m.fsm(16);
+			font-size: m.fsm(14);
+			border-radius: m.fsm(24);
+			text-align: center;
+		}
 	}
 
 	// ボタンエリア
 	&__button {
 		display: flex;
 		justify-content: center;
+
+		// モバイル対応
+		@include m.mq(md) {
+			margin-top: m.fsm(20);
+		}
 	}
 }

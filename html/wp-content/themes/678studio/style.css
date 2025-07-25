@@ -279,6 +279,15 @@ img {
   transition: all 0.3s ease;
   position: relative;
 }
+@media (max-width: 767px) {
+  .camera-button {
+    width: clamp(168px, 58.3333333333vw, 504px);
+    height: clamp(31.2px, 10.8333333333vw, 93.6px);
+    padding: clamp(9.6px, 3.3333333333vw, 28.8px) clamp(19.2px, 6.6666666667vw, 57.6px);
+    border-radius: clamp(7.2px, 2.5vw, 21.6px);
+    gap: clamp(4.8px, 1.6666666667vw, 14.4px);
+  }
+}
 .camera-button::before {
   content: "";
   position: absolute;
@@ -289,6 +298,15 @@ img {
   background: #fff;
   border-radius: calc(11.1px + (3.9) * (100vw - 768px) / (672));
   z-index: -1;
+}
+@media (max-width: 767px) {
+  .camera-button::before {
+    top: clamp(3px, 1.0416666667vw, 9px);
+    left: clamp(3px, 1.0416666667vw, 9px);
+    right: clamp(-3px, -1.0416666667vw, -9px);
+    bottom: clamp(-3px, -1.0416666667vw, -9px);
+    border-radius: clamp(7.2px, 2.5vw, 21.6px);
+  }
 }
 .camera-button:hover {
   background: #a99f3c;
@@ -309,11 +327,22 @@ img {
   align-items: center;
   gap: 10px;
 }
+@media (max-width: 767px) {
+  .camera-button__content {
+    gap: clamp(4.8px, 1.6666666667vw, 14.4px);
+  }
+}
 .camera-button__icon {
   width: 21px;
   height: 18px;
   -ms-flex-negative: 0;
   flex-shrink: 0;
+}
+@media (max-width: 767px) {
+  .camera-button__icon {
+    width: clamp(10.8px, 3.75vw, 32.4px);
+    height: clamp(9px, 3.125vw, 27px);
+  }
 }
 .camera-button__text {
   font-family: "Noto Sans JP", sans-serif;
@@ -327,6 +356,12 @@ img {
   -webkit-transition: color 0.3s ease;
   transition: color 0.3s ease;
   white-space: nowrap;
+}
+@media (max-width: 767px) {
+  .camera-button__text {
+    font-size: clamp(9.6px, 3.3333333333vw, 28.8px);
+    letter-spacing: clamp(1.2px, 0.4166666667vw, 3.6px);
+  }
 }
 .camera-button--blue-bg {
   border: 1px solid #3f3f3f;
@@ -402,7 +437,7 @@ img {
   border: 1px solid #3f3f3f !important;
 }
 .camera-button--detail::before {
-  background: #F5E2CF !important;
+  background: #f5e2cf !important;
 }
 .camera-button--detail:hover {
   background: #3f3f3f !important;
@@ -420,7 +455,7 @@ img {
   height: auto !important;
 }
 .camera-button--detail-card::before {
-  background: #F5E2CF !important;
+  background: #f5e2cf !important;
   border-radius: calc(5px + (5) * (100vw - 768px) / (672)) !important;
 }
 .camera-button--detail-card:hover {
@@ -437,7 +472,7 @@ img {
   border: 1px solid #3f3f3f;
 }
 .camera-button--contact::before {
-  background: #F5E2CF !important;
+  background: #f5e2cf !important;
 }
 .camera-button--contact:hover {
   background: #3f3f3f;
@@ -1785,6 +1820,12 @@ img {
   padding-top: calc(36px + (24) * (100vw - 768px) / (672));
   padding-bottom: calc(36px + (24) * (100vw - 768px) / (672));
 }
+@media (max-width: 767px) {
+  .recommend-section {
+    margin-right: 0;
+    padding: clamp(24px, 8.3333333333vw, 72px) 0;
+  }
+}
 .recommend-section__container {
   margin: 0 auto;
   padding: calc(32.4px + (21.6) * (100vw - 768px) / (672)) calc(64px + (96) * (100vw - 768px) / (672));
@@ -1792,8 +1833,19 @@ img {
   text-align: center;
   background: #f8f4e6;
 }
+@media (max-width: 767px) {
+  .recommend-section__container {
+    margin: clamp(12px, 4.1666666667vw, 36px) clamp(12px, 4.1666666667vw, 36px) clamp(24px, 8.3333333333vw, 72px);
+    padding: clamp(24px, 8.3333333333vw, 72px) clamp(12px, 4.1666666667vw, 36px);
+  }
+}
 .recommend-section__header {
   margin-bottom: calc(30px + (30) * (100vw - 768px) / (672));
+}
+@media (max-width: 767px) {
+  .recommend-section__header {
+    margin-bottom: clamp(24px, 8.3333333333vw, 72px);
+  }
 }
 .recommend-section__icon {
   margin-bottom: calc(8px + (12) * (100vw - 768px) / (672));
@@ -1804,9 +1856,20 @@ img {
   -ms-flex-pack: center;
   justify-content: center;
 }
+@media (max-width: 767px) {
+  .recommend-section__icon {
+    margin-bottom: clamp(9.6px, 3.3333333333vw, 28.8px);
+  }
+}
 .recommend-section__sun-icon {
   width: calc(57.36px + (38.24) * (100vw - 768px) / (672));
   height: calc(30px + (30) * (100vw - 768px) / (672));
+}
+@media (max-width: 767px) {
+  .recommend-section__sun-icon {
+    width: clamp(43.2px, 15vw, 129.6px);
+    height: clamp(27px, 9.375vw, 81px);
+  }
 }
 .recommend-section__title {
   font-size: calc(19.2px + (12.8) * (100vw - 768px) / (672));
@@ -1814,8 +1877,21 @@ img {
   color: #333;
   font-family: "Noto Sans JP", sans-serif;
 }
+@media (max-width: 767px) {
+  .recommend-section__title {
+    font-size: clamp(14.4px, 5vw, 43.2px);
+  }
+}
 .recommend-section__tags {
   margin-bottom: calc(30px + (30) * (100vw - 768px) / (672));
+}
+@media (max-width: 767px) {
+  .recommend-section__tags {
+    margin-bottom: clamp(24px, 8.3333333333vw, 72px);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(7.2px, 2.5vw, 21.6px);
+  }
 }
 .recommend-section__tag-row {
   display: -webkit-box;
@@ -1832,6 +1908,19 @@ img {
 .recommend-section__tag-row:last-child {
   margin-bottom: 0;
 }
+@media (max-width: 767px) {
+  .recommend-section__tag-row {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    gap: clamp(7.2px, 2.5vw, 21.6px);
+    margin-bottom: 0;
+  }
+}
 .recommend-section__tag {
   min-width: calc(64px + (64) * (100vw - 768px) / (672));
   background: #fff;
@@ -1844,6 +1933,15 @@ img {
   font-family: "Noto Sans JP", sans-serif;
   white-space: nowrap;
 }
+@media (max-width: 767px) {
+  .recommend-section__tag {
+    min-width: auto;
+    padding: clamp(7.2px, 2.5vw, 21.6px) clamp(9.6px, 3.3333333333vw, 28.8px);
+    font-size: clamp(8.4px, 2.9166666667vw, 25.2px);
+    border-radius: clamp(14.4px, 5vw, 43.2px);
+    text-align: center;
+  }
+}
 .recommend-section__button {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -1851,6 +1949,11 @@ img {
   -webkit-box-pack: center;
   -ms-flex-pack: center;
   justify-content: center;
+}
+@media (max-width: 767px) {
+  .recommend-section__button {
+    margin-top: clamp(12px, 4.1666666667vw, 36px);
+  }
 }
 
 .studio-search-section {
@@ -2267,7 +2370,6 @@ img {
 .about-mobile {
   width: 100%;
   padding: clamp(24px, 8.3333333333vw, 72px) 0;
-  margin-bottom: clamp(48px, 16.6666666667vw, 144px);
   overflow: hidden;
   display: none;
 }
