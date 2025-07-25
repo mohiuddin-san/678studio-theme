@@ -422,4 +422,29 @@ add_action('wp_logout', function($user_id) {
         ]);
     }
 });
+function enqueue_reservation_script() {
+    // Check if the current page slug is 'studio-reservation'
+    if (is_page('studio-reservation')) {
+        wp_enqueue_script(
+            'reservation-script',
+            get_template_directory_uri() . '/assets/js/reservation.js',
+            array(), // Add dependencies if needed
+            null,
+            true // Load in footer
+        );
+    }
+}
+function enqueue_inquery_script() {
+    // Check if the current page slug is 'studio-reservation'
+    if (is_page('studio-inquery')) {
+        wp_enqueue_script(
+            'reservation-script',
+            get_template_directory_uri() . '/assets/js/reservation.js',
+            array(), // Add dependencies if needed
+            null,
+            true // Load in footer
+        );
+    }
+}
+add_action('wp_enqueue_scripts', 'enqueue_inquery_script');
 ?>
