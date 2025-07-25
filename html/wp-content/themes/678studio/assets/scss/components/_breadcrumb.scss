@@ -60,17 +60,29 @@
 	}
 
 	// Responsive Design
-	@media (max-width: 768px) {
-		padding: m.fs(16, 0.5) 0;
+	@include m.mq(md) {
+		padding: m.fsm(12) 0;
 
 		&__container {
-			padding: 0 m.fs(16, 0.5);
+			padding: 0 m.fsm(20);
+		}
+
+		&__list {
+			gap: m.fsm(6);
+		}
+
+		&__item {
+			gap: m.fsm(6);
 		}
 
 		&__link,
-		&__current,
+		&__current {
+			font-size: m.fsm(16);
+		}
+
 		&__separator {
-			font-size: m.fs(12, 0.5);
+			font-size: m.fsm(12);
+			margin: 0 m.fsm(4);
 		}
 	}
 }

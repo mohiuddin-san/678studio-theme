@@ -1017,15 +1017,25 @@ img {
   color: #999;
   margin: 0 calc(1.2px + (2.8) * (100vw - 768px) / (672));
 }
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .breadcrumb {
-    padding: calc(8px + (8) * (100vw - 768px) / (672)) 0;
+    padding: clamp(7.2px, 2.5vw, 21.6px) 0;
   }
   .breadcrumb__container {
-    padding: 0 calc(8px + (8) * (100vw - 768px) / (672));
+    padding: 0 clamp(12px, 4.1666666667vw, 36px);
   }
-  .breadcrumb__link, .breadcrumb__current, .breadcrumb__separator {
-    font-size: calc(6px + (6) * (100vw - 768px) / (672));
+  .breadcrumb__list {
+    gap: clamp(3.6px, 1.25vw, 10.8px);
+  }
+  .breadcrumb__item {
+    gap: clamp(3.6px, 1.25vw, 10.8px);
+  }
+  .breadcrumb__link, .breadcrumb__current {
+    font-size: clamp(9.6px, 3.3333333333vw, 28.8px);
+  }
+  .breadcrumb__separator {
+    font-size: clamp(7.2px, 2.5vw, 21.6px);
+    margin: 0 clamp(2.4px, 0.8333333333vw, 7.2px);
   }
 }
 
