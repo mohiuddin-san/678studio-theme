@@ -1,28 +1,28 @@
 // Thoughts Section Components
 // =============================================================================
 
-@use '../base/mixins' as *;
-@use '../base/variables' as *;
+@use '../base/mixins' as m;
+@use '../base/variables' as v;
 
 // 1. 飾り部分コンポーネント（Our Thoughts）
 .thoughts-label {
 	display: inline-flex;
-	padding: fs(12, 0.6) fs(16, 0.6);
+	padding: m.fs(12, 0.6) m.fs(16, 0.6);
 	justify-content: center;
 	align-items: center;
 	gap: 10px;
 	background-color: #4a4a4a;
 
 	// モバイル対応
-	@include mq(md) {
-		padding: fsm(8) fsm(12);
-		gap: fsm(6);
+	@include m.mq(md) {
+		padding: m.fsm(8) m.fsm(12);
+		gap: m.fsm(6);
 	}
 
 	&__text {
 		color: #fff;
-		font-family: $ja-sans;
-		font-size: fs(16, 0.6);
+		font-family: v.$ja-sans;
+		font-size: m.fs(16, 0.6);
 		font-style: normal;
 		font-weight: 700;
 		line-height: 160%; /* 25.6px */
@@ -30,47 +30,57 @@
 		margin: 0;
 
 		// モバイル対応
-		@include mq(md) {
-			font-size: fsm(14);
-			letter-spacing: fsm(1.2);
+		@include m.mq(md) {
+			font-size: m.fsm(14);
+			letter-spacing: m.fsm(1.2);
 		}
 	}
 }
 
 // 2. タイトル部分コンポーネント
 .thoughts-title {
-	display: inline-block;
+	width: 100%; // 幅100%に設定
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	// iOS Safari対策
+	-webkit-text-size-adjust: 100%;
+	text-size-adjust: 100%;
 
 	&__text {
 		color: #3f3f3f;
-		font-family: $ja;
-		font-size: fs(39.06, 0.6);
+		font-family: v.$ja;
+		font-size: m.fs(39.06, 0.6);
 		font-style: normal;
 		font-weight: 500;
 		line-height: 200%; /* 78.12px */
 		letter-spacing: 3.906px;
 		margin: 0;
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
+		display: block; // blockに変更
+		-webkit-box-sizing: border-box;
+		box-sizing: border-box;
 
 		// モバイル対応
-		@include mq(md) {
-			font-size: fsm(28);
-			line-height: 1.4;
-			letter-spacing: fsm(2);
+		@include m.mq(md) {
+			font-size: m.fsm(28);
+			line-height: 1.8;
+			letter-spacing: m.fsm(2);
 		}
 	}
 
 	&__line {
 		position: relative;
-		width: 100%;
-		display: block; // blockに変更してボックス幅いっぱいに
-		padding-bottom: fs(10, 0.6); // 下線用のスペース
+		display: block;
+		width: 100%; // 幅100%
+		padding-bottom: m.fs(10, 0.6); // 下線用のスペース
+		-webkit-box-sizing: border-box;
+		box-sizing: border-box;
+		// iOS Safari対策
+		-webkit-transform: translateZ(0);
+		transform: translateZ(0);
 
 		// モバイル対応
-		@include mq(md) {
-			padding-bottom: fsm(8);
+		@include m.mq(md) {
+			padding-bottom: m.fsm(10);
 		}
 	}
 
@@ -78,17 +88,22 @@
 		position: absolute;
 		left: 0;
 		bottom: 0;
-		width: 100%;
+		width: 100%; // シンプルに100%の幅を使用
 		height: auto;
 		display: block;
+		// iOS Safari対策
+		-webkit-transform: translateZ(0);
+		transform: translateZ(0);
+		-webkit-backface-visibility: hidden;
+		backface-visibility: hidden;
 	}
 }
 
 // 3. 文章テキスト部分コンポーネント
 .thoughts-text {
 	color: #3f3f3f;
-	font-family: $ja-sans;
-	font-size: fs(16, 0.6);
+	font-family: v.$ja-sans;
+	font-size: m.fs(16, 0.6);
 	font-style: normal;
 	font-weight: 500;
 	line-height: 250%; /* 40px */
@@ -97,56 +112,88 @@
 	text-align: justify;
 
 	// モバイル対応
-	@include mq(md) {
-		font-size: fsm(16);
+	@include m.mq(md) {
+		font-size: m.fsm(16);
 		line-height: 1.6;
-		letter-spacing: fsm(1);
+		letter-spacing: m.fsm(1);
 		text-align: left;
 	}
 }
 
 // 4. Thoughtsセクション全体のコンテナ
 .thoughts-section {
-	padding: fs(80) 0;
+	padding: m.fs(80) 0;
 
 	// モバイル対応
-	@include mq(md) {
-		padding: fsm(40) 0;
+	@include m.mq(md) {
+		padding: m.fsm(40) 0;
 	}
 
 	&__inner {
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
-		padding: 0 fs(40);
+		padding: 0 m.fs(40);
 
 		// モバイル対応
-		@include mq(md) {
-			padding: 0 fsm(20);
+		@include m.mq(md) {
+			padding: 0 m.fsm(20);
 		}
 	}
 
 	&__label {
-		margin-bottom: fs(40, 0.5);
+		margin-bottom: m.fs(40, 0.5);
 		text-align: left;
 
 		// モバイル対応
-		@include mq(md) {
-			margin-bottom: fsm(20);
+		@include m.mq(md) {
+			margin-bottom: m.fsm(20);
 		}
 	}
 
 	&__title {
-		margin-bottom: fs(40, 0.5);
+		margin-bottom: m.fs(40, 0.5);
 		text-align: left;
 
 		// モバイル対応
-		@include mq(md) {
-			margin-bottom: fsm(20);
+		@include m.mq(md) {
+			margin-bottom: m.fsm(20);
 		}
 	}
 
 	&__content {
 		text-align: left;
+	}
+}
+
+// 5. メインThoughts用のtitle-sectionカスタムスタイル
+.thoughts-main-title-section {
+	width: 100%;
+	padding: 0;
+	gap: m.fs(40, 0.5);
+	text-align: left;
+
+	// モバイル対応
+	@include m.mq(md) {
+		gap: m.fsm(20);
+	}
+
+	.title-section__label {
+		margin-bottom: 0;
+	}
+
+	.title-section__title {
+		margin-bottom: 0;
+		
+		// モバイルでのline-height統一
+		@include m.mq(md) {
+			.thoughts-title__text {
+				line-height: 1.8;
+			}
+		}
+	}
+
+	.title-section__content {
+		margin-bottom: 0;
 	}
 }

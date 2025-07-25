@@ -34,12 +34,23 @@
 	&__box-1 {
 		grid-column: 1 / 12; // 1〜11列
 		grid-row: 1 / 16; // 1〜15行目（50px×15 = 750px）
-		background: #c4c4c4;
-		color: white;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		z-index: 10;
+
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			// iOS Safari画像回転対策
+			image-orientation: none;
+			-webkit-transform: none;
+			transform: none;
+			// フォースレンダリング対策
+			-webkit-backface-visibility: hidden;
+			backface-visibility: hidden;
+		}
 	}
 
 	// Box 2（ベージュ）- 重なりを表現

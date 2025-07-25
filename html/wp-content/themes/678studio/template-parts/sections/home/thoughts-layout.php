@@ -7,7 +7,8 @@
 <section class="thoughts-layout-section">
   <div class="thoughts-layout-section__container">
     <div class="thoughts-layout-section__wrapper">
-      <div class="thoughts-layout-section__box-1">Box 1</div>
+      <div class="thoughts-layout-section__box-1"><img
+          src="<?php echo get_template_directory_uri(); ?>/assets/images/plan-pic-1.png" alt=""></div>
       <div class="thoughts-layout-section__box-2"></div>
       <div class="thoughts-layout-section__box-3">
         <div class="thoughts-layout-section__inner">
