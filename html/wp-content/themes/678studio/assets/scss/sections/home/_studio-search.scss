@@ -8,6 +8,11 @@
 	width: 100%;
 	padding: m.fs(72, 0.6) 0;
 
+	// モバイル対応
+	@include m.mq(md) {
+		padding: m.fsm(40) 0;
+	}
+
 	&__container {
 		margin: 0 m.fs(224, 0.4);
 		padding-top: m.fs(72, 0.6);
@@ -18,18 +23,34 @@
 		align-items: center;
 		position: relative;
 		z-index: 0;
+
+		// モバイル対応
+		@include m.mq(md) {
+			margin: 0 m.fsm(20);
+			padding: m.fsm(40) m.fsm(20);
+		}
 	}
 
 	// ヘッダーエリア
 	&__header {
 		text-align: center;
 		margin-bottom: m.fs(40, 0.5);
+
+		// モバイル対応
+		@include m.mq(md) {
+			margin-bottom: m.fsm(30);
+		}
 	}
 
 	&__label {
 		display: flex;
 		justify-content: center;
 		margin-bottom: m.fs(64, 0.5);
+
+		// モバイル対応
+		@include m.mq(md) {
+			margin-bottom: m.fsm(32);
+		}
 	}
 
 	&__title {
@@ -39,12 +60,24 @@
 		margin-bottom: m.fs(48, 0.5);
 		font-family: v.$ja;
 		letter-spacing: m.fs(1);
+
+		// モバイル対応
+		@include m.mq(md) {
+			font-size: m.fsm(24);
+			margin-bottom: m.fsm(24);
+			letter-spacing: m.fsm(1);
+		}
 	}
 
 	&__subtitle {
 		font-size: m.fs(14, 0.4);
 		color: v.$main-color;
 		font-family: v.$ja-sans;
+
+		// モバイル対応
+		@include m.mq(md) {
+			font-size: m.fsm(14);
+		}
 	}
 
 	// 検索エリア
@@ -53,6 +86,13 @@
 		margin-bottom: m.fs(60, 0.5);
 		display: flex;
 		justify-content: center;
+
+		// モバイル対応
+		@include m.mq(md) {
+			width: 100%;
+			margin-bottom: m.fsm(40);
+			padding: 0 m.fsm(10);
+		}
 	}
 
 	&__search-box {
@@ -68,6 +108,12 @@
 		&:focus-within {
 			border-color: #666;
 		}
+
+		// モバイル対応
+		@include m.mq(md) {
+			padding: m.fsm(14) m.fsm(20);
+			border-radius: m.fsm(8);
+		}
 	}
 
 	&__search-icon {
@@ -77,6 +123,14 @@
 		margin-left: m.fs(12, 0.4);
 		margin-right: m.fs(8, 0.3);
 		flex-shrink: 0;
+
+		// モバイル対応
+		@include m.mq(md) {
+			width: m.fsm(18);
+			height: m.fsm(18);
+			margin-left: m.fsm(8);
+			margin-right: m.fsm(6);
+		}
 	}
 
 	&__search-input {
@@ -91,6 +145,12 @@
 		&::placeholder {
 			color: #999;
 		}
+
+		// モバイル対応
+		@include m.mq(md) {
+			font-size: m.fsm(14);
+			padding: m.fsm(10) m.fsm(8);
+		}
 	}
 
 	// カードエリア
@@ -100,6 +160,14 @@
 		grid-template-columns: repeat(3, 1fr);
 		gap: m.fs(24, 0.4);
 		margin-bottom: m.fs(60, 0.5);
+
+		// モバイル対応 - 1列レイアウト
+		@include m.mq(md) {
+			width: 100%;
+			grid-template-columns: 1fr;
+			gap: m.fsm(20);
+			margin-bottom: m.fsm(40);
+		}
 	}
 
 	// ページネーション
@@ -108,6 +176,13 @@
 		justify-content: center;
 		align-items: center;
 		gap: m.fs(16, 0.4);
+
+		// モバイル対応
+		@include m.mq(md) {
+			gap: m.fsm(8);
+			padding: 0 m.fsm(10);
+			flex-wrap: wrap;
+		}
 	}
 }
 
@@ -125,6 +200,13 @@
 	z-index: 1;
 	box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
 
+	// モバイル対応
+	@include m.mq(md) {
+		min-height: m.fsm(320);
+		border-radius: m.fsm(10);
+		padding: m.fsm(16);
+	}
+
 	&__image {
 		position: relative;
 		width: 100%;
@@ -132,10 +214,21 @@
 		background: #e0e0e0;
 		overflow: hidden;
 
+		// モバイル対応
+		@include m.mq(md) {
+			height: m.fsm(160);
+		}
+
 		img {
 			width: 100%;
 			height: 100%;
 			object-fit: cover;
+			// iOS Safari画像回転対策
+			image-orientation: none;
+			-webkit-transform: none;
+			transform: none;
+			-webkit-backface-visibility: hidden;
+			backface-visibility: hidden;
 		}
 	}
 
@@ -149,6 +242,13 @@
 		border-radius: m.fs(4, 0.3) 0 0 0;
 		font-size: m.fs(16, 0.6);
 		font-family: v.$ja-sans;
+
+		// モバイル対応
+		@include m.mq(md) {
+			padding: m.fsm(4) m.fsm(10);
+			border-radius: m.fsm(4) 0 0 0;
+			font-size: m.fsm(14);
+		}
 	}
 
 	&__content {
@@ -156,6 +256,12 @@
 		grid-template-rows: auto 1fr auto;
 		gap: m.fs(12, 0.4);
 		padding: m.fs(16, 0.4);
+
+		// モバイル対応
+		@include m.mq(md) {
+			gap: m.fsm(30);
+			padding: m.fsm(16);
+		}
 	}
 
 	&__name {
@@ -164,6 +270,12 @@
 		color: #333;
 		font-family: v.$ja-sans;
 		letter-spacing: m.fs(1);
+
+		// モバイル対応
+		@include m.mq(md) {
+			font-size: m.fsm(18);
+			letter-spacing: m.fsm(1);
+		}
 	}
 
 	&__address {
@@ -172,6 +284,11 @@
 		color: #666;
 		line-height: 1.5;
 		font-family: v.$ja-sans;
+
+		// モバイル対応
+		@include m.mq(md) {
+			font-size: m.fsm(15);
+		}
 	}
 
 	&__details {
@@ -179,11 +296,22 @@
 		display: flex;
 		flex-direction: column;
 		gap: m.fs(8, 0.3);
+
+		// モバイル対応
+		@include m.mq(md) {
+			font-size: m.fsm(15);
+			gap: m.fsm(8);
+		}
 	}
 
 	&__hours {
 		// studio-card__detailsに含まれる
 		font-size: m.fs(16, 0.6);
+
+		// モバイル対応
+		@include m.mq(md) {
+			font-size: m.fsm(15);
+		}
 	}
 
 	&__hour-item {
@@ -192,6 +320,11 @@
 		line-height: 1.4;
 		font-family: v.$ja-sans;
 		text-align: left;
+
+		// モバイル対応
+		@include m.mq(md) {
+			font-size: m.fsm(15);
+		}
 	}
 
 	&__contact-btn {
@@ -201,6 +334,11 @@
 		justify-content: center;
 		overflow: visible;
 		padding: m.fs(8, 0.3);
+
+		// モバイル対応
+		@include m.mq(md) {
+			padding: m.fsm(20) m.fsm(8) m.fsm(8); // 上部にスペース追加
+		}
 
 		.camera-button {
 			width: 100%;
@@ -221,6 +359,18 @@
 	font-size: m.fs(14);
 	color: v.$brand-gold;
 	font-weight: 500;
+
+	// モバイル対応
+	@include m.mq(md) {
+		padding: m.fsm(12) m.fsm(16);
+		border-radius: m.fsm(8);
+		font-size: m.fsm(14);
+		min-width: m.fsm(44);
+		min-height: m.fsm(44);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 
 	// &::before {
 	// 	content: '';
@@ -244,6 +394,14 @@
 	&--next {
 		font-size: m.fs(14);
 		padding: m.fs(10, 0.4) m.fs(14, 0.5);
+
+		// モバイル対応
+		@include m.mq(md) {
+			font-size: m.fsm(16);
+			padding: m.fsm(12) m.fsm(14);
+			min-width: m.fsm(44);
+			min-height: m.fsm(44);
+		}
 	}
 }
 
@@ -255,6 +413,12 @@
 	color: v.$main-color;
 	font-family: v.$ja-sans;
 
+	// モバイル対応
+	@include m.mq(md) {
+		gap: m.fsm(6);
+		font-size: m.fsm(14);
+	}
+
 	span {
 		display: inline-flex;
 		align-items: center;
@@ -264,6 +428,14 @@
 		border-radius: 50%;
 		cursor: pointer;
 		transition: all 0.3s ease;
+
+		// モバイル対応
+		@include m.mq(md) {
+			width: m.fsm(40);
+			height: m.fsm(40);
+			font-size: m.fsm(14);
+			font-weight: 500;
+		}
 
 		&:hover {
 			background: v.$brand-gold;
