@@ -19,9 +19,9 @@
           <a href="/" class="footer__nav-link">トップページ</a>
           <a href="/about" class="footer__nav-link">678撮影について</a>
           <a href="/gallery" class="footer__nav-link">ギャラリー</a>
-          <a href="/search" class="footer__nav-link">写真館検索</a>
-          <a href="/reservation" class="footer__nav-link">ご予約</a>
-          <a href="/contact" class="footer__nav-link">お問合せ</a>
+          <a href="/stores" class="footer__nav-link">写真館検索</a>
+          <a href="/studio-reservation" class="footer__nav-link">ご予約</a>
+          <a href="/studio-inquery" class="footer__nav-link">お問合せ</a>
         </div>
         <div class="footer__nav-row footer__nav-row--secondary">
           <a href="/privacy" class="footer__nav-link">プライバシーポリシー</a>
