@@ -52,23 +52,6 @@ $shop_data = fetch_studio_shops($search_query, $page);
 $shops = $shop_data['shops'];
 $total_pages = $shop_data['total_pages'];
 $current_page = $shop_data['current_page'];
-
-// // Debugging output for admins (on-screen, not logged)
-// if (current_user_can('administrator')) {
-//     echo '<div style="background: #fff; padding: 10px; border: 1px solid #ccc; margin-bottom: 20px;">';
-//     echo '<h3>Debug Info</h3>';
-//     echo '<p>API URL: https://678photo.com/api/get_all_studio_shop.php</p>';
-//     echo '<p>Search Query: ' . esc_html($search_query) . '</p>';
-//     echo '<p>Current Page: ' . $current_page . '</p>';
-//     echo '<p>Total Shops: ' . $shop_data['total'] . '</p>';
-//     echo '<p>Total Pages: ' . $total_pages . '</p>';
-//     echo '<p>Shops on Current Page: ' . count($shops) . '</p>';
-//     if ($shop_data['error']) {
-//         echo '<p style="color: red;">Error: ' . esc_html($shop_data['error']) . '</p>';
-//     }
-//     echo '<p>Shops Data: <pre>' . esc_html(print_r($shops, true)) . '</pre></p>';
-//     echo '</div>';
-// }
 ?>
 
 <section class="studio-search-section">
@@ -121,7 +104,7 @@ $current_page = $shop_data['current_page'];
                   'bg_color' => 'detail-card',
                   'icon' => 'none',
                   'class' => 'studio-card__contact-btn',
-                  'link' => esc_url($shop['map_url'] ?? '')
+                  'link' => home_url('/store-details/?shop_id=' . esc_attr($shop['id']))
               ]); ?>
             </div>
           </div>
@@ -162,7 +145,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 url.searchParams.delete('studio_search');
                 url.searchParams.set('studio_page', 1);
             }
-            console.log('Redirecting to: ' + url.toString());
             window.location.href = url.toString();
         }, 500);
     });
