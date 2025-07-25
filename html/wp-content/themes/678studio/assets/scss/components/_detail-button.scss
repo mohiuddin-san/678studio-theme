@@ -71,10 +71,10 @@
 
 	// モバイル対応
 	@include m.mq(md) {
-		padding: m.fsm(8) m.fsm(20);
-		gap: m.fsm(6);
+		padding: m.fsm(12) m.fsm(24);
+		gap: m.fsm(8);
 		border-radius: m.fsm(8);
-		min-width: m.fsm(160);
+		min-width: m.fsm(180);
 
 		&::before {
 			top: m.fsm(4);
@@ -82,21 +82,21 @@
 			right: m.fsm(-4);
 			bottom: m.fsm(-4);
 			border-radius: m.fsm(8);
-			min-width: m.fsm(160);
+			min-width: m.fsm(180);
 		}
 
 		&__content {
-			gap: m.fsm(6);
+			gap: m.fsm(8);
 		}
 
 		&__icon {
-			width: m.fsm(14);
-			height: m.fsm(14);
+			width: m.fsm(16);
+			height: m.fsm(16);
 		}
 
 		&__text {
-			font-size: m.fsm(14);
-			letter-spacing: m.fsm(0.5);
+			font-size: m.fsm(16);
+			letter-spacing: m.fsm(1);
 		}
 	}
 
