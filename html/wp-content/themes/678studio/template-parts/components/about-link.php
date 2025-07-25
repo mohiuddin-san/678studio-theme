@@ -27,7 +27,8 @@ $buttons = $args['buttons'] ?? [
 
 $title = $args['title'] ?? '';
 $description = $args['description'] ??
-'ロクナナハチ撮影は、60代・70代・80代の方々の美しさと品格を、<br>プロの技術で最大限に引き出す撮影サービスです。<br>記念撮影、家族写真、遺影撮影まで、人生の大切な瞬間をあなたらしい自然な美しさで残します。';
+'ロクナナハチ撮影は、60代・70代・80代の方々の美しさと品格を、<br class="pc-only">プロの技術で最大限に引き出す撮影サービスです。<br
+  class="pc-only">記念撮影、家族写真、遺影撮影まで、人生の大切な瞬間をあなたらしい自然な美しさで残します。';
 ?>
 
 <section class="about-link">
@@ -55,7 +56,7 @@ $description = $args['description'] ??
     <!-- Description -->
     <div class="about-link__description">
       <p class="about-link__text">
-        <?php echo wp_kses($description, ['br' => []]); ?>
+        <?php echo wp_kses($description, ['br' => ['class' => []]]); ?>
       </p>
     </div>
 

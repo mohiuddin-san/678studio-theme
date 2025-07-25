@@ -1,3 +1,52 @@
 @use '../base/variables' as v;
 @use '../base/mixins' as m;
 @use 'sass:color';
+
+// Utility Classes for Responsive Display
+.pc-only {
+	display: block;
+
+	@include m.mq(md) {
+		display: none;
+	}
+}
+
+.sp-only {
+	display: none;
+
+	@include m.mq(md) {
+		display: block;
+	}
+}
+
+// For inline elements
+.pc-only-inline {
+	display: inline;
+
+	@include m.mq(md) {
+		display: none;
+	}
+}
+
+.sp-only-inline {
+	display: none;
+
+	@include m.mq(md) {
+		display: inline;
+	}
+}
+
+// For br tags specifically
+br.pc-only {
+	@include m.mq(md) {
+		display: none !important;
+	}
+}
+
+br.sp-only {
+	display: none !important;
+
+	@include m.mq(md) {
+		display: initial !important;
+	}
+}
