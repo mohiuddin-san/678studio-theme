@@ -50,3 +50,20 @@ br.sp-only {
 		display: initial !important;
 	}
 }
+
+// PC/SP display control classes
+.pc {
+	display: block;
+	
+	@include m.mq(md) {
+		display: none;
+	}
+}
+
+.sp {
+	display: none;
+	
+	@include m.mq(md) {
+		display: block;
+	}
+}

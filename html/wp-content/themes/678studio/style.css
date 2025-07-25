@@ -134,6 +134,24 @@ br.sp-only {
   }
 }
 
+.pc {
+  display: block;
+}
+@media (max-width: 767px) {
+  .pc {
+    display: none;
+  }
+}
+
+.sp {
+  display: none;
+}
+@media (max-width: 767px) {
+  .sp {
+    display: block;
+  }
+}
+
 .header__container {
   margin: 0 auto;
   padding: calc(15px + (15) * (100vw - 768px) / (672)) calc(40px + (40) * (100vw - 768px) / (672)) calc(5px + (5) * (100vw - 768px) / (672));
