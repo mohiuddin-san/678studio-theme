@@ -10,28 +10,56 @@
 	padding-top: m.fs(60, 0.6);
 	padding-bottom: m.fs(60, 0.6);
 
+	// モバイル対応
+	@include m.mq(md) {
+		margin-right: 0;
+		padding: m.fsm(40) 0;
+	}
+
 	&__container {
 		margin: 0 auto;
 		padding: m.fs(54, 0.6) m.fs(160, 0.4);
 		margin: m.fs(80, 0.6) m.fs(160, 0.6);
 		text-align: center;
 		background: #f8f4e6;
+
+		// モバイル対応
+		@include m.mq(md) {
+			margin: m.fsm(20) m.fsm(20) m.fsm(40);
+			padding: m.fsm(40) m.fsm(20);
+		}
 	}
 
 	// ヘッダーエリア
 	&__header {
 		margin-bottom: m.fs(60, 0.5);
+
+		// モバイル対応
+		@include m.mq(md) {
+			margin-bottom: m.fsm(40);
+		}
 	}
 
 	&__icon {
 		margin-bottom: m.fs(20, 0.4);
 		display: flex;
 		justify-content: center;
+
+		// モバイル対応
+		@include m.mq(md) {
+			margin-bottom: m.fsm(16);
+		}
 	}
 
 	&__sun-icon {
 		width: m.fs(95.6, 0.6);
 		height: m.fs(60, 0.5);
+
+		// モバイル対応
+		@include m.mq(md) {
+			width: m.fsm(80);
+			height: m.fsm(50);
+		}
 	}
 
 	&__title {
@@ -39,11 +67,21 @@
 		font-weight: 600;
 		color: #333;
 		font-family: v.$ja-sans;
+
+		// モバイル対応
+		@include m.mq(md) {
+			font-size: m.fsm(24);
+		}
 	}
 
 	// コンテンツエリア（テキスト表示）
 	&__content {
 		margin-bottom: m.fs(60, 0.5);
+
+		// モバイル対応
+		@include m.mq(md) {
+			margin-bottom: m.fsm(40);
+		}
 	}
 
 	&__text-row {
@@ -52,6 +90,12 @@
 		gap: m.fs(20, 0.4);
 		margin-bottom: m.fs(20, 0.4);
 		flex-wrap: wrap;
+
+		// モバイル対応
+		@include m.mq(md) {
+			gap: m.fsm(12);
+			margin-bottom: m.fsm(16);
+		}
 
 		&:last-child {
 			margin-bottom: 0;
@@ -65,5 +109,11 @@
 		color: #333;
 		font-family: v.$ja-sans;
 		line-height: 1.6;
+
+		// モバイル対応
+		@include m.mq(md) {
+			font-size: m.fsm(16);
+			line-height: 1.5;
+		}
 	}
 }
