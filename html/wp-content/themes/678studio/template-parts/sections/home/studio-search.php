@@ -136,7 +136,11 @@ $current_page = $shop_data['current_page'];
     <?php if ($total_pages > 1): ?>
     <div class="studio-search-section__pagination">
       <a href="?studio_page=<?php echo max(1, $current_page - 1); ?><?php echo $search_query ? '&studio_search=' . urlencode($search_query) : ''; ?>"
-        class="pagination-btn pagination-btn--prev <?php echo $current_page == 1 ? 'disabled' : ''; ?>">◀</a>
+        class="pagination-btn pagination-btn--prev <?php echo $current_page == 1 ? 'disabled' : ''; ?>">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
       <div class="pagination-numbers">
         <?php for ($i = 1; $i <= $total_pages; $i++): ?>
         <a href="?studio_page=<?php echo $i; ?><?php echo $search_query ? '&studio_search=' . urlencode($search_query) : ''; ?>"
@@ -144,40 +148,154 @@ $current_page = $shop_data['current_page'];
         <?php endfor; ?>
       </div>
       <a href="?studio_page=<?php echo min($total_pages, $current_page + 1); ?><?php echo $search_query ? '&studio_search=' . urlencode($search_query) : ''; ?>"
-        class="pagination-btn pagination-btn--next <?php echo $current_page == $total_pages ? 'disabled' : ''; ?>">▶</a>
+        class="pagination-btn pagination-btn--next <?php echo $current_page == $total_pages ? 'disabled' : ''; ?>">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
     </div>
     <?php endif; ?>
   </div>
 </section>
 
-<!-- JavaScript for dynamic search -->
+<!-- JavaScript for real-time AJAX search -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   const searchInput = document.getElementById('studio-search-input');
+  const cardsContainer = document.querySelector('.studio-search-section__cards');
+  const paginationContainer = document.querySelector('.studio-search-section__pagination');
   let debounceTimer;
+  let currentPage = 1;
 
+  // AJAX search function
+  function performAjaxSearch(query = '', page = 1) {
+    // Show loading state
+    cardsContainer.style.opacity = '0.6';
+    
+    const formData = new FormData();
+    formData.append('action', 'studio_search');
+    formData.append('search_query', query);
+    formData.append('page', page);
+    formData.append('nonce', '<?php echo wp_create_nonce('studio_search_nonce'); ?>');
+
+    fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        // Update cards
+        cardsContainer.innerHTML = data.data.cards_html;
+        
+        // Update pagination
+        if (paginationContainer) {
+          if (data.data.pagination_html.trim()) {
+            paginationContainer.innerHTML = data.data.pagination_html;
+            paginationContainer.style.display = 'flex';
+          } else {
+            paginationContainer.style.display = 'none';
+          }
+        }
+        
+        // Update current page
+        currentPage = data.data.current_page;
+        
+        // Re-attach pagination event listeners
+        attachPaginationListeners();
+        
+        // Restore opacity
+        cardsContainer.style.opacity = '1';
+        
+        console.log(`Found ${data.data.total_shops} shops, showing page ${data.data.current_page} of ${data.data.total_pages}`);
+      } else {
+        console.error('Search failed:', data.data.message);
+        cardsContainer.style.opacity = '1';
+      }
+    })
+    .catch(error => {
+      console.error('AJAX error:', error);
+      cardsContainer.style.opacity = '1';
+    });
+  }
+
+  // Attach pagination event listeners
+  function attachPaginationListeners() {
+    const paginationLinks = document.querySelectorAll('.studio-search-section__pagination a');
+    
+    paginationLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        if (this.dataset.disabled === 'true') {
+          return;
+        }
+        
+        const page = parseInt(this.dataset.page);
+        const query = searchInput.value.trim();
+        
+        performAjaxSearch(query, page);
+      });
+    });
+  }
+
+  // Search input events
   searchInput.addEventListener('input', function() {
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => {
-      const query = searchInput.value.trim();
-      const url = new URL(window.location);
-      if (query) {
-        url.searchParams.set('studio_search', query);
-        url.searchParams.set('studio_page', 1);
-      } else {
-        url.searchParams.delete('studio_search');
-        url.searchParams.set('studio_page', 1);
-      }
-      console.log('Redirecting to: ' + url.toString());
-      window.location.href = url.toString();
-    }, 500);
+      const query = this.value.trim();
+      currentPage = 1;
+      performAjaxSearch(query, 1);
+    }, 300); // Reduced debounce time for more responsive feel
   });
+
+  // Enter key for immediate search
+  searchInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      clearTimeout(debounceTimer);
+      const query = this.value.trim();
+      currentPage = 1;
+      performAjaxSearch(query, 1);
+    }
+  });
+
+  // Initial pagination setup
+  attachPaginationListeners();
+
+  // Add smooth transition CSS
+  cardsContainer.style.transition = 'opacity 0.3s ease';
 });
 </script>
 
 <style>
-.pagination-btn.disabled {
+.pagination-btn.disabled,
+.pagination-btn[data-disabled="true"] {
   opacity: 0.5;
   pointer-events: none;
+  cursor: not-allowed;
+}
+
+/* Force remove blue outline from search input */
+.studio-search-section__search-input,
+.studio-search-section__search-input:focus,
+.studio-search-section__search-input:active,
+.studio-search-section__search-input:focus-visible {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
+.studio-search-section__search-box,
+.studio-search-section__search-box:focus-within {
+  outline: none !important;
+}
+
+/* Loading animation */
+.studio-search-section__cards {
+  transition: opacity 0.3s ease;
 }
 </style>
