@@ -12,6 +12,124 @@ require_once get_template_directory() . '/inc/post-types/media-achievements.php'
 // Load ACF configurations
 require_once get_template_directory() . '/inc/acf/media-achievements.php';
 
+// AJAX handler for studio search
+function ajax_studio_search() {
+    // Verify nonce for security
+    if (!wp_verify_nonce($_POST['nonce'], 'studio_search_nonce')) {
+        wp_die('Security check failed');
+    }
+
+    $search_query = isset($_POST['search_query']) ? sanitize_text_field($_POST['search_query']) : '';
+    $page = isset($_POST['page']) ? max(1, intval($_POST['page'])) : 1;
+    $per_page = 6;
+
+    // Use the same function from studio-search.php
+    $api_url = 'https://678photo.com/api/get_all_studio_shop.php';
+
+    $response = wp_remote_get($api_url, [
+        'timeout' => 15, 
+        'sslverify' => false 
+    ]);
+
+    if (is_wp_error($response)) {
+        wp_send_json_error(['message' => $response->get_error_message()]);
+        return;
+    }
+
+    $body = wp_remote_retrieve_body($response);
+    $data = json_decode($body, true);
+    
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        wp_send_json_error(['message' => 'Invalid JSON response']);
+        return;
+    }
+    
+    if (!isset($data['shops']) || !is_array($data['shops'])) {
+        wp_send_json_error(['message' => 'No shops found in API response']);
+        return;
+    }
+
+    $filtered_shops = $data['shops'];
+    if (!empty($search_query)) {
+        $filtered_shops = array_filter($data['shops'], function($shop) use ($search_query) {
+            return stripos($shop['name'] ?? '', $search_query) !== false || 
+                   stripos($shop['nearest_station'] ?? '', $search_query) !== false;
+        });
+    }
+
+    $total_shops = count($filtered_shops);
+    $total_pages = max(1, ceil($total_shops / $per_page));
+    $page = min($page, $total_pages);
+    $offset = ($page - 1) * $per_page;
+    $shops = array_slice($filtered_shops, $offset, $per_page);
+
+    // Generate HTML for cards
+    ob_start();
+    if (empty($shops)): ?>
+        <p>検索結果が見つかりませんでした。</p>
+    <?php else:
+        foreach ($shops as $shop): ?>
+            <div class="studio-card">
+                <div class="studio-card__image">
+                    <img src="<?php echo !empty($shop['image_urls']) ? esc_url($shop['image_urls'][0]) : get_template_directory_uri() . '/assets/images/cardpic-sample.jpg'; ?>" alt="スタジオ写真">
+                    <div class="studio-card__location"><?php echo esc_html($shop['nearest_station'] ?? 'N/A'); ?></div>
+                </div>
+                <div class="studio-card__content">
+                    <h3 class="studio-card__name"><?php echo esc_html($shop['name'] ?? 'Unknown'); ?></h3>
+                    <div class="studio-card__details">
+                        <p class="studio-card__address"><?php echo esc_html($shop['address'] ?? 'N/A'); ?></p>
+                        <div class="studio-card__hours">
+                            <div class="studio-card__hour-item">営業時間：<?php echo esc_html($shop['business_hours'] ?? 'N/A'); ?></div>
+                            <div class="studio-card__hour-item">定休日：<?php echo esc_html($shop['holidays'] ?? 'N/A'); ?></div>
+                        </div>
+                    </div>
+                    <?php get_template_part('template-parts/components/camera-button', null, [
+                        'text' => '詳しく見る',
+                        'bg_color' => 'detail-card',
+                        'icon' => 'none',
+                        'class' => 'studio-card__contact-btn',
+                        'url' => home_url('/shop-detail/?shop_id=' . $shop['id'])
+                    ]); ?>
+                </div>
+            </div>
+        <?php endforeach;
+    endif;
+    $cards_html = ob_get_clean();
+
+    // Generate HTML for pagination
+    ob_start();
+    if ($total_pages > 1): ?>
+        <a href="#" class="pagination-btn pagination-btn--prev" data-page="<?php echo max(1, $page - 1); ?>" <?php echo $page == 1 ? 'data-disabled="true"' : ''; ?>>
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </a>
+        <div class="pagination-numbers">
+            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                <a href="#" class="<?php echo $i == $page ? 'active' : ''; ?>" data-page="<?php echo $i; ?>"><?php echo $i; ?></a>
+            <?php endfor; ?>
+        </div>
+        <a href="#" class="pagination-btn pagination-btn--next" data-page="<?php echo min($total_pages, $page + 1); ?>" <?php echo $page == $total_pages ? 'data-disabled="true"' : ''; ?>>
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </a>
+    <?php endif;
+    $pagination_html = ob_get_clean();
+
+    wp_send_json_success([
+        'cards_html' => $cards_html,
+        'pagination_html' => $pagination_html,
+        'total_shops' => $total_shops,
+        'current_page' => $page,
+        'total_pages' => $total_pages
+    ]);
+}
+
+// Register AJAX endpoints
+add_action('wp_ajax_studio_search', 'ajax_studio_search');
+add_action('wp_ajax_nopriv_studio_search', 'ajax_studio_search');
+
 // Enqueue styles and scripts
 function theme_678studio_styles() {
     // Use filemtime for cache busting in development
