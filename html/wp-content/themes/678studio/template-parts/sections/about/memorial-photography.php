@@ -29,7 +29,7 @@
           </div>
           <div class="memorial-photography__text-content">
             <p class="memorial-photography__description">
-              還暦・古希・傘寿などの人生の節目をお祝いする特別な記念撮影。<br>お一人での撮影はもちろん、ご夫婦での記念撮影も承ります。
+              還暦・古希・傘寿などの人生の節目をお祝いする特別な記念撮影。<br class="pc-only">お一人での撮影はもちろん、ご夫婦での記念撮影も承ります。
             </p>
           </div>
         </div>

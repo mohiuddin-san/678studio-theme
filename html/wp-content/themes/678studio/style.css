@@ -4720,6 +4720,12 @@ br.sp-only {
   grid-template-rows: calc(24px + (24) * (100vw - 768px) / (672)) calc(71.5px + (71.5) * (100vw - 768px) / (672)) calc(190px + (190) * (100vw - 768px) / (672)) calc(58.5px + (58.5) * (100vw - 768px) / (672)) calc(28.5px + (28.5) * (100vw - 768px) / (672));
   width: 100%;
 }
+@media (max-width: 767px) {
+  .portrait-photography__grid {
+    grid-template-columns: clamp(12px, 4.1666666667vw, 36px) clamp(230.4px, 80vw, 691.2px) clamp(33.6px, 11.6666666667vw, 100.8px) clamp(12px, 4.1666666667vw, 36px);
+    grid-template-rows: clamp(123.6px, 42.9166666667vw, 370.8px) clamp(28.8px, 10vw, 86.4px) clamp(230.4px, 80vw, 691.2px) clamp(28.8px, 10vw, 86.4px);
+  }
+}
 .portrait-photography__item {
   position: relative;
   overflow: hidden;
@@ -4743,17 +4749,40 @@ br.sp-only {
   align-items: flex-start;
   z-index: 2;
 }
+@media (max-width: 767px) {
+  .portrait-photography__item--1 {
+    grid-column: 2/4;
+    grid-row: 1/3;
+    z-index: 0;
+    -webkit-box-pack: start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+  }
+}
 .portrait-photography__item--2 {
   grid-column: 2/5;
   grid-row: 2/-1;
   background: #f5e9e0;
   z-index: 0;
 }
+@media (max-width: 767px) {
+  .portrait-photography__item--2 {
+    grid-column: 2/4;
+    grid-row: 3/-1;
+  }
+}
 .portrait-photography__item--3 {
   grid-column: 3/-1;
   grid-row: 1/5;
   background-color: #fcf6de;
   z-index: 1;
+}
+@media (max-width: 767px) {
+  .portrait-photography__item--3 {
+    grid-column: 1/3;
+    grid-row: 2/4;
+    z-index: 1;
+  }
 }
 .portrait-photography__image {
   width: 100%;
@@ -4780,6 +4809,11 @@ br.sp-only {
   align-items: flex-start;
   padding: calc(12px + (12) * (100vw - 768px) / (672));
 }
+@media (max-width: 767px) {
+  .portrait-photography__content {
+    padding: 0;
+  }
+}
 .portrait-photography__title-box {
   background-color: #3f3f3f;
   padding: calc(6px + (6) * (100vw - 768px) / (672)) calc(12px + (12) * (100vw - 768px) / (672));
@@ -4788,6 +4822,11 @@ br.sp-only {
   width: -webkit-fit-content;
   width: -moz-fit-content;
   width: fit-content;
+}
+@media (max-width: 767px) {
+  .portrait-photography__title-box {
+    margin-bottom: clamp(9.6px, 3.3333333333vw, 28.8px);
+  }
 }
 .portrait-photography__title {
   font-family: "Noto Sans JP", sans-serif;
@@ -4799,8 +4838,18 @@ br.sp-only {
   text-align: center;
   line-height: 1.2;
 }
+@media (max-width: 767px) {
+  .portrait-photography__title {
+    font-size: clamp(9.6px, 3.3333333333vw, 28.8px);
+  }
+}
 .portrait-photography__text-content {
   padding: 0 calc(7.5px + (7.5) * (100vw - 768px) / (672));
+}
+@media (max-width: 767px) {
+  .portrait-photography__text-content {
+    padding: clamp(7.2px, 2.5vw, 21.6px) 0;
+  }
 }
 .portrait-photography__description {
   font-family: "Noto Sans JP", sans-serif;
@@ -4810,6 +4859,12 @@ br.sp-only {
   line-height: 2.2;
   margin: 0 0 calc(10px + (10) * (100vw - 768px) / (672)) 0;
   text-align: left;
+}
+@media (max-width: 767px) {
+  .portrait-photography__description {
+    font-size: clamp(9.6px, 3.3333333333vw, 28.8px);
+    line-height: 1.5;
+  }
 }
 .portrait-photography__features {
   list-style: none;
@@ -4831,6 +4886,11 @@ br.sp-only {
   color: #333;
   line-height: 1.5;
 }
+@media (max-width: 767px) {
+  .portrait-photography__feature {
+    font-size: clamp(8.4px, 2.9166666667vw, 25.2px);
+  }
+}
 .portrait-photography__feature:last-child {
   margin-bottom: 0;
 }
@@ -4839,47 +4899,6 @@ br.sp-only {
   height: calc(10px + (10) * (100vw - 768px) / (672));
   -ms-flex-negative: 0;
   flex-shrink: 0;
-}
-@media (max-width: 1440px) {
-  .portrait-photography__grid {
-    grid-template-columns: calc(68px + (17) * (100vw - 768px) / (672)) calc(447.2px + (111.8) * (100vw - 768px) / (672)) calc(56px + (14) * (100vw - 768px) / (672)) 1fr;
-    grid-template-rows: calc(38.4px + (9.6) * (100vw - 768px) / (672)) calc(114.4px + (28.6) * (100vw - 768px) / (672)) calc(304px + (76) * (100vw - 768px) / (672)) calc(93.6px + (23.4) * (100vw - 768px) / (672)) calc(45.6px + (11.4) * (100vw - 768px) / (672));
-  }
-}
-@media (max-width: 1024px) {
-  .portrait-photography {
-    padding: calc(30px + (30) * (100vw - 768px) / (672)) 0;
-  }
-  .portrait-photography__grid {
-    grid-template-columns: calc(51px + (34) * (100vw - 768px) / (672)) calc(335.4px + (223.6) * (100vw - 768px) / (672)) calc(42px + (28) * (100vw - 768px) / (672)) 1fr;
-    grid-template-rows: calc(28.8px + (19.2) * (100vw - 768px) / (672)) calc(85.8px + (57.2) * (100vw - 768px) / (672)) calc(228px + (152) * (100vw - 768px) / (672)) calc(70.2px + (46.8) * (100vw - 768px) / (672)) calc(34.2px + (22.8) * (100vw - 768px) / (672));
-    gap: calc(6px + (9) * (100vw - 768px) / (672));
-  }
-  .portrait-photography__description, .portrait-photography__feature {
-    font-size: calc(7px + (7) * (100vw - 768px) / (672));
-  }
-}
-@media (max-width: 768px) {
-  .portrait-photography {
-    padding: calc(20px + (20) * (100vw - 768px) / (672)) 0;
-  }
-  .portrait-photography__grid {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: repeat(3, calc(120px + (80) * (100vw - 768px) / (672)));
-    gap: calc(4px + (6) * (100vw - 768px) / (672));
-  }
-  .portrait-photography__item--1 {
-    grid-column: 1/3;
-    grid-row: 2;
-  }
-  .portrait-photography__item--2 {
-    grid-column: 1/3;
-    grid-row: 2/4;
-  }
-  .portrait-photography__item--3 {
-    grid-column: 1/3;
-    grid-row: 1;
-  }
 }
 
 .family-photography {
@@ -4896,6 +4915,12 @@ br.sp-only {
   grid-template-rows: calc(24px + (24) * (100vw - 768px) / (672)) calc(71px + (71) * (100vw - 768px) / (672)) calc(121.5px + (121.5) * (100vw - 768px) / (672)) calc(95.5px + (95.5) * (100vw - 768px) / (672)) calc(40px + (40) * (100vw - 768px) / (672));
   width: 100%;
 }
+@media (max-width: 767px) {
+  .family-photography__grid {
+    grid-template-columns: clamp(12px, 4.1666666667vw, 36px) clamp(230.4px, 80vw, 691.2px) clamp(33.6px, 11.6666666667vw, 100.8px) clamp(12px, 4.1666666667vw, 36px);
+    grid-template-rows: clamp(90px, 31.25vw, 270px) clamp(28.8px, 10vw, 86.4px) clamp(230.4px, 80vw, 691.2px) clamp(28.8px, 10vw, 86.4px);
+  }
+}
 .family-photography__item {
   position: relative;
   overflow: hidden;
@@ -4906,11 +4931,24 @@ br.sp-only {
   background-color: #f5e9e0;
   z-index: 1;
 }
+@media (max-width: 767px) {
+  .family-photography__item--1 {
+    grid-column: 1/3;
+    grid-row: 2/4;
+    z-index: 1;
+  }
+}
 .family-photography__item--2 {
   grid-column: 2/5;
   grid-row: 2/-1;
   background: #fcf6de;
   z-index: 0;
+}
+@media (max-width: 767px) {
+  .family-photography__item--2 {
+    grid-column: 2/4;
+    grid-row: 3/-1;
+  }
 }
 .family-photography__item--3 {
   grid-column: 3/5;
@@ -4930,6 +4968,16 @@ br.sp-only {
   -ms-flex-align: start;
   align-items: flex-start;
   z-index: 2;
+}
+@media (max-width: 767px) {
+  .family-photography__item--3 {
+    grid-column: 2/4;
+    grid-row: 1/3;
+    z-index: 0;
+    -webkit-box-pack: start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+  }
 }
 .family-photography__image {
   width: 100%;
@@ -4954,6 +5002,11 @@ br.sp-only {
   align-items: flex-start;
   padding: calc(12px + (12) * (100vw - 768px) / (672));
 }
+@media (max-width: 767px) {
+  .family-photography__content {
+    padding: clamp(7.2px, 2.5vw, 21.6px) 0;
+  }
+}
 .family-photography__title-box {
   background-color: #3f3f3f;
   padding: calc(6px + (6) * (100vw - 768px) / (672)) calc(12px + (12) * (100vw - 768px) / (672));
@@ -4962,6 +5015,11 @@ br.sp-only {
   width: -webkit-fit-content;
   width: -moz-fit-content;
   width: fit-content;
+}
+@media (max-width: 767px) {
+  .family-photography__title-box {
+    margin-bottom: clamp(9.6px, 3.3333333333vw, 28.8px);
+  }
 }
 .family-photography__title {
   font-family: "Noto Sans JP", sans-serif;
@@ -4973,8 +5031,18 @@ br.sp-only {
   text-align: center;
   line-height: 1.2;
 }
+@media (max-width: 767px) {
+  .family-photography__title {
+    font-size: clamp(9.6px, 3.3333333333vw, 28.8px);
+  }
+}
 .family-photography__text-content {
   padding: 0 calc(7.5px + (7.5) * (100vw - 768px) / (672));
+}
+@media (max-width: 767px) {
+  .family-photography__text-content {
+    padding: clamp(7.2px, 2.5vw, 21.6px) 0;
+  }
 }
 .family-photography__description {
   font-family: "Noto Sans JP", sans-serif;
@@ -4984,6 +5052,12 @@ br.sp-only {
   line-height: 2.2;
   margin: 0;
   text-align: left;
+}
+@media (max-width: 767px) {
+  .family-photography__description {
+    font-size: clamp(9.6px, 3.3333333333vw, 28.8px);
+    line-height: 1.5;
+  }
 }
 
 .photography-plans {
