@@ -71,15 +71,25 @@ class FAQAccordion {
       // Get natural height of content
       const content = answer.querySelector('.faq-item__a-content');
       
-      // Temporarily set height to auto to get natural height
-      gsap.set(answer, { height: 'auto', opacity: 0 });
-      const naturalHeight = answer.offsetHeight;
+      // Temporarily make visible and get natural height
+      gsap.set(answer, { 
+        height: 'auto', 
+        opacity: 1,
+        visibility: 'visible',
+        position: 'static'
+      });
+      
+      // Force reflow to ensure accurate measurement
+      answer.offsetHeight;
+      const naturalHeight = answer.scrollHeight;
       
       // Debug: Log setup details
       if (window.wpDebugLogger) {
         window.wpDebugLogger.debug('FAQ Accordion: Item setup', {
           itemIndex: index,
           naturalHeight: naturalHeight,
+          offsetHeight: answer.offsetHeight,
+          scrollHeight: answer.scrollHeight,
           hasAnswer: !!answer,
           hasIcon: !!icon,
           hasContent: !!content
@@ -96,11 +106,12 @@ class FAQAccordion {
       item._answer = answer;
       item._icon = icon;
       item._isOpen = false;
+      item._naturalHeight = naturalHeight;
       
       // Create timeline for this item (paused initially)
       item._timeline = gsap.timeline({ paused: true });
       
-      // Animation timeline
+      // Animation timeline using stored natural height
       item._timeline
         .to(answer, {
           height: naturalHeight,
@@ -177,6 +188,29 @@ class FAQAccordion {
 
   openItem(item) {
     if (item._isOpen) return;
+
+    // Recalculate height in case content has changed
+    const answer = item._answer;
+    gsap.set(answer, { height: 'auto', opacity: 1 });
+    const currentHeight = answer.scrollHeight;
+    gsap.set(answer, { height: 0, opacity: 0 });
+    
+    // Update timeline with current height
+    item._timeline.clear();
+    item._timeline
+      .to(answer, {
+        height: currentHeight,
+        opacity: 1,
+        duration: 0.4,
+        ease: "power2.out"
+      })
+      .to(item._icon, {
+        scale: 1.1,
+        duration: 0.15,
+        ease: "power2.out",
+        yoyo: true,
+        repeat: 1
+      }, "<");
 
     // Change icon source to minus.svg at the start of animation
     const icon = item._icon;
