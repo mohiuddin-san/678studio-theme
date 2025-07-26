@@ -30,7 +30,7 @@
       <div class="contact-booking__button">
         <?php get_template_part('template-parts/components/camera-button', null, [
           'text' => 'お問い合わせ',
-          'url' => '/contact/',
+          'url' => home_url('/studio-inquery/'),
           'bg_color' => 'contact',
           'icon' => 'home'
         ]); ?>
@@ -40,7 +40,7 @@
       <div class="contact-booking__button">
         <?php get_template_part('template-parts/components/camera-button', null, [
           'text' => 'ご予約',
-          'url' => '/booking/',
+          'url' => home_url('/studio-reservation/'),
           'bg_color' => 'reservation',
           'icon' => 'people'
         ]); ?>
