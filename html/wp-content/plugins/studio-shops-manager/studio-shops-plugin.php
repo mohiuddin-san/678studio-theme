@@ -42,6 +42,30 @@ function studio_shops_admin_page() {
         $is_update_mode = isset($_POST['update_mode']) && $_POST['update_mode'] === 'on';
         
         if (isset($_POST['submit_shop']) && check_admin_referer('studio_shops_save', 'studio_shops_nonce')) {
+            // Debug: Log all POST data at the very start
+            error_log('=== FORM SUBMISSION DEBUG START ===');
+            error_log('POST data: ' . print_r($_POST, true));
+            error_log('FILES data: ' . print_r($_FILES, true));
+            error_log('Update mode: ' . ($is_update_mode ? 'YES' : 'NO'));
+            error_log('=== FORM SUBMISSION DEBUG END ===');
+            
+            // Debug display for admin  
+            $main_files_debug = 'NO FILES';
+            if (!empty($_FILES['gallery_images_flat']['name'][0])) {
+                $main_files_debug = count($_FILES['gallery_images_flat']['name']) . ' files';
+            } elseif (isset($_FILES['gallery_images_flat'])) {
+                $main_files_debug = 'FILES FIELD EXISTS BUT EMPTY: ' . print_r($_FILES['gallery_images_flat']['error'], true);
+            }
+            
+            echo '<div class="notice notice-info"><p><strong>Debug Info:</strong><br>';
+            echo 'Main gallery files: ' . $main_files_debug . '<br>';
+            echo 'Category files: ' . (!empty($_FILES['gallery_images']) ? 'YES' : 'NO') . '<br>';
+            echo 'Update mode: ' . ($is_update_mode ? 'YES' : 'NO') . '<br>';
+            echo 'Shop ID: ' . (isset($_POST['shop_id']) ? $_POST['shop_id'] : 'Not set') . '<br>';
+            echo 'Total POST data: ' . count($_POST) . ' fields<br>';
+            echo 'Category names: ' . (isset($_POST['category_name']) ? implode(', ', array_unique($_POST['category_name'])) : 'None') . ' (unique: ' . (isset($_POST['category_name']) ? count(array_unique($_POST['category_name'])) : '0') . ')';
+            echo '</p></div>';
+            
             $name = sanitize_text_field($_POST['name']);
             $address = sanitize_textarea_field($_POST['address']);
             $phone = sanitize_text_field($_POST['phone']);
@@ -71,6 +95,67 @@ function studio_shops_admin_page() {
             if ($is_update_mode && empty($shop_id)) {
                 echo '<div class="error"><p>' . esc_html__('Error: Shop ID is missing during update.', 'studio-shops') . '</p></div>';
             } else {
+                // Debug: Log $_FILES data
+                error_log('$_FILES data: ' . print_r($_FILES, true));
+
+                // Handle main gallery images FIRST
+                $main_gallery_images = [];
+                error_log('DEBUG: $_FILES[gallery_images_flat] = ' . print_r($_FILES['gallery_images_flat'] ?? 'NOT SET', true));
+                error_log('DEBUG: Full $_FILES dump: ' . print_r($_FILES, true));
+                
+                if (!empty($_FILES['gallery_images_flat'])) {
+                    error_log('Processing main gallery images...');
+                    $gallery_flat_files = $_FILES['gallery_images_flat'];
+                    
+                    // Check if it's a single file or multiple files
+                    if (is_array($gallery_flat_files['name'])) {
+                        // Multiple files
+                        for ($i = 0; $i < count($gallery_flat_files['name']); $i++) {
+                            error_log("Processing image $i: " . $gallery_flat_files['name'][$i] . ", error: " . $gallery_flat_files['error'][$i]);
+                            if ($gallery_flat_files['error'][$i] === UPLOAD_ERR_OK) {
+                                $tmp_name = $gallery_flat_files['tmp_name'][$i];
+                                if (file_exists($tmp_name)) {
+                                    $image_data = file_get_contents($tmp_name);
+                                    $image_type = $gallery_flat_files['type'][$i];
+                                    $base64_image = 'data:' . $image_type . ';base64,' . base64_encode($image_data);
+                                    $main_gallery_images[] = $base64_image;
+                                    error_log("Successfully processed image: " . $gallery_flat_files['name'][$i] . " (Size: " . strlen($base64_image) . " chars)");
+                                } else {
+                                    error_log("ERROR: Temp file does not exist: " . $tmp_name);
+                                }
+                            } else {
+                                error_log("ERROR: Upload error for file " . $gallery_flat_files['name'][$i] . ": " . $gallery_flat_files['error'][$i]);
+                            }
+                        }
+                    } else {
+                        // Single file
+                        error_log("Processing single image: " . $gallery_flat_files['name'] . ", error: " . $gallery_flat_files['error']);
+                        if ($gallery_flat_files['error'] === UPLOAD_ERR_OK) {
+                            $tmp_name = $gallery_flat_files['tmp_name'];
+                            if (file_exists($tmp_name)) {
+                                $image_data = file_get_contents($tmp_name);
+                                $image_type = $gallery_flat_files['type'];
+                                $base64_image = 'data:' . $image_type . ';base64,' . base64_encode($image_data);
+                                $main_gallery_images[] = $base64_image;
+                                error_log("Successfully processed single image: " . $gallery_flat_files['name'] . " (Size: " . strlen($base64_image) . " chars)");
+                            } else {
+                                error_log("ERROR: Single temp file does not exist: " . $tmp_name);
+                            }
+                        } else {
+                            error_log("ERROR: Upload error for single file " . $gallery_flat_files['name'] . ": " . $gallery_flat_files['error']);
+                        }
+                    }
+                    error_log("Total main gallery images processed: " . count($main_gallery_images));
+                } else {
+                    error_log('No main gallery images found in $_FILES[gallery_images_flat]');
+                    if (isset($_FILES['gallery_images_flat'])) {
+                        error_log('gallery_images_flat exists but no valid files: ' . print_r($_FILES['gallery_images_flat'], true));
+                    } else {
+                        error_log('gallery_images_flat field not found in $_FILES');
+                    }
+                }
+
+                // Now create the API data with the processed main gallery images
                 $api_data = [
                     'name' => $name,
                     'address' => $address,
@@ -80,7 +165,7 @@ function studio_shops_admin_page() {
                     'holidays' => $holidays,
                     'map_url' => $map_url,
                     'company_email' => $company_email,
-                    'gallery_images' => []
+                    'gallery_images' => $main_gallery_images  // メインギャラリー画像をここに含める
                 ];
 
                 // Include shop_id in the API payload for update mode
@@ -91,20 +176,6 @@ function studio_shops_admin_page() {
                 // Debug: Log the API payload
                 error_log('API Payload: ' . print_r($api_data, true));
 
-                // Handle main gallery images
-                if (!empty($_FILES['gallery_images_flat'])) {
-                    $gallery_flat_files = $_FILES['gallery_images_flat'];
-                    for ($i = 0; $i < count($gallery_flat_files['name']); $i++) {
-                        if ($gallery_flat_files['error'][$i] === UPLOAD_ERR_OK) {
-                            $tmp_name = $gallery_flat_files['tmp_name'][$i];
-                            $image_data = file_get_contents($tmp_name);
-                            $image_type = $gallery_flat_files['type'][$i];
-                            $base64_image = 'data:' . $image_type . ';base64,' . base64_encode($image_data);
-                            $api_data['gallery_images'][] = $base64_image;
-                        }
-                    }
-                }
-
                 echo '<div id="loader" style="padding:10px; font-weight:bold; color:blue;">Processing shop data, please wait...</div>';
 
                 // Send API request for shop creation or update
@@ -112,6 +183,9 @@ function studio_shops_admin_page() {
                     'https://678photo.com/api/update_shop_details.php' : 
                     'https://678photo.com/api/studio_shop.php';
 
+                error_log('Sending to API: ' . $api_url);
+                error_log('API Data being sent: ' . json_encode($api_data, JSON_UNESCAPED_UNICODE));
+                
                 $response = wp_remote_post($api_url, [
                     'method' => 'POST',
                     'headers' => ['Content-Type' => 'application/json'],
@@ -119,6 +193,7 @@ function studio_shops_admin_page() {
                     'timeout' => 60
                 ]);
 
+                error_log('Raw API Response: ' . print_r($response, true));
                 
                 if (is_wp_error($response)) {
                     $error_message = $response->get_error_message();
@@ -132,22 +207,65 @@ function studio_shops_admin_page() {
                         if ($shop_id) {
                             // Prepare category gallery payload
                             $category_gallery = [];
+                            $has_category_images = false;
+                            
+                            error_log('Processing categories: ' . print_r($category_names, true));
+                            error_log('Gallery files structure: ' . print_r($gallery_files, true));
+                            
+                            // Remove duplicate category names but preserve their associated files
+                            $unique_categories = [];
                             foreach ($category_names as $cat_index => $cat_name) {
                                 $cat_name = sanitize_text_field($cat_name);
+                                if (empty($cat_name)) {
+                                    error_log("Skipping empty category at index {$cat_index}");
+                                    continue;
+                                }
+                                
+                                // Store all indices for each unique category name
+                                if (!isset($unique_categories[$cat_name])) {
+                                    $unique_categories[$cat_name] = [];
+                                }
+                                $unique_categories[$cat_name][] = $cat_index;
+                            }
+                            
+                            error_log("Unique categories: " . print_r($unique_categories, true));
+                            
+                            foreach ($unique_categories as $cat_name => $indices) {
+                                error_log("Processing category: {$cat_name} with indices: " . implode(',', $indices));
+                                
+                                // Initialize category array
                                 $category_gallery[$cat_name] = [];
 
-                                if (isset($gallery_files['name'][$cat_index])) {
-                                    foreach ($gallery_files['name'][$cat_index] as $img_index => $img_name) {
-                                        if ($gallery_files['error'][$cat_index][$img_index] === UPLOAD_ERR_OK) {
-                                            $tmp_name = $gallery_files['tmp_name'][$cat_index][$img_index];
-                                            $image_data = file_get_contents($tmp_name);
-                                            $image_type = $gallery_files['type'][$cat_index][$img_index];
-                                            $base64_image = 'data:' . $image_type . ';base64,' . base64_encode($image_data);
-                                            $category_gallery[$cat_name][] = $base64_image;
+                                // Process all files for all indices of this category
+                                foreach ($indices as $cat_index) {
+                                    if (isset($gallery_files['name'][$cat_index]) && is_array($gallery_files['name'][$cat_index])) {
+                                        error_log("Found files for category {$cat_name} at index {$cat_index}: " . print_r($gallery_files['name'][$cat_index], true));
+                                        foreach ($gallery_files['name'][$cat_index] as $img_index => $img_name) {
+                                            error_log("Processing file {$img_index}: {$img_name}, error: " . $gallery_files['error'][$cat_index][$img_index]);
+                                            if (!empty($img_name) && $gallery_files['error'][$cat_index][$img_index] === UPLOAD_ERR_OK) {
+                                                $tmp_name = $gallery_files['tmp_name'][$cat_index][$img_index];
+                                                if (file_exists($tmp_name)) {
+                                                    $image_data = file_get_contents($tmp_name);
+                                                    $image_type = $gallery_files['type'][$cat_index][$img_index];
+                                                    $base64_image = 'data:' . $image_type . ';base64,' . base64_encode($image_data);
+                                                    $category_gallery[$cat_name][] = $base64_image;
+                                                    $has_category_images = true;
+                                                    error_log("SUCCESS: Category image processed: {$cat_name} - {$img_name} (Base64 length: " . strlen($base64_image) . ")");
+                                                } else {
+                                                    error_log("ERROR: Temp file not found: {$tmp_name}");
+                                                }
+                                            } else {
+                                                error_log("SKIP: File {$img_name} - empty name or upload error: " . ($gallery_files['error'][$cat_index][$img_index] ?? 'unknown'));
+                                            }
                                         }
+                                    } else {
+                                        error_log("No files found for category {$cat_name} at index {$cat_index}");
                                     }
                                 }
                             }
+                            
+                            error_log('Category gallery data: ' . print_r($category_gallery, true));
+                            error_log('Has category images: ' . ($has_category_images ? 'YES' : 'NO'));
 
                             $final_payload = [
                                 'shop_id' => $shop_id,
@@ -162,13 +280,32 @@ function studio_shops_admin_page() {
                                     ];
                                 }
                             }
+                            
+                            // Debug final payload
+                            error_log('Final payload gallery: ' . print_r($final_payload['gallery'], true));
+
+                            // Main gallery images are now included in the main API call above
+                            $main_success = true;
+                            if (!empty($main_gallery_images)) {
+                                error_log('Main gallery images included in main API call: ' . count($main_gallery_images) . ' images');
+                                error_log('First image sample: ' . substr($main_gallery_images[0], 0, 50) . '...');
+                            } else {
+                                error_log('No main gallery images to upload - array is empty');
+                            }
 
                             // Send category images to the appropriate API
                             $category_api_url = $is_update_mode ? 
                                 'https://678photo.com/api/update_shop_category_images.php' : 
                                 'https://678photo.com/api/category_image_uploader.php';
 
-                            if (!empty($final_payload['gallery'])) {
+                            if (!$has_category_images || empty($final_payload['gallery'])) {
+                                // No category images to process, skip API call
+                                error_log('Skipping category API call - has_category_images: ' . ($has_category_images ? 'YES' : 'NO') . ', gallery count: ' . count($final_payload['gallery']));
+                                $category_success = true;
+                            } else {
+                                error_log('Sending category images to API: ' . $category_api_url);
+                                error_log('Category payload: ' . print_r($final_payload, true));
+                                
                                 $image_response = wp_remote_post($category_api_url, [
                                     'method' => 'POST',
                                     'headers' => ['Content-Type' => 'application/json'],
@@ -177,17 +314,81 @@ function studio_shops_admin_page() {
                                 ]);
 
                                 if (is_wp_error($image_response)) {
+                                    error_log('Category image API error: ' . $image_response->get_error_message());
                                     echo '<div class="error"><p>' . esc_html__('Failed to upload category images: ' . $image_response->get_error_message(), 'studio-shops') . '</p></div>';
+                                    $category_success = false;
                                 } else {
                                     $image_response_body = json_decode(wp_remote_retrieve_body($image_response), true);
                                     error_log('Category Image API Response: ' . print_r($image_response_body, true));
-                                    if (isset($image_response_body['success']) && $image_response_body['success']) {
-                                        echo '<div class="updated"><p>' . esc_html__($is_update_mode ? 'Shop and category images updated successfully!' : 'Shop created and category images uploaded successfully!', 'studio-shops') . '</p></div>';
-                                    } else {
-                                        echo '<div class="error"><p>' . esc_html__('Failed to upload category images: ' . ($image_response_body['error'] ?? 'Unknown error'), 'studio-shops') . '</p></div>';
+                                    if (!isset($image_response_body['success']) || !$image_response_body['success']) {
+                                        $error_msg = $image_response_body['error'] ?? 'Unknown error';
+                                        error_log('Category image upload failed: ' . $error_msg);
+                                        
+                                        // Check if it's a duplicate entry error for update mode
+                                        if ($is_update_mode && strpos($error_msg, 'Duplicate entry') !== false) {
+                                            error_log('Duplicate entry detected, attempting to delete existing categories first...');
+                                            
+                                            // Try to delete existing category images before inserting new ones
+                                            $delete_payload = ['shop_id' => $shop_id];
+                                            $delete_response = wp_remote_post('https://678photo.com/api/delete_shop_category_images.php', [
+                                                'method' => 'POST',
+                                                'headers' => ['Content-Type' => 'application/json'],
+                                                'body' => json_encode($delete_payload),
+                                                'timeout' => 30
+                                            ]);
+                                            
+                                            if (!is_wp_error($delete_response)) {
+                                                $delete_response_body = json_decode(wp_remote_retrieve_body($delete_response), true);
+                                                error_log('Delete API Response: ' . print_r($delete_response_body, true));
+                                                
+                                                if (isset($delete_response_body['success']) && $delete_response_body['success']) {
+                                                    error_log('Category images deleted successfully, attempting re-upload...');
+                                                } else {
+                                                    error_log('Delete API failed: ' . ($delete_response_body['error'] ?? 'Unknown error'));  
+                                                }
+                                                
+                                                error_log('Attempting to re-upload category images after deletion...');
+                                                // Retry the category image upload
+                                                $retry_response = wp_remote_post($category_api_url, [
+                                                    'method' => 'POST',
+                                                    'headers' => ['Content-Type' => 'application/json'],
+                                                    'body' => json_encode($final_payload),
+                                                    'timeout' => 60
+                                                ]);
+                                                
+                                                if (!is_wp_error($retry_response)) {
+                                                    $retry_body = json_decode(wp_remote_retrieve_body($retry_response), true);
+                                                    error_log('Retry API Response: ' . print_r($retry_body, true));
+                                                    if (isset($retry_body['success']) && $retry_body['success']) {
+                                                        $category_success = true;
+                                                    } else {
+                                                        echo '<div class="error"><p>' . esc_html__('Failed to upload category images after retry: ' . ($retry_body['error'] ?? 'Unknown error'), 'studio-shops') . '</p></div>';
+                                                        $category_success = false;
+                                                    }
+                                                } else {
+                                                    echo '<div class="error"><p>' . esc_html__('Failed to retry category image upload: ' . $retry_response->get_error_message(), 'studio-shops') . '</p></div>';
+                                                    $category_success = false;
+                                                }
+                                            } else {
+                                                echo '<div class="error"><p>' . esc_html__('Failed to delete existing category images: ' . $delete_response->get_error_message(), 'studio-shops') . '</p></div>';
+                                                $category_success = false;
+                                            }
+                                        } else {
+                                            echo '<div class="error"><p>' . esc_html__('Failed to upload category images: ' . $error_msg, 'studio-shops') . '</p></div>';
+                                            $category_success = false;
+                                        }
                                     }
                                 }
-                            } else {
+                            }
+                            
+                            // Clear store detail page cache on successful update
+                            if ($is_update_mode && ($main_success || $category_success)) {
+                                delete_transient('studio_shop_' . $shop_id);
+                                error_log('Cleared cache for shop ID: ' . $shop_id);
+                            }
+                            
+                            // Show final success message
+                            if ($main_success && $category_success) {
                                 echo '<div class="updated"><p>' . esc_html__($is_update_mode ? 'Shop updated successfully!' : 'Shop created successfully!', 'studio-shops') . '</p></div>';
                             }
                         } else {
@@ -222,9 +423,23 @@ function studio_shops_admin_page() {
             <div id="main-gallery-preview"></div>
 
             <h3>Gallery by Category</h3>
+            <div id="existing-categories-section" style="margin-bottom: 20px;">
+                <h4>Existing Categories</h4>
+                <p><em>Select from existing categories or create new ones below:</em></p>
+                <div id="existing-categories-list" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
+                    <!-- Categories will be populated here -->
+                </div>
+            </div>
+            
             <div id="category-gallery-wrapper">
                 <div class="category-gallery-block" data-category-id="">
-                    <input type="text" name="category_name[]" placeholder="Category Name" required>
+                    <div class="category-input-section">
+                        <label>Category:</label>
+                        <select name="category_name[]" class="category-select" style="width: 200px; margin-right: 10px;">
+                            <option value="">Choose existing or type new...</option>
+                        </select>
+                        <input type="text" class="new-category-input" placeholder="Or type new category name" style="width: 200px; margin-left: 10px;">
+                    </div>
                     <input type="file" name="gallery_images[0][]" multiple accept="image/*" class="category-image-input">
                     <div class="category-preview" data-index="0"></div>
                     <button type="button" class="delete-category button">Delete Category</button>
@@ -276,6 +491,9 @@ function studio_shops_admin_page() {
         <script>
         document.addEventListener('DOMContentLoaded', () => {
             console.log('studio-shops-manager.js loaded');
+            
+            // Global variable to store all categories
+            window.allCategories = new Set();
 
             // Debug DOM structure
             console.log('update-mode:', document.getElementById('update-mode'));
@@ -296,9 +514,11 @@ function studio_shops_admin_page() {
             window.shopsData = [];
 
             // Function to reset the form completely
-            function resetForm() {
-                console.log('Resetting form...');
-                form.reset();
+            function resetForm(preserveFiles = false) {
+                console.log('Resetting form...', preserveFiles ? '(preserving files)' : '(clearing all)');
+                if (!preserveFiles) {
+                    form.reset();
+                }
                 document.getElementById('shop_id').value = '';
                 document.getElementById('name').value = '';
                 document.getElementById('address').value = '';
@@ -308,24 +528,69 @@ function studio_shops_admin_page() {
                 document.getElementById('holidays').value = '';
                 document.getElementById('map_url').value = '';
                 document.getElementById('company_email').value = '';
-                document.getElementById('main-gallery-input').value = '';
-                mainGalleryPreview.innerHTML = '<p>No images selected.</p>';
-                categoryGalleryWrapper.innerHTML = `
-                    <div class="category-gallery-block" data-category-id="">
-                        <input type="text" name="category_name[]" placeholder="Category Name" required>
-                        <input type="file" name="gallery_images[0][]" multiple accept="image/*" class="category-image-input">
-                        <div class="category-preview" data-index="0"></div>
-                        <button type="button" class="delete-category button">Delete Category</button>
-                    </div>
-                `;
+                
+                if (!preserveFiles) {
+                    document.getElementById('main-gallery-input').value = '';
+                    mainGalleryPreview.innerHTML = '<p>No images selected.</p>';
+                    categoryGalleryWrapper.innerHTML = `
+                        <div class="category-gallery-block" data-category-id="">
+                            <input type="text" name="category_name[]" placeholder="Category Name" required>
+                            <input type="file" name="gallery_images[0][]" multiple accept="image/*" class="category-image-input">
+                            <div class="category-preview" data-index="0"></div>
+                            <button type="button" class="delete-category button">Delete Category</button>
+                        </div>
+                    `;
+                }
             }
 
-            // Validate shop_id before form submission
+            // Validate shop_id and process categories before form submission
             form.addEventListener('submit', (e) => {
                 if (updateCheckbox.checked && !document.getElementById('shop_id').value) {
                     e.preventDefault();
                     alert('Please select a shop to update.');
+                    return;
                 }
+                
+                // Process category names: merge select and text inputs
+                const categoryBlocks = document.querySelectorAll('.category-gallery-block');
+                const processedCategories = [];
+                let hasError = false;
+                
+                categoryBlocks.forEach((block, index) => {
+                    const select = block.querySelector('.category-select');
+                    const textInput = block.querySelector('.new-category-input');
+                    let categoryName = '';
+                    
+                    if (select && select.value.trim()) {
+                        categoryName = select.value.trim();
+                    } else if (textInput && textInput.value.trim()) {
+                        categoryName = textInput.value.trim();
+                    }
+                    
+                    if (categoryName) {
+                        // Check for duplicates
+                        if (processedCategories.includes(categoryName)) {
+                            alert(`Error: Category "${categoryName}" is duplicated. Please use unique category names.`);
+                            hasError = true;
+                            return;
+                        }
+                        processedCategories.push(categoryName);
+                        
+                        // Update the hidden input for form submission
+                        const hiddenInput = document.createElement('input');
+                        hiddenInput.type = 'hidden';
+                        hiddenInput.name = 'category_name[]';
+                        hiddenInput.value = categoryName;
+                        form.appendChild(hiddenInput);
+                    }
+                });
+                
+                if (hasError) {
+                    e.preventDefault();
+                    return;
+                }
+                
+                console.log('Processed categories for submission:', processedCategories);
             });
 
             // Fetch shop list
@@ -353,7 +618,7 @@ function studio_shops_admin_page() {
                 }
             }
 
-            // Populate shop dropdown
+            // Populate shop dropdown and collect categories
             function populateDropdown(shops) {
                 console.log('Populating dropdown with shops:', shops);
                 if (!shopSelect) {
@@ -361,19 +626,85 @@ function studio_shops_admin_page() {
                     return;
                 }
                 shopSelect.innerHTML = '<option value="">Select a Shop</option>';
+                
+                // Collect all categories from all shops
+                window.allCategories.clear();
+                
                 shops.forEach(shop => {
                     const option = document.createElement('option');
                     option.value = shop.id;
                     option.textContent = shop.name;
                     shopSelect.appendChild(option);
+                    
+                    // Debug category_images structure
+                    console.log(`Shop ${shop.id} (${shop.name}) category_images:`, shop.category_images, typeof shop.category_images, Array.isArray(shop.category_images));
+                    
+                    // Collect categories from this shop
+                    if (shop.category_images && typeof shop.category_images === 'object' && !Array.isArray(shop.category_images)) {
+                        Object.keys(shop.category_images).forEach(category => {
+                            if (category && category.trim()) {
+                                console.log(`Adding category: "${category.trim()}"`);
+                                window.allCategories.add(category.trim());
+                            }
+                        });
+                    }
                 });
+                
                 console.log('Dropdown populated:', shopSelect);
+                console.log('All categories collected:', Array.from(window.allCategories));
+                
+                // Wait a bit for DOM to be ready before updating selectors
+                setTimeout(() => {
+                    updateCategorySelectors();
+                }, 200);
+            }
+            
+            // Update category selector UI
+            function updateCategorySelectors() {
+                console.log('Updating category selectors...');
+                console.log('Available categories:', Array.from(window.allCategories));
+                console.log('Category selectors found:', document.querySelectorAll('.category-select').length);
+                
+                // Update existing categories display
+                const existingCategoriesList = document.getElementById('existing-categories-list');
+                if (existingCategoriesList) {
+                    existingCategoriesList.innerHTML = '';
+                    
+                    if (window.allCategories.size === 0) {
+                        existingCategoriesList.innerHTML = '<p><em>No existing categories found</em></p>';
+                    } else {
+                        Array.from(window.allCategories).sort().forEach(category => {
+                            const categoryTag = document.createElement('span');
+                            categoryTag.style.cssText = 'background: #e7f3ff; padding: 5px 10px; border-radius: 15px; font-size: 12px; border: 1px solid #b3d9ff;';
+                            categoryTag.textContent = category;
+                            existingCategoriesList.appendChild(categoryTag);
+                        });
+                    }
+                }
+                
+                // Update all category select dropdowns
+                document.querySelectorAll('.category-select').forEach((select, index) => {
+                    console.log(`Updating select ${index}:`, select);
+                    const currentValue = select.value;
+                    select.innerHTML = '<option value="">Choose existing or type new...</option>';
+                    
+                    Array.from(window.allCategories).sort().forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category;
+                        option.textContent = category;
+                        if (currentValue === category) {
+                            option.selected = true;
+                        }
+                        select.appendChild(option);
+                        console.log(`Added option: ${category}`);
+                    });
+                });
             }
 
             // Populate form with shop details
             function updateShopDetails(shopId) {
                 console.log('Updating shop details for shopId:', shopId);
-                resetForm(); // Reset form before populating new data
+                resetForm(true); // Reset form but preserve files
                 document.getElementById('shop_id').value = shopId;
 
                 if (!shopId) {
@@ -405,8 +736,8 @@ function studio_shops_admin_page() {
                         const div = document.createElement('div');
                         div.classList.add('image-preview');
                         div.innerHTML = `
-                            <img src="${imageUrl}" alt="Main Gallery Image">
-                            <button type="button" class="remove-image" data-type="main" data-index="${index}">×</button>
+                            <img src="${imageUrl}" alt="Main Gallery Image" style="width: 100px; height: 100px; object-fit: cover; border: 1px solid #ccc; border-radius: 4px;">
+                            <button type="button" class="remove-main-image" data-type="main" data-shop-id="${shop.id}" data-image-url="${imageUrl}" data-index="${index}">×</button>
                         `;
                         mainGalleryPreview.appendChild(div);
                     });
@@ -423,7 +754,13 @@ function studio_shops_admin_page() {
                         block.classList.add('category-gallery-block');
                         block.dataset.categoryId = ''; // Fetch category IDs if available from API
                         block.innerHTML = `
-                            <input type="text" name="category_name[]" value="${categoryName}" placeholder="Category Name" required>
+                            <div class="category-input-section">
+                                <label>Category:</label>
+                                <select name="category_name[]" class="category-select" style="width: 200px; margin-right: 10px;">
+                                    <option value="${categoryName}" selected>${categoryName}</option>
+                                </select>
+                                <input type="text" class="new-category-input" placeholder="Or type new category name" style="width: 200px; margin-left: 10px; display: none;">
+                            </div>
                             <input type="file" name="gallery_images[${index}][]" multiple accept="image/*" class="category-image-input">
                             <div class="category-preview" data-index="${index}"></div>
                             <button type="button" class="delete-category button">Delete Category</button>
@@ -444,17 +781,40 @@ function studio_shops_admin_page() {
                         } else {
                             preview.innerHTML = '<p>No images available for this category.</p>';
                         }
+                        
+                        // Setup event listeners for this block
+                        setupCategoryBlockListeners(block);
                         index++;
                     }
+                    
+                    // Update category selectors after populating existing categories
+                    setTimeout(() => {
+                        updateCategorySelectors();
+                    }, 100);
                 } else {
                     categoryGalleryWrapper.innerHTML = `
                         <div class="category-gallery-block" data-category-id="">
-                            <input type="text" name="category_name[]" placeholder="Category Name" required>
+                            <div class="category-input-section">
+                                <label>Category:</label>
+                                <select name="category_name[]" class="category-select" style="width: 200px; margin-right: 10px;">
+                                    <option value="">Choose existing or type new...</option>
+                                </select>
+                                <input type="text" class="new-category-input" placeholder="Or type new category name" style="width: 200px; margin-left: 10px;">
+                            </div>
                             <input type="file" name="gallery_images[0][]" multiple accept="image/*" class="category-image-input">
                             <div class="category-preview" data-index="0"></div>
                             <button type="button" class="delete-category button">Delete Category</button>
                         </div>
                     `;
+                    
+                    // Setup listeners for the default block
+                    setTimeout(() => {
+                        const defaultBlock = categoryGalleryWrapper.querySelector('.category-gallery-block');
+                        if (defaultBlock) {
+                            setupCategoryBlockListeners(defaultBlock);
+                            updateCategorySelectors();
+                        }
+                    }, 100);
                 }
             }
 
@@ -481,12 +841,59 @@ function studio_shops_admin_page() {
                 block.classList.add('category-gallery-block');
                 block.dataset.categoryId = '';
                 block.innerHTML = `
-                    <input type="text" name="category_name[]" placeholder="Category Name" required>
+                    <div class="category-input-section">
+                        <label>Category:</label>
+                        <select name="category_name[]" class="category-select" style="width: 200px; margin-right: 10px;">
+                            <option value="">Choose existing or type new...</option>
+                        </select>
+                        <input type="text" class="new-category-input" placeholder="Or type new category name" style="width: 200px; margin-left: 10px;">
+                    </div>
                     <input type="file" name="gallery_images[${index}][]" multiple accept="image/*" class="category-image-input">
                     <div class="category-preview" data-index="${index}"></div>
                     <button type="button" class="delete-category button">Delete Category</button>
                 `;
                 categoryGalleryWrapper.appendChild(block);
+                
+                // Add event listeners for the new block first
+                setupCategoryBlockListeners(block);
+                
+                // Then update the new category select with existing categories
+                setTimeout(() => {
+                    updateCategorySelectors();
+                }, 100);
+            });
+            
+            // Setup event listeners for category input interaction
+            function setupCategoryBlockListeners(block) {
+                const select = block.querySelector('.category-select');
+                const textInput = block.querySelector('.new-category-input');
+                
+                // When select changes, clear text input
+                select.addEventListener('change', () => {
+                    if (select.value) {
+                        textInput.value = '';
+                        textInput.style.display = 'none';
+                    } else {
+                        textInput.style.display = 'inline-block';
+                    }
+                });
+                
+                // When text input gets focus, clear select
+                textInput.addEventListener('focus', () => {
+                    select.value = '';
+                });
+                
+                // Show/hide text input based on select value
+                if (select.value) {
+                    textInput.style.display = 'none';
+                } else {
+                    textInput.style.display = 'inline-block';
+                }
+            }
+            
+            // Setup listeners for initial category blocks
+            document.querySelectorAll('.category-gallery-block').forEach(block => {
+                setupCategoryBlockListeners(block);
             });
 
             // Main gallery preview for new uploads
@@ -537,7 +944,48 @@ function studio_shops_admin_page() {
                 }
             });
 
-            // Delete image
+            // Delete main gallery image
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('remove-main-image')) {
+                    const shopId = e.target.getAttribute('data-shop-id');
+                    const imageUrl = e.target.getAttribute('data-image-url');
+                    const imageIndex = e.target.getAttribute('data-index');
+                    
+                    if (confirm('Are you sure you want to delete this main gallery image?')) {
+                        // Call API to delete main gallery image
+                        fetch('https://678photo.com/api/delete_shop_main_image.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ 
+                                shop_id: shopId, 
+                                image_url: imageUrl,
+                                image_index: imageIndex 
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                e.target.closest('.image-preview').remove();
+                                alert('Main gallery image deleted successfully');
+                                
+                                // Update the shop data in memory
+                                const shop = window.shopsData.find(s => s.id == shopId);
+                                if (shop && shop.image_urls) {
+                                    shop.image_urls.splice(imageIndex, 1);
+                                }
+                            } else {
+                                alert('Failed to delete main gallery image: ' + (data.error || 'Unknown error'));
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error deleting main gallery image:', error);
+                            alert('Failed to delete main gallery image');
+                        });
+                    }
+                }
+            });
+
+            // Delete category image
             document.addEventListener('click', (e) => {
                 if (e.target.classList.contains('remove-image')) {
                     const imageId = e.target.dataset.imageId;
@@ -608,8 +1056,15 @@ function studio_shops_admin_page() {
                 });
             }
 
-            // Fetch shops on page load
-            fetchShops();
+            // Initialize category block listeners first
+            setTimeout(() => {
+                document.querySelectorAll('.category-gallery-block').forEach(block => {
+                    setupCategoryBlockListeners(block);
+                });
+                
+                // Then fetch shops and update selectors
+                fetchShops();
+            }, 100);
         });
         </script>
     </div>
