@@ -40,6 +40,11 @@
 html {
   font-size: 100%;
   line-height: 1.6;
+  scroll-behavior: smooth;
+}
+
+[id] {
+  scroll-margin-top: 100px;
 }
 
 body {
@@ -1236,17 +1241,37 @@ br.sp-only {
   position: relative;
   z-index: 10;
 }
+@media (max-width: 767px) {
+  .contact-booking {
+    padding: clamp(36px, 12.5vw, 108px) 0;
+  }
+}
 .contact-booking__container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 calc(10px + (10) * (100vw - 768px) / (672));
 }
+@media (max-width: 767px) {
+  .contact-booking__container {
+    padding: 0 clamp(12px, 4.1666666667vw, 36px);
+  }
+}
 .contact-booking__header {
   text-align: center;
   margin-bottom: calc(30px + (30) * (100vw - 768px) / (672));
 }
+@media (max-width: 767px) {
+  .contact-booking__header {
+    margin-bottom: clamp(24px, 8.3333333333vw, 72px);
+  }
+}
 .contact-booking__label {
   margin-bottom: calc(32px + (32) * (100vw - 768px) / (672));
+}
+@media (max-width: 767px) {
+  .contact-booking__label {
+    margin-bottom: clamp(24px, 8.3333333333vw, 72px);
+  }
 }
 .contact-booking__label-text {
   display: inline-block;
@@ -1259,6 +1284,12 @@ br.sp-only {
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
+@media (max-width: 767px) {
+  .contact-booking__label-text {
+    font-size: clamp(7.2px, 2.5vw, 21.6px);
+    padding: clamp(7.2px, 2.5vw, 21.6px) clamp(12px, 4.1666666667vw, 36px);
+  }
+}
 .contact-booking__title {
   font-size: calc(19.53px + (19.53) * (100vw - 768px) / (672));
   font-weight: 700;
@@ -1267,9 +1298,11 @@ br.sp-only {
   line-height: 1.4;
   letter-spacing: 0.1em;
 }
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .contact-booking__title {
-    font-size: calc(14px + (14) * (100vw - 768px) / (672));
+    font-size: clamp(14.4px, 5vw, 43.2px);
+    margin-bottom: clamp(14.4px, 5vw, 43.2px);
+    letter-spacing: 0.05em;
   }
 }
 .contact-booking__description {
@@ -1278,6 +1311,12 @@ br.sp-only {
   font-family: "Noto Sans JP", sans-serif;
   line-height: 1.6;
   margin: 0;
+}
+@media (max-width: 767px) {
+  .contact-booking__description {
+    font-size: clamp(8.4px, 2.9166666667vw, 25.2px);
+    line-height: 1.5;
+  }
 }
 .contact-booking__buttons {
   display: -webkit-box;
@@ -1293,13 +1332,14 @@ br.sp-only {
   -ms-flex-wrap: wrap;
   flex-wrap: wrap;
 }
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .contact-booking__buttons {
-    gap: calc(12px + (12) * (100vw - 768px) / (672));
+    gap: clamp(12px, 4.1666666667vw, 36px);
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
     -ms-flex-direction: column;
     flex-direction: column;
+    width: 100%;
   }
 }
 .footer {
@@ -5759,3 +5799,4 @@ br.sp-only {
   height: auto;
   opacity: 1;
 }
+/*# sourceMappingURL=style.css.map */

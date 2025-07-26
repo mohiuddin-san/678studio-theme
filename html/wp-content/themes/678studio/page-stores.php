@@ -1,7 +1,8 @@
 <?php
-/*
-Template Name: Stores List
-*/
+/**
+ * Template Name: 店舗一覧
+ * Description: 写真館の店舗一覧ページ
+ */
 
 get_header();
 ?>

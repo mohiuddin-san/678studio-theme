@@ -1,6 +1,7 @@
 <?php
 /**
- * About Page Template - 678撮影について
+ * Template Name: 678撮影について
+ * Description: 678撮影についてのページテンプレート
  */
 
 get_header();
@@ -78,13 +79,14 @@ get_header();
   <!-- About Link Section -->
   <?php get_template_part('template-parts/components/about-link', null, [
     'buttons' => [
-      ['text' => '利用シーン', 'url' => '#'],
-      ['text' => '撮影プラン', 'url' => '#'],
-      ['text' => '撮影の流れ', 'url' => '#']
+      ['text' => '利用シーン', 'url' => '#usage-scenes'],
+      ['text' => '撮影プラン', 'url' => '#photography-plans'],
+      ['text' => '撮影の流れ', 'url' => '#photography-flow']
     ]
   ]); ?>
 
-  <!-- Memorial Photography Section -->
+  <!-- Memorial Photography Section (利用シーン) -->
+  <div id="usage-scenes"></div>
   <?php get_template_part('template-parts/sections/about/memorial-photography', null, [
     'title' => '記念撮影',
     'description' => '特別な瞬間を美しく残します',
@@ -103,16 +105,14 @@ get_header();
   <?php get_template_part('template-parts/sections/about/family-photography'); ?>
 
   <!-- Photography Plans Section -->
-  <?php get_template_part('template-parts/sections/about/photography
-  -plans'); ?>
-
-  <!-- Photography Plans Section -->
+  <div id="photography-plans"></div>
   <?php get_template_part('template-parts/sections/about/photography-plans'); ?>
 
   <!-- Options Section -->
   <?php get_template_part('template-parts/sections/about/options'); ?>
 
   <!-- Photography Flow Section -->
+  <div id="photography-flow"></div>
   <?php get_template_part('template-parts/sections/about/photography-flow'); ?>
 
   <!-- FAQ Section -->

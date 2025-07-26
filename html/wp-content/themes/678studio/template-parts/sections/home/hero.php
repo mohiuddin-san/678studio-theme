@@ -19,7 +19,7 @@
       <div class="hero-section__content">
         <?php get_template_part('template-parts/components/camera-button', null, [
               'text' => '写真館を探す',
-              'url' => home_url('/search'),
+              'url' => home_url('/stores'),
               'class' => 'hero-section__button',
               'bg_color' => 'white'
           ]); ?>

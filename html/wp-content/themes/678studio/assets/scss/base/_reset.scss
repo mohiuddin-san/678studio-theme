@@ -21,6 +21,12 @@
 html {
 	font-size: 100%;
 	line-height: 1.6;
+	scroll-behavior: smooth;
+}
+
+// アンカーリンクのオフセット調整（ヘッダー固定対応）
+[id] {
+	scroll-margin-top: 100px;
 }
 
 body {
