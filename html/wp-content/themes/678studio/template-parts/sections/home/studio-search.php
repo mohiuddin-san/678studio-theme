@@ -124,7 +124,7 @@ $current_page = $shop_data['current_page'];
                   'bg_color' => 'detail-card',
                   'icon' => 'none',
                   'class' => 'studio-card__contact-btn',
-                  'link' => esc_url($shop['map_url'] ?? '')
+                  'url' => home_url('/store-detail/?shop_id=' . $shop['id'])
               ]); ?>
         </div>
       </div>

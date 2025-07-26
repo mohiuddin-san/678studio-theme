@@ -6,8 +6,17 @@
 
 get_header();
 
-// Function to fetch shop data by ID
+// Function to fetch shop data by ID with caching
 function fetch_studio_shop_by_id($shop_id) {
+    // Check cache first
+    $cache_key = 'studio_shop_' . $shop_id;
+    $cached_shop = get_transient($cache_key);
+    
+    if ($cached_shop !== false) {
+        return ['shop' => $cached_shop, 'error' => null];
+    }
+    
+    // Fetch from API if not cached
     $api_url = 'https://678photo.com/api/get_all_studio_shop.php';
 
     $response = wp_remote_get($api_url, [
@@ -26,11 +35,19 @@ function fetch_studio_shop_by_id($shop_id) {
     if (!isset($data['shops']) || !is_array($data['shops'])) {
         return ['shop' => null, 'error' => 'No shops found in API response'];
     }
+    
+    // Cache all shops for future use
     foreach ($data['shops'] as $shop) {
+        set_transient('studio_shop_' . $shop['id'], $shop, HOUR_IN_SECONDS);
         if ($shop['id'] == $shop_id) {
-            return ['shop' => $shop, 'error' => null];
+            $found_shop = $shop;
         }
     }
+    
+    if (isset($found_shop)) {
+        return ['shop' => $found_shop, 'error' => null];
+    }
+    
     return ['shop' => null, 'error' => 'Shop not found'];
 }
 
@@ -59,9 +76,21 @@ function get_map_embed_url($shop) {
 
 // Get shop ID from URL
 $shop_id = isset($_GET['shop_id']) ? intval($_GET['shop_id']) : 0;
+
+// Validate shop ID
+if ($shop_id <= 0) {
+    wp_die('不正な店舗IDです。', 'エラー', ['response' => 404]);
+}
+
 $shop_data = fetch_studio_shop_by_id($shop_id);
 $shop = $shop_data['shop'];
-$map_embed_url = $shop ? get_map_embed_url($shop) : null;
+
+// Handle shop not found
+if (!$shop) {
+    wp_die('指定された店舗が見つかりませんでした。', 'エラー', ['response' => 404]);
+}
+
+$map_embed_url = get_map_embed_url($shop);
 
 // Debugging output for admins
 // if (current_user_can('administrator')) {
@@ -75,7 +104,7 @@ $map_embed_url = $shop ? get_map_embed_url($shop) : null;
 // }
 // ?>
 
-<main class="main-content single-store">
+<main class="main-content single-store" data-shop-id="<?php echo esc_attr($shop_id); ?>">
 
   <!-- Breadcrumb -->
   <?php get_template_part('template-parts/components/breadcrumb', null, [
