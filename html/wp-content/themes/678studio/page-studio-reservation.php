@@ -1,7 +1,8 @@
 <?php
-/*
-Template Name: スタジオ予約
-*/
+/**
+ * Template Name: スタジオ予約
+ * Description: 写真館の予約ページ
+ */
 ?>
 
 <?php get_header(); ?>

@@ -1,7 +1,8 @@
 <?php
-/*
-Template Name: スタジオお問い合わせ
-*/
+/**
+ * Template Name: スタジオお問い合わせ
+ * Description: 写真館のお問い合わせページ
+ */
 ?>
 
 <?php get_header(); ?>

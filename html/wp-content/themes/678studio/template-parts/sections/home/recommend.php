@@ -36,8 +36,8 @@
   <!-- ボタンエリア -->
   <div class="recommend-section__button">
     <?php get_template_part('template-parts/components/camera-button', null, [
-          'text' => '写真館を探す',
-          'url' => '#',
+          'text' => '詳しく見る',
+          'url' => '/about/',
           'bg_color' => 'blue'
       ]); ?>
   </div>

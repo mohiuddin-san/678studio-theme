@@ -1,7 +1,8 @@
 <?php
-/*
-Template Name: Store Detail Test
-*/
+/**
+ * Template Name: 店舗詳細
+ * Description: 写真館の店舗詳細ページテンプレート
+ */
 
 get_header();
 
