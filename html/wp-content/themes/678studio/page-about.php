@@ -106,6 +106,9 @@ get_header();
   <?php get_template_part('template-parts/sections/about/photography
   -plans'); ?>
 
+  <!-- Photography Plans Section -->
+  <?php get_template_part('template-parts/sections/about/photography-plans'); ?>
+
   <!-- Options Section -->
   <?php get_template_part('template-parts/sections/about/options'); ?>
 

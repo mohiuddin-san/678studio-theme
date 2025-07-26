@@ -105,16 +105,18 @@
 		}
 	}
 
-	// Title Box (Gray box)
+	// Title Box (Gray box) - title-sectionコンポーネントに合わせたスタイル
 	&__title-box {
 		background-color: #3f3f3f;
 		padding: m.fs(12, 0.5) m.fs(24, 0.5);
 		margin-bottom: m.fs(20, 0.5);
 		display: inline-block;
 		width: fit-content;
-
+		border-radius: 0;
+		
 		@include m.mq(md) {
 			margin-bottom: m.fsm(16);
+			padding: m.fsm(10) m.fsm(20);
 		}
 	}
 
