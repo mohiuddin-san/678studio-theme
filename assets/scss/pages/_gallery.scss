@@ -1,0 +1,314 @@
+// Gallery Page Styles
+// =============================================================================
+
+@use '../base/mixins' as m;
+@use '../base/variables' as v;
+
+// Gallery Header
+// =============================================================================
+.gallery-header {
+	width: 100%;
+	padding: m.fs(80, 0.5) m.fs(80, 0.5);
+
+	@include m.mq(md) {
+		padding: m.fsm(40) m.fsm(20);
+	}
+
+	&__inner {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		position: relative;
+
+		@include m.mq(md) {
+			flex-direction: column;
+			gap: m.fsm(16);
+		}
+	}
+
+	&__title {
+		font-size: m.fs(16);
+		font-family: v.$ja-sans;
+		font-weight: 700;
+		letter-spacing: 0.12em;
+		background-color: #333;
+		color: #fff;
+		padding: 12px 40px;
+		margin: 0;
+		display: inline-block;
+
+		@include m.mq(md) {
+			font-size: m.fsm(14);
+			padding: m.fsm(12) m.fsm(20);
+			margin-bottom: m.fsm(20);
+		}
+	}
+
+	&__filters {
+		display: flex;
+		gap: m.fs(16, 0.5);
+		position: absolute;
+		right: 0;
+		top: 50%;
+		transform: translateY(-50%);
+
+		@include m.mq(md) {
+			position: static;
+			transform: none;
+			flex-direction: column;
+			gap: m.fsm(12);
+			width: 100%;
+		}
+	}
+}
+
+.gallery-select-wrapper {
+	position: relative;
+
+	&::after {
+		content: '';
+		position: absolute;
+		top: 50%;
+		right: m.fs(20, 0.5);
+		transform: translateY(-50%);
+		width: 12px;
+		height: 12px;
+		background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="%23fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: contain;
+		pointer-events: none;
+
+		@include m.mq(md) {
+			right: m.fsm(16);
+			width: m.fsm(10);
+			height: m.fsm(10);
+		}
+	}
+}
+
+.gallery-select {
+	appearance: none;
+	background-color: #a5c3cf;
+	color: #fff;
+	border: none;
+	border-radius: m.fs(30, 0.5);
+	padding: m.fs(14, 0.5) m.fs(50, 0.5) m.fs(14, 0.5) m.fs(24, 0.5);
+	font-size: m.fs(16);
+	font-weight: 500;
+	min-width: m.fs(200, 0.5);
+	cursor: pointer;
+	transition: all 0.3s ease;
+
+	@include m.mq(md) {
+		width: 100%;
+		min-width: unset;
+		padding: m.fsm(14) m.fsm(40) m.fsm(14) m.fsm(16);
+		font-size: m.fsm(14);
+		border-radius: m.fsm(25);
+	}
+
+	&:hover {
+		background-color: darken(#e8f2f7, 5%);
+	}
+
+	&:focus {
+		outline: none;
+	}
+
+	option {
+		padding: 10px;
+	}
+}
+
+// Gallery Grid
+// =============================================================================
+.gallery-grid {
+	padding: 0 m.fs(80, 0.5);
+
+	&__inner {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: m.fs(24, 0.5);
+
+		@include m.mq(lg) {
+			grid-template-columns: repeat(3, 1fr);
+		}
+
+		@include m.mq(md) {
+			grid-template-columns: repeat(2, 1fr);
+			gap: m.fs(16, 0.5);
+		}
+
+		@include m.mq(sm) {
+			grid-template-columns: 1fr;
+			gap: m.fs(12, 0.5);
+		}
+	}
+
+	&__item {
+		position: relative;
+		overflow: hidden;
+		cursor: pointer;
+		z-index: 1;
+
+		img {
+			width: 100%;
+			height: auto;
+			display: block;
+			transition: transform 0.3s ease;
+		}
+
+		&:hover,
+		&:active {
+			img {
+				transform: scale(1.05);
+			}
+
+			.gallery-grid__overlay {
+				opacity: 1;
+			}
+		}
+
+		// スマホでもタップ時の効果を有効にする
+		@include m.mq(md) {
+			&:active {
+				img {
+					transform: scale(1.05);
+				}
+
+				.gallery-grid__overlay {
+					opacity: 1;
+				}
+			}
+		}
+	}
+
+	&__overlay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0, 0, 0, 0.5);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		opacity: 0;
+		transition: opacity 0.3s ease;
+		pointer-events: none;
+
+		@include m.mq(md) {
+			background-color: rgba(0, 0, 0, 0.3);
+		}
+	}
+
+	&__icon {
+		width: 40px;
+		height: 40px;
+		pointer-events: none;
+	}
+}
+
+// Lightbox
+// =============================================================================
+.lightbox {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	display: none;
+
+	&--active {
+		display: block;
+		animation: fadeIn 0.3s ease;
+	}
+
+	&__overlay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0, 0, 0, 0.9);
+	}
+
+	&__content {
+		position: relative;
+		width: 100%;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: m.fs(60, 0.5);
+	}
+
+	&__image {
+		max-width: 90%;
+		max-height: 90%;
+		width: auto;
+		height: auto;
+		object-fit: contain;
+		animation: zoomIn 0.3s ease;
+
+		// より大きく表示するための最小サイズ設定
+		@media (min-width: 768px) {
+			min-width: 600px;
+			min-height: 400px;
+		}
+
+		@media (min-width: 1200px) {
+			min-width: 800px;
+			min-height: 600px;
+		}
+	}
+
+	&__close {
+		position: absolute;
+		top: m.fs(20, 0.5);
+		right: m.fs(20, 0.5);
+		width: m.fs(48, 0.5);
+		height: m.fs(48, 0.5);
+		background: transparent;
+		border: none;
+		cursor: pointer;
+		padding: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: opacity 0.3s ease;
+		z-index: 10;
+
+		&:hover {
+			opacity: 0.7;
+		}
+
+		svg {
+			width: 24px;
+			height: 24px;
+		}
+	}
+}
+
+// アニメーション
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes zoomIn {
+	from {
+		transform: scale(0.8);
+		opacity: 0;
+	}
+	to {
+		transform: scale(1);
+		opacity: 1;
+	}
+}

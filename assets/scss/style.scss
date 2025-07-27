@@ -20,6 +20,7 @@
 @use 'sections/studio-search';
 @use 'sections/gallery';
 @use 'sections/plan';
+@use 'pages/gallery' as gallery-page;
 
 // Pages
 @use 'pages/home';
