@@ -148,6 +148,16 @@ function theme_678studio_styles() {
     
     // Enqueue gallery script on gallery pages
     if (is_page_template('page-gallery.php')) {
+        // GSAP Core
+        wp_enqueue_script('gsap', 
+            'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js', 
+            [], '3.12.2', true);
+        
+        // GSAP ScrollTrigger Plugin
+        wp_enqueue_script('gsap-scrolltrigger', 
+            'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js', 
+            ['gsap'], '3.12.2', true);
+        
         $js_version = WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/gallery.js') : '1.0.0';
         wp_enqueue_script('678studio-gallery', 
             get_template_directory_uri() . '/assets/js/gallery.js', 
