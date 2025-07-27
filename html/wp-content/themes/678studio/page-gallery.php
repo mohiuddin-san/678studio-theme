@@ -28,22 +28,7 @@ get_header(); ?>
         <div class="gallery-select-wrapper">
           <select class="gallery-select" id="studio-filter">
             <option value="all">全スタジオ</option>
-            <?php
-            // Fetch shop data from API
-            $api_url = 'https://678photo.com/api/get_all_studio_shop.php';
-            $response = wp_remote_get($api_url);
-            $shops = [];
-            if (!is_wp_error($response) && wp_remote_retrieve_response_code($response) === 200) {
-                $body = wp_remote_retrieve_body($response);
-                $data = json_decode($body, true);
-                if ($data['success'] && !empty($data['shops'])) {
-                    $shops = $data['shops'];
-                    foreach ($shops as $shop) {
-                        echo '<option value="' . esc_attr($shop['id']) . '">' . esc_html($shop['name']) . '</option>';
-                    }
-                }
-            }
-            ?>
+            <!-- Options will be populated dynamically via JavaScript -->
           </select>
         </div>
       </div>
@@ -108,8 +93,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const studioFilter = document.getElementById('studio-filter');
     const galleryGrid = document.getElementById('gallery-grid');
     
-    // Store API data
-    const shopsData = <?php echo json_encode($shops); ?>;
+    // Store API data (will be loaded dynamically)
+    let shopsData = [];
     
     // Animation configuration
     const CONFIG = {
@@ -120,6 +105,53 @@ document.addEventListener('DOMContentLoaded', function() {
         gridGap: 24 // Should match CSS gap
     };
     
+    // Function to load studio data asynchronously
+    async function loadStudioData() {
+        try {
+            const response = await fetch(galleryAjax.ajaxurl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    action: 'get_gallery_studios',
+                    nonce: galleryAjax.nonce
+                })
+            });
+
+            const data = await response.json();
+            
+            if (data.success && data.data.shops) {
+                shopsData = data.data.shops;
+                populateStudioFilter();
+                updateGallery(); // Initial gallery population
+            } else {
+                console.error('Failed to load studio data:', data.data?.message || 'Unknown error');
+                // Show fallback message
+                galleryGrid.innerHTML = '<p>スタジオデータの読み込みに失敗しました。</p>';
+            }
+        } catch (error) {
+            console.error('Error loading studio data:', error);
+            galleryGrid.innerHTML = '<p>スタジオデータの読み込み中にエラーが発生しました。</p>';
+        }
+    }
+
+    // Function to populate studio filter dropdown
+    function populateStudioFilter() {
+        // Clear existing options except "all"
+        while (studioFilter.children.length > 1) {
+            studioFilter.removeChild(studioFilter.lastChild);
+        }
+
+        // Add studio options
+        shopsData.forEach(shop => {
+            const option = document.createElement('option');
+            option.value = shop.id;
+            option.textContent = shop.name;
+            studioFilter.appendChild(option);
+        });
+    }
+
     // Function to update category filter based on selected shop
     function updateCategoryFilter(shopId) {
         // Clear existing categories
@@ -404,8 +436,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 250);
     });
     
-    // Initial gallery population
-    updateGallery();
+    // Load studio data and initialize gallery
+    loadStudioData();
     
     // Lightbox functionality
     const lightbox = document.getElementById('galleryLightbox');
