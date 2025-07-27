@@ -56,6 +56,25 @@ get_header(); ?>
   <div class="gallery-grid__inner" id="gallery-grid">
     <!-- Images will be populated dynamically via JavaScript -->
   </div>
+  
+  <!-- Loading indicator -->
+  <div class="gallery-loading" id="gallery-loading" style="display: none;">
+    <div class="gallery-loading__spinner">
+      <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="20" cy="20" r="18" fill="none" stroke="#a5c3cf" stroke-width="2" 
+                stroke-linecap="round" stroke-dasharray="28 28" 
+                transform="rotate(-90 20 20)">
+          <animateTransform attributeName="transform" type="rotate" values="-90 20 20;270 20 20" 
+                          dur="1s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+    </div>
+    <p class="gallery-loading__text">画像を読み込んでいます...</p>
+  </div>
+  
+  <!-- End of content indicator (hidden) -->
+  <div class="gallery-end" id="gallery-end" style="display: none;">
+  </div>
 </section>
 
 <!-- Contact & Booking Section -->
@@ -66,7 +85,7 @@ get_header(); ?>
   <div class="lightbox__overlay"></div>
   <div class="lightbox__content">
     <button class="lightbox__close" aria-label="閉じる">
-      <svg widthуму24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M18 6L6 18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
         <path d="M6 6L18 18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
       </svg>
@@ -77,14 +96,27 @@ get_header(); ?>
 
 <?php get_template_part('template-parts/components/footer'); ?>
 
+<script src="<?php echo get_template_directory_uri(); ?>/assets/js/gallery-lightbox.js"></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Register ScrollTrigger plugin if GSAP is available
+    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+        gsap.registerPlugin(ScrollTrigger);
+    }
     const categoryFilter = document.getElementById('category-filter');
     const studioFilter = document.getElementById('studio-filter');
     const galleryGrid = document.getElementById('gallery-grid');
     
     // Store API data
     const shopsData = <?php echo json_encode($shops); ?>;
+    
+    // Animation configuration
+    const CONFIG = {
+        animationDuration: 1.5,
+        animationDelay: 0.08,
+        initialBlur: 10 // pixels
+    };
     
     // Function to update category filter based on selected shop
     function updateCategoryFilter(shopId) {
@@ -148,11 +180,15 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateGallery() {
         const selectedStudio = studioFilter.value;
         const selectedCategory = categoryFilter.value;
+        
+        // Clear gallery
         galleryGrid.innerHTML = '';
         
         // Update categories when studio changes
         updateCategoryFilter(selectedStudio);
         
+        // Create all gallery items at once
+        let imageCount = 0;
         shopsData.forEach(shop => {
             // Filter by studio
             if (selectedStudio === 'all' || shop.id.toString() === selectedStudio) {
@@ -162,7 +198,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (selectedCategory === 'all' || selectedCategory === category) {
                             if (Array.isArray(images)) {
                                 images.forEach((image, index) => {
-                                    createGalleryItem(image, `${category} Image ${index + 1} from ${shop.name}`);
+                                    const alt = `${category} Image ${index + 1} from ${shop.name}`;
+                                    createGalleryItem(image, alt);
+                                    imageCount++;
                                 });
                             }
                         }
@@ -172,9 +210,56 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         // If no images are found, display a message
-        if (galleryGrid.innerHTML === '') {
+        if (imageCount === 0) {
             galleryGrid.innerHTML = '<p>No images available for the selected filters.</p>';
+        } else {
+            // Setup scroll-based animations
+            setupScrollAnimations();
         }
+    }
+    
+    // Setup scroll-based animations for all items
+    function setupScrollAnimations() {
+        if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+        
+        const galleryItems = galleryGrid.querySelectorAll('.gallery-grid__item');
+        if (galleryItems.length === 0) return;
+        
+        // Set initial state for all items (hidden with blur)
+        galleryItems.forEach(item => {
+            const img = item.querySelector('img');
+            if (img) {
+                gsap.set(item, {
+                    opacity: 0,
+                    filter: `blur(${CONFIG.initialBlur}px)`, // Apply blur to entire item
+                    scale: 1.05 // Slight scale for subtle effect
+                });
+            }
+        });
+        
+        // Create scroll triggers for each item
+        galleryItems.forEach((item, index) => {
+            const img = item.querySelector('img');
+            if (!img) return;
+            
+            const timeline = gsap.timeline({
+                scrollTrigger: {
+                    trigger: item,
+                    start: "top bottom-=100",
+                    toggleActions: "play none none none"
+                }
+            });
+            
+            timeline
+                .to(item, {
+                    opacity: 1,
+                    filter: "blur(0px)",
+                    scale: 1,
+                    duration: CONFIG.animationDuration,
+                    ease: "power1.out",
+                    delay: (index % 4) * CONFIG.animationDelay
+                });
+        });
     }
     
     // Function to create gallery item
@@ -213,16 +298,16 @@ document.addEventListener('DOMContentLoaded', function() {
         if (img) {
             lightboxImage.src = img.dataset.fullImage;
             lightboxImage.alt = img.alt;
-            lightbox.classList.add('active');
+            lightbox.classList.add('lightbox--active');
         }
     });
     
     closeButton.addEventListener('click', function() {
-        lightbox.classList.remove('active');
+        lightbox.classList.remove('lightbox--active');
     });
     
     lightbox.querySelector('.lightbox__overlay').addEventListener('click', function() {
-        lightbox.classList.remove('active');
+        lightbox.classList.remove('lightbox--active');
     });
 });
 </script>
