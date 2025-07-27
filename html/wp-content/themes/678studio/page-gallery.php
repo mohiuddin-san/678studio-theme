@@ -115,7 +115,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const CONFIG = {
         animationDuration: 1.5,
         animationDelay: 0.08,
-        initialBlur: 10 // pixels
+        initialBlur: 10, // pixels
+        gridRowHeight: 20, // Should match CSS grid-auto-rows
+        gridGap: 24 // Should match CSS gap
     };
     
     // Function to update category filter based on selected shop
@@ -213,9 +215,106 @@ document.addEventListener('DOMContentLoaded', function() {
         if (imageCount === 0) {
             galleryGrid.innerHTML = '<p>No images available for the selected filters.</p>';
         } else {
-            // Setup scroll-based animations
+            // Setup scroll-based animations directly (CSS columns handle the layout)
             setupScrollAnimations();
         }
+    }
+    
+    // Setup masonry layout
+    function setupMasonryLayout() {
+        return new Promise((resolve) => {
+            const galleryItems = galleryGrid.querySelectorAll('.gallery-grid__item');
+            if (galleryItems.length === 0) {
+                resolve();
+                return;
+            }
+            
+            // Wait for all images to load
+            const images = Array.from(galleryItems).map(item => item.querySelector('img'));
+            let loadedCount = 0;
+            
+            const checkAllLoaded = () => {
+                loadedCount++;
+                if (loadedCount === images.length) {
+                    // Add a small delay to ensure layout is stable
+                    setTimeout(() => {
+                        calculateMasonryLayout();
+                        resolve();
+                    }, 50);
+                }
+            };
+            
+            images.forEach(img => {
+                if (img.complete && img.naturalHeight > 0) {
+                    checkAllLoaded();
+                } else {
+                    img.addEventListener('load', () => {
+                        // Ensure image has rendered before calculating
+                        requestAnimationFrame(checkAllLoaded);
+                    });
+                    img.addEventListener('error', checkAllLoaded); // Handle broken images
+                }
+            });
+        });
+    }
+    
+    // Calculate and apply masonry layout
+    function calculateMasonryLayout() {
+        const galleryItems = galleryGrid.querySelectorAll('.gallery-grid__item');
+        if (galleryItems.length === 0) return;
+        
+        // Get grid properties
+        const gridComputedStyle = window.getComputedStyle(galleryGrid);
+        const gridColumnGap = parseInt(gridComputedStyle.getPropertyValue('gap')) || CONFIG.gridGap;
+        
+        // Determine number of columns based on screen size
+        const columns = getColumnCount();
+        
+        // Track height of each column
+        const columnHeights = new Array(columns).fill(0);
+        
+        galleryItems.forEach((item, index) => {
+            const img = item.querySelector('img');
+            if (!img) return;
+            
+            // Use actual rendered dimensions instead of natural dimensions
+            const actualHeight = img.offsetHeight || img.getBoundingClientRect().height;
+            const actualWidth = img.offsetWidth || img.getBoundingClientRect().width;
+            
+            // If image hasn't loaded yet, wait for it
+            if (actualHeight === 0 || actualWidth === 0) {
+                const imgHeight = img.naturalHeight || 200;
+                const imgWidth = img.naturalWidth || 200;
+                const itemWidth = galleryGrid.offsetWidth / columns - (gridColumnGap * (columns - 1)) / columns;
+                const calculatedHeight = (imgHeight / imgWidth) * itemWidth;
+                item.style.height = calculatedHeight + 'px';
+            }
+            
+            // Get the actual item height (including image + any padding)
+            const itemHeight = item.offsetHeight || item.getBoundingClientRect().height;
+            
+            // Find the shortest column
+            const shortestColumnIndex = columnHeights.indexOf(Math.min(...columnHeights));
+            
+            // Calculate grid row span needed to fit the actual height
+            const rowSpan = Math.ceil(itemHeight / CONFIG.gridRowHeight);
+            
+            // Apply grid positioning
+            item.style.gridColumn = shortestColumnIndex + 1;
+            item.style.gridRowEnd = `span ${rowSpan}`;
+            
+            // Update column height
+            columnHeights[shortestColumnIndex] += itemHeight + gridColumnGap;
+        });
+    }
+    
+    // Get number of columns based on screen width
+    function getColumnCount() {
+        const width = window.innerWidth;
+        if (width <= 479) return 1;  // sm
+        if (width <= 767) return 2;  // md
+        if (width <= 1023) return 3; // lg
+        return 4; // desktop
     }
     
     // Setup scroll-based animations for all items
@@ -284,6 +383,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // Event listeners for filters
     studioFilter.addEventListener('change', updateGallery);
     categoryFilter.addEventListener('change', updateGallery);
+    
+    // Add resize handler for responsive layout updates
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            if (typeof ScrollTrigger !== 'undefined') {
+                ScrollTrigger.refresh();
+            }
+        }, 250);
+    });
     
     // Initial gallery population
     updateGallery();
