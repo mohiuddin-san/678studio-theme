@@ -1,0 +1,34 @@
+// Scroll Animations Component
+// =============================================================================
+// 汎用的なスクロールアニメーション用のスタイル
+
+.scroll-animate-item {
+	// 初期状態はJavaScriptで設定されるため、フォールバック用の最小限のスタイル
+	transition: opacity 0.3s ease;
+	
+	// アニメーション中のちらつき防止
+	will-change: transform, opacity, filter;
+	
+	// ハードウェアアクセラレーションを有効化
+	transform: translateZ(0);
+	backface-visibility: hidden;
+	
+	// JavaScriptが無効の場合の表示を保証
+	.no-js & {
+		opacity: 1;
+		transform: none;
+		filter: none;
+	}
+}
+
+// パフォーマンス最適化のためのプリファレンス対応
+@media (prefers-reduced-motion: reduce) {
+	.scroll-animate-item {
+		// モーション削減設定時はアニメーション無効化
+		transition: none !important;
+		animation: none !important;
+		transform: none !important;
+		filter: none !important;
+		opacity: 1 !important;
+	}
+}

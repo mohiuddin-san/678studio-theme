@@ -5,14 +5,14 @@
  */
 ?>
 
-<section class="photography-plans">
+<section class="photography-plans" id="photography-plans-section">
   <div class="photography-plans__container">
 
     <!-- Grid Layout -->
     <div class="photography-plans__grid">
 
       <!-- Grid Item 1 -->
-      <div class="photography-plans__item photography-plans__item--1">
+      <div class="photography-plans__item photography-plans__item--1 scroll-animate-item" data-delay="0">
         <div class="photography-plans__content">
           <?php get_template_part('template-parts/components/title-section', null, [
           'variant' => 'default',
@@ -25,11 +25,11 @@
       </div>
 
       <!-- Grid Item 2 -->
-      <div class="photography-plans__item photography-plans__item--2">
+      <div class="photography-plans__item photography-plans__item--2 scroll-animate-item" data-delay="0.2">
       </div>
 
       <!-- Grid Item 3 -->
-      <div class="photography-plans__item photography-plans__item--3">
+      <div class="photography-plans__item photography-plans__item--3 scroll-animate-item" data-delay="0.4">
         <div class="photography-plans__content">
           <img src="<?php echo get_template_directory_uri(); ?>/assets/images/about-plan-pic.jpg" alt="撮影プラン">
         </div>

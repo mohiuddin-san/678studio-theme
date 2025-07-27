@@ -144,19 +144,18 @@ function theme_678studio_styles() {
         wp_enqueue_script('678studio-header', 
             get_template_directory_uri() . '/assets/js/header.js', 
             [], $header_version, true);
+            
+        // Page Transitions Script (global)
+        $transitions_version = WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/modules/page-transitions.js') : '1.0.0';
+        wp_enqueue_script('page-transitions', 
+            get_template_directory_uri() . '/assets/js/modules/page-transitions.js', 
+            [], $transitions_version, true);
     }
     
     // Enqueue gallery script on gallery pages
     if (is_page_template('page-gallery.php')) {
-        // GSAP Core
-        wp_enqueue_script('gsap', 
-            'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js', 
-            [], '3.12.2', true);
-        
-        // GSAP ScrollTrigger Plugin
-        wp_enqueue_script('gsap-scrolltrigger', 
-            'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js', 
-            ['gsap'], '3.12.2', true);
+        // ギャラリーページでは軽量化のためGSAPとScrollTriggerを無効化
+        // GSAPを読み込まない = スクロールアニメーションも無効化される
         
         $js_version = WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/gallery.js') : '1.0.0';
         wp_enqueue_script('678studio-gallery', 
@@ -171,6 +170,11 @@ function theme_678studio_styles() {
             'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js', 
             [], '3.12.2', true);
         
+        // GSAP ScrollTrigger Plugin
+        wp_enqueue_script('gsap-scrolltrigger', 
+            'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js', 
+            ['gsap'], '3.12.2', true);
+        
         // GSAP Draggable Plugin
         wp_enqueue_script('gsap-draggable', 
             'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/Draggable.min.js', 
@@ -181,6 +185,12 @@ function theme_678studio_styles() {
         wp_enqueue_script('media-slider', 
             get_template_directory_uri() . '/assets/js/modules/media-slider.js', 
             ['gsap', 'gsap-draggable'], $slider_version, true);
+        
+        // Scroll Animations Script
+        $scroll_animations_version = WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/modules/scroll-animations.js') : '1.0.0';
+        wp_enqueue_script('scroll-animations', 
+            get_template_directory_uri() . '/assets/js/modules/scroll-animations.js', 
+            ['gsap', 'gsap-scrolltrigger'], $scroll_animations_version, true);
     }
     
     // Enqueue GSAP and FAQ accordion on About page
@@ -190,11 +200,22 @@ function theme_678studio_styles() {
             'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js', 
             [], '3.12.2', true);
         
+        // GSAP ScrollTrigger Plugin
+        wp_enqueue_script('gsap-scrolltrigger', 
+            'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js', 
+            ['gsap'], '3.12.2', true);
+        
         // FAQ Accordion Script
         $faq_version = WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/components/faq-accordion.js') : '1.0.0';
         wp_enqueue_script('faq-accordion', 
             get_template_directory_uri() . '/assets/js/components/faq-accordion.js', 
             ['gsap'], $faq_version, true);
+        
+        // Scroll Animations Script
+        $scroll_animations_version = WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/modules/scroll-animations.js') : '1.0.0';
+        wp_enqueue_script('scroll-animations', 
+            get_template_directory_uri() . '/assets/js/modules/scroll-animations.js', 
+            ['gsap', 'gsap-scrolltrigger'], $scroll_animations_version, true);
     }
     
     // Enqueue GSAP and gallery slider on store detail pages

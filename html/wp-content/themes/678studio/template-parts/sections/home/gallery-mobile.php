@@ -22,6 +22,7 @@
       <div class="gallery-mobile__button">
         <?php get_template_part('template-parts/components/detail-button', null, [
           'text' => '詳しく見る',
+          'url' => home_url('/gallery/'),
           'variant' => 'detail',
           'icon' => 'none'
         ]); ?>

@@ -17,10 +17,10 @@ $media_query = new WP_Query($args);
 
 if ($media_query->have_posts()) : ?>
 
-<section class="media-slider-section">
+<section class="media-slider-section" id="media-slider-section">
   <div class="media-slider-section__container">
     <!-- Auto-scroll slider container -->
-    <div class="media-slider-section__slider">
+    <div class="media-slider-section__slider scroll-animate-item" data-delay="0">
       <div class="media-slider-section__track">
         <?php while ($media_query->have_posts()) : $media_query->the_post(); 
                       $media_image = get_field('media_image');

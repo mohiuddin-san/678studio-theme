@@ -72,11 +72,11 @@ $current_page = $shop_data['current_page'];
 // }
 ?>
 
-<section class="studio-search-section">
+<section class="studio-search-section" id="studio-search-section">
   <div class="studio-search-section__container">
 
     <!-- ヘッダーエリア -->
-    <div class="studio-search-section__header">
+    <div class="studio-search-section__header scroll-animate-item" data-delay="0">
       <div class="studio-search-section__label">
         <?php get_template_part('template-parts/components/thoughts-label', null, [
             'text' => 'Search for a photo studio'
@@ -87,7 +87,7 @@ $current_page = $shop_data['current_page'];
     </div>
 
     <!-- 検索バー -->
-    <div class="studio-search-section__search">
+    <div class="studio-search-section__search scroll-animate-item" data-delay="0.2">
       <div class="studio-search-section__search-box">
         <svg class="studio-search-section__search-icon" viewBox="0 0 24 24">
           <path
@@ -99,7 +99,7 @@ $current_page = $shop_data['current_page'];
     </div>
 
     <!-- 検索結果件数表示 -->
-    <div class="studio-search-section__result-count" id="search-result-count">
+    <div class="studio-search-section__result-count scroll-animate-item" data-delay="0.4" id="search-result-count">
       <div class="result-count-container">
         <?php if (!empty($search_query)): ?>
           <div class="result-count-text">
@@ -123,7 +123,7 @@ $current_page = $shop_data['current_page'];
     </div>
 
     <!-- スタジオカード一覧 -->
-    <div class="studio-search-section__cards">
+    <div class="studio-search-section__cards scroll-animate-item" data-delay="0.6">
       <?php if (empty($shops)): ?>
       <p>検索結果が見つかりませんでした。</p>
       <?php else: ?>
@@ -263,7 +263,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Restore opacity
         cardsContainer.style.opacity = '1';
         
-        console.log(`Found ${data.data.total_shops} shops, showing page ${data.data.current_page} of ${data.data.total_pages}`);
       } else {
         console.error('Search failed:', data.data.message);
         cardsContainer.style.opacity = '1';
