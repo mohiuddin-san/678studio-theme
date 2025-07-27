@@ -75,6 +75,8 @@ $highlight-color: #007bff;
 		border: 1px solid $border-color;
 		align-items: center;
 		border-radius: m.fs(8);
+		width: 100%;
+		box-sizing: border-box;
 
 		@include m.mq(md) {
 			padding: m.fsm(44) m.fsm(20);
@@ -109,6 +111,20 @@ $highlight-color: #007bff;
 
 		.contact-search {
 			margin-bottom: m.fs(24);
+
+			&__label {
+				display: block;
+				color: $text-color;
+				font-family: v.$ja;
+				font-size: m.fs(14);
+				margin-bottom: m.fs(8);
+				font-weight: 500;
+
+				@include m.mq(md) {
+					font-size: m.fsm(12);
+					margin-bottom: m.fsm(6);
+				}
+			}
 
 			.contact-select {
 				width: 100%;
@@ -153,6 +169,7 @@ $highlight-color: #007bff;
 			border: 1px solid $border-color;
 			border-radius: m.fs(8);
 			padding: m.fs(25);
+			width: 100%;
 
 			&[style*='display: none'] {
 				display: none !important;
@@ -189,6 +206,10 @@ $highlight-color: #007bff;
 				flex: 1;
 				min-width: 0;
 
+				@include m.mq(md) {
+					width: 100%;
+				}
+
 				table {
 					width: 100%;
 					height: m.fs(327);
@@ -198,6 +219,12 @@ $highlight-color: #007bff;
 					border-radius: m.fs(3);
 					overflow: hidden;
 
+					@include m.mq(md) {
+						height: auto;
+						border-radius: m.fsm(3);
+						width: 100%;
+					}
+
 					td {
 						padding: m.fs(8);
 						border: 0.5px solid $border-color;
@@ -205,6 +232,29 @@ $highlight-color: #007bff;
 						font-size: m.fs(14);
 						color: $border-color;
 						text-align: center;
+
+						@include m.mq(md) {
+							padding: m.fsm(12) m.fsm(8);
+							font-size: m.fsm(12);
+							text-align: left;
+						}
+
+						&:first-child {
+							@include m.mq(md) {
+								background-color: #f8f9fa;
+								font-weight: 600;
+								white-space: nowrap;
+								min-width: m.fsm(80);
+								width: 30%;
+							}
+						}
+
+						&:last-child {
+							@include m.mq(md) {
+								width: 70%;
+								word-break: break-word;
+							}
+						}
 					}
 
 					tr:first-child td:first-child {
@@ -388,6 +438,58 @@ $highlight-color: #007bff;
 		}
 	}
 
+	.privacy-policy-section {
+		margin-bottom: m.fs(40);
+
+		@include m.mq(md) {
+			margin-bottom: m.fsm(30);
+		}
+	}
+
+	.privacy-policy-text {
+		margin-bottom: m.fs(20);
+		padding: m.fs(20);
+		background-color: #f8f9fa;
+		border: 1px solid #e9ecef;
+		border-radius: m.fs(5);
+
+		@include m.mq(md) {
+			margin-bottom: m.fsm(15);
+			padding: m.fsm(15);
+			border-radius: m.fsm(4);
+		}
+
+		h3 {
+			font-family: v.$ja;
+			font-size: m.fs(16);
+			color: $text-color;
+			margin-bottom: m.fs(15);
+			font-weight: 600;
+
+			@include m.mq(md) {
+				font-size: m.fsm(14);
+				margin-bottom: m.fsm(12);
+			}
+		}
+
+		p {
+			font-family: v.$ja;
+			font-size: m.fs(14);
+			color: $text-color;
+			line-height: 1.6;
+			margin-bottom: m.fs(12);
+
+			@include m.mq(md) {
+				font-size: m.fsm(12);
+				margin-bottom: m.fsm(10);
+			}
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+	}
+
 	.confirmation-field-check {
 		width: 100%;
 		padding: m.fs(10);
@@ -403,6 +505,10 @@ $highlight-color: #007bff;
 			align-items: center;
 			justify-content: center;
 			cursor: pointer;
+
+			@include m.mq(md) {
+				font-size: m.fsm(14);
+			}
 
 			input[type='checkbox'] {
 				appearance: none;
@@ -638,6 +744,58 @@ $highlight-color: #007bff;
 			&:active {
 				background-color: darken($text-color, 15%);
 				border-color: darken($text-color, 15%);
+			}
+		}
+	}
+
+	// エラーメッセージのスタイル
+	.error-message {
+		color: #e74c3c;
+		font-family: v.$ja;
+		font-size: m.fs(12);
+		margin-top: m.fs(5);
+		margin-left: m.fs(5);
+
+		@include m.mq(md) {
+			font-size: m.fsm(11);
+			margin-top: m.fsm(4);
+			margin-left: m.fsm(4);
+		}
+	}
+
+	// エラー状態のフィールドスタイル
+	.input-field,
+	.textarea-field,
+	.contact-search,
+	.confirmation-field-check {
+		&.error {
+			input,
+			textarea,
+			select {
+				border-color: #e74c3c;
+				background-color: rgba(231, 76, 60, 0.05);
+
+				&:focus {
+					border-color: #e74c3c;
+					box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2);
+				}
+			}
+		}
+	}
+
+	// 確認ボタンの無効状態
+	.confirm-button {
+		&:disabled {
+			background-color: #bdc3c7;
+			color: #7f8c8d;
+			border-color: #bdc3c7;
+			cursor: not-allowed;
+			opacity: 0.6;
+
+			&:hover {
+				background-color: #bdc3c7;
+				color: #7f8c8d;
+				border-color: #bdc3c7;
 			}
 		}
 	}

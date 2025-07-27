@@ -24,9 +24,13 @@
     <h1 class="contact__main-title">お問い合わせ</h1>
 
     <div class="contact-search">
-      <select class="contact-select">
-        <option>ご予約・お問い合わせの店舗をお選びください</option>
+      <label for="store-select" class="contact-search__label">選択店舗 (必須)</label>
+      <select class="contact-select" id="store-select" name="store" required>
+        <option value="">ご予約・お問い合わせの店舗をお選びください</option>
       </select>
+      <div class="error-message" id="store-error" style="display: none;">
+        店舗を選択してください
+      </div>
     </div>
 
     <div class="contact-details" style="display: none;">
@@ -67,11 +71,17 @@
             <div class="input-field">
               <label for="name">お名前 (必須)</label>
               <input type="text" id="name" name="name" placeholder="例: 山田 花子" required>
+              <div class="error-message" id="name-error" style="display: none;">
+                お名前を入力してください
+              </div>
             </div>
 
             <div class="input-field">
               <label for="kana">フリガナ (必須)</label>
               <input type="text" id="kana" name="kana" placeholder="例: ヤマダ ハナコ" required>
+              <div class="error-message" id="kana-error" style="display: none;">
+                フリガナを入力してください
+              </div>
             </div>
 
             <div class="input-field">
@@ -82,6 +92,9 @@
             <div class="input-field">
               <label for="email">メールアドレス (必須)</label>
               <input type="email" id="email" name="email" placeholder="例: hanako@example.com" required>
+              <div class="error-message" id="email-error" style="display: none;">
+                正しいメールアドレスを入力してください
+              </div>
             </div>
 
             <div class="textarea-field">
@@ -91,10 +104,22 @@
 ・以前他の写真館で満足できませんでした。"></textarea>
             </div>
 
-            <div class="confirmation-field-check">
-              <label>
-                <input type="checkbox" name="agreement" required> 個人情報の取り扱いについて同意する
-              </label>
+            <div class="privacy-policy-section">
+              <div class="privacy-policy-text">
+                <h3>＜個人情報取り扱い＞</h3>
+                <p>当社は、応募者の個人情報を、以下の目的で利用いたします。<br>
+                お問い合わせに関する内容確認、調査及びご返信時の参照情報としてお問合せにあたり、「個人情報の取り扱い」を必ずご確認ください。</p>
+                <p>※上記の個人情報の取り扱いに関する要項をご確認のうえ、同意いただける場合は「同意する」にチェックを入れてください。</p>
+              </div>
+              
+              <div class="confirmation-field-check">
+                <label>
+                  <input type="checkbox" name="agreement" id="agreement" required> 個人情報の取り扱いについて同意する
+                </label>
+                <div class="error-message" id="agreement-error" style="display: none;">
+                  個人情報の取り扱いについて同意してください
+                </div>
+              </div>
             </div>
 
             <div class="contact-buttons">
@@ -108,33 +133,33 @@
       <div class="confirmation-step" id="confirmationStep" style="display: none;">
         <div class="form-container">
           <h2 class="confirmation-step__title">入力内容の確認</h2>
-          
+
           <div class="confirmation-step__content">
             <div class="confirmation-step__item">
               <span class="confirmation-step__label">お名前</span>
               <span class="confirmation-step__value" id="confirmName"></span>
             </div>
-            
+
             <div class="confirmation-step__item">
               <span class="confirmation-step__label">フリガナ</span>
               <span class="confirmation-step__value" id="confirmKana"></span>
             </div>
-            
+
             <div class="confirmation-step__item">
               <span class="confirmation-step__label">お電話番号</span>
               <span class="confirmation-step__value" id="confirmContact"></span>
             </div>
-            
+
             <div class="confirmation-step__item">
               <span class="confirmation-step__label">メールアドレス</span>
               <span class="confirmation-step__value" id="confirmEmail"></span>
             </div>
-            
+
             <div class="confirmation-step__item">
               <span class="confirmation-step__label">選択店舗</span>
               <span class="confirmation-step__value" id="confirmStore"></span>
             </div>
-            
+
             <div class="confirmation-step__item confirmation-step__item--textarea">
               <span class="confirmation-step__label">ご相談内容</span>
               <span class="confirmation-step__value" id="confirmNotes"></span>
