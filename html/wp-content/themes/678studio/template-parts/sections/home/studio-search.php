@@ -27,7 +27,8 @@ function fetch_studio_shops($search_query = '', $page = 1, $per_page = 6) {
     if (!empty($search_query)) {
         $filtered_shops = array_filter($data['shops'], function($shop) use ($search_query) {
             return stripos($shop['name'] ?? '', $search_query) !== false || 
-                   stripos($shop['nearest_station'] ?? '', $search_query) !== false;
+                   stripos($shop['nearest_station'] ?? '', $search_query) !== false ||
+                   stripos($shop['address'] ?? '', $search_query) !== false;
         });
     }
     $total_shops = count($filtered_shops);
@@ -94,6 +95,30 @@ $current_page = $shop_data['current_page'];
         </svg>
         <input type="text" placeholder="「東京」「埼玉県」「横浜市」「大阪」" class="studio-search-section__search-input"
           id="studio-search-input" value="<?php echo esc_attr($search_query); ?>">
+      </div>
+    </div>
+
+    <!-- 検索結果件数表示 -->
+    <div class="studio-search-section__result-count" id="search-result-count">
+      <div class="result-count-container">
+        <?php if (!empty($search_query)): ?>
+          <div class="result-count-text">
+            <span class="search-term">「<?php echo esc_html($search_query); ?>」</span>
+            <span class="result-label">の検索結果</span>
+          </div>
+          <div class="result-count-number">
+            <span class="count"><?php echo $shop_data['total']; ?></span>
+            <span class="count-unit">件</span>
+          </div>
+        <?php else: ?>
+          <div class="result-count-text">
+            <span class="result-label">全国のフォトスタジオ</span>
+          </div>
+          <div class="result-count-number">
+            <span class="count"><?php echo $shop_data['total']; ?></span>
+            <span class="count-unit">件</span>
+          </div>
+        <?php endif; ?>
       </div>
     </div>
 
@@ -164,6 +189,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const searchInput = document.getElementById('studio-search-input');
   const cardsContainer = document.querySelector('.studio-search-section__cards');
   const paginationContainer = document.querySelector('.studio-search-section__pagination');
+  const resultCountContainer = document.getElementById('search-result-count');
   let debounceTimer;
   let currentPage = 1;
 
@@ -195,6 +221,36 @@ document.addEventListener('DOMContentLoaded', function() {
             paginationContainer.style.display = 'flex';
           } else {
             paginationContainer.style.display = 'none';
+          }
+        }
+        
+        // Update result count
+        if (resultCountContainer && data.data.total_shops !== undefined) {
+          if (query.trim()) {
+            resultCountContainer.innerHTML = `
+              <div class="result-count-container">
+                <div class="result-count-text">
+                  <span class="search-term">「${query}」</span>
+                  <span class="result-label">の検索結果</span>
+                </div>
+                <div class="result-count-number">
+                  <span class="count">${data.data.total_shops}</span>
+                  <span class="count-unit">件</span>
+                </div>
+              </div>
+            `;
+          } else {
+            resultCountContainer.innerHTML = `
+              <div class="result-count-container">
+                <div class="result-count-text">
+                  <span class="result-label">全国のフォトスタジオ</span>
+                </div>
+                <div class="result-count-number">
+                  <span class="count">${data.data.total_shops}</span>
+                  <span class="count-unit">件</span>
+                </div>
+              </div>
+            `;
           }
         }
         
@@ -297,5 +353,114 @@ document.addEventListener('DOMContentLoaded', function() {
 /* Loading animation */
 .studio-search-section__cards {
   transition: opacity 0.3s ease;
+}
+
+/* Result count styling */
+.studio-search-section__result-count {
+  margin: 32px 0 48px;
+  display: flex;
+  justify-content: center;
+}
+
+.result-count-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid #e5e7eb;
+  border-radius: 24px;
+  padding: 12px 24px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+.result-count-container:hover {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+}
+
+.result-count-text {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Noto Sans JP', sans-serif;
+}
+
+.search-term {
+  font-weight: 600;
+  color: #3f3f3f;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+}
+
+.result-label {
+  color: #666666;
+  font-size: 14px;
+  letter-spacing: 0.3px;
+}
+
+.result-count-number {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  padding: 4px 12px;
+  background: linear-gradient(135deg, #a99f3c 0%, #b8ae4a 100%);
+  border-radius: 16px;
+  min-width: 60px;
+  justify-content: center;
+}
+
+.count {
+  font-weight: 700;
+  color: #ffffff;
+  font-size: 18px;
+  line-height: 1;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  letter-spacing: 0.5px;
+}
+
+.count-unit {
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 12px;
+  line-height: 1;
+  font-family: 'Noto Sans JP', sans-serif;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .studio-search-section__result-count {
+    margin: 24px 0 32px;
+  }
+  
+  .result-count-container {
+    gap: 12px;
+    padding: 10px 20px;
+    border-radius: 20px;
+  }
+  
+  .search-term {
+    font-size: 14px;
+  }
+  
+  .result-label {
+    font-size: 13px;
+  }
+  
+  .result-count-number {
+    padding: 3px 10px;
+    border-radius: 14px;
+    min-width: 50px;
+  }
+  
+  .count {
+    font-size: 16px;
+  }
+  
+  .count-unit {
+    font-size: 11px;
+  }
 }
 </style>
