@@ -53,7 +53,8 @@ function ajax_studio_search() {
     if (!empty($search_query)) {
         $filtered_shops = array_filter($data['shops'], function($shop) use ($search_query) {
             return stripos($shop['name'] ?? '', $search_query) !== false || 
-                   stripos($shop['nearest_station'] ?? '', $search_query) !== false;
+                   stripos($shop['nearest_station'] ?? '', $search_query) !== false ||
+                   stripos($shop['address'] ?? '', $search_query) !== false;
         });
     }
 
