@@ -268,7 +268,7 @@ function theme_678studio_debug_scripts() {
 add_action('wp_enqueue_scripts', 'theme_678studio_debug_scripts');
 
 // Theme support
-add_theme_support('title-tag');
+// add_theme_support('title-tag'); // SEOマネージャーで管理するためコメントアウト
 add_theme_support('post-thumbnails');
 add_theme_support('menus');
 
@@ -361,13 +361,14 @@ add_action('template_redirect', function() {
 });
 
 // Track WordPress errors
-add_action('wp_die_handler', function($message, $title, $args) {
+add_filter('wp_die_handler', function($message, $title, $args) {
     wp_log_error('WordPress die called', [
         'message' => $message,
         'title' => $title,
         'args' => $args
     ]);
-});
+    return '_default_wp_die_handler';
+}, 10, 3);
 
 // Track slow queries
 add_filter('log_query_custom_data', function($query_data, $query) {
@@ -685,6 +686,484 @@ add_shortcode('ftp_gallery', function($atts) {
 add_action('init', function() {
     wp_log_info('WordPress debug logger initialized');
     wp_log_debug('FAQ Debug Test', ['message' => 'Debug system is working', 'timestamp' => current_time('mysql')]);
+});
+
+// ================================
+// SEO & META MANAGEMENT SYSTEM
+// ================================
+
+/**
+ * 678スタジオ SEO管理システム
+ * 全ページのSEO情報を統一管理
+ */
+class StudioSEOManager {
+    
+    private static $instance = null;
+    
+    public static function getInstance() {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+    
+    private function __construct() {
+        // WordPressの標準titleタグ機能を無効化
+        remove_theme_support('title-tag');
+        add_filter('wp_title', '__return_false', 10, 3);
+        add_filter('pre_get_document_title', '__return_false');
+        add_action('wp_head', [$this, 'outputSEOTags'], 1);
+    }
+    
+    /**
+     * ページタイプに応じたSEO情報を取得
+     */
+    public function getSEOData() {
+        $seo_data = [
+            'title' => '',
+            'description' => '',
+            'keywords' => '',
+            'og_title' => '',
+            'og_description' => '',
+            'og_image' => '',
+            'og_type' => 'website',
+            'twitter_card' => 'summary_large_image',
+            'canonical' => '',
+            'noindex' => false
+        ];
+        
+        // 基本的なサイト情報
+        $site_name = 'ロクナナハチ(678)';
+        $site_description = '60代、70代、80代の方々のための記念撮影サービス。還暦、喜寿、米寿のお祝い、遺影撮影、家族写真など人生の大切な瞬間を美しく残します。';
+        $base_keywords = '記念撮影,還暦祝い,喜寿祝い,米寿祝い,遺影撮影,60代,70代,80代,家族写真,写真館,シニア撮影';
+        $default_og_image = get_template_directory_uri() . '/assets/images/og-image.jpg';
+        
+        if (is_front_page() || is_home()) {
+            // トップページ
+            $seo_data['title'] = $site_name . ' | シニア世代のための記念撮影・写真館サービス';
+            $seo_data['description'] = $site_description;
+            $seo_data['keywords'] = $base_keywords;
+            $seo_data['og_type'] = 'website';
+            
+        } elseif (is_page('about')) {
+            // Aboutページ
+            $seo_data['title'] = 'ロクナナハチについて | シニア向け撮影サービス・プラン | ' . $site_name;
+            $seo_data['description'] = 'ロクナナハチ(678)のサービス内容をご紹介。還暦・喜寿・米寿のお祝い撮影、遺影撮影、家族写真撮影など、シニア世代に寄り添った撮影プランをご用意しています。';
+            $seo_data['keywords'] = $base_keywords . ',撮影プラン,サービス内容,料金,シニア向け';
+            
+        } elseif (is_page('gallery')) {
+            // ギャラリーページ
+            $seo_data['title'] = 'ギャラリー | シニア撮影作品・事例紹介 | ' . $site_name;
+            $seo_data['description'] = 'ロクナナハチ(678)の撮影作品・事例をご紹介。還暦、喜寿、米寿のお祝い撮影、遺影撮影、家族写真など様々なシーンでの撮影作品をご覧いただけます。';
+            $seo_data['keywords'] = $base_keywords . ',作品,事例,ギャラリー,撮影実績';
+            
+        } elseif (is_page('stores')) {
+            // 店舗一覧ページ
+            $seo_data['title'] = '写真館検索・店舗一覧 | 全国の提携写真館 | ' . $site_name;
+            $seo_data['description'] = 'ロクナナハチ(678)提携写真館の店舗一覧ページです。全国の提携写真館でシニア向け記念撮影サービスをご利用いただけます。お近くの店舗を検索してください。';
+            $seo_data['keywords'] = $base_keywords . ',店舗検索,写真館一覧,全国対応';
+            
+        } elseif (is_page('studio-reservation')) {
+            // 予約ページ
+            $seo_data['title'] = 'ご予約 | シニア記念撮影のご予約・お申込み | ' . $site_name;
+            $seo_data['description'] = 'ロクナナハチ(678)の撮影予約ページです。還暦、喜寿、米寿のお祝い撮影、遺影撮影、家族写真などシニア向け記念撮影のご予約を承っております。';
+            $seo_data['keywords'] = $base_keywords . ',予約,申込み,撮影予約';
+            
+        } elseif (is_page('studio-inquery')) {
+            // 問合せページ
+            $seo_data['title'] = 'お問合せ | ご質問・ご相談 | ' . $site_name;
+            $seo_data['description'] = 'ロクナナハチ(678)へのお問合せページです。シニア向け撮影に関するご質問・ご相談はこちらからお気軽にお問合せください。';
+            $seo_data['keywords'] = $base_keywords . ',問合せ,質問,相談';
+            
+        } elseif (is_page('privacy')) {
+            // プライバシーポリシー
+            $seo_data['title'] = 'プライバシーポリシー | ' . $site_name;
+            $seo_data['description'] = 'ロクナナハチ(678)のプライバシーポリシーページです。個人情報の取扱いについて詳しく説明しています。';
+            $seo_data['keywords'] = 'プライバシーポリシー,個人情報保護,利用規約';
+            $seo_data['noindex'] = true; // 検索結果に表示しない
+            
+        } elseif (is_page_template('page-studio-detail.php')) {
+            // 店舗詳細ページ（動的コンテンツ）
+            $shop_data = $this->getStoreDetailSEO();
+            if ($shop_data) {
+                $seo_data['title'] = $shop_data['shop']['name'] . ' | 店舗詳細・アクセス | ' . $site_name;
+                $seo_data['description'] = $shop_data['shop']['name'] . 'の店舗情報。住所：' . $shop_data['shop']['address'] . '、最寄り駅：' . $shop_data['shop']['nearest_station'] . '。678撮影サービスをご利用いただけます。';
+                $seo_data['keywords'] = $base_keywords . ',' . $shop_data['shop']['name'] . ',店舗詳細,アクセス,' . $shop_data['shop']['nearest_station'];
+                
+                // 店舗固有のOG画像
+                if (!empty($shop_data['shop']['image_urls'][0])) {
+                    $seo_data['og_image'] = $shop_data['shop']['image_urls'][0];
+                }
+                
+                $seo_data['og_title'] = $shop_data['shop']['name'] . ' | ' . $site_name;
+                $seo_data['og_description'] = $shop_data['shop']['name'] . 'でロクナナハチ(678)のシニア向け記念撮影サービスをご利用いただけます。' . $shop_data['shop']['address'] . 'にてお待ちしております。';
+            }
+            
+        } else {
+            // その他のページ（デフォルト）
+            $post_title = get_the_title();
+            $seo_data['title'] = $post_title . ' | ' . $site_name;
+            $seo_data['description'] = $site_description;
+            $seo_data['keywords'] = $base_keywords;
+        }
+        
+        // OG情報の設定
+        $seo_data['og_title'] = $seo_data['og_title'] ?: $seo_data['title'];
+        $seo_data['og_description'] = $seo_data['og_description'] ?: $seo_data['description'];
+        $seo_data['og_image'] = $seo_data['og_image'] ?: $default_og_image;
+        
+        // カノニカルURL
+        $seo_data['canonical'] = get_permalink();
+        
+        return apply_filters('studio_seo_data', $seo_data);
+    }
+    
+    /**
+     * 店舗詳細ページのSEOデータを取得
+     */
+    private function getStoreDetailSEO() {
+        $shop_id = isset($_GET['shop_id']) ? intval($_GET['shop_id']) : 0;
+        if (!$shop_id) {
+            return null;
+        }
+        
+        // キャッシュから店舗データを取得
+        $cache_key = 'studio_shop_' . $shop_id;
+        $cached_shop = get_transient($cache_key);
+        
+        if ($cached_shop !== false) {
+            return ['shop' => $cached_shop];
+        }
+        
+        // キャッシュがない場合は全店舗データから検索
+        $all_shops_data = get_cached_studio_data();
+        if (isset($all_shops_data['shops']) && is_array($all_shops_data['shops'])) {
+            foreach ($all_shops_data['shops'] as $shop) {
+                if (isset($shop['id']) && intval($shop['id']) === $shop_id) {
+                    // 個別キャッシュに保存
+                    set_transient($cache_key, $shop, 300); // 5分キャッシュ
+                    return ['shop' => $shop];
+                }
+            }
+        }
+        
+        return null;
+    }
+    
+    /**
+     * SEOタグを出力
+     */
+    public function outputSEOTags() {
+        $seo_data = $this->getSEOData();
+        
+        // タイトルタグ
+        if ($seo_data['title']) {
+            echo '<title>' . esc_html($seo_data['title']) . '</title>' . "\n";
+        }
+        
+        // メタディスクリプション
+        if ($seo_data['description']) {
+            echo '<meta name="description" content="' . esc_attr($seo_data['description']) . '">' . "\n";
+        }
+        
+        // メタキーワード
+        if ($seo_data['keywords']) {
+            echo '<meta name="keywords" content="' . esc_attr($seo_data['keywords']) . '">' . "\n";
+        }
+        
+        // カノニカルURL
+        if ($seo_data['canonical']) {
+            echo '<link rel="canonical" href="' . esc_url($seo_data['canonical']) . '">' . "\n";
+        }
+        
+        // noindex設定
+        if ($seo_data['noindex']) {
+            echo '<meta name="robots" content="noindex,nofollow">' . "\n";
+        }
+        
+        // OGPタグ
+        echo '<meta property="og:title" content="' . esc_attr($seo_data['og_title']) . '">' . "\n";
+        echo '<meta property="og:description" content="' . esc_attr($seo_data['og_description']) . '">' . "\n";
+        echo '<meta property="og:type" content="' . esc_attr($seo_data['og_type']) . '">' . "\n";
+        echo '<meta property="og:url" content="' . esc_url($seo_data['canonical']) . '">' . "\n";
+        echo '<meta property="og:site_name" content="ロクナナハチ(678)">' . "\n";
+        echo '<meta property="og:locale" content="ja_JP">' . "\n";
+        
+        if ($seo_data['og_image']) {
+            echo '<meta property="og:image" content="' . esc_url($seo_data['og_image']) . '">' . "\n";
+            echo '<meta property="og:image:width" content="1200">' . "\n";
+            echo '<meta property="og:image:height" content="630">' . "\n";
+        }
+        
+        // Twitter Cardタグ
+        echo '<meta name="twitter:card" content="' . esc_attr($seo_data['twitter_card']) . '">' . "\n";
+        echo '<meta name="twitter:title" content="' . esc_attr($seo_data['og_title']) . '">' . "\n";
+        echo '<meta name="twitter:description" content="' . esc_attr($seo_data['og_description']) . '">' . "\n";
+        
+        if ($seo_data['og_image']) {
+            echo '<meta name="twitter:image" content="' . esc_url($seo_data['og_image']) . '">' . "\n";
+        }
+        
+        // 構造化データ（JSON-LD）を出力
+        $this->outputStructuredData();
+    }
+    
+    /**
+     * 構造化データ（JSON-LD）を出力
+     */
+    private function outputStructuredData() {
+        $structured_data = [];
+        
+        if (is_front_page() || is_home()) {
+            // トップページ - 企業/サービス情報
+            $structured_data[] = [
+                '@context' => 'https://schema.org',
+                '@type' => 'LocalBusiness',
+                'name' => 'ロクナナハチ(678)',
+                'description' => '60代、70代、80代の方々のための記念撮影サービス。還暦、喜寿、米寿のお祝い、遺影撮影、家族写真など人生の大切な瞬間を美しく残します。',
+                'url' => home_url(),
+                'telephone' => '',
+                'address' => [
+                    '@type' => 'PostalAddress',
+                    'addressCountry' => 'JP'
+                ],
+                'serviceType' => ['シニア記念撮影', '還暦祝い撮影', '喜寿祝い撮影', '米寿祝い撮影', '遺影撮影', '家族写真'],
+                'areaServed' => '全国',
+                'priceRange' => '$$',
+                'audience' => [
+                    '@type' => 'Audience',
+                    'audienceType' => 'シニア世代',
+                    'suggestedMinAge' => 60
+                ]
+            ];
+            
+            // パンくずリスト
+            $structured_data[] = [
+                '@context' => 'https://schema.org',
+                '@type' => 'BreadcrumbList',
+                'itemListElement' => [
+                    [
+                        '@type' => 'ListItem',
+                        'position' => 1,
+                        'name' => 'TOP',
+                        'item' => home_url()
+                    ]
+                ]
+            ];
+            
+        } elseif (is_page('about')) {
+            // Aboutページ - サービス情報
+            $structured_data[] = [
+                '@context' => 'https://schema.org',
+                '@type' => 'Service',
+                'name' => 'ロクナナハチ(678)',
+                'provider' => [
+                    '@type' => 'Organization',
+                    'name' => 'ロクナナハチ(678)'
+                ],
+                'serviceType' => 'シニア向け記念撮影サービス',
+                'description' => 'ロクナナハチ(678)のサービス内容をご紹介。還暦・喜寿・米寿のお祝い撮影、遺影撮影、家族写真撮影など、シニア世代に寄り添った撮影プランをご用意しています。',
+                'audience' => [
+                    '@type' => 'Audience',
+                    'audienceType' => 'シニア世代',
+                    'suggestedMinAge' => 60
+                ]
+            ];
+            
+        } elseif (is_page('gallery')) {
+            // ギャラリーページ - 作品集
+            $structured_data[] = [
+                '@context' => 'https://schema.org',
+                '@type' => 'ImageGallery',
+                'name' => 'ロクナナハチ(678) ギャラリー',
+                'description' => 'ロクナナハチ(678)の撮影作品・事例をご紹介。還暦、喜寿、米寿のお祝い撮影、遺影撮影、家族写真など様々なシーンでの撮影作品をご覧いただけます。'
+            ];
+            
+        } elseif (is_page('stores')) {
+            // 店舗一覧ページ - 店舗検索
+            $structured_data[] = [
+                '@context' => 'https://schema.org',
+                '@type' => 'ItemList',
+                'name' => 'ロクナナハチ(678) 提携写真館一覧',
+                'description' => '全国の提携写真館でロクナナハチ(678)のシニア向け記念撮影サービスをご利用いただけます。'
+            ];
+            
+        } elseif (is_page_template('page-studio-detail.php')) {
+            // 店舗詳細ページ - 個別店舗情報
+            $shop_data = $this->getStoreDetailSEO();
+            if ($shop_data && isset($shop_data['shop'])) {
+                $shop = $shop_data['shop'];
+                $structured_data[] = [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'LocalBusiness',
+                    'name' => $shop['name'],
+                    'description' => $shop['name'] . 'でロクナナハチ(678)のシニア向け記念撮影サービスをご利用いただけます。',
+                    'address' => [
+                        '@type' => 'PostalAddress',
+                        'streetAddress' => $shop['address'] ?? '',
+                        'addressCountry' => 'JP'
+                    ],
+                    'telephone' => $shop['phone'] ?? '',
+                    'url' => get_permalink(),
+                    'serviceType' => ['シニア記念撮影', '還暦祝い撮影', '遺影撮影'],
+                    'openingHours' => $shop['business_hours'] ?? '',
+                    'image' => !empty($shop['image_urls'][0]) ? $shop['image_urls'][0] : ''
+                ];
+            }
+        }
+        
+        // パンくずリスト（共通）
+        if (!is_front_page() && !is_home()) {
+            $breadcrumb_items = [
+                [
+                    '@type' => 'ListItem',
+                    'position' => 1,
+                    'name' => 'TOP',
+                    'item' => home_url()
+                ]
+            ];
+            
+            // 現在のページ
+            $breadcrumb_items[] = [
+                '@type' => 'ListItem',
+                'position' => 2,
+                'name' => get_the_title(),
+                'item' => get_permalink()
+            ];
+            
+            $structured_data[] = [
+                '@context' => 'https://schema.org',
+                '@type' => 'BreadcrumbList',
+                'itemListElement' => $breadcrumb_items
+            ];
+        }
+        
+        // JSON-LD出力
+        if (!empty($structured_data)) {
+            foreach ($structured_data as $data) {
+                echo '<script type="application/ld+json">' . "\n";
+                echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n";
+                echo '</script>' . "\n";
+            }
+        }
+    }
+}
+
+// SEOマネージャーを初期化
+add_action('init', function() {
+    StudioSEOManager::getInstance();
+});
+
+// ================================
+// SITEMAP GENERATION
+// ================================
+
+/**
+ * カスタムサイトマップ生成システム
+ */
+class StudioSitemapGenerator {
+    
+    public function __construct() {
+        add_action('init', [$this, 'addRewriteRules']);
+        add_action('template_redirect', [$this, 'handleSitemapRequest']);
+        add_filter('query_vars', [$this, 'addQueryVars']);
+    }
+    
+    public function addRewriteRules() {
+        add_rewrite_rule('^sitemap\.xml$', 'index.php?sitemap=1', 'top');
+        add_rewrite_rule('^sitemap_index\.xml$', 'index.php?sitemap_index=1', 'top');
+    }
+    
+    public function addQueryVars($vars) {
+        $vars[] = 'sitemap';
+        $vars[] = 'sitemap_index';
+        return $vars;
+    }
+    
+    public function handleSitemapRequest() {
+        if (get_query_var('sitemap')) {
+            $this->outputSitemap();
+            exit;
+        }
+        
+        if (get_query_var('sitemap_index')) {
+            $this->outputSitemapIndex();
+            exit;
+        }
+    }
+    
+    private function outputSitemapIndex() {
+        header('Content-Type: application/xml; charset=utf-8');
+        echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+        echo '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+        
+        $sitemap_url = home_url('/sitemap.xml');
+        $lastmod = date('Y-m-d\TH:i:s+00:00');
+        
+        echo '<sitemap>' . "\n";
+        echo '<loc>' . esc_url($sitemap_url) . '</loc>' . "\n";
+        echo '<lastmod>' . $lastmod . '</lastmod>' . "\n";
+        echo '</sitemap>' . "\n";
+        
+        echo '</sitemapindex>' . "\n";
+    }
+    
+    private function outputSitemap() {
+        header('Content-Type: application/xml; charset=utf-8');
+        echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+        echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">' . "\n";
+        
+        // 主要ページ
+        $pages = [
+            ['url' => home_url('/'), 'priority' => '1.0', 'changefreq' => 'daily'],
+            ['url' => home_url('/about'), 'priority' => '0.9', 'changefreq' => 'weekly'],
+            ['url' => home_url('/gallery'), 'priority' => '0.8', 'changefreq' => 'weekly'],
+            ['url' => home_url('/stores'), 'priority' => '0.9', 'changefreq' => 'daily'],
+            ['url' => home_url('/studio-reservation'), 'priority' => '0.7', 'changefreq' => 'monthly'],
+            ['url' => home_url('/studio-inquery'), 'priority' => '0.6', 'changefreq' => 'monthly']
+        ];
+        
+        foreach ($pages as $page) {
+            $this->outputUrlEntry($page['url'], $page['priority'], $page['changefreq']);
+        }
+        
+        // 店舗詳細ページ（動的）
+        $shops_data = get_cached_studio_data();
+        if (isset($shops_data['shops']) && is_array($shops_data['shops'])) {
+            foreach ($shops_data['shops'] as $shop) {
+                if (isset($shop['id'])) {
+                    $shop_url = home_url('/studio-detail/?shop_id=' . $shop['id']);
+                    $this->outputUrlEntry($shop_url, '0.7', 'weekly');
+                }
+            }
+        }
+        
+        echo '</urlset>' . "\n";
+    }
+    
+    private function outputUrlEntry($url, $priority, $changefreq, $lastmod = null) {
+        if (!$lastmod) {
+            $lastmod = date('Y-m-d\TH:i:s+00:00');
+        }
+        
+        echo '<url>' . "\n";
+        echo '<loc>' . esc_url($url) . '</loc>' . "\n";
+        echo '<lastmod>' . $lastmod . '</lastmod>' . "\n";
+        echo '<changefreq>' . $changefreq . '</changefreq>' . "\n";
+        echo '<priority>' . $priority . '</priority>' . "\n";
+        echo '</url>' . "\n";
+    }
+}
+
+// サイトマップジェネレーターを初期化
+new StudioSitemapGenerator();
+
+// パーマリンク更新時にリライトルールをフラッシュ
+add_action('wp_loaded', function() {
+    if (!get_option('studio_sitemap_flushed')) {
+        flush_rewrite_rules();
+        update_option('studio_sitemap_flushed', true);
+    }
 });
 
 // Load WP-CLI commands if WP-CLI is available

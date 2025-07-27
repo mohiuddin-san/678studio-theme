@@ -123,23 +123,7 @@ if (!$shop) {
 
 $map_embed_url = get_map_embed_url($shop);
 
-// SEO meta tags for store detail page
-if ($shop) {
-    // Update page title
-    add_filter('pre_get_document_title', function() use ($shop) {
-        return $shop['name'] . ' - 店舗詳細 | 678写真館';
-    }, 10);
-    
-    // Add meta tags
-    add_action('wp_head', function() use ($shop) {
-        echo '<meta name="description" content="' . esc_attr($shop['name'] . 'の店舗情報。住所：' . $shop['address'] . '、最寄り駅：' . $shop['nearest_station']) . '">' . "\n";
-        echo '<meta property="og:title" content="' . esc_attr($shop['name']) . ' - 678写真館">' . "\n";
-        echo '<meta property="og:description" content="' . esc_attr($shop['name'] . 'の店舗詳細ページです。') . '">' . "\n";
-        if (!empty($shop['image_urls'][0])) {
-            echo '<meta property="og:image" content="' . esc_url($shop['image_urls'][0]) . '">' . "\n";
-        }
-    }, 1);
-}
+// SEO情報は統一システム（StudioSEOManager）で自動処理されます
 
 // Debugging output for admins
 // if (current_user_can('administrator')) {

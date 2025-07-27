@@ -1,0 +1,206 @@
+// Privacy Policy Page Styles
+// =============================================================================
+
+@use '../base/mixins' as m;
+@use '../base/variables' as v;
+
+.privacy-policy {
+    padding: m.fs(80, 0.5) 0;
+    background-color: #f8f9fa;
+
+    @include m.mq(md) {
+        padding: m.fsm(40) 0;
+    }
+
+    &__container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 m.fs(40, 0.5);
+
+        @include m.mq(md) {
+            padding: 0 m.fsm(20);
+        }
+    }
+
+    &__header {
+        text-align: center;
+        margin-bottom: m.fs(60, 0.5);
+
+        @include m.mq(md) {
+            margin-bottom: m.fsm(40);
+        }
+    }
+
+    &__title {
+        font-size: m.fs(32, 0.8);
+        font-family: v.$ja-sans;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: m.fs(16, 0.5);
+
+        @include m.mq(md) {
+            font-size: m.fsm(24);
+            margin-bottom: m.fsm(12);
+        }
+    }
+
+    &__date {
+        font-size: m.fs(14, 0.8);
+        color: #666;
+        margin: 0;
+
+        @include m.mq(md) {
+            font-size: m.fsm(12);
+        }
+    }
+
+    &__content {
+        line-height: 1.8;
+    }
+
+    &__section {
+        margin-bottom: m.fs(40, 0.5);
+
+        @include m.mq(md) {
+            margin-bottom: m.fsm(30);
+        }
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    &__section-title {
+        font-size: m.fs(20, 0.8);
+        font-family: v.$ja-sans;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: m.fs(16, 0.5);
+        padding-bottom: m.fs(8, 0.5);
+        border-bottom: 2px solid #a5c3cf;
+
+        @include m.mq(md) {
+            font-size: m.fsm(18);
+            margin-bottom: m.fsm(12);
+            padding-bottom: m.fsm(6);
+        }
+    }
+
+    &__text {
+        font-size: m.fs(16, 0.8);
+        color: #333;
+        line-height: 1.8;
+        margin-bottom: m.fs(16, 0.5);
+
+        @include m.mq(md) {
+            font-size: m.fsm(14);
+            margin-bottom: m.fsm(12);
+        }
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        a {
+            color: #a5c3cf;
+            text-decoration: underline;
+
+            &:hover {
+                color: darken(#a5c3cf, 10%);
+            }
+        }
+    }
+
+    &__list {
+        margin: m.fs(16, 0.5) 0;
+        padding-left: m.fs(24, 0.5);
+
+        @include m.mq(md) {
+            margin: m.fsm(12) 0;
+            padding-left: m.fsm(20);
+        }
+
+        li {
+            font-size: m.fs(16, 0.8);
+            color: #333;
+            line-height: 1.8;
+            margin-bottom: m.fs(8, 0.5);
+
+            @include m.mq(md) {
+                font-size: m.fsm(14);
+                margin-bottom: m.fsm(6);
+            }
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+    }
+
+    &__contact {
+        background-color: #f8f9fa;
+        padding: m.fs(20, 0.5);
+        border-radius: m.fs(8, 0.5);
+
+        @include m.mq(md) {
+            padding: m.fsm(16);
+            border-radius: m.fsm(6);
+        }
+    }
+
+    &__contact-info {
+        margin-top: m.fs(16, 0.5);
+        padding: m.fs(16, 0.5);
+        background-color: #fff;
+        border-radius: m.fs(6, 0.5);
+
+        @include m.mq(md) {
+            margin-top: m.fsm(12);
+            padding: m.fsm(12);
+            border-radius: m.fsm(4);
+        }
+
+        p {
+            font-size: m.fs(14, 0.8);
+            color: #333;
+            margin-bottom: m.fs(8, 0.5);
+
+            @include m.mq(md) {
+                font-size: m.fsm(13);
+                margin-bottom: m.fsm(6);
+            }
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+
+            strong {
+                font-weight: 600;
+            }
+        }
+    }
+
+    &__footer {
+        margin-top: m.fs(60, 0.5);
+        padding-top: m.fs(30, 0.5);
+        border-top: 1px solid #eee;
+        text-align: center;
+
+        @include m.mq(md) {
+            margin-top: m.fsm(40);
+            padding-top: m.fsm(20);
+        }
+    }
+
+    &__company {
+        font-size: m.fs(16, 0.8);
+        font-weight: 600;
+        color: #333;
+        margin-bottom: m.fs(8, 0.5);
+
+        @include m.mq(md) {
+            font-size: m.fsm(14);
+            margin-bottom: m.fsm(6);
+        }
+    }
+}
