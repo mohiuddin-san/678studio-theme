@@ -109,7 +109,7 @@ get_header();
   <?php get_template_part('template-parts/sections/about/photography-plans'); ?>
 
   <!-- Options Section -->
-  <?php get_template_part('template-parts/sections/about/options'); ?>
+  <?php // get_template_part('template-parts/sections/about/options'); ?>
 
   <!-- Photography Flow Section -->
   <div id="photography-flow"></div>

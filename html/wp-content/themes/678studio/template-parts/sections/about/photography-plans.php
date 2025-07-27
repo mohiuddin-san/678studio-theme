@@ -18,7 +18,7 @@
           'variant' => 'default',
           'label_text' => '678撮影プラン',
           'title_text' => '￥24,000<span class="tax-included">(税込)</span>',
-          'content_text' => '撮影時間 2時間<br>ヘアメイク<br>写真撮影(3カット)<br>データ納品',
+          'content_text' => '・写真撮影<br>・ヘアメイク<br>・撮影データ1カット<br>・貸衣装 <br><small style="font-size: 0.8em; color: #999;">※貸衣装の有無は店舗により異なります</small>',
           'class' => 'gallery-mobile-title-section'
         ]); ?>
         </div>

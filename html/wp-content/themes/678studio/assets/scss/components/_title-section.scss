@@ -10,7 +10,7 @@
 
 	// デフォルト値（widthなし、コンテンツ幅に合わせる）
 	width: 100%;
-	padding: m.fs(32, 0.5);
+	padding: m.fs(48, 0.6);
 	gap: m.fs(24, 0.5);
 
 	// モバイル対応
@@ -22,8 +22,8 @@
 	&--default {
 		--width: 448;
 		--width-scale: 0.7;
-		--padding: 32;
-		--padding-scale: 0.5;
+		--padding: 48;
+		--padding-scale: 0.6;
 		--gap: 24;
 		--gap-scale: 0.5;
 
