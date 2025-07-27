@@ -324,6 +324,8 @@ if ($shop) {
 }
 </style>
 
+
+
 <?php
 get_template_part('template-parts/components/footer');
 get_footer();

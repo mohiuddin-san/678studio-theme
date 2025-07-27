@@ -18,17 +18,17 @@ add_action('wp_head', function() {
 // Add structured data for local business listing
 add_action('wp_footer', function() {
     ?>
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "ItemList",
-        "name": "678写真館 店舗一覧",
-        "description": "678写真館の提携店舗一覧",
-        "url": "<?php echo esc_url(home_url('/stores/')); ?>",
-        "numberOfItems": 30
-    }
-    </script>
-    <?php
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "678写真館 店舗一覧",
+  "description": "678写真館の提携店舗一覧",
+  "url": "<?php echo esc_url(home_url('/stores/')); ?>",
+  "numberOfItems": 30
+}
+</script>
+<?php
 }, 99);
 
 get_header();
@@ -46,6 +46,9 @@ get_header();
 
   <!-- Store Search Section -->
   <?php get_template_part('template-parts/sections/home/studio-search'); ?>
+
+  <!-- Contact & Booking Section -->
+  <?php get_template_part('template-parts/components/contact-booking'); ?>
 
 </main>
 
