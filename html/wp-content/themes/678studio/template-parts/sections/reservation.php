@@ -48,7 +48,7 @@
       </select>
     </div>
 
-    <div class="contact-details">
+    <div class="contact-details" style="display: none;">
       <div class="contact-image">
         <img src="<?php echo get_template_directory_uri(); ?>/assets/images/cardpic-sample.jpg" alt="Studio Image">
       </div>

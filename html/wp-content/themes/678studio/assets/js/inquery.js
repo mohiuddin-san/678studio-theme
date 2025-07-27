@@ -1,20 +1,11 @@
-
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('reservation.js loaded');
-
-    // Debug DOM structure
-    console.log('contact-search:', document.querySelector('.contact-search'));
-    console.log('contact-select:', document.querySelector('.contact-select'));
-    console.log('contact-details:', document.querySelector('.contact-details'));
-    console.log('contact-image img:', document.querySelector('.contact-image img'));
-    console.log('table cells:', document.querySelectorAll('.contact-info table tr td:nth-child(2)'));
+    console.log('inquery.js loaded');
 
     // Initialize shopsData as empty array to prevent undefined errors
     window.shopsData = [];
 
     async function fetchShops() {
         try {
-            // Use local JSON for testing
             const response = await fetch('https://678photo.com/api/get_all_studio_shop.php');
             console.log('API response:', response);
             if (!response.ok) {
@@ -39,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error: .contact-select not found');
             return;
         }
-        console.log('Select element before population:', select);
+        
         try {
             select.innerHTML = '<option value="">ご予約・お問い合わせの店舗をお選びください</option>';
             shops.forEach(shop => {
@@ -48,7 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 option.textContent = shop.name;
                 select.appendChild(option);
             });
-            console.log('Select element after population:', select);
             window.shopsData = shops;
         } catch (error) {
             console.error('Error populating dropdown:', error);

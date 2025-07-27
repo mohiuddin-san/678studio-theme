@@ -2,455 +2,650 @@
 @use '../base/mixins' as m;
 
 $primary-color: #f5e8c7;
-$text-color: #547E8F;
-$border-color: #547E8F;
+$text-color: #547e8f;
+$border-color: #547e8f;
 $highlight-color: #007bff;
 
 .contact-section {
-  background-color: #E9EDF0;
-  width: 100%;
-  padding-left: m.fs(120);
-  padding-right: m.fs(120);
+	background-color: #e9edf0;
+	width: 100%;
+	padding: 0 m.fs(120, 0.5);
 
-  .contact-header-container {
-    background-color: #fff;
-    padding: m.fs(16) 0;
-    text-align: center;
-    margin-bottom: m.fs(16);
+	@include m.mq(md) {
+		padding: 0 m.fsm(20);
+	}
 
-    .contact-header {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      margin-top: m.fs(16);
+	.contact-header-container {
+		background-color: #fff;
+		padding: m.fs(16) 0;
+		text-align: center;
+		margin-bottom: m.fs(16);
 
-      .thoughts-label {
-        color: #fff;
-        text-decoration: none;
-        font-family: v.$ja; // Ensure v.$ja is defined in your _variables.scss
-        font-size: m.fs(16);
-        font-weight: 500;
-        background-color: #000;
-        padding: m.fs(10) m.fs(20);
-        width: 264px;
-        height: 60px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-    }
+		.contact-header {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			margin-top: m.fs(16);
 
+			// BEM記法でのタイトル
+			&__title {
+				color: #fff;
+				text-decoration: none;
+				font-family: v.$ja-sans;
+				letter-spacing: 0.12em;
+				font-size: m.fs(16);
+				font-weight: 500;
+				background-color: #3f3f3f;
+				padding: m.fs(10) m.fs(20);
+				width: m.fs(160);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+		}
+	}
 
-  }
+	// BEM記法でのメインタイトル
+	.contact__main-title {
+		width: 100%;
+		text-align: center;
+		margin-top: m.fs(20);
+		margin-bottom: m.fs(100);
+		font-family: v.$ja;
+		font-size: m.fs(39);
+		color: #3f3f3f;
+		font-weight: 400;
+		letter-spacing: 0.12em;
+	}
 
-  .main-title {
-    width: 100%;
-    text-align: center;
-    margin-top: m.fs(60);
-    margin-bottom: m.fs(100);
-    font-family: v.$ja;
-    font-size: m.fs(39);
-    color: #333;
-  }
+	.contact-main-text {
+		padding: m.fs(16) 0;
+		color: #333;
+		margin-bottom: m.fs(24);
 
+		p {
+			font-family: v.$ja;
+			font-size: m.fs(14);
+		}
+	}
 
-  .contact-main-text {
-    padding: m.fs(16) 0;
-    color: #333;
-    margin-bottom: m.fs(24);
+	.contact-content {
+		padding: m.fs(44) m.fs(100);
+		background-color: #fff;
+		border: 1px solid $border-color;
+		align-items: center;
+		border-radius: m.fs(8);
 
-    p {
-      font-family: v.$ja;
-      font-size: m.fs(14);
-    }
-  }
+		@include m.mq(md) {
+			padding: m.fsm(44) m.fsm(20);
+		}
 
-  .contact-content {
-    padding: m.fs(44);
-    background-color: #fff;
-    border: 1px solid $border-color;
-    align-items: center;
-    border-radius: m.fs(8);
+		.h1 {
+			text-align: center;
+		}
 
-    .h1 {
-      text-align: center;
-    }
+		.user-count-section__line {
+			width: 100%;
+			height: m.fs(4);
+			margin-bottom: m.fs(24);
+		}
 
-    .user-count-section__line {
-      width: 100%;
-      height: m.fs(4);
-      margin-bottom: m.fs(24);
-    }
+		.contact-buttons {
+			display: flex;
+			gap: m.fs(16);
+			justify-content: center;
+			margin-bottom: m.fs(24);
+		}
 
-    .contact-buttons {
-      display: flex;
-      gap: m.fs(16);
-      justify-content: center;
-      margin-bottom: m.fs(24);
-    }
+		.contact-title {
+			font-family: v.$ja;
+			font-size: m.fs(16);
+			font-weight: 300;
+			margin-top: m.fs(100);
+			margin-bottom: m.fs(26);
+			color: $text-color;
+			text-align: center;
+		}
 
-    .contact-title {
-      font-family: v.$ja;
-      font-size: m.fs(16);
-      font-weight: 300;
-      margin-top: m.fs(100);
-      margin-bottom: m.fs(26);
-      color: $text-color;
-      text-align: center;
-    }
+		.contact-search {
+			margin-bottom: m.fs(24);
 
-    .contact-search {
-      margin-bottom: m.fs(24);
+			.contact-select {
+				width: 100%;
+				height: m.fs(50);
+				padding: m.fs(12) m.fs(16);
+				font-family: v.$ja;
+				font-size: m.fs(16);
+				color: white;
+				background-color: #7996a1;
+				border: none;
+				border-radius: m.fs(4);
+				appearance: none;
+				background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+				background-repeat: no-repeat;
+				background-position: right m.fs(10) center;
 
-      .contact-select {
-        width: 100%;
-        height: m.fs(50);
-        padding: m.fs(12) m.fs(16);
-        font-family: v.$ja;
-        font-size: m.fs(14);
-        border: 1px solid $border-color;
-        border-radius: m.fs(4);
-        appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23547E8F' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right m.fs(10) center;
+				@include m.mq(md) {
+					font-size: m.fsm(14);
+					height: m.fsm(45);
+					padding: m.fsm(10) m.fsm(14);
+				}
 
-        option {
-          font-size: m.fs(20);
-          color: $border-color;
-        }
-      }
+				option {
+					font-family: v.$ja-sans;
+					font-size: m.fs(16);
+					color: white;
+					background-color: $border-color;
 
-    }
+					@include m.mq(md) {
+						font-size: m.fsm(14);
+					}
+				}
+			}
+		}
 
-    .contact-details {
-      margin-top: m.fs(80);
-      display: flex;
-      gap: m.fs(80);
-      border: 1px solid $border-color;
-      border-radius: m.fs(8);
-      padding: m.fs(25);
+		.contact-details {
+			margin-top: m.fs(80);
+			display: flex;
+			flex-direction: row;
+			align-items: flex-start;
+			gap: m.fs(40);
+			border: 1px solid $border-color;
+			border-radius: m.fs(8);
+			padding: m.fs(25);
 
-      .contact-image {
-        width: m.fs(490);
-        height: m.fs(400);
-        flex: 1;
-        overflow: hidden;
+			&[style*='display: none'] {
+				display: none !important;
+			}
 
-        img {
-          width: 100%;
-          height: 100%;
-          display: block;
-          object-fit: cover;
-        }
-      }
+			@include m.mq(md) {
+				flex-direction: column;
+				gap: m.fsm(24);
+				padding: m.fsm(20);
+			}
 
-      .contact-info {
-        flex: 1;
+			.contact-image {
+				width: 50%;
+				max-width: m.fs(400);
+				height: m.fs(327);
+				flex-shrink: 0;
+				overflow: hidden;
 
-        h3 {
-          font-family: v.$ja;
-          font-size: m.fs(18);
-          margin-bottom: m.fs(16);
-          text-align: center;
-          color: $border-color;
-        }
+				@include m.mq(md) {
+					width: 100%;
+					height: m.fsm(250);
+					max-width: none;
+				}
 
-        table {
-          width: 100%;
-          height: m.fs(327);
-          border-collapse: separate;
-          border-spacing: 0;
-          margin-top: m.fs(45);
-          border: 1px solid $border-color;
-          border-radius: m.fs(3);
-          overflow: hidden;
+				img {
+					width: 100%;
+					height: 100%;
+					display: block;
+					object-fit: cover;
+				}
+			}
 
-          td {
-            padding: m.fs(8);
-            border: 1px solid $border-color;
-            font-family: v.$ja;
-            font-size: m.fs(14);
-            color: $border-color;
-            text-align: center;
-          }
+			.contact-info {
+				flex: 1;
+				min-width: 0;
 
-          tr:first-child td:first-child {
-            border-top-left-radius: m.fs(3);
-          }
+				table {
+					width: 100%;
+					height: m.fs(327);
+					border-collapse: separate;
+					border-spacing: 0;
+					border: 0.5px solid $border-color;
+					border-radius: m.fs(3);
+					overflow: hidden;
 
-          tr:first-child td:last-child {
-            border-top-right-radius: m.fs(3);
-          }
+					td {
+						padding: m.fs(8);
+						border: 0.5px solid $border-color;
+						font-family: v.$ja;
+						font-size: m.fs(14);
+						color: $border-color;
+						text-align: center;
+					}
 
-          tr:last-child td:first-child {
-            border-bottom-left-radius: m.fs(3);
-          }
+					tr:first-child td:first-child {
+						border-top-left-radius: m.fs(3);
+					}
 
-          tr:last-child td:last-child {
-            border-bottom-right-radius: m.fs(3);
-          }
-        }
+					tr:first-child td:last-child {
+						border-top-right-radius: m.fs(3);
+					}
 
-      }
-    }
-  }
+					tr:last-child td:first-child {
+						border-bottom-left-radius: m.fs(3);
+					}
 
-  .schedule-container {
-    margin-top: m.fs(80);
-    max-width: 100%;
-    margin: 0 auto;
-    padding: m.fs(20);
-    font-family: v.$ja;
+					tr:last-child td:last-child {
+						border-bottom-right-radius: m.fs(3);
+					}
+				}
+			}
+		}
+	}
 
-    h1 {
-      margin-top: m.fs(40);
-      text-align: center;
-      color: #3F3F3F;
-      font-family: v.$ja;
-      ;
-      font-size: m.fs(39);
-      margin-bottom: m.fs(44);
-    }
+	.schedule-container {
+		margin-top: m.fs(80);
+		width: 100%;
+		padding: 0;
+		font-family: v.$ja;
 
-    .text-block {
-      margin-top: m.fs(88);
-      margin-bottom: m.fs(80);
-      text-align: center;
-      font-family: v.$ja;
-      color: $text-color;
+		h1 {
+			margin-top: m.fs(40);
+			text-align: center;
+			color: #3f3f3f;
+			font-family: v.$ja;
+			font-size: m.fs(39);
+			margin-bottom: m.fs(44);
+		}
 
-    }
+		.text-block {
+			margin-top: m.fs(88);
+			margin-bottom: m.fs(80);
+			text-align: center;
+			font-family: v.$ja;
+			color: $text-color;
+		}
 
-    .big-text {
-      font-size: m.fs(25);
-    }
+		.big-text {
+			font-size: m.fs(25);
+		}
 
-    .small-text {
-      padding-top: m.fs(40);
-      font-size: m.fs(15);
-    }
+		.small-text {
+			padding-top: m.fs(40);
+			font-size: m.fs(15);
+		}
 
-    .schedule-options {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      margin-top: m.fs(20);
+		.schedule-options {
+			display: flex;
+			justify-content: space-around;
+			align-items: center;
+			margin-top: m.fs(20);
 
-      .option-card {
-        background-color: #FCF6DE;
-        padding: m.fs(20);
-        border-radius: m.fs(10);
-        width: 60%;
-        box-shadow: 0 m.fs(2) m.fs(5) rgba(0, 0, 0, 0.1);
+			.option-card {
+				background-color: #fcf6de;
+				padding: m.fs(20);
+				border-radius: m.fs(10);
+				width: 60%;
+				box-shadow: 0 m.fs(2) m.fs(5) rgba(0, 0, 0, 0.1);
 
-        h2 {
-          margin-top: m.fs(40);
-          color: $text-color;
-          margin-bottom: m.fs(60);
-          text-align: center;
-          font-family: v.$ja;
-          font-size: m.fs(25);
-        }
+				h2 {
+					margin-top: m.fs(40);
+					color: $text-color;
+					margin-bottom: m.fs(60);
+					text-align: center;
+					font-family: v.$ja;
+					font-size: m.fs(25);
+				}
 
-        ul {
-          list-style-type: none;
-          padding: 0;
-          color: $text-color;
-          margin-bottom: m.fs(40);
+				ul {
+					list-style-type: none;
+					padding: 0;
+					color: $text-color;
+					margin-bottom: m.fs(40);
 
-          li {
-            margin-bottom: m.fs(10);
+					li {
+						margin-bottom: m.fs(10);
 
-            &:nth-child(1)::after,
-            &:nth-child(2)::after,
-            &:nth-child(3)::after {
-              content: "";
-              display: block;
-              width: 100%;
-              height: 1px;
-              background-color: $text-color;
-              margin-top: m.fs(30);
-              margin-bottom: m.fs(30);
-            }
-          }
-        }
+						&:nth-child(1)::after,
+						&:nth-child(2)::after,
+						&:nth-child(3)::after {
+							content: '';
+							display: block;
+							width: 100%;
+							height: 1px;
+							background-color: $text-color;
+							margin-top: m.fs(30);
+							margin-bottom: m.fs(30);
+						}
+					}
+				}
 
-        button {
-          background-color: $text-color;
-          color: white;
-          border: none;
-          padding: m.fs(10) m.fs(20);
-          border-radius: m.fs(5);
-          cursor: pointer;
-          width: 100%;
-          text-align: center;
+				button {
+					background-color: $text-color;
+					color: white;
+					border: none;
+					padding: m.fs(10) m.fs(20);
+					border-radius: m.fs(5);
+					cursor: pointer;
+					width: 100%;
+					text-align: center;
 
-          &:hover {
-            background-color: darken($text-color, 10%);
-          }
-        }
-      }
-    }
-  }
+					&:hover {
+						background-color: darken($text-color, 10%);
+					}
+				}
+			}
+		}
+	}
 
-  .form-container {
-    max-width: 100%;
-    margin-top: m.fs(120);
-    padding: m.fs(20);
-    font-family: v.$ja;
+	.form-container {
+		width: 100%;
+		margin-top: 0;
+		font-family: v.$ja;
 
-    h1 {
-      margin-bottom: m.fs(60);
-      text-align: center;
-      color: $text-color;
-      font-family: v.$ja;
-      font-size: m.fs(25);
-    }
+		h1 {
+			margin-bottom: m.fs(60);
+			text-align: center;
+			color: $text-color;
+			font-family: v.$ja;
+			font-size: m.fs(25);
+		}
+	}
 
-    button {
-      background-color: $highlight-color;
-      color: white;
-      border: none;
-      padding: m.fs(10) m.fs(20);
-      border-radius: m.fs(5);
-      cursor: pointer;
-      width: 100%;
-      margin-top: m.fs(10);
+	.input-field,
+	.dropdown-field,
+	.textarea-field,
+	.confirmation-field {
+		margin-bottom: m.fs(35);
 
-      &:hover {
-        background-color: darken($highlight-color, 10%);
-      }
-    }
-  }
+		label {
+			display: block;
+			color: $text-color;
+			margin-bottom: m.fs(15);
+		}
 
-  .input-field,
-  .dropdown-field,
-  .textarea-field,
-  .confirmation-field {
-    margin-bottom: m.fs(35);
+		input,
+		select,
+		textarea {
+			width: 100%;
+			height: m.fs(60);
+			padding: m.fs(10);
+			border: 1px solid $border-color;
+			border-radius: m.fs(5);
+			box-sizing: border-box;
 
-    label {
-      display: block;
-      color: $text-color;
-      margin-bottom: m.fs(15);
-    }
+			&::placeholder {
+				color: #9cbecd; // プレースホルダーの色
+				font-size: 14px; // プレースホルダーの文字サイズ
+				font-family: 'Noto Sans JP', medium;
+			}
+		}
+		textarea {
+			height: m.fs(150);
+			resize: vertical;
 
-    input,
-    select,
-    textarea {
-      width: 100%;
-      height: m.fs(60);
-      padding: m.fs(10);
-      border: 1px solid $border-color;
-      border-radius: m.fs(5);
-      box-sizing: border-box;
+			@include m.mq(md) {
+				height: m.fsm(180);
+				min-height: m.fsm(100);
+			}
+		}
 
-      &::placeholder {
-        color: #9CBECD; // プレースホルダーの色
-        font-size: 14px; // プレースホルダーの文字サイズ
-        font-family: 'Noto Sans JP', medium;
-      }
-    }
-    textarea {
-      height: m.fs(150);
-      resize: vertical;
-    }
+		select {
+			appearance: none;
+			background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23547E8F' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+			background-repeat: no-repeat;
+			background-position: right m.fs(10) center;
+			cursor: pointer;
 
-    select {
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23547E8F' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right m.fs(10) center;
-      cursor: pointer;
+			&::-ms-expand {
+				display: none;
+				/* Hide default arrow in IE */
+			}
+		}
+	}
 
-      &::-ms-expand {
-        display: none;
-        /* Hide default arrow in IE */
-      }
-    }
-  }
+	.confirmation-field-check {
+		width: 100%;
+		padding: m.fs(10);
+		border: 1px solid $border-color;
+		border-radius: m.fs(5);
+		text-align: center;
+		margin-bottom: m.fs(60);
 
-  .confirmation-field-check {
-    width: 100%;
-    padding: m.fs(10);
-    border: 1px solid $border-color;
-    border-radius: m.fs(5);
-    text-align: center;
-    margin-bottom: m.fs(60);
+		label {
+			color: $text-color;
+			font-size: m.fs(14);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
 
-    label {
-      color: $text-color;
-      font-size: m.fs(14);
-      input[type="checkbox"] {
-        margin-right: m.fs(5);
-        vertical-align: middle;
-      }
-    }
-  }
+			input[type='checkbox'] {
+				appearance: none;
+				width: m.fs(20);
+				height: m.fs(20);
+				border: 1px solid $border-color;
+				border-radius: m.fs(3);
+				margin-right: m.fs(8);
+				position: relative;
+				cursor: pointer;
+				transition: all 0.3s ease;
+
+				&:checked {
+					background-color: $border-color;
+					border-color: $border-color;
+
+					&::after {
+						content: '';
+						position: absolute;
+						left: 50%;
+						top: 50%;
+						width: m.fs(6);
+						height: m.fs(10);
+						border: solid white;
+						border-width: 0 2px 2px 0;
+						transform: translate(-50%, -60%) rotate(45deg);
+					}
+				}
+
+				&:hover {
+					border-color: darken($border-color, 10%);
+				}
+			}
+		}
+	}
+
+	.confirm-button {
+		background-color: transparent;
+		color: $text-color;
+		border: 1px solid $text-color;
+		padding: m.fs(15) m.fs(40);
+		border-radius: m.fs(5);
+		cursor: pointer;
+		font-family: v.$ja;
+		font-size: m.fs(16);
+		font-weight: 400;
+		max-width: m.fs(300);
+		width: 100%;
+		text-align: center;
+		transition: all 0.3s ease;
+		margin: 0 auto;
+		display: block;
+
+		@include m.mq(md) {
+			max-width: none;
+			padding: m.fsm(12) m.fsm(30);
+			border-radius: m.fsm(4);
+			font-size: m.fsm(14);
+		}
+
+		&:hover {
+			background-color: $text-color;
+			color: white;
+		}
+
+		&:active {
+			background-color: darken($text-color, 10%);
+			border-color: darken($text-color, 10%);
+		}
+
+		@include m.mq(md) {
+			&:active {
+				background-color: $text-color;
+				color: white;
+			}
+		}
+	}
+
+	// フォームステップと確認ステップのトランジション
+	.form-step,
+	.confirmation-step {
+		transition: opacity 0.3s ease-in-out;
+	}
+
+	// 確認画面のスタイル
+	.confirmation-step {
+		&__title {
+			text-align: center;
+			font-family: v.$ja;
+			font-size: m.fs(25);
+			color: $text-color;
+			margin-bottom: m.fs(40);
+
+			@include m.mq(md) {
+				font-size: m.fsm(20);
+				margin-bottom: m.fsm(30);
+			}
+		}
+
+		&__content {
+			margin-bottom: m.fs(40);
+
+			@include m.mq(md) {
+				margin-bottom: m.fsm(30);
+			}
+		}
+
+		&__item {
+			display: flex;
+			align-items: flex-start;
+			margin-bottom: m.fs(20);
+			padding: m.fs(15);
+			border: 1px solid $border-color;
+			border-radius: m.fs(5);
+
+			@include m.mq(md) {
+				flex-direction: column;
+				margin-bottom: m.fsm(15);
+				padding: m.fsm(12);
+				border-radius: m.fsm(4);
+			}
+
+			&--textarea {
+				flex-direction: column;
+				align-items: stretch;
+
+				.confirmation-step__label {
+					margin-bottom: m.fs(10);
+
+					@include m.mq(md) {
+						margin-bottom: m.fsm(8);
+					}
+				}
+			}
+		}
+
+		&__label {
+			font-family: v.$ja;
+			font-size: m.fs(14);
+			color: $text-color;
+			font-weight: 500;
+			min-width: m.fs(120);
+			flex-shrink: 0;
+			margin-right: m.fs(20);
+
+			@include m.mq(md) {
+				font-size: m.fsm(12);
+				min-width: auto;
+				margin-right: 0;
+				margin-bottom: m.fsm(5);
+				font-weight: 600;
+			}
+		}
+
+		&__value {
+			font-family: v.$ja;
+			font-size: m.fs(14);
+			color: $text-color;
+			flex: 1;
+			word-wrap: break-word;
+			white-space: pre-wrap;
+
+			@include m.mq(md) {
+				font-size: m.fsm(13);
+			}
+		}
+
+		&__buttons {
+			display: flex;
+			gap: m.fs(20);
+			justify-content: center;
+			margin-top: m.fs(40);
+
+			@include m.mq(md) {
+				flex-direction: column;
+				gap: m.fsm(15);
+				margin-top: m.fsm(30);
+			}
+		}
+	}
+
+	// 戻るボタンと送信ボタンのスタイル
+	.back-button,
+	.submit-button {
+		padding: m.fs(15) m.fs(40);
+		border-radius: m.fs(5);
+		cursor: pointer;
+		font-family: v.$ja;
+		font-size: m.fs(16);
+		font-weight: 400;
+		max-width: m.fs(200);
+		width: 100%;
+		text-align: center;
+		transition: all 0.3s ease;
+		border: 2px solid $text-color;
+
+		@include m.mq(md) {
+			max-width: none;
+			padding: m.fsm(12) m.fsm(30);
+			border-radius: m.fsm(4);
+			font-size: m.fsm(14);
+			border-width: 1px;
+		}
+	}
+
+	.back-button {
+		background-color: transparent;
+		color: $text-color;
+
+		&:hover {
+			background-color: $text-color;
+			color: white;
+		}
+
+		@include m.mq(md) {
+			&:active {
+				background-color: $text-color;
+				color: white;
+			}
+		}
+	}
+
+	.submit-button {
+		background-color: $text-color;
+		color: white;
+
+		&:hover {
+			background-color: darken($text-color, 10%);
+			border-color: darken($text-color, 10%);
+		}
+
+		@include m.mq(md) {
+			&:active {
+				background-color: darken($text-color, 15%);
+				border-color: darken($text-color, 15%);
+			}
+		}
+	}
 }
-.confirmation-field-level{
-  label {
-      display: block;
-      color: $text-color;
-      margin-top: m.fs(15);
-    }
-}
-
-.custom-button {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px 24px;
-  background-color: #4a6bff;
-  color: white;
-  font-family: 'Arial', sans-serif;
-  font-size: 16px;
-  font-weight: bold;
-  border: none;
-  cursor: pointer;
-  overflow: hidden;
-  transition: all 0.3s ease;
-
-  // The main button text
-  .button-text {
-    margin-right: 10px;
-    z-index: 2;
-  }
-
-  // The icon
-  .button-icon {
-    width: 20px;
-    height: 20px;
-    z-index: 2;
-    // You can replace this with your actual icon
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"/></svg>');
-    background-repeat: no-repeat;
-    background-position: center;
-  }
-
-  // The angled border effect
-  &::before {
-    content: '';
-    position: absolute;
-    top: -5px;
-    left: -5px;
-    width: calc(100% + 10px);
-    height: calc(100% + 10px);
-    border: 2px solid #4a6bff;
-    transform: rotate(0deg);
-    z-index: 1;
-    pointer-events: none;
-    transition: all 0.3s ease;
-  }
-
-  &:hover {
-    background-color: #3a5bef;
-
-    &::before {
-      transform: rotate(45deg);
-      border-color: #3a5bef;
-    }
-  }
+.confirmation-field-level {
+	label {
+		display: block;
+		color: $text-color;
+		margin-top: m.fs(15);
+	}
 }
