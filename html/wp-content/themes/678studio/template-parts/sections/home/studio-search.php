@@ -91,22 +91,22 @@ $current_page = $shop_data['current_page'];
     <div class="studio-search-section__result-count scroll-animate-item" data-delay="0.4" id="search-result-count">
       <div class="result-count-container">
         <?php if (!empty($search_query)): ?>
-          <div class="result-count-text">
-            <span class="search-term">「<?php echo esc_html($search_query); ?>」</span>
-            <span class="result-label">の検索結果</span>
-          </div>
-          <div class="result-count-number">
-            <span class="count"><?php echo $shop_data['total']; ?></span>
-            <span class="count-unit">件</span>
-          </div>
+        <div class="result-count-text">
+          <span class="search-term">「<?php echo esc_html($search_query); ?>」</span>
+          <span class="result-label">の検索結果</span>
+        </div>
+        <div class="result-count-number">
+          <span class="count"><?php echo $shop_data['total']; ?></span>
+          <span class="count-unit">件</span>
+        </div>
         <?php else: ?>
-          <div class="result-count-text">
-            <span class="result-label">全国のフォトスタジオ</span>
-          </div>
-          <div class="result-count-number">
-            <span class="count"><?php echo $shop_data['total']; ?></span>
-            <span class="count-unit">件</span>
-          </div>
+        <div class="result-count-text">
+          <span class="result-label">全国のフォトスタジオ</span>
+        </div>
+        <div class="result-count-number">
+          <span class="count"><?php echo $shop_data['total']; ?></span>
+          <span class="count-unit">件</span>
+        </div>
         <?php endif; ?>
       </div>
     </div>
@@ -152,7 +152,8 @@ $current_page = $shop_data['current_page'];
       <a href="?studio_page=<?php echo max(1, $current_page - 1); ?><?php echo $search_query ? '&studio_search=' . urlencode($search_query) : ''; ?>"
         class="pagination-btn pagination-btn--prev <?php echo $current_page == 1 ? 'disabled' : ''; ?>">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
         </svg>
       </a>
       <div class="pagination-numbers">
@@ -164,7 +165,8 @@ $current_page = $shop_data['current_page'];
       <a href="?studio_page=<?php echo min($total_pages, $current_page + 1); ?><?php echo $search_query ? '&studio_search=' . urlencode($search_query) : ''; ?>"
         class="pagination-btn pagination-btn--next <?php echo $current_page == $total_pages ? 'disabled' : ''; ?>">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
         </svg>
       </a>
     </div>
@@ -186,7 +188,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function performAjaxSearch(query = '', page = 1) {
     // Show loading state
     cardsContainer.style.opacity = '0.6';
-    
+
     const formData = new FormData();
     formData.append('action', 'studio_search');
     formData.append('search_query', query);
@@ -194,29 +196,29 @@ document.addEventListener('DOMContentLoaded', function() {
     formData.append('nonce', '<?php echo wp_create_nonce('studio_search_nonce'); ?>');
 
     fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
-      method: 'POST',
-      body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        // Update cards
-        cardsContainer.innerHTML = data.data.cards_html;
-        
-        // Update pagination
-        if (paginationContainer) {
-          if (data.data.pagination_html.trim()) {
-            paginationContainer.innerHTML = data.data.pagination_html;
-            paginationContainer.style.display = 'flex';
-          } else {
-            paginationContainer.style.display = 'none';
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Update cards
+          cardsContainer.innerHTML = data.data.cards_html;
+
+          // Update pagination
+          if (paginationContainer) {
+            if (data.data.pagination_html.trim()) {
+              paginationContainer.innerHTML = data.data.pagination_html;
+              paginationContainer.style.display = 'flex';
+            } else {
+              paginationContainer.style.display = 'none';
+            }
           }
-        }
-        
-        // Update result count
-        if (resultCountContainer && data.data.total_shops !== undefined) {
-          if (query.trim()) {
-            resultCountContainer.innerHTML = `
+
+          // Update result count
+          if (resultCountContainer && data.data.total_shops !== undefined) {
+            if (query.trim()) {
+              resultCountContainer.innerHTML = `
               <div class="result-count-container">
                 <div class="result-count-text">
                   <span class="search-term">「${query}」</span>
@@ -228,8 +230,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
               </div>
             `;
-          } else {
-            resultCountContainer.innerHTML = `
+            } else {
+              resultCountContainer.innerHTML = `
               <div class="result-count-container">
                 <div class="result-count-text">
                   <span class="result-label">全国のフォトスタジオ</span>
@@ -240,33 +242,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
               </div>
             `;
+            }
           }
+
+          // Update current page
+          currentPage = data.data.current_page;
+
+          // Re-attach pagination event listeners
+          attachPaginationListeners();
+
+          // Restore opacity
+          cardsContainer.style.opacity = '1';
+
+        } else {
+          console.error('Search failed:', data.data.message);
+          cardsContainer.style.opacity = '1';
         }
-        
-        // Update current page
-        currentPage = data.data.current_page;
-        
-        // Re-attach pagination event listeners
-        attachPaginationListeners();
-        
-        // Restore opacity
+      })
+      .catch(error => {
+        console.error('AJAX error:', error);
         cardsContainer.style.opacity = '1';
-        
-      } else {
-        console.error('Search failed:', data.data.message);
-        cardsContainer.style.opacity = '1';
-      }
-    })
-    .catch(error => {
-      console.error('AJAX error:', error);
-      cardsContainer.style.opacity = '1';
-    });
+      });
   }
 
   // Attach pagination event listeners
   function attachPaginationListeners() {
     const paginationLinks = document.querySelectorAll('.studio-search-section__pagination a');
-    
+
     paginationLinks.forEach(link => {
       // Remove any existing listeners to prevent duplicates
       link.removeEventListener('click', handlePaginationClick);
@@ -277,12 +279,12 @@ document.addEventListener('DOMContentLoaded', function() {
   // Separate pagination click handler
   function handlePaginationClick(e) {
     e.preventDefault();
-    
+
     // Check if button is disabled
     if (this.classList.contains('disabled') || this.dataset.disabled === 'true') {
       return;
     }
-    
+
     let page;
     if (this.dataset.page) {
       page = parseInt(this.dataset.page);
@@ -292,12 +294,12 @@ document.addEventListener('DOMContentLoaded', function() {
       const match = href.match(/studio_page=(\d+)/);
       page = match ? parseInt(match[1]) : 1;
     }
-    
+
     if (isNaN(page) || page < 1) {
       console.warn('Invalid page number:', page);
       return;
     }
-    
+
     const query = searchInput.value.trim();
     performAjaxSearch(query, page);
   }
@@ -441,31 +443,31 @@ document.addEventListener('DOMContentLoaded', function() {
   .studio-search-section__result-count {
     margin: 24px 0 32px;
   }
-  
+
   .result-count-container {
     gap: 12px;
     padding: 10px 20px;
     border-radius: 20px;
   }
-  
+
   .search-term {
     font-size: 14px;
   }
-  
+
   .result-label {
     font-size: 13px;
   }
-  
+
   .result-count-number {
     padding: 3px 10px;
     border-radius: 14px;
     min-width: 50px;
   }
-  
+
   .count {
     font-size: 16px;
   }
-  
+
   .count-unit {
     font-size: 11px;
   }

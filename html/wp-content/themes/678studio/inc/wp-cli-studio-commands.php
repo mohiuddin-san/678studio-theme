@@ -422,7 +422,7 @@ WP_CLI::add_command('studio example', function() {
             "https://example.com/image1.jpg",
             "https://example.com/image2.jpg"
         ],
-        "category_images" => {
+        "category_images" => [
             "interior" => [
                 "https://example.com/interior1.jpg",
                 "https://example.com/interior2.jpg"
@@ -430,7 +430,7 @@ WP_CLI::add_command('studio example', function() {
             "staff" => [
                 "https://example.com/staff1.jpg"
             ]
-        }
+        ]
     ];
     
     WP_CLI::log("Example JSON for shop data:");

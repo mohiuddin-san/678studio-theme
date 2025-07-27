@@ -25,7 +25,7 @@
         </div>
         <div class="footer__nav-row footer__nav-row--secondary">
           <a href="/privacy" class="footer__nav-link">プライバシーポリシー</a>
-          <a href="/company" class="footer__nav-link">運営会社</a>
+          <a href="https://egao-salon.jp/" class="footer__nav-link" target="_blank" rel="noopener noreferrer">本サービス運営</a>
         </div>
       </nav>
     </div>

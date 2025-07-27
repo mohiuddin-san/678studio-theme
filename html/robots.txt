@@ -1,0 +1,38 @@
+User-agent: *
+Allow: /
+
+# 重要なページへの優先アクセス
+Allow: /about
+Allow: /gallery  
+Allow: /stores
+Allow: /studio-reservation
+Allow: /studio-inquery
+
+# 管理ページの除外
+Disallow: /wp-admin/
+Disallow: /wp-includes/
+Disallow: /wp-content/plugins/
+Disallow: /wp-content/themes/
+Allow: /wp-content/themes/678studio/assets/
+
+# 不要なページの除外
+Disallow: /cgi-bin/
+Disallow: /wp-login.php
+Disallow: /wp-register.php
+Disallow: /?s=
+Disallow: /search/
+Disallow: /author/
+Disallow: /trackback/
+Disallow: /xmlrpc.php
+Disallow: /readme.html
+Disallow: /license.txt
+
+# プライバシー関連
+Disallow: /privacy
+
+# クロール頻度制御
+Crawl-delay: 1
+
+# サイトマップの場所
+Sitemap: https://678studio.localhost/sitemap.xml
+Sitemap: https://678studio.localhost/sitemap_index.xml
