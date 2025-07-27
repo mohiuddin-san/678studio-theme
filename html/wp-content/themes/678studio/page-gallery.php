@@ -52,7 +52,16 @@ get_header(); ?>
     ?>
     <div class="gallery-grid__item">
       <img src="<?php echo get_template_directory_uri(); ?>/assets/images/grayscale.jpg"
-        alt="Gallery Image <?php echo $i; ?>" loading="lazy">
+        alt="Gallery Image <?php echo $i; ?>" 
+        data-full-image="<?php echo get_template_directory_uri(); ?>/assets/images/grayscale.jpg"
+        loading="lazy">
+      <div class="gallery-grid__overlay">
+        <svg class="gallery-grid__icon" width="40" height="40" viewBox="0 0 40 40" fill="none"
+          xmlns="http://www.w3.org/2000/svg">
+          <circle cx="16" cy="16" r="10" stroke="white" stroke-width="2" />
+          <path d="M23 23L30 30" stroke="white" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </div>
     </div>
     <?php endfor; ?>
   </div>
@@ -60,5 +69,20 @@ get_header(); ?>
 <!-- Contact & Booking Section -->
 <?php get_template_part('template-parts/components/contact-booking'); ?>
 
+<!-- Lightbox Modal -->
+<div class="lightbox" id="galleryLightbox">
+  <div class="lightbox__overlay"></div>
+  <div class="lightbox__content">
+    <button class="lightbox__close" aria-label="閉じる">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 6L6 18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M6 6L18 18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </button>
+    <img class="lightbox__image" src="" alt="">
+  </div>
+</div>
 
 <?php get_template_part('template-parts/components/footer'); ?>
+
+<script src="<?php echo get_template_directory_uri(); ?>/assets/js/gallery-lightbox.js"></script>
