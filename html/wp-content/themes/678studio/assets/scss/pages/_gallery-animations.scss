@@ -1,0 +1,68 @@
+/**
+ * Gallery Beautiful Fade Animations
+ * Pure CSS-based fade effects for gallery images
+ */
+
+.gallery-fade-item {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: 
+    opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: opacity, transform;
+}
+
+.gallery-fade-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+// Enhanced hover effects for faded-in items
+.gallery-fade-visible {
+  .gallery-grid__item {
+    transition: 
+      transform 0.3s ease-out,
+      box-shadow 0.3s ease-out;
+    
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(165, 195, 207, 0.2);
+    }
+  }
+}
+
+// Smooth image loading
+.gallery-grid__item img {
+  transition: opacity 0.4s ease-out;
+  
+  &[src=""] {
+    opacity: 0;
+  }
+  
+  &.loaded {
+    opacity: 1;
+  }
+}
+
+// Performance optimizations for animations
+@media (prefers-reduced-motion: no-preference) {
+  .gallery-fade-item {
+    transition-duration: 0.8s;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery-fade-item {
+    transition-duration: 0.2s !important;
+    transform: none !important;
+  }
+}
+
+// Smooth transitions during filter changes
+.gallery-grid__inner {
+  transition: opacity 0.3s ease-out;
+  
+  &.updating {
+    opacity: 0.6;
+  }
+}

@@ -9,7 +9,7 @@ get_header();
 
 <main class="main-content about-page">
   <!-- About FV Section (Desktop) -->
-  <section class="about-fv pc">
+  <section class="about-fv pc" id="about-fv-section">
     <div class="about-fv__container">
 
       <!-- Text Content -->
@@ -51,7 +51,7 @@ get_header();
   </section>
 
   <!-- About FV Section (Mobile) -->
-  <section class="about-mobile-fv sp">
+  <section class="about-mobile-fv sp" id="about-mobile-fv-section">
     <div class="about-mobile-fv__container">
       <!-- Grid Layout Container -->
       <div class="about-mobile-fv__grid">

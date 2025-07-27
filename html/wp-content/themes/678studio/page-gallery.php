@@ -183,41 +183,49 @@ document.addEventListener('DOMContentLoaded', function() {
         const selectedStudio = studioFilter.value;
         const selectedCategory = categoryFilter.value;
         
-        // Clear gallery
-        galleryGrid.innerHTML = '';
+        // Add updating class for smooth transition
+        galleryGrid.classList.add('updating');
         
-        // Update categories when studio changes
-        updateCategoryFilter(selectedStudio);
-        
-        // Create all gallery items at once
-        let imageCount = 0;
-        shopsData.forEach(shop => {
-            // Filter by studio
-            if (selectedStudio === 'all' || shop.id.toString() === selectedStudio) {
-                // Handle only category images
-                if (shop.category_images && typeof shop.category_images === 'object') {
-                    Object.entries(shop.category_images).forEach(([category, images]) => {
-                        if (selectedCategory === 'all' || selectedCategory === category) {
-                            if (Array.isArray(images)) {
-                                images.forEach((image, index) => {
-                                    const alt = `${category} Image ${index + 1} from ${shop.name}`;
-                                    createGalleryItem(image, alt);
-                                    imageCount++;
-                                });
+        // Clear gallery after brief delay for smooth transition
+        setTimeout(() => {
+            galleryGrid.innerHTML = '';
+            
+            // Update categories when studio changes
+            updateCategoryFilter(selectedStudio);
+            
+            // Create all gallery items at once
+            let imageCount = 0;
+            shopsData.forEach(shop => {
+                // Filter by studio
+                if (selectedStudio === 'all' || shop.id.toString() === selectedStudio) {
+                    // Handle only category images
+                    if (shop.category_images && typeof shop.category_images === 'object') {
+                        Object.entries(shop.category_images).forEach(([category, images]) => {
+                            if (selectedCategory === 'all' || selectedCategory === category) {
+                                if (Array.isArray(images)) {
+                                    images.forEach((image, index) => {
+                                        const alt = `${category} Image ${index + 1} from ${shop.name}`;
+                                        createGalleryItem(image, alt);
+                                        imageCount++;
+                                    });
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
+            });
+            
+            // Remove updating class
+            galleryGrid.classList.remove('updating');
+            
+            // If no images are found, display a message
+            if (imageCount === 0) {
+                galleryGrid.innerHTML = '<p>No images available for the selected filters.</p>';
+            } else {
+                // Setup beautiful fade animations
+                setupScrollAnimations();
             }
-        });
-        
-        // If no images are found, display a message
-        if (imageCount === 0) {
-            galleryGrid.innerHTML = '<p>No images available for the selected filters.</p>';
-        } else {
-            // Setup scroll-based animations directly (CSS columns handle the layout)
-            setupScrollAnimations();
-        }
+        }, 150);
     }
     
     // Setup masonry layout
@@ -317,47 +325,48 @@ document.addEventListener('DOMContentLoaded', function() {
         return 4; // desktop
     }
     
-    // Setup scroll-based animations for all items
+    // Setup beautiful fade-in animations for all items (no blur, pure fade)
     function setupScrollAnimations() {
-        if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
-        
         const galleryItems = galleryGrid.querySelectorAll('.gallery-grid__item');
         if (galleryItems.length === 0) return;
         
-        // Set initial state for all items (hidden with blur)
+        // Set initial state for all items (hidden but without blur)
         galleryItems.forEach(item => {
             const img = item.querySelector('img');
             if (img) {
-                gsap.set(item, {
-                    opacity: 0,
-                    filter: `blur(${CONFIG.initialBlur}px)`, // Apply blur to entire item
-                    scale: 1.05 // Slight scale for subtle effect
-                });
+                // Pure CSS-based fade animation
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px)';
+                item.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out';
+                item.classList.add('gallery-fade-item');
             }
         });
         
-        // Create scroll triggers for each item
-        galleryItems.forEach((item, index) => {
-            const img = item.querySelector('img');
-            if (!img) return;
-            
-            const timeline = gsap.timeline({
-                scrollTrigger: {
-                    trigger: item,
-                    start: "top bottom-=100",
-                    toggleActions: "play none none none"
+        // Use Intersection Observer for smooth fade-in
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    const item = entry.target;
+                    // Staggered delay for beautiful cascading effect
+                    const delay = (Array.from(galleryItems).indexOf(item) % 4) * 100;
+                    
+                    setTimeout(() => {
+                        item.style.opacity = '1';
+                        item.style.transform = 'translateY(0)';
+                        item.classList.add('gallery-fade-visible');
+                    }, delay);
+                    
+                    observer.unobserve(item);
                 }
             });
-            
-            timeline
-                .to(item, {
-                    opacity: 1,
-                    filter: "blur(0px)",
-                    scale: 1,
-                    duration: CONFIG.animationDuration,
-                    ease: "power1.out",
-                    delay: (index % 4) * CONFIG.animationDelay
-                });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+        
+        // Observe all gallery items
+        galleryItems.forEach(item => {
+            observer.observe(item);
         });
     }
     

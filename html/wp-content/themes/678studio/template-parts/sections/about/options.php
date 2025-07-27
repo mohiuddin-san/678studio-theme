@@ -5,11 +5,11 @@
  */
 ?>
 
-<section class="options-section">
+<section class="options-section" id="options-section">
   <div class="options-section__container">
     
     <!-- タイトルエリア -->
-    <div class="options-section__header">
+    <div class="options-section__header scroll-animate-item" data-delay="0">
       <div class="options-section__icon">
         <img src="<?php echo get_template_directory_uri(); ?>/assets/images/light.svg" alt="太陽アイコン" class="options-section__sun-icon">
       </div>
@@ -17,7 +17,7 @@
     </div>
 
     <!-- テキストエリア -->
-    <div class="options-section__content">
+    <div class="options-section__content scroll-animate-item" data-delay="0.2">
       <!-- 1行目 -->
       <div class="options-section__text-row">
         <div class="options-section__text">写真撮影（3カット）</div>

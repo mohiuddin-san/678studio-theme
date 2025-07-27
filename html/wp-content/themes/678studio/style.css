@@ -1465,6 +1465,176 @@ br.sp-only {
   }
 }
 
+.scroll-animate-item {
+  -webkit-transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease;
+  will-change: transform, opacity, filter;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+.no-js .scroll-animate-item {
+  opacity: 1;
+  -webkit-transform: none;
+  transform: none;
+  -webkit-filter: none;
+  filter: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-animate-item {
+    -webkit-transition: none !important;
+    transition: none !important;
+    -webkit-animation: none !important;
+    animation: none !important;
+    -webkit-transform: none !important;
+    transform: none !important;
+    -webkit-filter: none !important;
+    filter: none !important;
+    opacity: 1 !important;
+  }
+}
+/**
+ * Modern Beautiful Page Transitions
+ * 現代的で美しいページ遷移アニメーション
+ * - グラデーションオーバーレイ
+ * - 高品質ブラー効果
+ * - 微妙なスケールアニメーション
+ * - GPUアクセラレーション最適化
+ */
+.page-transition-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  display: none;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  opacity: 0;
+  will-change: opacity;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.98) 50%, rgba(255, 255, 255, 0.95) 100%);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+}
+
+.page-transition-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+.page-transition-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(165, 195, 207, 0.1) 0%, rgba(165, 195, 207, 0.05) 50%, transparent 100%);
+  opacity: 0;
+  -webkit-animation: gradientPulse 3s ease-in-out infinite;
+  animation: gradientPulse 3s ease-in-out infinite;
+}
+
+.page-transition-blur-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+@-webkit-keyframes gradientPulse {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes gradientPulse {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+body:not(.page-ready) .main-content {
+  -webkit-filter: blur(12px) brightness(1.05);
+  filter: blur(12px) brightness(1.05);
+  opacity: 0;
+  -webkit-transform: scale(1.05);
+  transform: scale(1.05);
+  will-change: filter, opacity, transform;
+}
+
+body.page-ready .main-content {
+  -webkit-transition: opacity 0.8s cubic-bezier(0, 0, 0.2, 1), -webkit-filter 1s cubic-bezier(0, 0, 0.2, 1), -webkit-transform 0.8s cubic-bezier(0, 0, 0.2, 1);
+  transition: opacity 0.8s cubic-bezier(0, 0, 0.2, 1), -webkit-filter 1s cubic-bezier(0, 0, 0.2, 1), -webkit-transform 0.8s cubic-bezier(0, 0, 0.2, 1);
+  transition: filter 1s cubic-bezier(0, 0, 0.2, 1), opacity 0.8s cubic-bezier(0, 0, 0.2, 1), transform 0.8s cubic-bezier(0, 0, 0.2, 1);
+  transition: filter 1s cubic-bezier(0, 0, 0.2, 1), opacity 0.8s cubic-bezier(0, 0, 0.2, 1), transform 0.8s cubic-bezier(0, 0, 0.2, 1), -webkit-filter 1s cubic-bezier(0, 0, 0.2, 1), -webkit-transform 0.8s cubic-bezier(0, 0, 0.2, 1);
+}
+
+body.page-transitioning {
+  overflow: hidden;
+}
+body.page-transitioning .main-content {
+  pointer-events: none;
+  will-change: filter, opacity, transform;
+  -webkit-transform-origin: center center;
+  transform-origin: center center;
+}
+
+.main-content {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-perspective: 1000px;
+  perspective: 1000px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .page-transition-overlay {
+    -webkit-transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-transition-overlay,
+  .main-content {
+    -webkit-transition: opacity 0.3s ease !important;
+    transition: opacity 0.3s ease !important;
+  }
+  .page-transition-gradient {
+    -webkit-animation: none !important;
+    animation: none !important;
+  }
+}
 .hero-section {
   position: relative;
   width: 100%;
@@ -1611,10 +1781,24 @@ br.sp-only {
   display: inline-block;
   margin: 0 10px;
   font-family: "Noto Sans JP", sans-serif;
+  position: relative;
 }
 @media (max-width: 767px) {
   .user-count-section__number {
     font-size: clamp(29.298px, 10.1729166667vw, 87.894px);
+  }
+}
+.user-count-section__asterisk {
+  font-size: calc(12px + (8) * (100vw - 768px) / (672));
+  color: #e59d5c;
+  font-weight: 400;
+  position: absolute;
+  top: 0;
+  margin-left: 2px;
+}
+@media (max-width: 767px) {
+  .user-count-section__asterisk {
+    font-size: clamp(8.4px, 2.9166666667vw, 25.2px);
   }
 }
 .user-count-section__line {
@@ -1643,6 +1827,18 @@ br.sp-only {
 }
 .user-count-section__description p:last-child {
   margin-bottom: 0;
+}
+.user-count-section__note {
+  font-size: calc(8.4px + (5.6) * (100vw - 768px) / (672)) !important;
+  color: #999999 !important;
+  margin-top: 15px !important;
+  margin-bottom: 0 !important;
+}
+@media (max-width: 767px) {
+  .user-count-section__note {
+    font-size: clamp(7.2px, 2.5vw, 21.6px) !important;
+    margin-top: clamp(6px, 2.0833333333vw, 18px) !important;
+  }
 }
 
 .media-slider-section {
@@ -5560,6 +5756,73 @@ br.sp-only {
     opacity: 1;
   }
 }
+/**
+ * Gallery Beautiful Fade Animations
+ * Pure CSS-based fade effects for gallery images
+ */
+.gallery-fade-item {
+  opacity: 0;
+  -webkit-transform: translateY(20px);
+  transform: translateY(20px);
+  -webkit-transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), -webkit-transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), -webkit-transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), -webkit-transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: opacity, transform;
+}
+
+.gallery-fade-visible {
+  opacity: 1;
+  -webkit-transform: translateY(0);
+  transform: translateY(0);
+}
+
+.gallery-fade-visible .gallery-grid__item {
+  -webkit-transition: -webkit-transform 0.3s ease-out, -webkit-box-shadow 0.3s ease-out;
+  transition: -webkit-transform 0.3s ease-out, -webkit-box-shadow 0.3s ease-out;
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, -webkit-transform 0.3s ease-out, -webkit-box-shadow 0.3s ease-out;
+}
+.gallery-fade-visible .gallery-grid__item:hover {
+  -webkit-transform: translateY(-4px);
+  transform: translateY(-4px);
+  -webkit-box-shadow: 0 8px 24px rgba(165, 195, 207, 0.2);
+  box-shadow: 0 8px 24px rgba(165, 195, 207, 0.2);
+}
+
+.gallery-grid__item img {
+  -webkit-transition: opacity 0.4s ease-out;
+  transition: opacity 0.4s ease-out;
+}
+.gallery-grid__item img[src=""] {
+  opacity: 0;
+}
+.gallery-grid__item img.loaded {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .gallery-fade-item {
+    -webkit-transition-duration: 0.8s;
+    transition-duration: 0.8s;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gallery-fade-item {
+    -webkit-transition-duration: 0.2s !important;
+    transition-duration: 0.2s !important;
+    -webkit-transform: none !important;
+    transform: none !important;
+  }
+}
+.gallery-grid__inner {
+  -webkit-transition: opacity 0.3s ease-out;
+  transition: opacity 0.3s ease-out;
+}
+.gallery-grid__inner.updating {
+  opacity: 0.6;
+}
+
 .memorial-photography {
   width: 100%;
   padding: calc(40px + (40) * (100vw - 768px) / (672)) 0;
@@ -6772,4 +7035,3 @@ br.sp-only {
   height: auto;
   opacity: 1;
 }
-/*# sourceMappingURL=style.css.map */

@@ -33,9 +33,23 @@
 		display: inline-block;
 		margin: 0 10px;
 		font-family: v.$ja-sans;
+		position: relative;
 
 		@include m.mq(md) {
 			font-size: m.fsm(48.83);
+		}
+	}
+
+	&__asterisk {
+		font-size: m.fs(20, 0.6);
+		color: v.$text-number;
+		font-weight: 400;
+		position: absolute;
+		top: 0;
+		margin-left: 2px;
+
+		@include m.mq(md) {
+			font-size: m.fsm(14);
 		}
 	}
 
@@ -66,6 +80,18 @@
 			&:last-child {
 				margin-bottom: 0;
 			}
+		}
+	}
+
+	&__note {
+		font-size: m.fs(14, 0.6) !important;
+		color: #999999 !important;
+		margin-top: 15px !important;
+		margin-bottom: 0 !important;
+
+		@include m.mq(md) {
+			font-size: m.fsm(12) !important;
+			margin-top: m.fsm(10) !important;
 		}
 	}
 }

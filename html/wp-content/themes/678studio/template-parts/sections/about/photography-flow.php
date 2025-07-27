@@ -5,11 +5,11 @@
  */
 ?>
 
-<section class="photography-flow-section">
+<section class="photography-flow-section" id="photography-flow-section">
   <div class="photography-flow-section__container">
 
     <!-- ヘッダーエリア -->
-    <div class="photography-flow-section__header">
+    <div class="photography-flow-section__header scroll-animate-item" data-delay="0">
       <div class="photography-flow-section__label">
         <span class="photography-flow-section__label-text">Steps</span>
       </div>
@@ -17,7 +17,7 @@
     </div>
 
     <!-- フローカード一覧 -->
-    <div class="photography-flow-section__cards">
+    <div class="photography-flow-section__cards scroll-animate-item" data-delay="0.2">
 
       <!-- フローカード1 -->
       <div class="flow-card">

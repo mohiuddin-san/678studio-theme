@@ -4,7 +4,7 @@
  */
 ?>
 
-<section class="hero-section">
+<section class="hero-section" id="hero-section">
   <!-- PC Hero -->
   <div class="hero-section__pc">
     <div class="hero-section__image-container">

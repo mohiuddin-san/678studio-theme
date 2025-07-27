@@ -24,11 +24,11 @@ $faq_items = [
 ];
 ?>
 
-<section class="faq-section">
+<section class="faq-section" id="faq-section">
   <div class="faq-section__container">
     
     <!-- ヘッダーエリア -->
-    <div class="faq-section__header">
+    <div class="faq-section__header scroll-animate-item" data-delay="0">
       <div class="faq-section__icon">
         <img src="<?php echo get_template_directory_uri(); ?>/assets/images/light.svg" alt="太陽アイコン" class="faq-section__sun-icon">
       </div>
@@ -36,7 +36,7 @@ $faq_items = [
     </div>
 
     <!-- FAQ リスト -->
-    <div class="faq-section__list">
+    <div class="faq-section__list scroll-animate-item" data-delay="0.2">
       <?php foreach ($faq_items as $index => $item): ?>
       <div class="faq-item" data-faq-item="<?php echo $index; ?>">
         <div class="faq-item__question" data-faq-toggle>
