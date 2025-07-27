@@ -1,0 +1,92 @@
+<?php
+// CORS headers
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+
+// Handle preflight OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
+// Content-Type
+header("Content-Type: application/json; charset=UTF-8");
+
+// DB connection
+include_once("config/db_conection.php");
+
+// Define table prefix (set to empty string if no prefix is needed)
+$TABLE_PREFIX = ''; // Example: 'wp_' if you have prefix
+
+try {
+    // Fetch all shops
+    $stmt = $conn->prepare("SELECT id, name, address, phone, nearest_station, business_hours, holidays, map_url, created_at, company_email  
+                            FROM {$TABLE_PREFIX}studio_shops");
+    if (!$stmt->execute()) {
+        throw new Exception("Failed to fetch shops: " . $stmt->error);
+    }
+    $shops_result = $stmt->get_result();
+    $shops = [];
+
+    while ($shop = $shops_result->fetch_assoc()) {
+        $shop_id = $shop['id'];
+
+        // 1️⃣ General shop images
+        $img_stmt = $conn->prepare("SELECT image_url FROM {$TABLE_PREFIX}studio_shop_images WHERE shop_id = ?");
+        $img_stmt->bind_param("i", $shop_id);
+        if (!$img_stmt->execute()) {
+            throw new Exception("Failed to fetch images for shop_id $shop_id: " . $img_stmt->error);
+        }
+        $img_result = $img_stmt->get_result();
+        $image_urls = [];
+        while ($img = $img_result->fetch_assoc()) {
+            $image_urls[] = $img['image_url'];
+        }
+        $img_stmt->close();
+        $shop['image_urls'] = $image_urls;
+
+        // 2️⃣ Category-wise images with category name
+        $cat_stmt = $conn->prepare("
+            SELECT c.category_name, i.image_url 
+            FROM {$TABLE_PREFIX}studio_shop_catgorie_images i
+            JOIN {$TABLE_PREFIX}studio_shop_categories c ON i.category_id = c.id
+            WHERE i.shop_id = ?
+        ");
+        $cat_stmt->bind_param("i", $shop_id);
+        if (!$cat_stmt->execute()) {
+            throw new Exception("Failed to fetch category images for shop_id $shop_id: " . $cat_stmt->error);
+        }
+        $cat_result = $cat_stmt->get_result();
+
+        $category_images = [];
+        while ($row = $cat_result->fetch_assoc()) {
+            $category = $row['category_name'];
+            $img_url = $row['image_url'];
+
+            if (!isset($category_images[$category])) {
+                $category_images[$category] = [];
+            }
+            $category_images[$category][] = $img_url;
+        }
+        $cat_stmt->close();
+        $shop['category_images'] = $category_images;
+
+        $shops[] = $shop;
+    }
+    $stmt->close();
+
+    // Final JSON response
+    echo json_encode([
+        "success" => true,
+        "message" => "Shops retrieved successfully",
+        "shops" => $shops
+    ]);
+} catch (Exception $e) {
+    error_log("Error in get_studio_shops.php: " . $e->getMessage());
+    http_response_code(500);
+    echo json_encode(["error" => $e->getMessage()]);
+}
+
+$conn->close();
+?>

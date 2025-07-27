@@ -29,7 +29,7 @@
       <div class="plan-mobile__button">
         <?php get_template_part('template-parts/components/detail-button', null, [
           'text' => '詳しく見る',
-          'url' => home_url('/about/'),
+          'url' => home_url('/about/#photography-plans'),
           'variant' => 'detail',
           'icon' => 'none'
         ]); ?>

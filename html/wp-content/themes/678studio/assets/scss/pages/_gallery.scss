@@ -27,20 +27,23 @@
 	}
 
 	&__title {
-		font-size: m.fs(16);
+		font-size: m.fs(16, 0.8); // 画面幅に応じて縮小するように調整
 		font-family: v.$ja-sans;
 		font-weight: 700;
 		letter-spacing: 0.12em;
 		background-color: #333;
 		color: #fff;
-		padding: 12px 40px;
+		padding: m.fs(12, 0.6) m.fs(40, 0.6); // パディングをより小さく調整
 		margin: 0;
 		display: inline-block;
+		flex-shrink: 1; // プルダウンのためのスペースを確保
+		max-width: 60%; // 最大幅を制限してプルダウンと衝突を防ぐ
 
 		@include m.mq(md) {
 			font-size: m.fsm(14);
 			padding: m.fsm(12) m.fsm(20);
 			margin-bottom: m.fsm(20);
+			max-width: none; // モバイルでは制限を解除
 		}
 	}
 
@@ -58,6 +61,8 @@
 			flex-direction: column;
 			gap: m.fsm(12);
 			width: 100%;
+			align-items: center; // プルダウンを中央寄せにしてかわいく
+			justify-content: center; // 水平方向も中央寄せ
 		}
 	}
 }
@@ -80,9 +85,9 @@
 		pointer-events: none;
 
 		@include m.mq(md) {
-			right: m.fsm(16);
-			width: m.fsm(10);
-			height: m.fsm(10);
+			right: m.fsm(25); // 右パディング50pxに対して適切な位置
+			width: m.fsm(12); // サイズを少し大きく
+			height: m.fsm(12);
 		}
 	}
 }
@@ -101,11 +106,13 @@
 	transition: all 0.3s ease;
 
 	@include m.mq(md) {
-		width: 100%;
-		min-width: unset;
-		padding: m.fsm(14) m.fsm(40) m.fsm(14) m.fsm(16);
+		width: m.fsm(260); // 固定幅で安定した表示
+		min-width: unset; // 固定幅にするためmin-widthは不要
+		max-width: unset; // 固定幅にするためmax-widthは不要
+		padding: m.fsm(14) m.fsm(50) m.fsm(14) m.fsm(20); // 左右のパディングを調整
 		font-size: m.fsm(14);
 		border-radius: m.fsm(25);
+		text-align: left; // テキストを左寄せに変更
 	}
 
 	&:hover {
@@ -116,8 +123,29 @@
 		outline: none;
 	}
 
+	// プルダウンオプションのスタイリング（ブラウザ制限あり）
 	option {
-		padding: 10px;
+		padding: m.fs(12, 0.5) m.fs(20, 0.5);
+		background-color: #a5c3cf;
+		color: #fff;
+		font-size: m.fs(14, 0.8);
+		font-weight: 400;
+		border: none;
+		
+		@include m.mq(md) {
+			padding: m.fsm(10) m.fsm(16);
+			font-size: m.fsm(13);
+		}
+		
+		&:hover,
+		&:focus {
+			background-color: darken(#a5c3cf, 10%);
+		}
+		
+		&:checked {
+			background-color: darken(#a5c3cf, 15%);
+			font-weight: 600;
+		}
 	}
 }
 
