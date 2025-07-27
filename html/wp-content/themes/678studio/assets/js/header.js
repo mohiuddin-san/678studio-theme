@@ -8,9 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
   if (hamburgerButton && mobileNavigation && header) {
     hamburgerButton.addEventListener('click', function() {
-      console.log('ハンバーガーボタンがクリックされました'); // デバッグ用
       const isOpen = mobileNavigation.classList.contains('is-open');
-      console.log('現在の状態:', isOpen ? '開いている' : '閉じている'); // デバッグ用
       
       if (isOpen) {
         // メニューを閉じる
@@ -20,7 +18,6 @@ document.addEventListener('DOMContentLoaded', function() {
         hamburgerButton.setAttribute('aria-label', 'メニューを開く');
         // ボディのスクロールを有効化
         document.body.style.overflow = '';
-        console.log('メニューを閉じました'); // デバッグ用
       } else {
         // メニューを開く
         mobileNavigation.classList.add('is-open');
@@ -29,8 +26,6 @@ document.addEventListener('DOMContentLoaded', function() {
         hamburgerButton.setAttribute('aria-label', 'メニューを閉じる');
         // ボディのスクロールを無効化
         document.body.style.overflow = 'hidden';
-        console.log('メニューを開きました'); // デバッグ用
-        console.log('headerのクラス:', header.className); // デバッグ用
       }
     });
 

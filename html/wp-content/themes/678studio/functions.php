@@ -687,6 +687,11 @@ add_action('init', function() {
     wp_log_debug('FAQ Debug Test', ['message' => 'Debug system is working', 'timestamp' => current_time('mysql')]);
 });
 
+// Load WP-CLI commands if WP-CLI is available
+if (defined('WP_CLI') && WP_CLI) {
+    require_once get_template_directory() . '/inc/wp-cli-studio-commands.php';
+}
+
 
 function enqueue_reservation_script() {
     // Check if the current page slug is 'studio-reservation'

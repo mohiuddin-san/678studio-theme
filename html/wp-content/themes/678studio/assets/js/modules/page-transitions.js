@@ -60,25 +60,22 @@ document.addEventListener('DOMContentLoaded', function() {
         return overlay;
     }
 
-    // 完全に固定的なページアウトアニメーション（位置移動なし）
+    // 完全に固定的なページアウトアニメーション（画面ずれなし）
     function pageOutAnimation() {
         return new Promise((resolve) => {
             const overlay = createTransitionOverlay();
             const content = document.querySelector('.main-content') || document.body;
             
-            // 現在のスクロール位置を保存・固定
-            const scrollY = window.scrollY;
-            document.body.style.position = 'fixed';
-            document.body.style.top = `-${scrollY}px`;
-            document.body.style.width = '100%';
-            
             // オーバーレイの初期状態
             overlay.style.opacity = '0';
             overlay.style.display = 'flex';
             
-            // 完全に固定的なアニメーション（位置は一切動かさない）
+            // body固定を使わずに画面ずれを完全に防ぐ
+            // スクロールを無効化する別の方法を使用
+            
+            // 完全に固定的なアニメーション（bodyのposition変更なし）
             requestAnimationFrame(() => {
-                // Phase 1: コンテンツを完全固定でブラー・フェードのみ
+                // Phase 1: コンテンツのみアニメーション（bodyスタイルは変更しない）
                 content.style.transition = `
                     filter ${TRANSITION_CONFIG.duration * 0.7}ms ${TRANSITION_CONFIG.easing.out},
                     opacity ${TRANSITION_CONFIG.duration * 0.7}ms ${TRANSITION_CONFIG.easing.out}
@@ -86,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 content.style.filter = `blur(${TRANSITION_CONFIG.blur.max}px)`;
                 content.style.opacity = '0.15';
-                content.style.transform = 'none'; // 強制的に変形なし
+                content.style.transform = 'none';
                 
                 // Phase 2: オーバーレイの自然なフェードイン
                 setTimeout(() => {
@@ -106,11 +103,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const overlay = document.querySelector('.page-transition-overlay');
             const content = document.querySelector('.main-content') || document.body;
             
-            // 新ページでは body の固定を解除してスクロール位置をリセット
-            document.body.style.position = '';
-            document.body.style.top = '';
-            document.body.style.width = '';
-            window.scrollTo(0, 0);
+            // bodyスタイルの復元は不要（アウトアニメーションで変更していないため）
+            // 新ページは自然な状態でスタート
             
             // オーバーレイがある場合（ページ遷移時）
             if (overlay) {
@@ -190,10 +184,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.preventDefault();
                 const href = this.getAttribute('href');
                 
-                // ページアウトアニメーション実行後にページ遷移
-                pageOutAnimation().then(() => {
-                    window.location.href = href;
-                });
+                // ヘッダーリンクかどうかを判定
+                const isHeaderLink = this.closest('.header') !== null;
+                
+                // ヘッダーリンクの場合はより短い遅延でスムーズに遷移
+                if (isHeaderLink) {
+                    // ヘッダーリンク用の軽量なアニメーション
+                    const content = document.querySelector('.main-content') || document.body;
+                    content.style.transition = 'opacity 0.3s ease';
+                    content.style.opacity = '0.7';
+                    
+                    setTimeout(() => {
+                        window.location.href = href;
+                    }, 150);
+                } else {
+                    // 通常のページアウトアニメーション実行後にページ遷移
+                    pageOutAnimation().then(() => {
+                        window.location.href = href;
+                    });
+                }
             });
             
             link.setAttribute('data-transition-attached', 'true');
