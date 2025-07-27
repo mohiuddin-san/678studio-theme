@@ -36,7 +36,7 @@
           <img class="flow-card__underline"
             src="<?php echo get_template_directory_uri(); ?>/assets/images/underline-long.svg" alt="">
           <p class="flow-card__description">
-            お電話またはWebフォームからお気軽にお問い合わせください。撮影日時やご希望をお聞かせいただき、最適なプランをご案内いたします。
+            <a href="/stores" style="color: #a5c3cf; text-decoration: underline;">店舗検索</a>よりお近くの店舗をお選びいただき、<a href="/studio-reservation" style="color: #a5c3cf; text-decoration: underline;">ご予約</a>または<a href="/studio-inquery" style="color: #a5c3cf; text-decoration: underline;">お問合せ</a>のページよりご連絡ください。
           </p>
         </div>
       </div>
@@ -58,7 +58,7 @@
           <img class="flow-card__underline"
             src="<?php echo get_template_directory_uri(); ?>/assets/images/underline-long.svg" alt="">
           <p class="flow-card__description">
-            撮影当日または事前に、撮影の目的やご希望のイメージをお聞きします。お客様のご要望に合わせて、最適なプランをご提案いたします。
+            撮影当日または事前に、撮影の目的やご希望のイメージをお聞きします。お客様のご要望に合わせて、撮影スタイルや仕上がりをご相談いたします。
           </p>
         </div>
       </div>
@@ -102,7 +102,8 @@
           <img class="flow-card__underline"
             src="<?php echo get_template_directory_uri(); ?>/assets/images/underline-long.svg" alt="">
           <p class="flow-card__description">
-            撮影後、お客様と一緒に写真を選定いたします。選定した写真のデータをCDやUSBにてお渡しいたします。
+            撮影後、お客様と一緒に写真を選定いたします。選定した写真のデータをCDやUSBにてお渡しいたします。<br><br>
+            ※お渡し方法は店舗によって異なることがございますので、詳しくは各店舗にお問合せください。
           </p>
         </div>
       </div>
