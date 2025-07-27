@@ -10,7 +10,9 @@
     <div class="footer__container">
       <!-- Logo -->
       <div class="footer__logo">
-        <img src="<?php echo get_template_directory_uri(); ?>/assets/images/logo.svg" alt="678撮影">
+        <a href="<?php echo esc_url(home_url('/')); ?>">
+          <img src="<?php echo get_template_directory_uri(); ?>/assets/images/logo.svg" alt="ロクナナハチ(678)">
+        </a>
       </div>
 
       <!-- Navigation Links -->
@@ -34,7 +36,7 @@
   <!-- Copyright Section -->
   <div class="footer__copyright-section">
     <div class="footer__container">
-      <p class="footer__copyright">© 2025 ハチナナロク ALL RIGHTS RESERVED.</p>
+      <p class="footer__copyright">© 2025 ロクナナハチ(678) ALL RIGHTS RESERVED.</p>
     </div>
   </div>
 </footer>
