@@ -279,19 +279,38 @@ document.addEventListener('DOMContentLoaded', function() {
     const paginationLinks = document.querySelectorAll('.studio-search-section__pagination a');
     
     paginationLinks.forEach(link => {
-      link.addEventListener('click', function(e) {
-        e.preventDefault();
-        
-        if (this.dataset.disabled === 'true') {
-          return;
-        }
-        
-        const page = parseInt(this.dataset.page);
-        const query = searchInput.value.trim();
-        
-        performAjaxSearch(query, page);
-      });
+      // Remove any existing listeners to prevent duplicates
+      link.removeEventListener('click', handlePaginationClick);
+      link.addEventListener('click', handlePaginationClick);
     });
+  }
+
+  // Separate pagination click handler
+  function handlePaginationClick(e) {
+    e.preventDefault();
+    
+    // Check if button is disabled
+    if (this.classList.contains('disabled') || this.dataset.disabled === 'true') {
+      return;
+    }
+    
+    let page;
+    if (this.dataset.page) {
+      page = parseInt(this.dataset.page);
+    } else {
+      // Fallback: extract page from href for static links
+      const href = this.getAttribute('href');
+      const match = href.match(/studio_page=(\d+)/);
+      page = match ? parseInt(match[1]) : 1;
+    }
+    
+    if (isNaN(page) || page < 1) {
+      console.warn('Invalid page number:', page);
+      return;
+    }
+    
+    const query = searchInput.value.trim();
+    performAjaxSearch(query, page);
   }
 
   // Search input events
