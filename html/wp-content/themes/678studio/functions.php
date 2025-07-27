@@ -48,6 +48,26 @@ function get_cached_studio_data() {
     return $data;
 }
 
+// AJAX handler for gallery studio data
+function ajax_get_gallery_studios() {
+    // Verify nonce for security
+    if (!wp_verify_nonce($_POST['nonce'], 'gallery_nonce')) {
+        wp_die('Security check failed');
+    }
+
+    // キャッシュされたデータを使用
+    $data = get_cached_studio_data();
+    
+    if (isset($data['error'])) {
+        wp_send_json_error(['message' => $data['error']]);
+        return;
+    }
+
+    wp_send_json_success([
+        'shops' => $data['shops']
+    ]);
+}
+
 // AJAX handler for studio search
 function ajax_studio_search() {
     // Verify nonce for security
@@ -146,6 +166,10 @@ function ajax_studio_search() {
 }
 
 // Register AJAX endpoints
+// Register AJAX actions for gallery studio data
+add_action('wp_ajax_get_gallery_studios', 'ajax_get_gallery_studios');
+add_action('wp_ajax_nopriv_get_gallery_studios', 'ajax_get_gallery_studios');
+
 add_action('wp_ajax_studio_search', 'ajax_studio_search');
 add_action('wp_ajax_nopriv_studio_search', 'ajax_studio_search');
 
@@ -262,6 +286,14 @@ function theme_678studio_debug_scripts() {
         wp_localize_script('wp-debug-logger', 'wpDebugAjax', [
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('wp_debug_nonce')
+        ]);
+    }
+    
+    // Always localize gallery AJAX data for gallery pages
+    if (is_page_template('page-gallery.php') || is_page('gallery')) {
+        wp_localize_script('jquery', 'galleryAjax', [
+            'ajaxurl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('gallery_nonce')
         ]);
     }
 }
