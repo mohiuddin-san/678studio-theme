@@ -5,24 +5,13 @@
  */
 
 function fetch_studio_shops($search_query = '', $page = 1, $per_page = 6) {
-    $api_url = 'https://678photo.com/api/get_all_studio_shop.php';
-
-    $response = wp_remote_get($api_url, [
-        'timeout' => 15, 
-        'sslverify' => false 
-    ]);
-
-    if (is_wp_error($response)) {
-        return ['shops' => [], 'total' => 0, 'error' => $response->get_error_message()];
+    // functions.phpのキャッシュ機能を使用
+    $data = get_cached_studio_data();
+    
+    if (isset($data['error'])) {
+        return ['shops' => [], 'total' => 0, 'error' => $data['error']];
     }
-    $body = wp_remote_retrieve_body($response);
-    $data = json_decode($body, true);
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        return ['shops' => [], 'total' => 0, 'error' => 'Invalid JSON response'];
-    }
-    if (!isset($data['shops']) || !is_array($data['shops'])) {
-        return ['shops' => [], 'total' => 0, 'error' => 'No shops found in API response'];
-    }
+    
     $filtered_shops = $data['shops'];
     if (!empty($search_query)) {
         $filtered_shops = array_filter($data['shops'], function($shop) use ($search_query) {

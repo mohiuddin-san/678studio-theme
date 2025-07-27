@@ -4,108 +4,136 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    // 現代的で美しいアニメーション設定
+    // より洗練された固定的なアニメーション設定
     const TRANSITION_CONFIG = {
-        duration: 1000, // 美しさを重視した時間設定
+        duration: 800, // スムーズで快適な時間
         blur: {
             initial: 0,
-            max: 12 // より美しいブラー効果
-        },
-        scale: {
-            initial: 1,
-            out: 0.95, // 微妙なスケール効果
-            in: 1.05
+            max: 8 // 適度なブラー効果
         },
         opacity: {
             hidden: 0,
             visible: 1
         },
         easing: {
-            out: 'cubic-bezier(0.4, 0.0, 1, 1)', // Expo out
-            in: 'cubic-bezier(0.0, 0.0, 0.2, 1)'  // Expo in
+            out: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)', // より自然なイージング
+            in: 'cubic-bezier(0.55, 0.06, 0.68, 0.19)'   // より自然なイージング
         }
     };
 
     // 全ページで統一された美しいアニメーション（ギャラリーページも同様）
 
-    // 美しいオーバーレイ要素を作成
+    // 固定的なオーバーレイ要素を作成（上から降りてこない）
     function createTransitionOverlay() {
         const overlay = document.createElement('div');
         overlay.className = 'page-transition-overlay';
+        
+        // 完全に固定的なスタイルを適用
+        overlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,248,248,0.98) 100%);
+            backdrop-filter: blur(10px);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+            transform: none !important;
+            animation: none !important;
+        `;
+        
         overlay.innerHTML = `
-            <div class="page-transition-content">
-                <div class="page-transition-gradient"></div>
-                <div class="page-transition-blur-layer"></div>
+            <div class="page-transition-content" style="
+                width: 100%;
+                height: 100%;
+                background: transparent;
+                transform: none !important;
+                animation: none !important;
+            ">
             </div>
         `;
         document.body.appendChild(overlay);
         return overlay;
     }
 
-    // 美しいページアウトアニメーション
+    // 完全に固定的なページアウトアニメーション（位置移動なし）
     function pageOutAnimation() {
         return new Promise((resolve) => {
             const overlay = createTransitionOverlay();
             const content = document.querySelector('.main-content') || document.body;
             
+            // 現在のスクロール位置を保存・固定
+            const scrollY = window.scrollY;
+            document.body.style.position = 'fixed';
+            document.body.style.top = `-${scrollY}px`;
+            document.body.style.width = '100%';
+            
             // オーバーレイの初期状態
             overlay.style.opacity = '0';
             overlay.style.display = 'flex';
             
-            // 美しい段階的アニメーション
+            // 完全に固定的なアニメーション（位置は一切動かさない）
             requestAnimationFrame(() => {
-                // Phase 1: コンテンツをゆっくりとブラー・スケール・フェード
+                // Phase 1: コンテンツを完全固定でブラー・フェードのみ
                 content.style.transition = `
-                    filter ${TRANSITION_CONFIG.duration * 0.8}ms ${TRANSITION_CONFIG.easing.out},
-                    opacity ${TRANSITION_CONFIG.duration * 0.8}ms ${TRANSITION_CONFIG.easing.out},
-                    transform ${TRANSITION_CONFIG.duration * 0.8}ms ${TRANSITION_CONFIG.easing.out}
+                    filter ${TRANSITION_CONFIG.duration * 0.7}ms ${TRANSITION_CONFIG.easing.out},
+                    opacity ${TRANSITION_CONFIG.duration * 0.7}ms ${TRANSITION_CONFIG.easing.out}
                 `;
                 
                 content.style.filter = `blur(${TRANSITION_CONFIG.blur.max}px)`;
-                content.style.opacity = '0.1';
-                content.style.transform = `scale(${TRANSITION_CONFIG.scale.out})`;
+                content.style.opacity = '0.15';
+                content.style.transform = 'none'; // 強制的に変形なし
                 
-                // Phase 2: オーバーレイの美しいフェードイン（少し遅らせて）
+                // Phase 2: オーバーレイの自然なフェードイン
                 setTimeout(() => {
-                    overlay.style.transition = `opacity ${TRANSITION_CONFIG.duration * 0.6}ms ${TRANSITION_CONFIG.easing.out}`;
+                    overlay.style.transition = `opacity ${TRANSITION_CONFIG.duration * 0.5}ms ${TRANSITION_CONFIG.easing.out}`;
                     overlay.style.opacity = '1';
-                }, TRANSITION_CONFIG.duration * 0.2);
+                }, TRANSITION_CONFIG.duration * 0.25);
             });
             
-            // 美しさを重視した完了タイミング
-            setTimeout(resolve, TRANSITION_CONFIG.duration * 0.9);
+            // 完了タイミング
+            setTimeout(resolve, TRANSITION_CONFIG.duration * 0.8);
         });
     }
 
-    // 美しいページインアニメーション
+    // 完全に固定的なページインアニメーション（位置移動なし）
     function pageInAnimation() {
         return new Promise((resolve) => {
             const overlay = document.querySelector('.page-transition-overlay');
             const content = document.querySelector('.main-content') || document.body;
             
+            // 新ページでは body の固定を解除してスクロール位置をリセット
+            document.body.style.position = '';
+            document.body.style.top = '';
+            document.body.style.width = '';
+            window.scrollTo(0, 0);
+            
             // オーバーレイがある場合（ページ遷移時）
             if (overlay) {
-                // 美しい段階的表示アニメーション
+                // 完全に固定的な表示アニメーション
                 requestAnimationFrame(() => {
-                    // Phase 1: オーバーレイを優雅にフェードアウト
+                    // Phase 1: オーバーレイを自然にフェードアウト
                     overlay.style.transition = `opacity ${TRANSITION_CONFIG.duration * 0.4}ms ${TRANSITION_CONFIG.easing.out}`;
                     overlay.style.opacity = '0';
                     
-                    // Phase 2: コンテンツの美しい登場（少し遅らせて）
+                    // Phase 2: コンテンツの完全固定登場（位置は絶対に動かさない）
                     setTimeout(() => {
                         content.style.transition = `
-                            filter ${TRANSITION_CONFIG.duration * 0.9}ms ${TRANSITION_CONFIG.easing.in},
-                            opacity ${TRANSITION_CONFIG.duration * 0.8}ms ${TRANSITION_CONFIG.easing.in},
-                            transform ${TRANSITION_CONFIG.duration * 0.8}ms ${TRANSITION_CONFIG.easing.in}
+                            filter ${TRANSITION_CONFIG.duration * 0.8}ms ${TRANSITION_CONFIG.easing.in},
+                            opacity ${TRANSITION_CONFIG.duration * 0.7}ms ${TRANSITION_CONFIG.easing.in}
                         `;
                         
                         content.style.filter = `blur(${TRANSITION_CONFIG.blur.initial}px)`;
                         content.style.opacity = '1';
-                        content.style.transform = `scale(${TRANSITION_CONFIG.scale.initial})`;
+                        content.style.transform = 'none'; // 強制的に変形なし
                     }, TRANSITION_CONFIG.duration * 0.1);
                 });
                 
-                // 美しいクリーンアップ
+                // スムーズなクリーンアップ
                 setTimeout(() => {
                     if (overlay && overlay.parentNode) {
                         overlay.parentNode.removeChild(overlay);
@@ -116,19 +144,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     content.style.transform = '';
                     document.body.classList.add('page-ready');
                     resolve();
-                }, TRANSITION_CONFIG.duration * 1.1);
+                }, TRANSITION_CONFIG.duration * 0.9);
             } else {
                 // 初回ページ読み込み時（オーバーレイなし）
                 requestAnimationFrame(() => {
                     content.style.transition = `
-                        filter ${TRANSITION_CONFIG.duration * 0.9}ms ${TRANSITION_CONFIG.easing.in},
-                        opacity ${TRANSITION_CONFIG.duration * 0.8}ms ${TRANSITION_CONFIG.easing.in},
-                        transform ${TRANSITION_CONFIG.duration * 0.8}ms ${TRANSITION_CONFIG.easing.in}
+                        filter ${TRANSITION_CONFIG.duration * 0.8}ms ${TRANSITION_CONFIG.easing.in},
+                        opacity ${TRANSITION_CONFIG.duration * 0.7}ms ${TRANSITION_CONFIG.easing.in}
                     `;
                     
                     content.style.filter = `blur(${TRANSITION_CONFIG.blur.initial}px)`;
                     content.style.opacity = '1';
-                    content.style.transform = `scale(${TRANSITION_CONFIG.scale.initial})`;
+                    content.style.transform = 'none'; // 強制的に変形なし
                 });
                 
                 // クリーンアップと準備完了状態の設定
@@ -139,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     content.style.transform = '';
                     document.body.classList.add('page-ready');
                     resolve();
-                }, TRANSITION_CONFIG.duration * 0.9);
+                }, TRANSITION_CONFIG.duration * 0.8);
             }
         });
     }

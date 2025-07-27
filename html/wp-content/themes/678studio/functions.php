@@ -12,6 +12,42 @@ require_once get_template_directory() . '/inc/post-types/media-achievements.php'
 // Load ACF configurations
 require_once get_template_directory() . '/inc/acf/media-achievements.php';
 
+// キャッシュ機能付きスタジオデータ取得
+function get_cached_studio_data() {
+    $cache_key = 'studio_shops_data';
+    $cache_duration = 300; // 5分キャッシュ
+
+    // キャッシュから取得を試行
+    $cached_data = get_transient($cache_key);
+    if ($cached_data !== false) {
+        return $cached_data;
+    }
+
+    // キャッシュがない場合はAPIから取得
+    $api_url = 'https://678photo.com/api/get_all_studio_shop.php';
+    
+    $response = wp_remote_get($api_url, [
+        'timeout' => 8, // タイムアウト短縮
+        'sslverify' => false 
+    ]);
+
+    if (is_wp_error($response)) {
+        return ['shops' => [], 'error' => $response->get_error_message()];
+    }
+
+    $body = wp_remote_retrieve_body($response);
+    $data = json_decode($body, true);
+    
+    if (json_last_error() !== JSON_ERROR_NONE || !isset($data['shops']) || !is_array($data['shops'])) {
+        return ['shops' => [], 'error' => 'Invalid API response'];
+    }
+
+    // キャッシュに保存
+    set_transient($cache_key, $data, $cache_duration);
+    
+    return $data;
+}
+
 // AJAX handler for studio search
 function ajax_studio_search() {
     // Verify nonce for security
@@ -23,29 +59,11 @@ function ajax_studio_search() {
     $page = isset($_POST['page']) ? max(1, intval($_POST['page'])) : 1;
     $per_page = 6;
 
-    // Use the same function from studio-search.php
-    $api_url = 'https://678photo.com/api/get_all_studio_shop.php';
-
-    $response = wp_remote_get($api_url, [
-        'timeout' => 15, 
-        'sslverify' => false 
-    ]);
-
-    if (is_wp_error($response)) {
-        wp_send_json_error(['message' => $response->get_error_message()]);
-        return;
-    }
-
-    $body = wp_remote_retrieve_body($response);
-    $data = json_decode($body, true);
+    // キャッシュされたデータを使用
+    $data = get_cached_studio_data();
     
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        wp_send_json_error(['message' => 'Invalid JSON response']);
-        return;
-    }
-    
-    if (!isset($data['shops']) || !is_array($data['shops'])) {
-        wp_send_json_error(['message' => 'No shops found in API response']);
+    if (isset($data['error'])) {
+        wp_send_json_error(['message' => $data['error']]);
         return;
     }
 
