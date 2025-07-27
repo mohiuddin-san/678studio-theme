@@ -220,7 +220,7 @@ if ($shop) {
   </section>
 
   <!-- Gallery Section -->
-  <section class="store-gallery">
+   <section class="store-gallery">
     <div class="store-basic-info__container">
       <h2 class="store-basic-info__heading">
         撮影ギャラリー
@@ -239,27 +239,20 @@ if ($shop) {
                 }
             }
         }
-        // Ensure at least 3 images for gallery display
-        if (count($gallery_images) < 3) {
-            $default_image = get_template_directory_uri() . '/assets/images/grayscale.jpg';
-            $needed = 3 - count($gallery_images);
-            for ($i = 0; $i < $needed; $i++) {
-                $gallery_images[] = $default_image;
-            }
+        if (empty($gallery_images)) {
+            $gallery_images = array_fill(0, 10, get_template_directory_uri() . '/assets/images/grayscale.jpg');
         }
         foreach ($gallery_images as $index => $image): 
         ?>
-        <div class="store-gallery__item">
-          <img src="<?php echo esc_url($image); ?>" alt="ギャラリー画像 <?php echo $index + 1; ?>"
-            data-full-image="<?php echo esc_url($image); ?>" loading="lazy">
-          <div class="store-gallery__overlay">
-            <svg class="store-gallery__icon" width="40" height="40" viewBox="0 0 40 40" fill="none"
-              xmlns="http://www.w3.org/2000/svg">
-              <circle cx="16" cy="16" r="10" stroke="white" stroke-width="2" />
-              <path d="M23 23L30 30" stroke="white" stroke-width="2" stroke-linecap="round" />
-            </svg>
+          <div class="store-gallery__item">
+            <img src="<?php echo esc_url($image); ?>" alt="ギャラリー画像 <?php echo $index + 1; ?>" data-full-image="<?php echo esc_url($image); ?>">
+            <div class="store-gallery__overlay">
+              <svg class="store-gallery__icon" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="16" cy="16" r="10" stroke="white" stroke-width="2"/>
+                <path d="M23 23L30 30" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
           </div>
-        </div>
         <?php endforeach; ?>
       </div>
     </div>
