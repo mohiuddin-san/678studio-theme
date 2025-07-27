@@ -651,13 +651,23 @@ function enqueue_reservation_script() {
     }
 }
 function enqueue_inquery_script() {
-    // Check if the current page slug is 'studio-reservation'
+    // Check if the current page slug is 'studio-inquery'
     if (is_page('studio-inquery')) {
+        // 店舗選択用のスクリプト
         wp_enqueue_script(
-            'reservation-script',
-            get_template_directory_uri() . '/assets/js/reservation.js',
+            'inquery-script',
+            get_template_directory_uri() . '/assets/js/inquery.js',
             array(), // Add dependencies if needed
-            null,
+            WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/inquery.js') : '1.0.0',
+            true // Load in footer
+        );
+        
+        // フォーム確認画面用のスクリプト
+        wp_enqueue_script(
+            'inquiry-form-script',
+            get_template_directory_uri() . '/assets/js/inquiry-form.js',
+            array(), // Add dependencies if needed
+            WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/inquiry-form.js') : '1.0.0',
             true // Load in footer
         );
     }
