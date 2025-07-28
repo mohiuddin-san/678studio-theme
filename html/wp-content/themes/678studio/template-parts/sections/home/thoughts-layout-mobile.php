@@ -12,7 +12,7 @@
           'variant' => 'default',
           'label_text' => 'Thoughts',
           'title_text' => 'ロクナナハチ撮影<br>への想い',
-          'content_text' => '678撮影の想いや、<br>撮影に対する考えについてはこちらから',
+          'content_text' => '10年以上に渡り培ってきたシニア撮影の技術とノウハウを全国の写真館の皆様と共有し、より多くのシニアの方々に人生の大切な瞬間を美しく残していただきたいという想いから、678（ロクナナハチ）撮影の監修を行っています。',
           'class' => 'thoughts-layout-mobile-title-section'
         ]); ?>
       </div>
