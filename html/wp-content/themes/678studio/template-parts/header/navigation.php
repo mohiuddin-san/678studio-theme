@@ -5,7 +5,7 @@
         class="navigation__link">ロクナナハチ撮影とは？</a></li>
     <li class="navigation__item"><a href="<?php echo esc_url(home_url('/stores')); ?>"
         class="navigation__link">店舗一覧</a></li>
-    <li class="navigation__item"><a href="<?php echo esc_url(home_url('/gallery')); ?>"
+    <li class="navigation__item"><a href="<?php echo esc_url(home_url('/photo-gallery')); ?>"
         class="navigation__link">ギャラリー</a></li>
     <li class="navigation__item"><a href="<?php echo esc_url(home_url('/studio-reservation')); ?>"
         class="navigation__link">ご予約</a></li>
