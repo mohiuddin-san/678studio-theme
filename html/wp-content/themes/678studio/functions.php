@@ -12,6 +12,11 @@ require_once get_template_directory() . '/inc/post-types/media-achievements.php'
 // Load ACF configurations
 require_once get_template_directory() . '/inc/acf/media-achievements.php';
 
+// Load WP-CLI commands for Studio Shop testing
+if (file_exists(get_template_directory() . '/inc/wp-cli-studio-shop-test.php')) {
+    require_once get_template_directory() . '/inc/wp-cli-studio-shop-test.php';
+}
+
 // キャッシュ機能付きスタジオデータ取得
 function get_cached_studio_data() {
     $cache_key = 'studio_shops_data';
@@ -50,7 +55,7 @@ function get_cached_studio_data() {
 
 // Ajax用のスクリプトをエンキュー（ギャラリーページでのみ）
 function enqueue_gallery_scripts() {
-    if (is_page_template('page-gallery.php')) {
+    if (is_page_template('page-photo-gallery.php')) {
         wp_localize_script('jquery', 'galleryAjax', [
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('gallery_nonce')
@@ -209,7 +214,7 @@ function theme_678studio_styles() {
     }
     
     // Enqueue gallery script on gallery pages
-    if (is_page_template('page-gallery.php')) {
+    if (is_page_template('page-photo-gallery.php')) {
         // ギャラリーページでは軽量化のためGSAPとScrollTriggerを無効化
         // GSAPを読み込まない = スクロールアニメーションも無効化される
         
@@ -304,7 +309,7 @@ function theme_678studio_debug_scripts() {
     }
     
     // Always localize gallery AJAX data for gallery pages
-    if (is_page_template('page-gallery.php') || is_page('gallery')) {
+    if (is_page_template('page-photo-gallery.php') || is_page('photo-gallery')) {
         wp_localize_script('jquery', 'galleryAjax', [
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('gallery_nonce')
@@ -1167,7 +1172,7 @@ echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   $pages = [
   ['url' => home_url('/'), 'priority' => '1.0', 'changefreq' => 'daily'],
   ['url' => home_url('/about'), 'priority' => '0.9', 'changefreq' => 'weekly'],
-  ['url' => home_url('/gallery'), 'priority' => '0.8', 'changefreq' => 'weekly'],
+  ['url' => home_url('/photo-gallery'), 'priority' => '0.8', 'changefreq' => 'weekly'],
   ['url' => home_url('/stores'), 'priority' => '0.9', 'changefreq' => 'daily'],
   ['url' => home_url('/studio-reservation'), 'priority' => '0.7', 'changefreq' => 'monthly'],
   ['url' => home_url('/studio-inquery'), 'priority' => '0.6', 'changefreq' => 'monthly']

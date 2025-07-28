@@ -1,0 +1,320 @@
+0000.000 (0) Opened log file at time: Mon, 28 Jul 2025 02:00:43 +0000 on http://localhost:8080
+0000.002 (0) UpdraftPlus WordPress backup plugin (https://updraftplus.com): 1.25.6 WP: 6.4.3 PHP: 8.2.17 (apache2handler, Linux e07e061fc20f 5.15.49-linuxkit-pr #1 SMP PREEMPT Thu May 25 07:27:39 UTC 2023 aarch64) MySQL: 8.0.40 (max packet size=67108864) WPLANG: en_US Server: Apache/2.4.57 (Debian) safe_mode: 0 max_execution_time: 900 memory_limit: 256M (used: 3.9M | 6M) multisite: N openssl: OpenSSL 3.0.11 19 Sep 2023 mcrypt: N LANG: C WP Proxy: disabled ZipArchive::addFile: Y
+0000.003 (0) Free space on disk containing Updraft's temporary directory: 80241.7 MB
+0000.007 (0) Tasks: Backup files: 1 (schedule: unset) Backup DB: 1 (schedule: unset)
+0000.010 (0) Requesting semaphore lock (fd) (apparently not via scheduler)
+0000.013 (0) Set semaphore last lock (fd) time to 2025-07-28 02:00:43
+0000.014 (0) Semaphore lock (fd) complete
+0000.016 (0) Backup run: resumption=0, nonce=892a4f28e765, file_nonce=892a4f28e765 begun at=1753668043 (0s ago), job type=backup
+0000.018 (0) Scheduling a resumption (1) after 300 seconds (1753668343) in case this run gets aborted
+0000.030 (0) Checking if we have a zip executable available
+0000.032 (0) Creation of backups of directories: beginning
+0000.035 (0) Beginning creation of dump of plugins (split every: 400 MB)
+0000.238 (0) Total entities for the zip file: 314 directories, 2044 files (0 skipped as non-modified), 47.8 MB
+0000.246 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-plugins.zip.tmp: 100 files added (on-disk size: 0 KB)
+0000.253 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-plugins.zip.tmp: 200 files added (on-disk size: 0 KB)
+0000.260 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-plugins.zip.tmp: 300 files added (on-disk size: 0 KB)
+0000.267 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-plugins.zip.tmp: 400 files added (on-disk size: 0 KB)
+0000.274 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-plugins.zip.tmp: 500 files added (on-disk size: 0 KB)
+0000.281 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-plugins.zip.tmp: 600 files added (on-disk size: 0 KB)
+0000.288 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-plugins.zip.tmp: 700 files added (on-disk size: 0 KB)
+0000.294 (0) Adding batch to zip file (UpdraftPlus_ZipArchive): over 25 MB added on this batch (25 MB, 2044 files batched, 783 (783) added so far); re-opening (prior size: 0 KB)
+0001.950 (0) A useful amount of data was added after this amount of zip processing: 2.2 s (normalised: 2.2 s, rate: 11604.3 KB/s)
+0001.952 (0) Performance is good - will increase the amount of data we attempt to batch (time=2.2074010372162, normalised_time=2.2060740804253, max_time=1.9509699344635, data points known=1, old_max_bytes=26214400, new_max_bytes=71296971)
+0001.959 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-plugins.zip.tmp: 800 files added (on-disk size: 7748.6 KB)
+0001.971 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-plugins.zip.tmp: 900 files added (on-disk size: 7748.6 KB)
+0001.982 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-plugins.zip.tmp: 1000 files added (on-disk size: 7748.6 KB)
+0001.993 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-plugins.zip.tmp: 1100 files added (on-disk size: 7748.6 KB)
+0002.004 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-plugins.zip.tmp: 1200 files added (on-disk size: 7748.6 KB)
+0002.015 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-plugins.zip.tmp: 1300 files added (on-disk size: 7748.6 KB)
+0002.026 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-plugins.zip.tmp: 1400 files added (on-disk size: 7748.6 KB)
+0002.037 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-plugins.zip.tmp: 1500 files added (on-disk size: 7748.6 KB)
+0002.049 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-plugins.zip.tmp: 1600 files added (on-disk size: 7748.6 KB)
+0002.060 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-plugins.zip.tmp: 1700 files added (on-disk size: 7748.6 KB)
+0002.069 (0) Adding batch to zip file (UpdraftPlus_ZipArchive): over 1000 files added on this batch (21.6 MB, 2044 files batched, 1001 (1784) added so far); re-opening (prior size: 7748.6 KB)
+0003.823 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-plugins.zip.tmp: 1800 files added (on-disk size: 13644.2 KB)
+0003.835 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-plugins.zip.tmp: 1900 files added (on-disk size: 13644.2 KB)
+0003.846 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-plugins.zip.tmp: 2000 files added (on-disk size: 13644.2 KB)
+0004.377 (0) Creating zip file manifest (backup_2025-07-28-0200_678_Studio_892a4f28e765-plugins.zip.list-temp.tmp)
+0004.564 (0) Successfully created zip file manifest (size: 173768)
+0004.695 (0) Created plugins zip (0) - 14053.4 KB in 4.7 s (3017.8 KB/s) (sha1: b7c70afd9a051669e765541a4943b013336bff4e, sha256: 8237a1b3a834a573f81b09d7e776ec12cbf6b3bc7e63519072288f5195926b95)
+0004.700 (0) Cloud backup selection (1/1): none with instance (1/1) (last)
+0004.701 (0) No remote despatch: user chose no remote backup service
+0004.702 (0) Recording as successfully uploaded: backup_2025-07-28-0200_678_Studio_892a4f28e765-plugins.zip
+0004.703 (0) Deleting zip manifest (backup_2025-07-28-0200_678_Studio_892a4f28e765-plugins.zip.list.tmp)
+0004.706 (0) Retain: beginning examination of existing backup sets; user setting: retain_files=2, retain_db=2
+0004.707 (0) Number of backup sets in history: 1; groups (db): 1
+0004.708 (0) Examining (for databases) backup set with group_id=0, nonce=c4e2e9920436, datestamp=1753660268 (Jul 27 2025 23:51:08)
+0004.709 (0) This backup set remains non-empty (f=1/d=1); will retain in history
+0004.710 (0) Number of backup sets in history: 1; groups (files): 1
+0004.711 (0) Examining (for files) backup set with nonce=c4e2e9920436, datestamp=1753660268 (Jul 27 2025 23:51:08)
+0004.711 (0) This backup set remains non-empty (f=1/d=1); will retain in history
+0004.711 (0) Retain: saving new backup history (sets now: 1) and finishing retain operation
+0004.716 (0) Beginning creation of dump of themes (split every: 400 MB)
+0005.828 (0) Total entities for the zip file: 1511 directories, 8644 files (0 skipped as non-modified), 60.6 MB
+0005.842 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 100 files added (on-disk size: 0 KB)
+0005.854 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 200 files added (on-disk size: 0 KB)
+0005.865 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 300 files added (on-disk size: 0 KB)
+0005.876 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 400 files added (on-disk size: 0 KB)
+0005.888 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 500 files added (on-disk size: 0 KB)
+0005.900 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 600 files added (on-disk size: 0 KB)
+0005.911 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 700 files added (on-disk size: 0 KB)
+0005.923 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 800 files added (on-disk size: 0 KB)
+0005.936 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 900 files added (on-disk size: 0 KB)
+0005.948 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 1000 files added (on-disk size: 0 KB)
+0005.949 (0) Adding batch to zip file (UpdraftPlus_ZipArchive): over 1000 files added on this batch (9.9 MB, 8644 files batched, 1001 (1001) added so far); re-opening (prior size: 0 KB)
+0007.582 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 1100 files added (on-disk size: 3357.1 KB)
+0007.593 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 1200 files added (on-disk size: 3357.1 KB)
+0007.604 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 1300 files added (on-disk size: 3357.1 KB)
+0007.615 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 1400 files added (on-disk size: 3357.1 KB)
+0007.628 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 1500 files added (on-disk size: 3357.1 KB)
+0007.639 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 1600 files added (on-disk size: 3357.1 KB)
+0007.651 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 1700 files added (on-disk size: 3357.1 KB)
+0007.662 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 1800 files added (on-disk size: 3357.1 KB)
+0007.673 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 1900 files added (on-disk size: 3357.1 KB)
+0007.684 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 2000 files added (on-disk size: 3357.1 KB)
+0007.685 (0) Adding batch to zip file (UpdraftPlus_ZipArchive): over 1000 files added on this batch (3 MB, 8644 files batched, 1001 (2002) added so far); re-opening (prior size: 3357.1 KB)
+0008.365 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 2100 files added (on-disk size: 4549.1 KB)
+0008.378 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 2200 files added (on-disk size: 4549.1 KB)
+0008.390 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 2300 files added (on-disk size: 4549.1 KB)
+0008.402 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 2400 files added (on-disk size: 4549.1 KB)
+0008.414 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 2500 files added (on-disk size: 4549.1 KB)
+0008.428 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 2600 files added (on-disk size: 4549.1 KB)
+0008.440 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 2700 files added (on-disk size: 4549.1 KB)
+0008.452 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 2800 files added (on-disk size: 4549.1 KB)
+0008.464 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 2900 files added (on-disk size: 4549.1 KB)
+0008.476 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 3000 files added (on-disk size: 4549.1 KB)
+0008.478 (0) Adding batch to zip file (UpdraftPlus_ZipArchive): over 1000 files added on this batch (3.9 MB, 8644 files batched, 1001 (3003) added so far); re-opening (prior size: 4549.1 KB)
+0009.276 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 3100 files added (on-disk size: 5817.5 KB)
+0009.288 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 3200 files added (on-disk size: 5817.5 KB)
+0009.299 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 3300 files added (on-disk size: 5817.5 KB)
+0009.310 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 3400 files added (on-disk size: 5817.5 KB)
+0009.322 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 3500 files added (on-disk size: 5817.5 KB)
+0009.334 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 3600 files added (on-disk size: 5817.5 KB)
+0009.345 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 3700 files added (on-disk size: 5817.5 KB)
+0009.356 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 3800 files added (on-disk size: 5817.5 KB)
+0009.367 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 3900 files added (on-disk size: 5817.5 KB)
+0009.377 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 4000 files added (on-disk size: 5817.5 KB)
+0009.378 (0) Adding batch to zip file (UpdraftPlus_ZipArchive): over 1000 files added on this batch (7.3 MB, 8644 files batched, 1001 (4004) added so far); re-opening (prior size: 5817.5 KB)
+0010.597 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 4100 files added (on-disk size: 8475.3 KB)
+0010.610 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 4200 files added (on-disk size: 8475.3 KB)
+0010.623 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 4300 files added (on-disk size: 8475.3 KB)
+0010.634 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 4400 files added (on-disk size: 8475.3 KB)
+0010.645 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 4500 files added (on-disk size: 8475.3 KB)
+0010.657 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 4600 files added (on-disk size: 8475.3 KB)
+0010.668 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 4700 files added (on-disk size: 8475.3 KB)
+0010.679 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 4800 files added (on-disk size: 8475.3 KB)
+0010.691 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 4900 files added (on-disk size: 8475.3 KB)
+0010.702 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 5000 files added (on-disk size: 8475.3 KB)
+0010.703 (0) Adding batch to zip file (UpdraftPlus_ZipArchive): over 1000 files added on this batch (3.7 MB, 8644 files batched, 1001 (5005) added so far); re-opening (prior size: 8475.3 KB)
+0011.519 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 5100 files added (on-disk size: 9867.1 KB)
+0011.530 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 5200 files added (on-disk size: 9867.1 KB)
+0011.542 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 5300 files added (on-disk size: 9867.1 KB)
+0011.554 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 5400 files added (on-disk size: 9867.1 KB)
+0011.566 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 5500 files added (on-disk size: 9867.1 KB)
+0011.577 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 5600 files added (on-disk size: 9867.1 KB)
+0011.589 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 5700 files added (on-disk size: 9867.1 KB)
+0011.600 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 5800 files added (on-disk size: 9867.1 KB)
+0011.611 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 5900 files added (on-disk size: 9867.1 KB)
+0011.623 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 6000 files added (on-disk size: 9867.1 KB)
+0011.624 (0) Adding batch to zip file (UpdraftPlus_ZipArchive): over 1000 files added on this batch (4.1 MB, 8644 files batched, 1001 (6006) added so far); re-opening (prior size: 9867.1 KB)
+0012.574 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 6100 files added (on-disk size: 11350.1 KB)
+0012.586 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 6200 files added (on-disk size: 11350.1 KB)
+0012.598 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 6300 files added (on-disk size: 11350.1 KB)
+0012.609 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 6400 files added (on-disk size: 11350.1 KB)
+0012.620 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 6500 files added (on-disk size: 11350.1 KB)
+0012.632 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 6600 files added (on-disk size: 11350.1 KB)
+0012.643 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 6700 files added (on-disk size: 11350.1 KB)
+0012.655 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 6800 files added (on-disk size: 11350.1 KB)
+0012.666 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 6900 files added (on-disk size: 11350.1 KB)
+0012.677 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 7000 files added (on-disk size: 11350.1 KB)
+0012.678 (0) Adding batch to zip file (UpdraftPlus_ZipArchive): over 1000 files added on this batch (10.4 MB, 8644 files batched, 1001 (7007) added so far); re-opening (prior size: 11350.1 KB)
+0013.947 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 7100 files added (on-disk size: 13925.4 KB)
+0013.959 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 7200 files added (on-disk size: 13925.4 KB)
+0013.971 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 7300 files added (on-disk size: 13925.4 KB)
+0013.982 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 7400 files added (on-disk size: 13925.4 KB)
+0013.994 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 7500 files added (on-disk size: 13925.4 KB)
+0014.005 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 7600 files added (on-disk size: 13925.4 KB)
+0014.015 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 7700 files added (on-disk size: 13925.4 KB)
+0014.026 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 7800 files added (on-disk size: 13925.4 KB)
+0014.037 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 7900 files added (on-disk size: 13925.4 KB)
+0014.048 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 8000 files added (on-disk size: 13925.4 KB)
+0014.049 (0) Adding batch to zip file (UpdraftPlus_ZipArchive): over 1000 files added on this batch (6.3 MB, 8644 files batched, 1001 (8008) added so far); re-opening (prior size: 13925.4 KB)
+0015.191 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 8100 files added (on-disk size: 15796.5 KB)
+0015.204 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 8200 files added (on-disk size: 15796.5 KB)
+0015.217 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 8300 files added (on-disk size: 15796.5 KB)
+0015.229 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 8400 files added (on-disk size: 15796.5 KB)
+0015.240 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 8500 files added (on-disk size: 15796.5 KB)
+0015.251 (0) Zip: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.tmp: 8600 files added (on-disk size: 15796.5 KB)
+0016.364 (0) Creating zip file manifest (backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.list-temp.tmp)
+0017.117 (0) Successfully created zip file manifest (size: 657382)
+0017.335 (0) Created themes zip (0) - 23956.6 KB in 12.6 s (1899.3 KB/s) (sha1: 23cbe4a9d9dea95752a2962470d44315cc3212e5, sha256: 5819faeedeeb8cd269316fb8a04960ac5b35510c3240364ba7537619c8103e41)
+0017.348 (0) Cloud backup selection (1/1): none with instance (1/1) (last)
+0017.350 (0) No remote despatch: user chose no remote backup service
+0017.352 (0) Recording as successfully uploaded: backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip
+0017.357 (0) Deleting zip manifest (backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip.list.tmp)
+0017.361 (0) Retain: beginning examination of existing backup sets; user setting: retain_files=2, retain_db=2
+0017.362 (0) Number of backup sets in history: 1; groups (db): 1
+0017.363 (0) Examining (for databases) backup set with group_id=0, nonce=c4e2e9920436, datestamp=1753660268 (Jul 27 2025 23:51:08)
+0017.364 (0) This backup set remains non-empty (f=1/d=1); will retain in history
+0017.365 (0) Number of backup sets in history: 1; groups (files): 1
+0017.365 (0) Examining (for files) backup set with nonce=c4e2e9920436, datestamp=1753660268 (Jul 27 2025 23:51:08)
+0017.365 (0) This backup set remains non-empty (f=1/d=1); will retain in history
+0017.366 (0) Retain: saving new backup history (sets now: 1) and finishing retain operation
+0017.371 (0) Exclusion option setting (uploads): backup*,*backups,backwpup*,wp-clone,snapshots
+0017.373 (0) Looking for candidates to backup in: /var/www/html/wp-content/uploads
+0017.374 (0) finding files: 2025: adding to list (1)
+0017.374 (0) Beginning creation of dump of uploads (split every: 400 MB)
+0017.380 (0) Total entities for the zip file: 2 directories, 12 files (0 skipped as non-modified), 0.2 MB
+0017.393 (0) Creating zip file manifest (backup_2025-07-28-0200_678_Studio_892a4f28e765-uploads.zip.list-temp.tmp)
+0017.396 (0) Successfully created zip file manifest (size: 562)
+0017.402 (0) Created uploads zip (0) - 169.7 KB in 0 s (7087.4 KB/s) (sha1: 73ba8311dfeb12325b6a168a629bacca719d3f7f, sha256: 7d267ed5911d32adc85e11d9289dbccdc28c3ab6af941478a6485cab96b9767c)
+0017.408 (0) Cloud backup selection (1/1): none with instance (1/1) (last)
+0017.408 (0) No remote despatch: user chose no remote backup service
+0017.409 (0) Recording as successfully uploaded: backup_2025-07-28-0200_678_Studio_892a4f28e765-uploads.zip
+0017.411 (0) Deleting zip manifest (backup_2025-07-28-0200_678_Studio_892a4f28e765-uploads.zip.list.tmp)
+0017.412 (0) Retain: beginning examination of existing backup sets; user setting: retain_files=2, retain_db=2
+0017.414 (0) Number of backup sets in history: 1; groups (db): 1
+0017.414 (0) Examining (for databases) backup set with group_id=0, nonce=c4e2e9920436, datestamp=1753660268 (Jul 27 2025 23:51:08)
+0017.414 (0) This backup set remains non-empty (f=1/d=1); will retain in history
+0017.415 (0) Number of backup sets in history: 1; groups (files): 1
+0017.416 (0) Examining (for files) backup set with nonce=c4e2e9920436, datestamp=1753660268 (Jul 27 2025 23:51:08)
+0017.416 (0) This backup set remains non-empty (f=1/d=1); will retain in history
+0017.417 (0) Retain: saving new backup history (sets now: 1) and finishing retain operation
+0017.420 (0) No backup of mu-plugins: excluded by user's options
+0017.423 (0) Beginning backup of other directories found in the content directory (index: 0)
+0017.424 (0) Exclusion option setting (others): upgrade,cache,updraft,backup*,*backups,mysql.sql,debug.log
+0017.425 (0) Looking for candidates to backup in: /var/www/html/wp-content
+0017.426 (0) finding files: upgrade: skipping: excluded by options
+0017.427 (0) finding files: index.php: adding to list (1)
+0017.428 (0) finding files: plugins: skipping: this is the plugins directory
+0017.429 (0) finding files: debug-logs: adding to list (2)
+0017.429 (0) finding files: uploads: skipping: this is the uploads directory
+0017.430 (0) finding files: updraft: skipping: this is the updraft directory
+0017.431 (0) finding files: debug.log: skipping: excluded by options
+0017.432 (0) finding files: themes: skipping: this is the themes directory
+0017.437 (0) Total entities for the zip file: 1 directories, 11 files (0 skipped as non-modified), 118.6 MB
+0017.439 (0) Adding batch to zip file (UpdraftPlus_ZipArchive): over 68 MB added on this batch (79.3 MB, 11 files batched, 9 (9) added so far); re-opening (prior size: 0 KB)
+0017.953 (0) A useful amount of data was added after this amount of zip processing: 1.2 s (normalised: 1 s, rate: 67125.8 KB/s)
+0017.955 (0) Performance is good - will increase the amount of data we attempt to batch (time=1.2096381187439, normalised_time=1.0372451967687, max_time=17.95314002037, data points known=1, old_max_bytes=71296971, new_max_bytes=209715200)
+0018.232 (0) Creating zip file manifest (backup_2025-07-28-0200_678_Studio_892a4f28e765-others.zip.list-temp.tmp)
+0018.236 (0) Successfully created zip file manifest (size: 526)
+0018.264 (0) Created others zip (0) - 2626.2 KB in 0.8 s (3170.2 KB/s) (sha1: ea21fce1979c291f53818ca9b5c6341b68bea333, sha256: deb191da950609a787ed8a538a4e14361164febab0f03a082648f39df8dd2e74)
+0018.269 (0) Cloud backup selection (1/1): none with instance (1/1) (last)
+0018.269 (0) No remote despatch: user chose no remote backup service
+0018.270 (0) Recording as successfully uploaded: backup_2025-07-28-0200_678_Studio_892a4f28e765-others.zip
+0018.272 (0) Deleting zip manifest (backup_2025-07-28-0200_678_Studio_892a4f28e765-others.zip.list.tmp)
+0018.274 (0) Retain: beginning examination of existing backup sets; user setting: retain_files=2, retain_db=2
+0018.275 (0) Number of backup sets in history: 1; groups (db): 1
+0018.276 (0) Examining (for databases) backup set with group_id=0, nonce=c4e2e9920436, datestamp=1753660268 (Jul 27 2025 23:51:08)
+0018.276 (0) This backup set remains non-empty (f=1/d=1); will retain in history
+0018.277 (0) Number of backup sets in history: 1; groups (files): 1
+0018.278 (0) Examining (for files) backup set with nonce=c4e2e9920436, datestamp=1753660268 (Jul 27 2025 23:51:08)
+0018.278 (0) This backup set remains non-empty (f=1/d=1); will retain in history
+0018.279 (0) Retain: saving new backup history (sets now: 1) and finishing retain operation
+0018.286 (0) Saving backup status to database (elements: 8)
+0018.288 (0) Beginning creation of database dump (WordPress DB)
+0018.289 (0) SQL compatibility mode is: NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+0018.299 (0) Table wp_options: Total expected rows (via COUNT): 276
+0018.300 (0) Table is relatively small; fetch_rows will thus be: 500 (allow_further_reductions=1, is_first_fetch=1, known_bigger_than_table=1)
+0018.332 (0) Table wp_options: Rows added in this batch (next record: 665): 267 (uncompressed bytes in this segment=1243446) in 0.04 seconds
+0018.338 (0) Table wp_options: finishing file(s) (2, 274.1 KB)
+0018.341 (0) Table wp_users: Total expected rows (via COUNT): 1
+0018.342 (0) Table is relatively small; fetch_rows will thus be: 20 (allow_further_reductions=1, is_first_fetch=1, known_bigger_than_table=1)
+0018.344 (0) Table wp_users: Rows added in this batch (next record: 1): 1 (uncompressed bytes in this segment=1371) in 0.00 seconds
+0018.350 (0) Table wp_users: finishing file(s) (2, 0.6 KB)
+0018.355 (0) Table wp_usermeta: Total expected rows (via COUNT): 23
+0018.356 (0) Table is relatively small; fetch_rows will thus be: 20 (allow_further_reductions=1, is_first_fetch=1, known_bigger_than_table=1)
+0018.357 (0) Table wp_usermeta: Rows added in this batch (next record: 24): 23 (uncompressed bytes in this segment=3785) in 0.00 seconds
+0018.363 (0) Table wp_usermeta: finishing file(s) (2, 1.5 KB)
+0018.368 (0) Table wp_commentmeta: Total expected rows (via COUNT): 0
+0018.370 (0) Table wp_commentmeta: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=677) in 0.00 seconds
+0018.377 (0) Table wp_commentmeta: finishing file(s) (2, 0.4 KB)
+0018.380 (0) Table wp_comments: Total expected rows (via COUNT): 1
+0018.381 (0) Table is relatively small; fetch_rows will thus be: 20 (allow_further_reductions=1, is_first_fetch=1, known_bigger_than_table=1)
+0018.383 (0) Table wp_comments: Rows added in this batch (next record: 1): 1 (uncompressed bytes in this segment=2121) in 0.00 seconds
+0018.388 (0) Table wp_comments: finishing file(s) (2, 0.7 KB)
+0018.392 (0) Table wp_links: Total expected rows (via COUNT): 0
+0018.394 (0) Table wp_links: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=1298) in 0.00 seconds
+0018.400 (0) Table wp_links: finishing file(s) (2, 0.5 KB)
+0018.403 (0) Table wp_postmeta: Total expected rows (via COUNT): 138
+0018.404 (0) Table is relatively small; fetch_rows will thus be: 250 (allow_further_reductions=1, is_first_fetch=1, known_bigger_than_table=1)
+0018.407 (0) Table wp_postmeta: Rows added in this batch (next record: 138): 138 (uncompressed bytes in this segment=15460) in 0.00 seconds
+0018.412 (0) Table wp_postmeta: finishing file(s) (2, 2.2 KB)
+0018.416 (0) Table wp_posts: Total expected rows (via COUNT): 63
+0018.417 (0) Table is relatively small; fetch_rows will thus be: 100 (allow_further_reductions=1, is_first_fetch=1, known_bigger_than_table=1)
+0018.420 (0) Table wp_posts: Rows added in this batch (next record: 63): 63 (uncompressed bytes in this segment=31201) in 0.00 seconds
+0018.427 (0) Table wp_posts: finishing file(s) (2, 5.4 KB)
+0018.430 (0) Table wp_term_relationships: Total expected rows (approximate): 0
+0018.432 (0) Table wp_term_relationships: Rows added in this batch (next record: 100000): 1 (uncompressed bytes in this segment=690) in 0.00 seconds
+0018.436 (0) Table wp_term_relationships: finishing file(s) (2, 0.4 KB)
+0018.442 (0) Table wp_term_taxonomy: Total expected rows (via COUNT): 1
+0018.443 (0) Table is relatively small; fetch_rows will thus be: 20 (allow_further_reductions=1, is_first_fetch=1, known_bigger_than_table=1)
+0018.445 (0) Table wp_term_taxonomy: Rows added in this batch (next record: 1): 1 (uncompressed bytes in this segment=910) in 0.00 seconds
+0018.451 (0) Table wp_term_taxonomy: finishing file(s) (2, 0.4 KB)
+0018.457 (0) Table wp_termmeta: Total expected rows (via COUNT): 0
+0018.458 (0) Table wp_termmeta: Rows added in this batch (next record: -1): 0 (uncompressed bytes in this segment=650) in 0.00 seconds
+0018.463 (0) Table wp_termmeta: finishing file(s) (2, 0.4 KB)
+0018.467 (0) Table wp_terms: Total expected rows (via COUNT): 1
+0018.468 (0) Table is relatively small; fetch_rows will thus be: 20 (allow_further_reductions=1, is_first_fetch=1, known_bigger_than_table=1)
+0018.470 (0) Table wp_terms: Rows added in this batch (next record: 1): 1 (uncompressed bytes in this segment=728) in 0.00 seconds
+0018.474 (0) Table wp_terms: finishing file(s) (2, 0.4 KB)
+0018.475 (0) PHP event: code E_WARNING: filemtime(): stat failed for /var/www/html/wp-content/updraft/backup_2025-07-28-0200_678_Studio_892a4f28e765-db.gz (line 1923, wp-content/plugins/updraftplus/backup.php)
+0018.477 (0) backup_2025-07-28-0200_678_Studio_892a4f28e765-db-table-wp_options.table.tmpr666.gz (1/12/fopen): adding to final database dump
+0018.567 (0) backup_2025-07-28-0200_678_Studio_892a4f28e765-db-table-wp_options.table.gz (2/12/fopen): adding to final database dump
+0018.568 (0) backup_2025-07-28-0200_678_Studio_892a4f28e765-db-table-wp_users.table.tmpr2.gz (3/12/fopen): adding to final database dump
+0018.569 (0) backup_2025-07-28-0200_678_Studio_892a4f28e765-db-table-wp_users.table.gz (4/12/fopen): adding to final database dump
+0018.570 (0) backup_2025-07-28-0200_678_Studio_892a4f28e765-db-table-wp_usermeta.table.tmpr25.gz (5/12/fopen): adding to final database dump
+0018.571 (0) backup_2025-07-28-0200_678_Studio_892a4f28e765-db-table-wp_usermeta.table.gz (6/12/fopen): adding to final database dump
+0018.572 (0) backup_2025-07-28-0200_678_Studio_892a4f28e765-db-table-wp_commentmeta.table.tmpr0.gz (7/12/fopen): adding to final database dump
+0018.573 (0) backup_2025-07-28-0200_678_Studio_892a4f28e765-db-table-wp_commentmeta.table.gz (8/12/fopen): adding to final database dump
+0018.574 (0) backup_2025-07-28-0200_678_Studio_892a4f28e765-db-table-wp_comments.table.tmpr2.gz (9/12/fopen): adding to final database dump
+0018.575 (0) backup_2025-07-28-0200_678_Studio_892a4f28e765-db-table-wp_comments.table.gz (10/12/fopen): adding to final database dump
+0018.576 (0) backup_2025-07-28-0200_678_Studio_892a4f28e765-db-table-wp_links.table.tmpr0.gz (11/12/fopen): adding to final database dump
+0018.577 (0) backup_2025-07-28-0200_678_Studio_892a4f28e765-db-table-wp_links.table.gz (12/12/fopen): adding to final database dump
+0018.578 (0) backup_2025-07-28-0200_678_Studio_892a4f28e765-db-table-wp_postmeta.table.tmpr139.gz (13/12/fopen): adding to final database dump
+0018.579 (0) backup_2025-07-28-0200_678_Studio_892a4f28e765-db-table-wp_postmeta.table.gz (14/12/fopen): adding to final database dump
+0018.580 (0) backup_2025-07-28-0200_678_Studio_892a4f28e765-db-table-wp_posts.table.tmpr64.gz (15/12/fopen): adding to final database dump
+0018.582 (0) backup_2025-07-28-0200_678_Studio_892a4f28e765-db-table-wp_posts.table.gz (16/12/fopen): adding to final database dump
+0018.583 (0) backup_2025-07-28-0200_678_Studio_892a4f28e765-db-table-wp_term_relationships.table.tmpr100001.gz (17/12/fopen): adding to final database dump
+0018.584 (0) backup_2025-07-28-0200_678_Studio_892a4f28e765-db-table-wp_term_relationships.table.gz (18/12/fopen): adding to final database dump
+0018.584 (0) backup_2025-07-28-0200_678_Studio_892a4f28e765-db-table-wp_term_taxonomy.table.tmpr2.gz (19/12/fopen): adding to final database dump
+0018.585 (0) backup_2025-07-28-0200_678_Studio_892a4f28e765-db-table-wp_term_taxonomy.table.gz (20/12/fopen): adding to final database dump
+0018.586 (0) backup_2025-07-28-0200_678_Studio_892a4f28e765-db-table-wp_termmeta.table.tmpr0.gz (21/12/fopen): adding to final database dump
+0018.587 (0) backup_2025-07-28-0200_678_Studio_892a4f28e765-db-table-wp_termmeta.table.gz (22/12/fopen): adding to final database dump
+0018.588 (0) backup_2025-07-28-0200_678_Studio_892a4f28e765-db-table-wp_terms.table.tmpr2.gz (23/12/fopen): adding to final database dump
+0018.589 (0) backup_2025-07-28-0200_678_Studio_892a4f28e765-db-table-wp_terms.table.gz (24/12/fopen): adding to final database dump
+0018.593 (0) backup_2025-07-28-0200_678_Studio_892a4f28e765-db.gz: finished writing out complete database file (287.3 KB)
+0018.608 (0) Total database tables backed up: 12 (backup_2025-07-28-0200_678_Studio_892a4f28e765-db.gz, size: 294298, sha1: b589c71557a534dd64f424bafcdd77e806d86a07, sha256: af6b7c7e4eb8d2995194b1ff7d6978f520c4120aeed635cc12e8c8c64a7c3c6b)
+0018.615 (0) backup_2025-07-28-0200_678_Studio_892a4f28e765-plugins.zip: plugins: This file has already been successfully processed
+0018.616 (0) backup_2025-07-28-0200_678_Studio_892a4f28e765-themes.zip: themes: This file has already been successfully processed
+0018.616 (0) backup_2025-07-28-0200_678_Studio_892a4f28e765-uploads.zip: uploads: This file has already been successfully processed
+0018.617 (0) backup_2025-07-28-0200_678_Studio_892a4f28e765-others.zip: others: This file has already been successfully processed
+0018.618 (0) backup_2025-07-28-0200_678_Studio_892a4f28e765-db.gz: db: This file has not yet been successfully uploaded: will queue
+0018.618 (0) Saving backup history. Total backup size: 40.1 MB
+0018.620 (0) Requesting upload of the files that have not yet been successfully uploaded (1)
+0018.623 (0) Cloud backup selection (1/1): none with instance (1/1) (last)
+0018.623 (0) No remote despatch: user chose no remote backup service
+0018.624 (0) Recording as successfully uploaded: backup_2025-07-28-0200_678_Studio_892a4f28e765-db.gz
+0018.627 (0) Retain: beginning examination of existing backup sets; user setting: retain_files=2, retain_db=2
+0018.629 (0) Number of backup sets in history: 2; groups (db): 1
+0018.630 (0) Examining (for databases) backup set with group_id=0, nonce=892a4f28e765, datestamp=1753668043 (Jul 28 2025 02:00:43)
+0018.630 (0) This backup set is the backup set just made, so will not be deleted.
+0018.630 (0) Examining (for databases) backup set with group_id=0, nonce=c4e2e9920436, datestamp=1753660268 (Jul 27 2025 23:51:08)
+0018.630 (0) This backup set remains non-empty (f=1/d=1); will retain in history
+0018.631 (0) Number of backup sets in history: 2; groups (files): 1
+0018.632 (0) Examining (for files) backup set with nonce=892a4f28e765, datestamp=1753668043 (Jul 28 2025 02:00:43)
+0018.632 (0) This backup set is the backup set just made, so will not be deleted.
+0018.633 (0) This backup set is the backup set just made, so will not be deleted.
+0018.633 (0) This backup set is the backup set just made, so will not be deleted.
+0018.633 (0) This backup set is the backup set just made, so will not be deleted.
+0018.633 (0) This backup set remains non-empty (f=1/d=1); will retain in history
+0018.634 (0) Examining (for files) backup set with nonce=c4e2e9920436, datestamp=1753660268 (Jul 27 2025 23:51:08)
+0018.634 (0) This backup set remains non-empty (f=1/d=1); will retain in history
+0018.634 (0) Retain: saving new backup history (sets now: 2) and finishing retain operation
+0018.636 (0) Resume backup (892a4f28e765, 0): finish run
+0018.639 (0) Decremented the semaphore (fd) by 1
+0018.640 (0) Semaphore (fd) unlocked
+0018.641 (0) There were no errors in the uploads, so the 'resume' event (1) is being unscheduled
+0018.645 (0) No email will/can be sent - the user has not configured an email address.
+0018.646 (0) The backup succeeded and is now complete

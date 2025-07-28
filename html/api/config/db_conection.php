@@ -1,8 +1,18 @@
 <?php
-$host = "localhost";
-$db_name = "xb592942_sugamonavishop";
-$username = "xb592942_sugamo"; 
-$password = "Sugamonavi12345"; 
+// 環境判定（ローカル環境かサーバー環境か）
+if (!isset($_SERVER['HTTP_HOST']) || $_SERVER['HTTP_HOST'] === 'localhost:8080' || $_SERVER['HTTP_HOST'] === 'localhost') {
+    // ローカル環境の設定（WP-CLI含む）
+    $host = "db"; // Docker環境のMySQLホスト名
+    $db_name = "wordpress_678";
+    $username = "wp_user";
+    $password = "password";
+} else {
+    // サーバー環境の設定
+    $host = "localhost";
+    $db_name = "xb592942_sugamonavishop";
+    $username = "xb592942_sugamo";
+    $password = "Sugamonavi12345";
+}
 
 $conn = new mysqli($host, $username, $password, $db_name);
 
