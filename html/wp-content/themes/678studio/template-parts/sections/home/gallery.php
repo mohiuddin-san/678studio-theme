@@ -38,7 +38,7 @@
       <div class="gallery-box__button">
         <?php get_template_part('template-parts/components/detail-button', null, [
           'text' => '写真ギャラリーを見る',
-          'url' => home_url('/gallery/'),
+          'url' => home_url('/photo-gallery/'),
           'variant' => 'gallery',
           'icon' => 'cam'
       ]); ?>
