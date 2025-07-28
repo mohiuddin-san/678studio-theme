@@ -37,8 +37,6 @@ function handle_studio_shop_internal_api() {
             }
         }
         
-        error_log('FormData API Call - Endpoint: ' . $endpoint);
-        error_log('FormData API Call - Data: ' . json_encode($data, JSON_UNESCAPED_UNICODE));
         
     } else {
         // JSON submission (fallback)
@@ -51,14 +49,9 @@ function handle_studio_shop_internal_api() {
         $endpoint = $input['endpoint'];
         $data = $input['data'];
         
-        error_log('JSON API Call - Endpoint: ' . $endpoint);
-        error_log('JSON API Call - Data: ' . json_encode($data, JSON_UNESCAPED_UNICODE));
     }
     
     $result = make_internal_api_call($endpoint, $data);
-    
-    // API call completed
-    error_log('API Call Result: ' . json_encode($result, JSON_UNESCAPED_UNICODE));
     
     wp_die(json_encode($result));
 }
@@ -165,47 +158,6 @@ function studio_shops_admin_page() {
         $is_update_mode = isset($_POST['update_mode']) && $_POST['update_mode'] === 'on';
         
         if (isset($_POST['submit_shop']) && check_admin_referer('studio_shops_save', 'studio_shops_nonce')) {
-            // Immediate debug log to confirm form processing
-            wp_log_debug('🔥 FORM SUBMITTED - Studio Shop Manager Processing Started');
-            file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Form submitted\n", FILE_APPEND);
-            // Debug: Log all POST data at the very start
-            error_log('=== FORM SUBMISSION DEBUG START ===');
-            error_log('POST data: ' . print_r($_POST, true));
-            error_log('FILES data: ' . print_r($_FILES, true));
-            error_log('Update mode: ' . ($is_update_mode ? 'YES' : 'NO'));
-            error_log('Category names from POST: ' . (isset($_POST['category_name']) ? print_r($_POST['category_name'], true) : 'NOT SET'));
-            error_log('Gallery images files: ' . (isset($_FILES['gallery_images']) ? 'SET - ' . count($_FILES['gallery_images']['name']) . ' entries' : 'NOT SET'));
-            if (isset($_FILES['gallery_images'])) {
-                error_log('Gallery images detailed structure:');
-                foreach ($_FILES['gallery_images']['name'] as $index => $names) {
-                    if (is_array($names)) {
-                        error_log("  Index {$index}: " . count($names) . " files - " . print_r($names, true));
-                        error_log("  Errors at index {$index}: " . print_r($_FILES['gallery_images']['error'][$index], true));
-                    } else {
-                        error_log("  Index {$index}: Single file - {$names}");
-                        error_log("  Error at index {$index}: " . $_FILES['gallery_images']['error'][$index]);
-                    }
-                }
-            }
-            error_log('=== FORM SUBMISSION DEBUG END ===');
-            
-            // Debug display for admin  
-            $main_files_debug = 'NO FILES';
-            if (!empty($_FILES['gallery_images_flat']['name'][0])) {
-                $main_files_debug = count($_FILES['gallery_images_flat']['name']) . ' files';
-            } elseif (isset($_FILES['gallery_images_flat'])) {
-                $main_files_debug = 'FILES FIELD EXISTS BUT EMPTY: ' . print_r($_FILES['gallery_images_flat']['error'], true);
-            }
-            
-            echo '<div class="notice notice-info"><p><strong>Debug Info:</strong><br>';
-            echo 'Main gallery files: ' . $main_files_debug . '<br>';
-            echo 'Category files: ' . (!empty($_FILES['gallery_images']) ? 'YES' : 'NO') . '<br>';
-            echo 'Update mode: ' . ($is_update_mode ? 'YES' : 'NO') . '<br>';
-            echo 'Shop ID: ' . (isset($_POST['shop_id']) ? $_POST['shop_id'] : 'Not set') . '<br>';
-            echo 'Total POST data: ' . count($_POST) . ' fields<br>';
-            echo 'Category names: ' . (isset($_POST['category_name']) ? implode(', ', array_unique($_POST['category_name'])) : 'None') . ' (unique: ' . (isset($_POST['category_name']) ? count(array_unique($_POST['category_name'])) : '0') . ')';
-            echo '</p></div>';
-            
             $name = sanitize_text_field($_POST['name']);
             $address = sanitize_textarea_field($_POST['address']);
             $phone = sanitize_text_field($_POST['phone']);
@@ -228,35 +180,22 @@ function studio_shops_admin_page() {
             $gallery_files = $_FILES['gallery_images'] ?? [];
             $shop_id = isset($_POST['shop_id']) ? sanitize_text_field($_POST['shop_id']) : '';
 
-            // Debug: Log the shop_id to verify it's being received
-            error_log('Submitted shop_id: ' . $shop_id);
 
             // Validate shop_id for update mode
             if ($is_update_mode && empty($shop_id)) {
                 echo '<div class="error"><p>' . esc_html__('Error: Shop ID is missing during update.', 'studio-shops') . '</p></div>';
             } else {
-                // Debug: Log $_FILES data
-                error_log('$_FILES data: ' . print_r($_FILES, true));
 
                 // Handle main gallery images FIRST
                 $main_gallery_images = [];
-                file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Starting main gallery processing\n", FILE_APPEND);
-                error_log('=== MAIN GALLERY PROCESSING START ===');
-                file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - FILES keys: " . implode(', ', array_keys($_FILES)) . "\n", FILE_APPEND);
-                error_log('DEBUG: $_FILES[gallery_images_flat] = ' . print_r($_FILES['gallery_images_flat'] ?? 'NOT SET', true));
-                error_log('DEBUG: Full $_FILES dump: ' . print_r($_FILES, true));
-                error_log('DEBUG: $_FILES keys: ' . implode(', ', array_keys($_FILES)));
                 
                 if (!empty($_FILES['gallery_images_flat'])) {
-                    file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Found gallery_images_flat files\n", FILE_APPEND);
-                    error_log('Processing main gallery images...');
                     $gallery_flat_files = $_FILES['gallery_images_flat'];
                     
                     // Check if it's a single file or multiple files
                     if (is_array($gallery_flat_files['name'])) {
                         // Multiple files
                         for ($i = 0; $i < count($gallery_flat_files['name']); $i++) {
-                            error_log("Processing image $i: " . $gallery_flat_files['name'][$i] . ", error: " . $gallery_flat_files['error'][$i]);
                             if ($gallery_flat_files['error'][$i] === UPLOAD_ERR_OK) {
                                 $tmp_name = $gallery_flat_files['tmp_name'][$i];
                                 if (file_exists($tmp_name)) {
@@ -264,18 +203,11 @@ function studio_shops_admin_page() {
                                     $image_type = $gallery_flat_files['type'][$i];
                                     $base64_image = 'data:' . $image_type . ';base64,' . base64_encode($image_data);
                                     $main_gallery_images[] = $base64_image;
-                                    file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Processed image: " . $gallery_flat_files['name'][$i] . " (Size: " . strlen($base64_image) . " chars)\n", FILE_APPEND);
-                                    error_log("Successfully processed image: " . $gallery_flat_files['name'][$i] . " (Size: " . strlen($base64_image) . " chars)");
-                                } else {
-                                    error_log("ERROR: Temp file does not exist: " . $tmp_name);
                                 }
-                            } else {
-                                error_log("ERROR: Upload error for file " . $gallery_flat_files['name'][$i] . ": " . $gallery_flat_files['error'][$i]);
                             }
                         }
                     } else {
                         // Single file
-                        error_log("Processing single image: " . $gallery_flat_files['name'] . ", error: " . $gallery_flat_files['error']);
                         if ($gallery_flat_files['error'] === UPLOAD_ERR_OK) {
                             $tmp_name = $gallery_flat_files['tmp_name'];
                             if (file_exists($tmp_name)) {
@@ -283,29 +215,10 @@ function studio_shops_admin_page() {
                                 $image_type = $gallery_flat_files['type'];
                                 $base64_image = 'data:' . $image_type . ';base64,' . base64_encode($image_data);
                                 $main_gallery_images[] = $base64_image;
-                                error_log("Successfully processed single image: " . $gallery_flat_files['name'] . " (Size: " . strlen($base64_image) . " chars)");
-                            } else {
-                                error_log("ERROR: Single temp file does not exist: " . $tmp_name);
                             }
-                        } else {
-                            error_log("ERROR: Upload error for single file " . $gallery_flat_files['name'] . ": " . $gallery_flat_files['error']);
                         }
                     }
-                    error_log("Total main gallery images processed: " . count($main_gallery_images));
-                } else {
-                    file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - No gallery_images_flat files found\n", FILE_APPEND);
-                    error_log('No main gallery images found in $_FILES[gallery_images_flat]');
-                    if (isset($_FILES['gallery_images_flat'])) {
-                        file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - gallery_images_flat exists but empty\n", FILE_APPEND);
-                        error_log('gallery_images_flat exists but no valid files: ' . print_r($_FILES['gallery_images_flat'], true));
-                    } else {
-                        file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - gallery_images_flat field not found\n", FILE_APPEND);
-                        error_log('gallery_images_flat field not found in $_FILES');
-                    }
                 }
-                error_log('=== MAIN GALLERY PROCESSING END ===');
-                error_log('Final main_gallery_images count: ' . count($main_gallery_images));
-                file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Final main_gallery_images count: " . count($main_gallery_images) . "\n", FILE_APPEND);
 
                 // Now create the API data with the processed main gallery images
                 $api_data = [
@@ -325,32 +238,21 @@ function studio_shops_admin_page() {
                     $api_data['shop_id'] = $shop_id;
                 }
 
-                // Debug: Log the API payload
-                error_log('API Payload: ' . print_r($api_data, true));
 
                 echo '<div id="loader" style="padding:10px; font-weight:bold; color:blue;">Processing shop data, please wait...</div>';
 
                 // Send API request for shop creation or update
                 $api_endpoint = $is_update_mode ? 'update_shop_details.php' : 'studio_shop.php';
                 
-                error_log('Making internal API call to: ' . $api_endpoint);
-                error_log('API Data being sent: ' . json_encode($api_data, JSON_UNESCAPED_UNICODE));
-                
                 // Make internal API call
-                file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Calling API endpoint: " . $api_endpoint . "\n", FILE_APPEND);
-                file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - API data gallery_images count: " . (isset($api_data['gallery_images']) ? count($api_data['gallery_images']) : '0') . "\n", FILE_APPEND);
                 $response_body = make_internal_api_call($api_endpoint, $api_data);
-                file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - API response: " . json_encode($response_body) . "\n", FILE_APPEND);
                 $response = array('body' => json_encode($response_body));
-
-                error_log('Raw API Response: ' . print_r($response, true));
                 
                 if (is_wp_error($response)) {
                     $error_message = $response->get_error_message();
                     echo '<div class="error"><p>' . esc_html__('API request failed: ' . $error_message, 'studio-shops') . '</p></div>';
                 } else {
                     $response_body = json_decode(wp_remote_retrieve_body($response), true);
-                    error_log('API Response (Submit): ' . print_r($response_body, true)); // Debug API response
                     if (isset($response_body['success']) && $response_body['success']) {
                         $shop_id = $is_update_mode ? $shop_id : ($response_body['shop_id'] ?? '');
                         
@@ -359,24 +261,11 @@ function studio_shops_admin_page() {
                             $category_gallery = [];
                             $has_category_images = false;
                             
-                            file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - === CATEGORY PROCESSING START ===\n", FILE_APPEND);
-                            file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Category names: " . print_r($category_names, true) . "\n", FILE_APPEND);
-                            file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Gallery files keys: " . (isset($gallery_files['name']) ? implode(', ', array_keys($gallery_files['name'])) : 'NO FILES') . "\n", FILE_APPEND);
-                            if (isset($gallery_files['name'])) {
-                                foreach ($gallery_files['name'] as $idx => $files) {
-                                    file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Gallery files[{$idx}]: " . (is_array($files) ? count($files) . ' files: ' . implode(', ', $files) : 'Not array: ' . $files) . "\n", FILE_APPEND);
-                                }
-                            }
-                            
-                            error_log('Processing categories: ' . print_r($category_names, true));
-                            error_log('Gallery files structure: ' . print_r($gallery_files, true));
-                            
                             // Remove duplicate category names but preserve their associated files
                             $unique_categories = [];
                             foreach ($category_names as $cat_index => $cat_name) {
                                 $cat_name = sanitize_text_field($cat_name);
                                 if (empty($cat_name)) {
-                                    error_log("Skipping empty category at index {$cat_index}");
                                     continue;
                                 }
                                 
@@ -387,54 +276,30 @@ function studio_shops_admin_page() {
                                 $unique_categories[$cat_name][] = $cat_index;
                             }
                             
-                            error_log("Unique categories: " . print_r($unique_categories, true));
-                            
                             foreach ($unique_categories as $cat_name => $indices) {
-                                error_log("Processing category: {$cat_name} with indices: " . implode(',', $indices));
                                 
                                 // Initialize category array
                                 $category_gallery[$cat_name] = [];
 
                                 // Process all files for all indices of this category
                                 foreach ($indices as $cat_index) {
-                                    error_log("DEBUG: Processing category {$cat_name} at index {$cat_index}");
-                                    error_log("DEBUG: gallery_files structure at index {$cat_index}: " . print_r($gallery_files['name'][$cat_index] ?? 'NOT SET', true));
                                     
                                     if (isset($gallery_files['name'][$cat_index]) && is_array($gallery_files['name'][$cat_index])) {
-                                        file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Found files for category {$cat_name} at index {$cat_index}: " . count($gallery_files['name'][$cat_index]) . " files\n", FILE_APPEND);
-                                        error_log("Found files for category {$cat_name} at index {$cat_index}: " . print_r($gallery_files['name'][$cat_index], true));
                                         foreach ($gallery_files['name'][$cat_index] as $img_index => $img_name) {
-                                            file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Processing file {$img_index}: {$img_name}, error: " . $gallery_files['error'][$cat_index][$img_index] . "\n", FILE_APPEND);
-                                            error_log("Processing file {$img_index}: {$img_name}, error: " . $gallery_files['error'][$cat_index][$img_index]);
                                             if (!empty($img_name) && $gallery_files['error'][$cat_index][$img_index] === UPLOAD_ERR_OK) {
                                                 $tmp_name = $gallery_files['tmp_name'][$cat_index][$img_index];
-                                                file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Temp file: {$tmp_name}, exists: " . (file_exists($tmp_name) ? 'YES' : 'NO') . "\n", FILE_APPEND);
                                                 if (file_exists($tmp_name)) {
                                                     $image_data = file_get_contents($tmp_name);
                                                     $image_type = $gallery_files['type'][$cat_index][$img_index];
                                                     $base64_image = 'data:' . $image_type . ';base64,' . base64_encode($image_data);
                                                     $category_gallery[$cat_name][] = $base64_image;
                                                     $has_category_images = true;
-                                                    file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - SUCCESS: Category image processed: {$cat_name} - {$img_name} (Base64 length: " . strlen($base64_image) . ")\n", FILE_APPEND);
-                                                    error_log("SUCCESS: Category image processed: {$cat_name} - {$img_name} (Base64 length: " . strlen($base64_image) . ")");
-                                                } else {
-                                                    file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - ERROR: Temp file not found: {$tmp_name}\n", FILE_APPEND);
-                                                    error_log("ERROR: Temp file not found: {$tmp_name}");
                                                 }
-                                            } else {
-                                                error_log("SKIP: File {$img_name} - empty name or upload error: " . ($gallery_files['error'][$cat_index][$img_index] ?? 'unknown'));
                                             }
                                         }
-                                    } else {
-                                        error_log("No files found for category {$cat_name} at index {$cat_index}");
                                     }
                                 }
                             }
-                            
-                            file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Has category images: " . ($has_category_images ? 'YES' : 'NO') . "\n", FILE_APPEND);
-                            file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Category gallery count: " . count($category_gallery) . "\n", FILE_APPEND);
-                            error_log('Category gallery data: ' . print_r($category_gallery, true));
-                            error_log('Has category images: ' . ($has_category_images ? 'YES' : 'NO'));
 
                             $final_payload = [
                                 'shop_id' => $shop_id,
@@ -449,18 +314,9 @@ function studio_shops_admin_page() {
                                     ];
                                 }
                             }
-                            
-                            // Debug final payload
-                            error_log('Final payload gallery: ' . print_r($final_payload['gallery'], true));
 
                             // Main gallery images are now included in the main API call above
                             $main_success = true;
-                            if (!empty($main_gallery_images)) {
-                                error_log('Main gallery images included in main API call: ' . count($main_gallery_images) . ' images');
-                                error_log('First image sample: ' . substr($main_gallery_images[0], 0, 50) . '...');
-                            } else {
-                                error_log('No main gallery images to upload - array is empty');
-                            }
 
                             // Send category images to the appropriate API
                             $category_api_endpoint = $is_update_mode ? 
@@ -469,34 +325,23 @@ function studio_shops_admin_page() {
 
                             if (!$has_category_images || empty($final_payload['gallery'])) {
                                 // No category images to process, skip API call
-                                file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Skipping category API call - has_category_images: " . ($has_category_images ? 'YES' : 'NO') . ", gallery count: " . count($final_payload['gallery']) . "\n", FILE_APPEND);
-                                error_log('Skipping category API call - has_category_images: ' . ($has_category_images ? 'YES' : 'NO') . ', gallery count: ' . count($final_payload['gallery']));
                                 $category_success = true;
                             } else {
-                                file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Sending category images to API: " . $category_api_endpoint . "\n", FILE_APPEND);
-                                file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Category payload gallery count: " . count($final_payload['gallery']) . "\n", FILE_APPEND);
-                                error_log('Sending category images to API: ' . $category_api_endpoint);
-                                error_log('Category payload: ' . print_r($final_payload, true));
                                 
                                 // Make internal API call
                                 $image_response_body = make_internal_api_call($category_api_endpoint, $final_payload);
-                                file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Category API response: " . json_encode($image_response_body) . "\n", FILE_APPEND);
                                 $image_response = array('body' => json_encode($image_response_body));
 
                                 if (is_wp_error($image_response)) {
-                                    error_log('Category image API error: ' . $image_response->get_error_message());
                                     echo '<div class="error"><p>' . esc_html__('Failed to upload category images: ' . $image_response->get_error_message(), 'studio-shops') . '</p></div>';
                                     $category_success = false;
                                 } else {
                                     $image_response_body = json_decode(wp_remote_retrieve_body($image_response), true);
-                                    error_log('Category Image API Response: ' . print_r($image_response_body, true));
                                     if (!isset($image_response_body['success']) || !$image_response_body['success']) {
                                         $error_msg = $image_response_body['error'] ?? 'Unknown error';
-                                        error_log('Category image upload failed: ' . $error_msg);
                                         
                                         // Check if it's a duplicate entry error for update mode
                                         if ($is_update_mode && strpos($error_msg, 'Duplicate entry') !== false) {
-                                            error_log('Duplicate entry detected, attempting to delete existing categories first...');
                                             
                                             // Try to delete existing category images before inserting new ones
                                             $delete_payload = ['shop_id' => $shop_id];
@@ -509,15 +354,6 @@ function studio_shops_admin_page() {
                                             
                                             if (!is_wp_error($delete_response)) {
                                                 $delete_response_body = json_decode(wp_remote_retrieve_body($delete_response), true);
-                                                error_log('Delete API Response: ' . print_r($delete_response_body, true));
-                                                
-                                                if (isset($delete_response_body['success']) && $delete_response_body['success']) {
-                                                    error_log('Category images deleted successfully, attempting re-upload...');
-                                                } else {
-                                                    error_log('Delete API failed: ' . ($delete_response_body['error'] ?? 'Unknown error'));  
-                                                }
-                                                
-                                                error_log('Attempting to re-upload category images after deletion...');
                                                 // Retry the category image upload
                                                 $retry_response = wp_remote_post($category_api_url, [
                                                     'method' => 'POST',
@@ -528,7 +364,6 @@ function studio_shops_admin_page() {
                                                 
                                                 if (!is_wp_error($retry_response)) {
                                                     $retry_body = json_decode(wp_remote_retrieve_body($retry_response), true);
-                                                    error_log('Retry API Response: ' . print_r($retry_body, true));
                                                     if (isset($retry_body['success']) && $retry_body['success']) {
                                                         $category_success = true;
                                                     } else {
@@ -554,7 +389,6 @@ function studio_shops_admin_page() {
                             // Clear store detail page cache on successful update
                             if ($is_update_mode && ($main_success || $category_success)) {
                                 delete_transient('studio_shop_' . $shop_id);
-                                error_log('Cleared cache for shop ID: ' . $shop_id);
                             }
                             
                             // Show final success message
@@ -567,7 +401,6 @@ function studio_shops_admin_page() {
                                         // Refresh shop list after new shop creation
                                         if (typeof fetchShops === "function") {
                                             setTimeout(() => {
-                                                console.log("Refreshing shop list after successful creation...");
                                                 
                                                 // Show loading indicator
                                                 const shopSelect = document.getElementById("shop-id-select");
@@ -577,9 +410,7 @@ function studio_shops_admin_page() {
                                                 
                                                 // Refresh the shop list
                                                 fetchShops().then(() => {
-                                                    console.log("Shop list refreshed successfully");
                                                 }).catch(error => {
-                                                    console.error("Failed to refresh shop list:", error);
                                                     if (shopSelect) {
                                                         shopSelect.innerHTML = "<option value=\"\">Select a Shop</option>";
                                                     }
@@ -987,7 +818,6 @@ function studio_shops_admin_page() {
 
             // Function to reset the form completely
             function resetForm(preserveFiles = false) {
-                console.log('Resetting form...', preserveFiles ? '(preserving files)' : '(clearing all)');
                 if (!preserveFiles) {
                     form.reset();
                 }
@@ -1037,7 +867,6 @@ function studio_shops_admin_page() {
                 }
                 
                 // New UI doesn't use category blocks anymore
-                console.log('Form submission - Update mode:', updateCheckbox.checked);
             });
 
             // Get API base URL based on environment
@@ -1060,24 +889,19 @@ function studio_shops_admin_page() {
                     const response = await fetch(apiBaseUrl + 'get_all_studio_shop.php?t=' + new Date().getTime(), {
                         cache: 'no-store'
                     });
-                    console.log('Shop List API Response:', response);
                     if (!response.ok) {
                         throw new Error(`HTTP error! Status: ${response.status}`);
                     }
                     const data = await response.json();
-                    console.log('Shop List API Data:', data);
-                    console.log('DEBUG: First shop category_images:', data.shops && data.shops[0] ? data.shops[0].category_images : 'undefined');
                     if (data.success && data.shops) {
                         window.shopsData = data.shops;
                         populateDropdown(data.shops);
                         return true; // Return success
                     } else {
-                        console.error('Failed to fetch shops:', data.error || 'No shops found');
                         alert('Failed to load shop list');
                         return false;
                     }
                 } catch (error) {
-                    console.error('Error fetching shops:', error);
                     alert('Failed to load shop list');
                     return false;
                 }
@@ -1085,9 +909,7 @@ function studio_shops_admin_page() {
 
             // Populate shop dropdown and collect categories
             function populateDropdown(shops) {
-                console.log('Populating dropdown with shops:', shops);
                 if (!shopSelect) {
-                    console.error('Error: shop-id-select not found');
                     return;
                 }
                 shopSelect.innerHTML = '<option value="">Select a Shop</option>';
@@ -1101,22 +923,16 @@ function studio_shops_admin_page() {
                     option.textContent = shop.name;
                     shopSelect.appendChild(option);
                     
-                    // Debug category_images structure
-                    console.log(`Shop ${shop.id} (${shop.name}) category_images:`, shop.category_images, typeof shop.category_images, Array.isArray(shop.category_images));
                     
                     // Collect categories from this shop
                     if (shop.category_images && typeof shop.category_images === 'object' && !Array.isArray(shop.category_images)) {
                         Object.keys(shop.category_images).forEach(category => {
                             if (category && category.trim()) {
-                                console.log(`Adding category: "${category.trim()}"`);
                                 window.allCategories.add(category.trim());
                             }
                         });
                     }
                 });
-                
-                console.log('Dropdown populated:', shopSelect);
-                console.log('All categories collected:', Array.from(window.allCategories));
                 
                 // Wait a bit for DOM to be ready before updating selectors
                 setTimeout(() => {
@@ -1126,9 +942,6 @@ function studio_shops_admin_page() {
             
             // Update category selector UI
             function updateCategorySelectors() {
-                console.log('Updating category selectors...');
-                console.log('Available categories:', Array.from(window.allCategories));
-                console.log('Category selectors found:', document.querySelectorAll('.category-select').length);
                 
                 // Update existing categories display
                 const existingCategoriesList = document.getElementById('existing-categories-list');
@@ -1149,7 +962,6 @@ function studio_shops_admin_page() {
                 
                 // Update all category select dropdowns
                 document.querySelectorAll('.category-select').forEach((select, index) => {
-                    console.log(`Updating select ${index}:`, select);
                     const currentValue = select.value;
                     select.innerHTML = '<option value="">Choose existing or type new...</option>';
                     
@@ -1161,33 +973,24 @@ function studio_shops_admin_page() {
                             option.selected = true;
                         }
                         select.appendChild(option);
-                        console.log(`Added option: ${category}`);
                     });
                 });
             }
 
             // Populate form with shop details
             function updateShopDetails(shopId) {
-                console.log('Updating shop details for shopId:', shopId);
-                console.log('DEBUG: Available shops data:', window.shopsData);
                 resetForm(true); // Reset form but preserve files
                 document.getElementById('shop_id').value = shopId;
 
                 if (!shopId) {
-                    console.log('No shop selected, form reset');
                     return;
                 }
 
                 const shop = window.shopsData.find(s => s.id == shopId);
                 if (!shop) {
-                    console.error('Shop not found for ID:', shopId);
-                    console.error('Available shop IDs:', window.shopsData.map(s => s.id));
                     alert('Shop data not found');
                     return;
                 }
-
-                console.log('Populating form with shop data:', shop);
-                console.log('DEBUG: Shop category_images:', shop.category_images);
                 document.getElementById('name').value = shop.name || '';
                 document.getElementById('address').value = shop.address || '';
                 document.getElementById('phone').value = shop.phone || '';
@@ -1206,7 +1009,6 @@ function studio_shops_admin_page() {
 
             // Toggle update mode
             updateCheckbox.addEventListener('change', () => {
-                console.log('Update mode changed:', updateCheckbox.checked);
                 shopSelector.style.display = updateCheckbox.checked ? 'block' : 'none';
                 document.getElementById('update_mode').value = updateCheckbox.checked ? 'on' : 'off';
                 document.getElementById('submit_shop').value = updateCheckbox.checked ? 'Update Shop' : 'Add Shop';
@@ -1223,12 +1025,6 @@ function studio_shops_admin_page() {
 
             // Populate form on shop selection
             shopSelect.addEventListener('change', (event) => {
-                console.log('DEBUG: Shop selected:', event.target.value);
-                console.log('DEBUG: Event target:', event.target);
-                console.log('DEBUG: Available options:');
-                Array.from(event.target.options).forEach((opt, i) => {
-                    console.log(`  ${i}: value="${opt.value}" text="${opt.text}"`);
-                });
                 updateShopDetails(event.target.value);
                 
                 // Show/hide delete button based on shop selection
@@ -1275,18 +1071,15 @@ function studio_shops_admin_page() {
                 data.append('endpoint', 'delete_shop.php');
                 data.append('shop_id', shopId);
                 
-                console.log('Sending delete shop request with shop_id:', shopId);
                 
                 fetch(ajaxurl, {
                     method: 'POST',
                     body: data
                 })
                 .then(response => {
-                    console.log('Delete shop response status:', response.status);
                     return response.text();
                 })
                 .then(text => {
-                    console.log('Delete shop raw response:', text);
                     let result;
                     try {
                         result = JSON.parse(text);
@@ -1296,7 +1089,6 @@ function studio_shops_admin_page() {
                     return result;
                 })
                 .then(result => {
-                    console.log('Delete shop parsed result:', result);
                     if (result.success) {
                         showMessage(`ショップ「${result.shop_name}」を削除しました`, 'success');
                         
@@ -1323,7 +1115,6 @@ function studio_shops_admin_page() {
                     }
                 })
                 .catch(error => {
-                    console.error('削除エラー:', error);
                     this.innerHTML = '🗑️ このショップを削除';
                     this.disabled = false;
                     showMessage('削除に失敗しました', 'error');
@@ -1419,7 +1210,6 @@ function studio_shops_admin_page() {
                                 }
                             })
                             .catch(error => {
-                                console.error('Error deleting category:', error);
                                 alert('Failed to delete category');
                             });
                         }
@@ -1463,7 +1253,6 @@ function studio_shops_admin_page() {
                             }
                         })
                         .catch(error => {
-                            console.error('Error deleting main gallery image:', error);
                             alert('Failed to delete main gallery image');
                         });
                     }
@@ -1507,7 +1296,6 @@ function studio_shops_admin_page() {
                                 }
                             })
                             .catch(error => {
-                                console.error('Error deleting image:', error);
                                 alert('Failed to delete image');
                             });
                         }
@@ -1559,7 +1347,6 @@ function studio_shops_admin_page() {
                 const noMessage = document.getElementById('no-main-image-message');
                 
                 if (!container) {
-                    console.error('メイン画像コンテナが見つかりません');
                     return;
                 }
                 
@@ -1663,7 +1450,6 @@ function studio_shops_admin_page() {
                     }
                 })
                 .catch(error => {
-                    console.error('削除エラー:', error);
                     buttonElement.innerHTML = '×';
                     buttonElement.disabled = false;
                     showMessage('削除に失敗しました', 'error');
@@ -1686,7 +1472,6 @@ function studio_shops_admin_page() {
                 const noMessage = document.getElementById('no-categories-message');
                 
                 if (!container) {
-                    console.error('既存カテゴリーコンテナが見つかりません');
                     return;
                 }
                 
@@ -1755,17 +1540,10 @@ function studio_shops_admin_page() {
                     `;
                 });
                 
-                console.log('Generated HTML:', html);
-                console.log('Container element:', container);
                 
                 if (html) {
                     container.innerHTML = html;
-                    console.log('HTML inserted into container');
-                } else {
-                    console.log('No HTML generated - keeping default message');
                 }
-                
-                console.log('既存カテゴリー表示完了:', Object.keys(categoryImages).length, 'カテゴリー');
             }
             
             // 画像プレビュー表示（グローバル関数として定義）
@@ -1848,7 +1626,6 @@ function studio_shops_admin_page() {
                     }
                 })
                 .catch(error => {
-                    console.error('削除エラー:', error);
                     alert('画像の削除中にエラーが発生しました');
                     buttonElement.innerHTML = '×';
                     buttonElement.disabled = false;
@@ -1913,7 +1690,6 @@ function studio_shops_admin_page() {
                     }
                 })
                 .catch(error => {
-                    console.error('カテゴリー削除エラー:', error);
                     alert('カテゴリーの削除中にエラーが発生しました');
                     buttonElement.innerHTML = originalText;
                     buttonElement.disabled = false;
@@ -2067,13 +1843,10 @@ function studio_shops_admin_page() {
                             try {
                                 return JSON.parse(text);
                             } catch (e) {
-                                console.error('JSON parse error:', e);
-                                console.error('Response was:', text);
                                 throw new Error('Invalid JSON response');
                             }
                         })
                         .then(result => {
-                            console.log('Category upload result:', result);
                             
                             if (result && result.success) {
                                 // Show success message
@@ -2098,13 +1871,11 @@ function studio_shops_admin_page() {
                             addNewCategoryBtn.disabled = newCategoryNameInput.value.trim() && newCategoryImagesInput.files.length > 0 ? false : true;
                         })
                         .catch(error => {
-                            console.error('Category upload error:', error);
                             alert('カテゴリーのアップロード中にエラーが発生しました');
                             addNewCategoryBtn.innerHTML = '➕ このカテゴリーを追加';
                             addNewCategoryBtn.disabled = false;
                         });
                     }).catch(error => {
-                        console.error('File reading error:', error);
                         alert('画像の読み込みに失敗しました');
                         addNewCategoryBtn.innerHTML = '➕ このカテゴリーを追加';
                         addNewCategoryBtn.disabled = false;
@@ -2139,13 +1910,9 @@ function studio_shops_admin_page() {
 
             // Initialize - fetch shops on page load
             setTimeout(() => {
-                console.log('Fetching shops on page load...');
-                console.log('shopSelect element:', shopSelect);
-                console.log('fetchShops function exists:', typeof fetchShops);
                 if (shopSelect && typeof fetchShops === 'function') {
                     fetchShops();
                 } else {
-                    console.error('Cannot fetch shops - missing elements or functions');
                 }
             }, 100);
         });

@@ -17,18 +17,110 @@ if (file_exists(get_template_directory() . '/inc/wp-cli-studio-shop-test.php')) 
     require_once get_template_directory() . '/inc/wp-cli-studio-shop-test.php';
 }
 
-// キャッシュ機能付きスタジオデータ取得
-function get_cached_studio_data() {
-    $cache_key = 'studio_shops_data';
-    $cache_duration = 300; // 5分キャッシュ
-
-    // キャッシュから取得を試行
-    $cached_data = get_transient($cache_key);
-    if ($cached_data !== false) {
-        return $cached_data;
+/**
+ * 環境判定関数 - ローカルかサーバーかを判定
+ * @return bool true if local environment, false if server
+ */
+function is_local_environment() {
+    // HTTP_HOSTで判定
+    if (isset($_SERVER['HTTP_HOST'])) {
+        $host = $_SERVER['HTTP_HOST'];
+        if ($host === 'localhost:8080' || $host === 'localhost' || strpos($host, '127.0.0.1') !== false) {
+            return true;
+        }
     }
+    
+    // DOCUMENT_ROOTでDocker環境を判定
+    if (isset($_SERVER['DOCUMENT_ROOT']) && strpos($_SERVER['DOCUMENT_ROOT'], '/var/www/html') === 0) {
+        return true;
+    }
+    
+    // WP_HOME定数で判定
+    if (defined('WP_HOME') && strpos(WP_HOME, 'localhost') !== false) {
+        return true;
+    }
+    
+    return false;
+}
 
-    // キャッシュがない場合はAPIから取得
+/**
+ * ローカル環境用: Studio Shop Manager APIからデータ取得
+ */
+function get_studio_data_from_local_api() {
+    try {
+        // データベースから直接取得
+        global $wpdb;
+        
+        // ショップ一覧を取得
+        $shops = $wpdb->get_results("
+            SELECT id, name, address, phone, nearest_station, business_hours, holidays, map_url, created_at, company_email  
+            FROM studio_shops
+        ", ARRAY_A);
+        
+        if ($wpdb->last_error) {
+            return ['shops' => [], 'error' => 'Database error: ' . $wpdb->last_error];
+        }
+        
+        // 各ショップの画像データを取得
+        foreach ($shops as &$shop) {
+            $shop_id = $shop['id'];
+            
+            // メインギャラリー画像
+            $main_images = $wpdb->get_results($wpdb->prepare("
+                SELECT id, image_url FROM studio_shop_images WHERE shop_id = %d
+            ", $shop_id), ARRAY_A);
+            
+            $image_urls = [];
+            $image_data = [];
+            foreach ($main_images as $img) {
+                $image_urls[] = $img['image_url'];
+                $image_data[] = [
+                    'id' => $img['id'],
+                    'url' => $img['image_url']
+                ];
+            }
+            $shop['image_urls'] = $image_urls;
+            $shop['main_gallery_images'] = $image_data;
+            
+            // カテゴリー画像
+            $category_images = $wpdb->get_results($wpdb->prepare("
+                SELECT c.category_name, i.image_url, i.id as image_id
+                FROM studio_shop_catgorie_images i
+                JOIN studio_shop_categories c ON i.category_id = c.id
+                WHERE i.shop_id = %d
+            ", $shop_id), ARRAY_A);
+            
+            $category_data = [];
+            foreach ($category_images as $row) {
+                $category = $row['category_name'];
+                if (!isset($category_data[$category])) {
+                    $category_data[$category] = [];
+                }
+                $category_data[$category][] = [
+                    'url' => $row['image_url'],
+                    'id' => $row['image_id']
+                ];
+            }
+            $shop['category_images'] = $category_data;
+        }
+        
+        $data = [
+            'success' => true,
+            'message' => 'Shops retrieved successfully',
+            'shops' => $shops
+        ];
+        
+        return $data;
+        
+    } catch (Exception $e) {
+        return ['shops' => [], 'error' => 'Local API error: ' . $e->getMessage()];
+    }
+}
+
+/**
+ * サーバー環境用: 既存APIからデータ取得
+ */
+function get_studio_data_from_server_api() {
     $api_url = 'https://678photo.com/api/get_all_studio_shop.php';
     
     $response = wp_remote_get($api_url, [
@@ -46,12 +138,82 @@ function get_cached_studio_data() {
     if (json_last_error() !== JSON_ERROR_NONE || !isset($data['shops']) || !is_array($data['shops'])) {
         return ['shops' => [], 'error' => 'Invalid API response'];
     }
-
-    // キャッシュに保存
-    set_transient($cache_key, $data, $cache_duration);
     
     return $data;
 }
+
+// キャッシュ機能付きスタジオデータ取得
+function get_cached_studio_data() {
+    $cache_key = 'studio_shops_data';
+    $cache_duration = 300; // 5分キャッシュ
+
+    // キャッシュから取得を試行
+    $cached_data = get_transient($cache_key);
+    if ($cached_data !== false) {
+        return $cached_data;
+    }
+
+    // 環境に応じたAPI呼び出し
+    if (is_local_environment()) {
+        $data = get_studio_data_from_local_api();
+    } else {
+        $data = get_studio_data_from_server_api();
+    }
+    
+    // キャッシュに保存（エラーの場合でも短時間キャッシュ）
+    if (isset($data['error'])) {
+        set_transient($cache_key, $data, 60); // エラー時は1分キャッシュ
+    } else {
+        set_transient($cache_key, $data, $cache_duration);
+    }
+    
+    return $data;
+}
+
+/**
+ * スタジオデータキャッシュをクリア
+ */
+function clear_studio_data_cache() {
+    $cache_key = 'studio_shops_data';
+    delete_transient($cache_key);
+    
+    // 個別ショップキャッシュもクリア
+    global $wpdb;
+    $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_studio_shop_%'");
+    $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_studio_shop_%'");
+}
+
+/**
+ * Studio Shop Manager の更新時にキャッシュをクリアするフック
+ */
+function clear_cache_on_shop_update() {
+    clear_studio_data_cache();
+}
+
+// Studio Shop Manager のアクションフックに接続
+add_action('studio_shop_updated', 'clear_cache_on_shop_update');
+add_action('studio_shop_created', 'clear_cache_on_shop_update');
+add_action('studio_shop_deleted', 'clear_cache_on_shop_update');
+add_action('studio_category_updated', 'clear_cache_on_shop_update');
+add_action('studio_category_deleted', 'clear_cache_on_shop_update');
+
+/**
+ * 管理画面用：手動でキャッシュクリア
+ */
+function manual_clear_studio_cache() {
+    if (current_user_can('manage_options') && isset($_GET['clear_studio_cache'])) {
+        clear_studio_data_cache();
+        wp_redirect(add_query_arg('cache_cleared', '1', remove_query_arg('clear_studio_cache')));
+        exit;
+    }
+    
+    if (isset($_GET['cache_cleared']) && $_GET['cache_cleared'] == '1') {
+        add_action('admin_notices', function() {
+            echo '<div class="notice notice-success is-dismissible"><p>スタジオデータキャッシュがクリアされました。</p></div>';
+        });
+    }
+}
+add_action('admin_init', 'manual_clear_studio_cache');
 
 // Ajax用のスクリプトをエンキュー（ギャラリーページでのみ）
 function enqueue_gallery_scripts() {

@@ -25,7 +25,7 @@
 
     <div class="contact-search">
       <label for="store-select" class="contact-search__label">選択店舗 (必須)</label>
-      <select class="contact-select" id="shop-dropdown" name="shop-id" required>
+      <select class="contact-select" id="store-select" name="shop-id" required>
         <option value="">ご予約・お問い合わせの店舗をお選びください</option>
       </select>
       <div class="error-message" id="store-error" style="display: none;">
@@ -67,7 +67,7 @@
       <!-- フォーム入力画面 -->
       <div class="form-step" id="formStep">
         <div class="form-container">
-         <form id="inquiry-form" method="post" action="">
+          <form id="inquiry-form" method="post" action="">
             <div class="input-field">
               <label for="name">お名前 (必須)</label>
               <input type="text" id="name" name="name" placeholder="例: 山田 花子" required>
@@ -108,10 +108,10 @@
               <div class="privacy-policy-text">
                 <h3>＜個人情報取り扱い＞</h3>
                 <p>当社は、応募者の個人情報を、以下の目的で利用いたします。<br>
-                お問い合わせに関する内容確認、調査及びご返信時の参照情報としてお問合せにあたり、「個人情報の取り扱い」を必ずご確認ください。</p>
+                  お問い合わせに関する内容確認、調査及びご返信時の参照情報としてお問合せにあたり、「個人情報の取り扱い」を必ずご確認ください。</p>
                 <p>※上記の個人情報の取り扱いに関する要項をご確認のうえ、同意いただける場合は「同意する」にチェックを入れてください。</p>
               </div>
-              
+
               <div class="confirmation-field-check">
                 <label>
                   <input type="checkbox" name="agreement" id="agreement" required> 個人情報の取り扱いについて同意する
