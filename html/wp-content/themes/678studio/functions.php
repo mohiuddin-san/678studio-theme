@@ -48,25 +48,35 @@ function get_cached_studio_data() {
     return $data;
 }
 
-// AJAX handler for gallery studio data
-function ajax_get_gallery_studios() {
-    // Verify nonce for security
-    if (!wp_verify_nonce($_POST['nonce'], 'gallery_nonce')) {
-        wp_die('Security check failed');
+// Ajax用のスクリプトをエンキュー（ギャラリーページでのみ）
+function enqueue_gallery_scripts() {
+    if (is_page_template('page-gallery.php')) {
+        wp_localize_script('jquery', 'galleryAjax', [
+            'ajaxurl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('gallery_nonce')
+        ]);
     }
+}
+add_action('wp_enqueue_scripts', 'enqueue_gallery_scripts');
 
-    // キャッシュされたデータを使用
-    $data = get_cached_studio_data();
-    
-    if (isset($data['error'])) {
-        wp_send_json_error(['message' => $data['error']]);
+// Ajax アクション: ギャラリー用スタジオデータ取得
+function ajax_get_gallery_studios() {
+    // nonce チェック
+    if (!wp_verify_nonce($_POST['nonce'], 'gallery_nonce')) {
+        wp_send_json_error(['message' => 'Invalid nonce']);
         return;
     }
 
-    wp_send_json_success([
-        'shops' => $data['shops']
-    ]);
+    $studio_data = get_cached_studio_data();
+    
+    if (isset($studio_data['error'])) {
+        wp_send_json_error(['message' => $studio_data['error']]);
+    } else {
+        wp_send_json_success($studio_data);
+    }
 }
+add_action('wp_ajax_get_gallery_studios', 'ajax_get_gallery_studios');
+add_action('wp_ajax_nopriv_get_gallery_studios', 'ajax_get_gallery_studios');
 
 // AJAX handler for studio search
 function ajax_studio_search() {
@@ -105,55 +115,59 @@ function ajax_studio_search() {
     // Generate HTML for cards
     ob_start();
     if (empty($shops)): ?>
-        <p>検索結果が見つかりませんでした。</p>
-    <?php else:
+<p>検索結果が見つかりませんでした。</p>
+<?php else:
         foreach ($shops as $shop): ?>
-            <div class="studio-card">
-                <div class="studio-card__image">
-                    <img src="<?php echo !empty($shop['image_urls']) ? esc_url($shop['image_urls'][0]) : get_template_directory_uri() . '/assets/images/cardpic-sample.jpg'; ?>" alt="スタジオ写真">
-                    <div class="studio-card__location"><?php echo esc_html($shop['nearest_station'] ?? 'N/A'); ?></div>
-                </div>
-                <div class="studio-card__content">
-                    <h3 class="studio-card__name"><?php echo esc_html($shop['name'] ?? 'Unknown'); ?></h3>
-                    <div class="studio-card__details">
-                        <p class="studio-card__address"><?php echo esc_html($shop['address'] ?? 'N/A'); ?></p>
-                        <div class="studio-card__hours">
-                            <div class="studio-card__hour-item">営業時間：<?php echo esc_html($shop['business_hours'] ?? 'N/A'); ?></div>
-                            <div class="studio-card__hour-item">定休日：<?php echo esc_html($shop['holidays'] ?? 'N/A'); ?></div>
-                        </div>
-                    </div>
-                    <?php get_template_part('template-parts/components/camera-button', null, [
+<div class="studio-card">
+  <div class="studio-card__image">
+    <img
+      src="<?php echo !empty($shop['image_urls']) ? esc_url($shop['image_urls'][0]) : get_template_directory_uri() . '/assets/images/cardpic-sample.jpg'; ?>"
+      alt="スタジオ写真">
+    <div class="studio-card__location"><?php echo esc_html($shop['nearest_station'] ?? 'N/A'); ?></div>
+  </div>
+  <div class="studio-card__content">
+    <h3 class="studio-card__name"><?php echo esc_html($shop['name'] ?? 'Unknown'); ?></h3>
+    <div class="studio-card__details">
+      <p class="studio-card__address"><?php echo esc_html($shop['address'] ?? 'N/A'); ?></p>
+      <div class="studio-card__hours">
+        <div class="studio-card__hour-item">営業時間：<?php echo esc_html($shop['business_hours'] ?? 'N/A'); ?></div>
+        <div class="studio-card__hour-item">定休日：<?php echo esc_html($shop['holidays'] ?? 'N/A'); ?></div>
+      </div>
+    </div>
+    <?php get_template_part('template-parts/components/camera-button', null, [
                         'text' => '詳しく見る',
                         'bg_color' => 'detail-card',
                         'icon' => 'none',
                         'class' => 'studio-card__contact-btn',
                         'url' => home_url('/studio-detail/?shop_id=' . $shop['id'])
                     ]); ?>
-                </div>
-            </div>
-        <?php endforeach;
+  </div>
+</div>
+<?php endforeach;
     endif;
     $cards_html = ob_get_clean();
 
     // Generate HTML for pagination
     ob_start();
     if ($total_pages > 1): ?>
-        <a href="#" class="pagination-btn pagination-btn--prev" data-page="<?php echo max(1, $page - 1); ?>" <?php echo $page == 1 ? 'data-disabled="true"' : ''; ?>>
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-        </a>
-        <div class="pagination-numbers">
-            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                <a href="#" class="<?php echo $i == $page ? 'active' : ''; ?>" data-page="<?php echo $i; ?>"><?php echo $i; ?></a>
-            <?php endfor; ?>
-        </div>
-        <a href="#" class="pagination-btn pagination-btn--next" data-page="<?php echo min($total_pages, $page + 1); ?>" <?php echo $page == $total_pages ? 'data-disabled="true"' : ''; ?>>
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-        </a>
-    <?php endif;
+<a href="#" class="pagination-btn pagination-btn--prev" data-page="<?php echo max(1, $page - 1); ?>"
+  <?php echo $page == 1 ? 'data-disabled="true"' : ''; ?>>
+  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
+</a>
+<div class="pagination-numbers">
+  <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+  <a href="#" class="<?php echo $i == $page ? 'active' : ''; ?>" data-page="<?php echo $i; ?>"><?php echo $i; ?></a>
+  <?php endfor; ?>
+</div>
+<a href="#" class="pagination-btn pagination-btn--next" data-page="<?php echo min($total_pages, $page + 1); ?>"
+  <?php echo $page == $total_pages ? 'data-disabled="true"' : ''; ?>>
+  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
+</a>
+<?php endif;
     $pagination_html = ob_get_clean();
 
     wp_send_json_success([
@@ -596,41 +610,43 @@ function ftp_gallery_upload_page() {
     }
 
     ?>
-    <div class="wrap">
-        <h1><?php echo esc_html($translations['page_title']); ?></h1>
-        <?php echo $message; ?>
-        <form method="post" enctype="multipart/form-data">
-            <?php wp_nonce_field('ftp_gallery_nonce'); ?>
-            <p>
-                <label><?php echo esc_html($translations['select_language']); ?></label><br>
-                <select name="gallery_language" style="width:300px;" onchange="this.form.submit()">
-                    <option value="en" <?php selected($lang, 'en'); ?>>English</option>
-                    <option value="ja" <?php selected($lang, 'ja'); ?>>日本語 (Japanese)</option>
-                </select>
-            </p>
-            <p>
-                <label><?php echo esc_html($translations['select_category']); ?></label><br>
-                <select name="gallery_category" style="width:300px;">
-                    <option value=""><?php echo esc_html($translations['select_category']); ?></option>
-                    <?php foreach ($existing_categories as $cat): ?>
-                        <option value="<?php echo esc_attr($cat); ?>"><?php echo esc_html($cat); ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </p>
-            <p>
-                <label><?php echo esc_html($translations['new_category']); ?></label><br>
-                <input type="text" name="new_category" placeholder="<?php echo esc_attr($translations['placeholder_category']); ?>" style="width:300px;">
-            </p>
-            <p>
-                <label><?php echo esc_html($translations['select_images']); ?></label><br>
-                <input type="file" name="gallery_images[]" multiple accept="image/*" required>
-            </p>
-            <p>
-                <input type="submit" name="ftp_gallery_submit" class="button button-primary" value="<?php echo esc_attr($translations['upload_button']); ?>">
-            </p>
-        </form>
-    </div>
-    <?php
+<div class="wrap">
+  <h1><?php echo esc_html($translations['page_title']); ?></h1>
+  <?php echo $message; ?>
+  <form method="post" enctype="multipart/form-data">
+    <?php wp_nonce_field('ftp_gallery_nonce'); ?>
+    <p>
+      <label><?php echo esc_html($translations['select_language']); ?></label><br>
+      <select name="gallery_language" style="width:300px;" onchange="this.form.submit()">
+        <option value="en" <?php selected($lang, 'en'); ?>>English</option>
+        <option value="ja" <?php selected($lang, 'ja'); ?>>日本語 (Japanese)</option>
+      </select>
+    </p>
+    <p>
+      <label><?php echo esc_html($translations['select_category']); ?></label><br>
+      <select name="gallery_category" style="width:300px;">
+        <option value=""><?php echo esc_html($translations['select_category']); ?></option>
+        <?php foreach ($existing_categories as $cat): ?>
+        <option value="<?php echo esc_attr($cat); ?>"><?php echo esc_html($cat); ?></option>
+        <?php endforeach; ?>
+      </select>
+    </p>
+    <p>
+      <label><?php echo esc_html($translations['new_category']); ?></label><br>
+      <input type="text" name="new_category"
+        placeholder="<?php echo esc_attr($translations['placeholder_category']); ?>" style="width:300px;">
+    </p>
+    <p>
+      <label><?php echo esc_html($translations['select_images']); ?></label><br>
+      <input type="file" name="gallery_images[]" multiple accept="image/*" required>
+    </p>
+    <p>
+      <input type="submit" name="ftp_gallery_submit" class="button button-primary"
+        value="<?php echo esc_attr($translations['upload_button']); ?>">
+    </p>
+  </form>
+</div>
+<?php
 }
 
 // === Helper: Fetch Category List from FTP ===
@@ -696,21 +712,21 @@ add_shortcode('ftp_gallery', function($atts) {
     
     ob_start();
     ?>
-    <div class="gallery-shortcode">
-        <?php foreach ($images_by_category as $category => $images): ?>
-            <div class="gallery-category">
-                <h3><?php echo esc_html($category); ?></h3>
-                <div class="gallery-grid">
-                    <?php foreach ($images as $image): ?>
-                        <div class="gallery-item">
-                            <img src="<?php echo esc_url($image['url']); ?>" alt="<?php echo esc_attr($image['name']); ?>">
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-        <?php endforeach; ?>
+<div class="gallery-shortcode">
+  <?php foreach ($images_by_category as $category => $images): ?>
+  <div class="gallery-category">
+    <h3><?php echo esc_html($category); ?></h3>
+    <div class="gallery-grid">
+      <?php foreach ($images as $image): ?>
+      <div class="gallery-item">
+        <img src="<?php echo esc_url($image['url']); ?>" alt="<?php echo esc_attr($image['name']); ?>">
+      </div>
+      <?php endforeach; ?>
     </div>
-    <?php
+  </div>
+  <?php endforeach; ?>
+</div>
+<?php
     return ob_get_clean();
 });
 
@@ -1127,64 +1143,66 @@ class StudioSitemapGenerator {
     private function outputSitemapIndex() {
         header('Content-Type: application/xml; charset=utf-8');
         echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-        echo '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
-        
-        $sitemap_url = home_url('/sitemap.xml');
-        $lastmod = date('Y-m-d\TH:i:s+00:00');
-        
-        echo '<sitemap>' . "\n";
-        echo '<loc>' . esc_url($sitemap_url) . '</loc>' . "\n";
-        echo '<lastmod>' . $lastmod . '</lastmod>' . "\n";
-        echo '</sitemap>' . "\n";
-        
-        echo '</sitemapindex>' . "\n";
-    }
-    
-    private function outputSitemap() {
-        header('Content-Type: application/xml; charset=utf-8');
-        echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-        echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">' . "\n";
-        
-        // 主要ページ
-        $pages = [
-            ['url' => home_url('/'), 'priority' => '1.0', 'changefreq' => 'daily'],
-            ['url' => home_url('/about'), 'priority' => '0.9', 'changefreq' => 'weekly'],
-            ['url' => home_url('/gallery'), 'priority' => '0.8', 'changefreq' => 'weekly'],
-            ['url' => home_url('/stores'), 'priority' => '0.9', 'changefreq' => 'daily'],
-            ['url' => home_url('/studio-reservation'), 'priority' => '0.7', 'changefreq' => 'monthly'],
-            ['url' => home_url('/studio-inquery'), 'priority' => '0.6', 'changefreq' => 'monthly']
-        ];
-        
-        foreach ($pages as $page) {
-            $this->outputUrlEntry($page['url'], $page['priority'], $page['changefreq']);
-        }
-        
-        // 店舗詳細ページ（動的）
-        $shops_data = get_cached_studio_data();
-        if (isset($shops_data['shops']) && is_array($shops_data['shops'])) {
-            foreach ($shops_data['shops'] as $shop) {
-                if (isset($shop['id'])) {
-                    $shop_url = home_url('/studio-detail/?shop_id=' . $shop['id']);
-                    $this->outputUrlEntry($shop_url, '0.7', 'weekly');
-                }
-            }
-        }
-        
-        echo '</urlset>' . "\n";
-    }
-    
-    private function outputUrlEntry($url, $priority, $changefreq, $lastmod = null) {
-        if (!$lastmod) {
-            $lastmod = date('Y-m-d\TH:i:s+00:00');
-        }
-        
-        echo '<url>' . "\n";
-        echo '<loc>' . esc_url($url) . '</loc>' . "\n";
-        echo '<lastmod>' . $lastmod . '</lastmod>' . "\n";
-        echo '<changefreq>' . $changefreq . '</changefreq>' . "\n";
-        echo '<priority>' . $priority . '</priority>' . "\n";
-        echo '</url>' . "\n";
-    }
+echo '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+
+  $sitemap_url = home_url('/sitemap.xml');
+  $lastmod = date('Y-m-d\TH:i:s+00:00');
+
+  echo '<sitemap>' . "\n";
+    echo '<loc>' . esc_url($sitemap_url) . '</loc>' . "\n";
+    echo '<lastmod>' . $lastmod . '</lastmod>' . "\n";
+    echo '</sitemap>' . "\n";
+
+  echo '</sitemapindex>' . "\n";
+}
+
+private function outputSitemap() {
+header('Content-Type: application/xml; charset=utf-8');
+echo '
+<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">' . "\n";
+
+  // 主要ページ
+  $pages = [
+  ['url' => home_url('/'), 'priority' => '1.0', 'changefreq' => 'daily'],
+  ['url' => home_url('/about'), 'priority' => '0.9', 'changefreq' => 'weekly'],
+  ['url' => home_url('/gallery'), 'priority' => '0.8', 'changefreq' => 'weekly'],
+  ['url' => home_url('/stores'), 'priority' => '0.9', 'changefreq' => 'daily'],
+  ['url' => home_url('/studio-reservation'), 'priority' => '0.7', 'changefreq' => 'monthly'],
+  ['url' => home_url('/studio-inquery'), 'priority' => '0.6', 'changefreq' => 'monthly']
+  ];
+
+  foreach ($pages as $page) {
+  $this->outputUrlEntry($page['url'], $page['priority'], $page['changefreq']);
+  }
+
+  // 店舗詳細ページ（動的）
+  $shops_data = get_cached_studio_data();
+  if (isset($shops_data['shops']) && is_array($shops_data['shops'])) {
+  foreach ($shops_data['shops'] as $shop) {
+  if (isset($shop['id'])) {
+  $shop_url = home_url('/studio-detail/?shop_id=' . $shop['id']);
+  $this->outputUrlEntry($shop_url, '0.7', 'weekly');
+  }
+  }
+  }
+
+  echo '</urlset>' . "\n";
+}
+
+private function outputUrlEntry($url, $priority, $changefreq, $lastmod = null) {
+if (!$lastmod) {
+$lastmod = date('Y-m-d\TH:i:s+00:00');
+}
+
+echo '<url>' . "\n";
+  echo '<loc>' . esc_url($url) . '</loc>' . "\n";
+  echo '<lastmod>' . $lastmod . '</lastmod>' . "\n";
+  echo '<changefreq>' . $changefreq . '</changefreq>' . "\n";
+  echo '<priority>' . $priority . '</priority>' . "\n";
+  echo '</url>' . "\n";
+}
 }
 
 // サイトマップジェネレーターを初期化
@@ -1192,61 +1210,61 @@ new StudioSitemapGenerator();
 
 // パーマリンク更新時にリライトルールをフラッシュ
 add_action('wp_loaded', function() {
-    if (!get_option('studio_sitemap_flushed')) {
-        flush_rewrite_rules();
-        update_option('studio_sitemap_flushed', true);
-    }
+if (!get_option('studio_sitemap_flushed')) {
+flush_rewrite_rules();
+update_option('studio_sitemap_flushed', true);
+}
 });
 
 // Load WP-CLI commands if WP-CLI is available
 if (defined('WP_CLI') && WP_CLI) {
-    require_once get_template_directory() . '/inc/wp-cli-studio-commands.php';
+require_once get_template_directory() . '/inc/wp-cli-studio-commands.php';
 }
 
 
 function enqueue_reservation_script() {
-    // Check if the current page slug is 'studio-reservation'
-    if (is_page('studio-reservation')) {
-        // 店舗選択用のスクリプト
-        wp_enqueue_script(
-            'reservation-script',
-            get_template_directory_uri() . '/assets/js/inquery.js',
-            array(), // Add dependencies if needed
-            WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/inquery.js') : '1.0.0',
-            true // Load in footer
-        );
-        
-        // フォーム確認画面用のスクリプト
-        wp_enqueue_script(
-            'reservation-form-script',
-            get_template_directory_uri() . '/assets/js/reservation-form.js',
-            array(), // Add dependencies if needed
-            WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/reservation-form.js') : '1.0.0',
-            true // Load in footer
-        );
-    }
+// Check if the current page slug is 'studio-reservation'
+if (is_page('studio-reservation')) {
+// 店舗選択用のスクリプト
+wp_enqueue_script(
+'reservation-script',
+get_template_directory_uri() . '/assets/js/inquery.js',
+array(), // Add dependencies if needed
+WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/inquery.js') : '1.0.0',
+true // Load in footer
+);
+
+// フォーム確認画面用のスクリプト
+wp_enqueue_script(
+'reservation-form-script',
+get_template_directory_uri() . '/assets/js/reservation-form.js',
+array(), // Add dependencies if needed
+WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/reservation-form.js') : '1.0.0',
+true // Load in footer
+);
+}
 }
 add_action('wp_enqueue_scripts', 'enqueue_reservation_script');
 function enqueue_inquery_script() {
-    // Check if the current page slug is 'studio-inquery'
-    if (is_page('studio-inquery')) {
-        // 店舗選択用のスクリプト
-        wp_enqueue_script(
-            'inquery-script',
-            get_template_directory_uri() . '/assets/js/inquery.js',
-            array(), // Add dependencies if needed
-            WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/inquery.js') : '1.0.0',
-            true // Load in footer
-        );
-        
-        // フォーム確認画面用のスクリプト
-        wp_enqueue_script(
-            'inquiry-form-script',
-            get_template_directory_uri() . '/assets/js/inquiry-form.js',
-            array(), // Add dependencies if needed
-            WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/inquiry-form.js') : '1.0.0',
-            true // Load in footer
-        );
-    }
+// Check if the current page slug is 'studio-inquery'
+if (is_page('studio-inquery')) {
+// 店舗選択用のスクリプト
+wp_enqueue_script(
+'inquery-script',
+get_template_directory_uri() . '/assets/js/inquery.js',
+array(), // Add dependencies if needed
+WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/inquery.js') : '1.0.0',
+true // Load in footer
+);
+
+// フォーム確認画面用のスクリプト
+wp_enqueue_script(
+'inquiry-form-script',
+get_template_directory_uri() . '/assets/js/inquiry-form.js',
+array(), // Add dependencies if needed
+WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/inquiry-form.js') : '1.0.0',
+true // Load in footer
+);
+}
 }
 add_action('wp_enqueue_scripts', 'enqueue_inquery_script');
