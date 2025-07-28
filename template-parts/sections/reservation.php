@@ -43,8 +43,8 @@
     <h2 class="contact-title">選択店舗確認</h2>
 
     <div class="contact-search">
-      <select class="contact-select">
-        <option>ご予約・お問い合わせの店舗をお選びください</option>
+      <select class="contact-select" id="shop-dropdown" name="shop-id">
+        <option value="">ご予約・お問い合わせの店舗をお選びください</option>
       </select>
     </div>
 
@@ -81,7 +81,7 @@
     </div>
     <div class="form-container">
         <h1>オンライン予約フォーム</h1>
-
+<form id="inquiry-form" method="post" action="">
         <div class="input-field">
             <label for="name">お名前 (必須)</label>
             <input type="text" id="name" name="name" placeholder="例: 山田 花子">
@@ -137,14 +137,10 @@
         </div>
 
         <div class="contact-buttons">
-      <?php get_template_part('template-parts/components/camera-button', null, [
-          'text' => 'お問い合わせ',
-          'url' => home_url('/search'),
-          'class' => 'hero-section__button',
-          'bg_color' => 'reservation',
-          'icon' => 'home'
-      ]); ?>
-        
+       <div class="contact-buttons">
+          <button type="submit" class="hero-section__button reservation">お問い合わせ</button>
+        </div>
+      </form>
     </div>
   </div>
 </section>

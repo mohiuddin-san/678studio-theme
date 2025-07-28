@@ -5,7 +5,6 @@
 ?>
 
 <section class="contact-section">
-
   <!-- Main Page Text -->
   <div class="contact-main-text">
     <p>TOP / 写真館情報</p>
@@ -13,18 +12,16 @@
 
   <!-- Content Section -->
   <div class="contact-content">
-      <div class="contact-header-container">
-    <div class="contact-header">
-      <?php get_template_part('template-parts/components/thoughts-label', null, [
-          'text' => 'Contact & Reservations'
-      ]); ?>
+    <div class="contact-header-container">
+      <div class="contact-header">
+        <?php get_template_part('template-parts/components/thoughts-label', null, [
+            'text' => 'Contact & Reservations'
+        ]); ?>
+      </div>
     </div>
-   
-  </div>
-   <h1 class="main-title">お問い合わせ＆ご予約</h1>
-
+    <h1 class="main-title">お問い合わせ＆ご予約</h1>
     <img src="<?php echo get_template_directory_uri(); ?>/assets/images/underline-store.svg" alt=""
-      class="user-count-section__line" />
+         class="user-count-section__line" />
     <div class="contact-buttons">
       <?php get_template_part('template-parts/components/camera-button', null, [
           'text' => 'お問い合わせ',
@@ -45,8 +42,9 @@
     <h2 class="contact-title">選択店舗確認</h2>
 
     <div class="contact-search">
-      <select class="contact-select">
-        <option>ご予約・お問い合わせの店舗をお選びください</option>
+      <select class="contact-select" id="shop-dropdown" name="shop-id">
+        <option value="">ご予約・お問い合わせの店舗をお選びください</option>
+        <!-- Options populated by reservation.js via API -->
       </select>
     </div>
 
@@ -67,55 +65,43 @@
     </div>
 
     <div class="schedule-container">
-        <h1>お問い合わせ</h1>
-        <img src="<?php echo get_template_directory_uri(); ?>/assets/images/underline-store.svg" alt=""
-         class="user-count-section__line" />
-         <div class="text-block">
-    </div>
-    <div class="form-container">
+      <h1>お問い合わせ</h1>
+      <img src="<?php echo get_template_directory_uri(); ?>/assets/images/underline-store.svg" alt=""
+           class="user-count-section__line" />
+      <div class="text-block"></div>
+      <form id="inquiry-form" method="post" action="">
         <div class="input-field">
-            <label for="name">お名前 (必須)</label>
-            <input type="text" id="name" name="name" placeholder="例: 山田 花子">
+          <label for="name">お名前 (必須)</label>
+          <input type="text" id="name" name="name" placeholder="例: 山田 花子" required>
         </div>
-
         <div class="input-field">
-            <label for="kana">フリガナ (必須)</label>
-            <input type="text" id="kana" name="kana" placeholder="例: ヤマダ ハナコ">
+          <label for="kana">フリガナ (必須)</label>
+          <input type="text" id="kana" name="kana" placeholder="例: ヤマダ ハナコ" required>
         </div>
-
         <div class="input-field">
-            <label for="contact">お電話番号 (必須)</label>
-            <input type="text" id="contact" name="contact" placeholder="例: 03-1234-5678">
+          <label for="contact">お電話番号 (必須)</label>
+          <input type="text" id="contact" name="contact" placeholder="例: 03-1234-5678" required>
         </div>
-
         <div class="input-field">
-            <label for="email">メールアドレス (任意)</label>
-            <input type="email" id="email" name="email" placeholder="例: hanako@example.com">
+          <label for="email">メールアドレス (任意)</label>
+          <input type="email" id="email" name="email" placeholder="例: hanako@example.com">
         </div>
-
         <div class="textarea-field">
-            <label for="notes">詳細相談内容</label>
-            <label for="notes">詳しいご相談内容・ご質問（任意）</label>
-            <textarea id="notes" name="notes" placeholder="ご不安なこと、知りたいこと、特別な配慮が必要なことなど、 何でもお気軽にお書きください。  
+          <label for="notes">詳細相談内容</label>
+          <label for="notes">詳しいご相談内容・ご質問（任意）</label>
+          <textarea id="notes" name="notes" placeholder="ご不安なこと、知りたいこと、特別な配慮が必要なことなど、何でもお気軽にお書きください。  
 記入例： ・化粧品アレルギーがあります ・車椅子での利用を考えています ・家族へのサプライズ撮影を計画中です 
 ・以前他の写真館で満足できませんでした。"></textarea>
         </div>
-
         <div class="confirmation-field-check">
-            <label>
-                <input type="checkbox" name="agreement"> 個人情報の取り扱いについて同意する
-            </label>
+          <label>
+            <input type="checkbox" name="agreement" required> 個人情報の取り扱いについて同意する
+          </label>
         </div>
-
-       <div class="contact-buttons">
-      <?php get_template_part('template-parts/components/camera-button', null, [
-          'text' => 'お問い合わせ',
-          'url' => home_url('/search'),
-          'class' => 'hero-section__button',
-          'bg_color' => 'reservation',
-          'icon' => 'home'
-      ]); ?>
-        
+        <div class="contact-buttons">
+          <button type="submit" class="hero-section__button reservation">お問い合わせ</button>
+        </div>
+      </form>
     </div>
   </div>
 </section>
