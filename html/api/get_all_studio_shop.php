@@ -32,23 +32,29 @@ try {
     while ($shop = $shops_result->fetch_assoc()) {
         $shop_id = $shop['id'];
 
-        // 1️⃣ General shop images
-        $img_stmt = $conn->prepare("SELECT image_url FROM {$TABLE_PREFIX}studio_shop_images WHERE shop_id = ?");
+        // 1️⃣ General shop images with image IDs
+        $img_stmt = $conn->prepare("SELECT id, image_url FROM {$TABLE_PREFIX}studio_shop_images WHERE shop_id = ?");
         $img_stmt->bind_param("i", $shop_id);
         if (!$img_stmt->execute()) {
             throw new Exception("Failed to fetch images for shop_id $shop_id: " . $img_stmt->error);
         }
         $img_result = $img_stmt->get_result();
         $image_urls = [];
+        $image_data = [];
         while ($img = $img_result->fetch_assoc()) {
-            $image_urls[] = $img['image_url'];
+            $image_urls[] = $img['image_url']; // Keep for backward compatibility
+            $image_data[] = [
+                'id' => $img['id'],
+                'url' => $img['image_url']
+            ];
         }
         $img_stmt->close();
-        $shop['image_urls'] = $image_urls;
+        $shop['image_urls'] = $image_urls; // Keep for backward compatibility
+        $shop['main_gallery_images'] = $image_data; // New structure with IDs
 
-        // 2️⃣ Category-wise images with category name
+        // 2️⃣ Category-wise images with category name and image ID
         $cat_stmt = $conn->prepare("
-            SELECT c.category_name, i.image_url 
+            SELECT c.category_name, i.image_url, i.id as image_id
             FROM {$TABLE_PREFIX}studio_shop_catgorie_images i
             JOIN {$TABLE_PREFIX}studio_shop_categories c ON i.category_id = c.id
             WHERE i.shop_id = ?
@@ -63,11 +69,15 @@ try {
         while ($row = $cat_result->fetch_assoc()) {
             $category = $row['category_name'];
             $img_url = $row['image_url'];
+            $img_id = $row['image_id'];
 
             if (!isset($category_images[$category])) {
                 $category_images[$category] = [];
             }
-            $category_images[$category][] = $img_url;
+            $category_images[$category][] = [
+                'url' => $img_url,
+                'id' => $img_id
+            ];
         }
         $cat_stmt->close();
         $shop['category_images'] = $category_images;

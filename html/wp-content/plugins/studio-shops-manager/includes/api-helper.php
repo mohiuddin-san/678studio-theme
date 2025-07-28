@@ -1,0 +1,741 @@
+<?php
+/**
+ * Helper function to make internal API calls
+ * Uses direct database operations instead of HTTP requests
+ */
+
+// Include database connection
+require_once ABSPATH . 'api/config/db_conection.php';
+require_once ABSPATH . 'api/config/common_functions.php';
+
+function make_internal_api_call($endpoint, $data = array()) {
+    global $conn;
+    
+    error_log('Internal API Call - Endpoint: ' . $endpoint);
+    error_log('Internal API Call - Data: ' . json_encode($data, JSON_UNESCAPED_UNICODE));
+    
+    try {
+        switch ($endpoint) {
+            case 'studio_shop.php':
+                return create_studio_shop($data);
+            case 'update_shop_details.php':
+                return update_studio_shop($data);
+            case 'category_image_uploader.php':
+                return upload_category_images($data);
+            // update_shop_category_images.php removed - unused
+            case 'delete_category_image.php':
+                return delete_category_image($data);
+            case 'delete_main_gallery_image.php':
+                return delete_main_gallery_image($data);
+            case 'delete_shop.php':
+                return delete_shop($data);
+            default:
+                return array(
+                    'success' => false,
+                    'error' => 'Unknown endpoint: ' . $endpoint
+                );
+        }
+    } catch (Exception $e) {
+        error_log('Internal API Error: ' . $e->getMessage());
+        return array(
+            'success' => false,
+            'error' => $e->getMessage()
+        );
+    }
+}
+
+function create_studio_shop($data) {
+    global $conn;
+    
+    // Validation
+    if (empty(trim($data['name'])) || empty(trim($data['address']))) {
+        return array(
+            'success' => false,
+            'error' => 'Missing required fields: name and address'
+        );
+    }
+    
+    // Sanitize
+    $company_email = isset($data['company_email']) ? filter_var(trim($data['company_email']), FILTER_SANITIZE_EMAIL) : null;
+    $phone = isset($data['phone']) ? filter_var(trim($data['phone']), FILTER_SANITIZE_STRING) : null;
+    $nearest_station = isset($data['nearest_station']) ? filter_var(trim($data['nearest_station']), FILTER_SANITIZE_STRING) : null;
+    $business_hours = isset($data['business_hours']) ? filter_var(trim($data['business_hours']), FILTER_SANITIZE_STRING) : null;
+    $holidays = isset($data['holidays']) ? filter_var(trim($data['holidays']), FILTER_SANITIZE_STRING) : null;
+    $map_url = isset($data['map_url']) ? filter_var(trim($data['map_url']), FILTER_SANITIZE_URL) : null;
+    
+    // Begin transaction
+    $conn->begin_transaction();
+    
+    try {
+        // Insert shop
+        $stmt = $conn->prepare("INSERT INTO studio_shops 
+            (name, address, company_email, phone, nearest_station, business_hours, holidays, map_url, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+        
+        $stmt->bind_param("ssssssss", $data['name'], $data['address'], $company_email, $phone, $nearest_station, $business_hours, $holidays, $map_url);
+        
+        if (!$stmt->execute()) {
+            throw new Exception("Shop insert failed: " . $stmt->error);
+        }
+        
+        $shop_id = $stmt->insert_id;
+        $stmt->close();
+        
+        // Handle gallery images
+        $image_urls = array();
+        error_log('=== GALLERY IMAGES DEBUG START ===');
+        error_log('gallery_images isset: ' . (isset($data['gallery_images']) ? 'YES' : 'NO'));
+        error_log('gallery_images is_array: ' . (isset($data['gallery_images']) && is_array($data['gallery_images']) ? 'YES' : 'NO'));
+        error_log('gallery_images count: ' . (isset($data['gallery_images']) && is_array($data['gallery_images']) ? count($data['gallery_images']) : '0'));
+        if (isset($data['gallery_images'])) {
+            error_log('gallery_images sample: ' . (is_array($data['gallery_images']) && !empty($data['gallery_images']) ? substr($data['gallery_images'][0], 0, 100) . '...' : 'EMPTY OR NOT ARRAY'));
+        }
+        error_log('=== GALLERY IMAGES DEBUG END ===');
+        
+        if (isset($data['gallery_images']) && is_array($data['gallery_images']) && !empty($data['gallery_images'])) {
+            $upload_dir = get_upload_directory();
+            error_log('Upload directory: ' . $upload_dir);
+            if (!is_dir($upload_dir)) {
+                mkdir($upload_dir, 0755, true);
+                error_log('Created upload directory: ' . $upload_dir);
+            }
+            
+            foreach ($data['gallery_images'] as $index => $image_data) {
+                if (preg_match('/^data:image\/(\w+);base64,/', $image_data, $matches)) {
+                    $image_type = strtolower($matches[1]);
+                    
+                    if (!in_array($image_type, ['png', 'jpg', 'jpeg', 'gif'])) {
+                        continue;
+                    }
+                    
+                    $image_base64 = substr($image_data, strpos($image_data, ',') + 1);
+                    $decoded_image = base64_decode($image_base64);
+                    
+                    if ($decoded_image === false) {
+                        continue;
+                    }
+                    
+                    $filename = 'shop_' . $shop_id . '_' . time() . '_' . $index . '.' . $image_type;
+                    $filepath = $upload_dir . $filename;
+                    $url = generate_image_url($filename);
+                    
+                    if (file_put_contents($filepath, $decoded_image) !== false) {
+                        // Insert image into DB
+                        $img_stmt = $conn->prepare("INSERT INTO studio_shop_images (shop_id, image_url) VALUES (?, ?)");
+                        $img_stmt->bind_param("is", $shop_id, $url);
+                        if ($img_stmt->execute()) {
+                            $image_urls[] = $url;
+                        }
+                        $img_stmt->close();
+                    }
+                }
+            }
+        }
+        
+        $conn->commit();
+        
+        return array(
+            'success' => true,
+            'message' => 'Shop and image added successfully',
+            'shop_id' => $shop_id,
+            'image_urls' => $image_urls
+        );
+        
+    } catch (Exception $e) {
+        $conn->rollback();
+        throw $e;
+    }
+}
+
+// Placeholder functions for other endpoints
+function update_studio_shop($data) {
+    global $conn;
+    
+    // Initialize database connection if not exists
+    if (!isset($conn) || !$conn) {
+        // Environment detection
+        if (!isset($_SERVER['HTTP_HOST']) || $_SERVER['HTTP_HOST'] === 'localhost:8080' || $_SERVER['HTTP_HOST'] === 'localhost') {
+            // Local environment (including WP-CLI)
+            $host = "db";
+            $db_name = "wordpress_678";
+            $username = "wp_user";
+            $password = "password";
+        } else {
+            // Server environment
+            $host = "localhost";
+            $db_name = "xb592942_sugamonavishop";
+            $username = "xb592942_sugamo";
+            $password = "Sugamonavi12345";
+        }
+        
+        $conn = new mysqli($host, $username, $password, $db_name);
+        
+        if ($conn->connect_error) {
+            file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Database connection failed: " . $conn->connect_error . "\n", FILE_APPEND);
+            return array('success' => false, 'error' => 'Database connection failed: ' . $conn->connect_error);
+        }
+        
+        file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Database connection established for update_studio_shop\n", FILE_APPEND);
+    }
+    
+    file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - update_studio_shop called with shop_id: " . ($data['shop_id'] ?? 'NOT SET') . "\n", FILE_APPEND);
+    
+    // Validation
+    if (empty($data['shop_id'])) {
+        return array(
+            'success' => false,
+            'error' => 'Missing shop_id for update'
+        );
+    }
+    
+    if (empty(trim($data['name'])) || empty(trim($data['address']))) {
+        return array(
+            'success' => false,
+            'error' => 'Missing required fields: name and address'
+        );
+    }
+    
+    $shop_id = intval($data['shop_id']);
+    
+    // Sanitize
+    $company_email = isset($data['company_email']) ? filter_var(trim($data['company_email']), FILTER_SANITIZE_EMAIL) : null;
+    $phone = isset($data['phone']) ? filter_var(trim($data['phone']), FILTER_SANITIZE_STRING) : null;
+    $nearest_station = isset($data['nearest_station']) ? filter_var(trim($data['nearest_station']), FILTER_SANITIZE_STRING) : null;
+    $business_hours = isset($data['business_hours']) ? filter_var(trim($data['business_hours']), FILTER_SANITIZE_STRING) : null;
+    $holidays = isset($data['holidays']) ? filter_var(trim($data['holidays']), FILTER_SANITIZE_STRING) : null;
+    $map_url = isset($data['map_url']) ? filter_var(trim($data['map_url']), FILTER_SANITIZE_URL) : null;
+    
+    // Begin transaction
+    $conn->begin_transaction();
+    
+    try {
+        // Update shop
+        $stmt = $conn->prepare("UPDATE studio_shops SET 
+            name = ?, address = ?, company_email = ?, phone = ?, nearest_station = ?, 
+            business_hours = ?, holidays = ?, map_url = ?, updated_at = NOW()
+            WHERE id = ?");
+        
+        $stmt->bind_param("ssssssssi", $data['name'], $data['address'], $company_email, $phone, $nearest_station, $business_hours, $holidays, $map_url, $shop_id);
+        
+        if (!$stmt->execute()) {
+            throw new Exception("Shop update failed: " . $stmt->error);
+        }
+        
+        $stmt->close();
+        file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Shop details updated successfully\n", FILE_APPEND);
+        
+        // Handle gallery images (ADD to existing images, don't replace)
+        $image_urls = array();
+        if (isset($data['gallery_images']) && is_array($data['gallery_images']) && !empty($data['gallery_images'])) {
+            $upload_dir = get_upload_directory();
+            if (!is_dir($upload_dir)) {
+                mkdir($upload_dir, 0755, true);
+            }
+            
+            file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Processing " . count($data['gallery_images']) . " new gallery images\n", FILE_APPEND);
+            
+            foreach ($data['gallery_images'] as $index => $image_data) {
+                if (preg_match('/^data:image\/(\w+);base64,/', $image_data, $matches)) {
+                    $image_type = strtolower($matches[1]);
+                    
+                    if (!in_array($image_type, ['png', 'jpg', 'jpeg', 'gif'])) {
+                        continue;
+                    }
+                    
+                    $image_base64 = substr($image_data, strpos($image_data, ',') + 1);
+                    $decoded_image = base64_decode($image_base64);
+                    
+                    if ($decoded_image === false) {
+                        continue;
+                    }
+                    
+                    $filename = 'shop_' . $shop_id . '_' . time() . '_' . $index . '.' . $image_type;
+                    $filepath = $upload_dir . $filename;
+                    $url = generate_image_url($filename);
+                    
+                    if (file_put_contents($filepath, $decoded_image) !== false) {
+                        // Insert image into DB
+                        $img_stmt = $conn->prepare("INSERT INTO studio_shop_images (shop_id, image_url) VALUES (?, ?)");
+                        $img_stmt->bind_param("is", $shop_id, $url);
+                        if ($img_stmt->execute()) {
+                            $image_urls[] = $url;
+                            file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Added new image: " . $filename . "\n", FILE_APPEND);
+                        }
+                        $img_stmt->close();
+                    }
+                }
+            }
+        }
+        
+        $conn->commit();
+        
+        return array(
+            'success' => true,
+            'message' => 'Shop updated successfully',
+            'shop_id' => $shop_id,
+            'image_urls' => $image_urls
+        );
+        
+    } catch (Exception $e) {
+        $conn->rollback();
+        file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Update error: " . $e->getMessage() . "\n", FILE_APPEND);
+        throw $e;
+    }
+}
+
+function upload_category_images($data) {
+    global $conn;
+    
+    // Initialize database connection if not exists
+    if (!isset($conn) || !$conn) {
+        // Environment detection
+        if (!isset($_SERVER['HTTP_HOST']) || $_SERVER['HTTP_HOST'] === 'localhost:8080' || $_SERVER['HTTP_HOST'] === 'localhost') {
+            // Local environment (including WP-CLI)
+            $host = "db";
+            $db_name = "wordpress_678";
+            $username = "wp_user";
+            $password = "password";
+        } else {
+            // Server environment
+            $host = "localhost";
+            $db_name = "xb592942_sugamonavishop";
+            $username = "xb592942_sugamo";
+            $password = "Sugamonavi12345";
+        }
+        
+        $conn = new mysqli($host, $username, $password, $db_name);
+        
+        if ($conn->connect_error) {
+            file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Database connection failed: " . $conn->connect_error . "\n", FILE_APPEND);
+            return array('success' => false, 'error' => 'Database connection failed: ' . $conn->connect_error);
+        }
+        
+        file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Database connection established\n", FILE_APPEND);
+    }
+    
+    file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - upload_category_images called\n", FILE_APPEND);
+    file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Data keys: " . implode(', ', array_keys($data)) . "\n", FILE_APPEND);
+    
+    if (!isset($data['shop_id']) || !isset($data['gallery'])) {
+        file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Missing shop_id or gallery data\n", FILE_APPEND);
+        return array('success' => false, 'error' => 'Missing shop_id or gallery data');
+    }
+    
+    $shop_id = intval($data['shop_id']);
+    $gallery = $data['gallery'];
+    
+    file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Processing " . count($gallery) . " categories for shop " . $shop_id . "\n", FILE_APPEND);
+    
+    $conn->begin_transaction();
+    
+    try {
+        foreach ($gallery as $category_data) {
+            $category_name = $category_data['category_name'];
+            $images = $category_data['images'];
+            
+            file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Processing category: " . $category_name . " with " . count($images) . " images\n", FILE_APPEND);
+            
+            // Insert or get category
+            $cat_stmt = $conn->prepare("INSERT IGNORE INTO studio_shop_categories (category_name) VALUES (?)");
+            $cat_stmt->bind_param("s", $category_name);
+            $cat_stmt->execute();
+            $cat_stmt->close();
+            
+            // Get category ID
+            $cat_id_stmt = $conn->prepare("SELECT id FROM studio_shop_categories WHERE category_name = ?");
+            $cat_id_stmt->bind_param("s", $category_name);
+            $cat_id_stmt->execute();
+            $result = $cat_id_stmt->get_result();
+            $category_id = $result->fetch_assoc()['id'];
+            $cat_id_stmt->close();
+            
+            file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Category ID: " . $category_id . "\n", FILE_APPEND);
+            
+            // Process images
+            $upload_dir = get_upload_directory();
+            if (!is_dir($upload_dir)) {
+                mkdir($upload_dir, 0755, true);
+            }
+            
+            foreach ($images as $index => $image_data) {
+                if (preg_match('/^data:image\/(\w+);base64,/', $image_data, $matches)) {
+                    $image_type = strtolower($matches[1]);
+                    
+                    if (!in_array($image_type, ['png', 'jpg', 'jpeg', 'gif'])) {
+                        continue;
+                    }
+                    
+                    $image_base64 = substr($image_data, strpos($image_data, ',') + 1);
+                    $decoded_image = base64_decode($image_base64);
+                    
+                    if ($decoded_image === false) {
+                        continue;
+                    }
+                    
+                    $filename = 'category_' . $shop_id . '_' . $category_id . '_' . time() . '_' . $index . '.' . $image_type;
+                    $filepath = $upload_dir . $filename;
+                    $url = generate_image_url($filename);
+                    
+                    if (file_put_contents($filepath, $decoded_image) !== false) {
+                        // Insert image into DB
+                        $img_stmt = $conn->prepare("INSERT INTO studio_shop_catgorie_images (shop_id, category_id, image_url) VALUES (?, ?, ?)");
+                        $img_stmt->bind_param("iis", $shop_id, $category_id, $url);
+                        if ($img_stmt->execute()) {
+                            file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Saved category image: " . $filename . "\n", FILE_APPEND);
+                        }
+                        $img_stmt->close();
+                    }
+                }
+            }
+        }
+        
+        $conn->commit();
+        file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Category images upload completed successfully\n", FILE_APPEND);
+        
+        return array('success' => true, 'message' => 'Category images uploaded successfully');
+        
+    } catch (Exception $e) {
+        $conn->rollback();
+        file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Category upload error: " . $e->getMessage() . "\n", FILE_APPEND);
+        return array('success' => false, 'error' => $e->getMessage());
+    }
+}
+
+// update_category_images function removed - unused
+
+function delete_category_image($data) {
+    global $conn;
+    
+    // Initialize database connection if not exists
+    if (!isset($conn) || !$conn) {
+        // Environment detection
+        if (!isset($_SERVER['HTTP_HOST']) || $_SERVER['HTTP_HOST'] === 'localhost:8080' || $_SERVER['HTTP_HOST'] === 'localhost') {
+            // Local environment (including WP-CLI)
+            $host = "db";
+            $db_name = "wordpress_678";
+            $username = "wp_user";
+            $password = "password";
+        } else {
+            // Server environment
+            $host = "localhost";
+            $db_name = "xb592942_sugamonavishop";
+            $username = "xb592942_sugamo";
+            $password = "Sugamonavi12345";
+        }
+        
+        $conn = new mysqli($host, $username, $password, $db_name);
+        
+        if ($conn->connect_error) {
+            file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Database connection failed: " . $conn->connect_error . "\n", FILE_APPEND);
+            return array('success' => false, 'error' => 'Database connection failed: ' . $conn->connect_error);
+        }
+        
+        file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Database connection established for delete_category_image\n", FILE_APPEND);
+    }
+    
+    $image_id = $data['image_id'] ?? null;
+    
+    if (!$image_id) {
+        return array('success' => false, 'error' => 'Missing image_id');
+    }
+    
+    file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Deleting category image with ID: " . $image_id . "\n", FILE_APPEND);
+    
+    $del_stmt = $conn->prepare("DELETE FROM studio_shop_catgorie_images WHERE id = ?");
+    $del_stmt->bind_param("i", $image_id);
+    
+    if ($del_stmt->execute()) {
+        file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Category image deleted successfully\n", FILE_APPEND);
+        $del_stmt->close();
+        return array('success' => true, 'message' => 'Image deleted from category');
+    } else {
+        file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Failed to delete category image: " . $del_stmt->error . "\n", FILE_APPEND);
+        $del_stmt->close();
+        return array('success' => false, 'error' => $del_stmt->error);
+    }
+}
+
+function delete_entire_category($data) {
+    global $conn;
+    
+    // Initialize database connection if not exists
+    if (!isset($conn) || !$conn) {
+        // Environment detection
+        if (!isset($_SERVER['HTTP_HOST']) || $_SERVER['HTTP_HOST'] === 'localhost:8080' || $_SERVER['HTTP_HOST'] === 'localhost') {
+            // Local environment (including WP-CLI)
+            $host = "db";
+            $db_name = "wordpress_678";
+            $username = "wp_user";
+            $password = "password";
+        } else {
+            // Server environment
+            $host = "localhost";
+            $db_name = "xb592942_sugamonavishop";
+            $username = "xb592942_sugamo";
+            $password = "Sugamonavi12345";
+        }
+        
+        $conn = new mysqli($host, $username, $password, $db_name);
+        
+        if ($conn->connect_error) {
+            file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Database connection failed: " . $conn->connect_error . "\n", FILE_APPEND);
+            return array('success' => false, 'error' => 'Database connection failed: ' . $conn->connect_error);
+        }
+        
+        file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Database connection established for delete_entire_category\n", FILE_APPEND);
+    }
+    
+    $shop_id = $data['shop_id'] ?? null;
+    $category_name = $data['category_name'] ?? null;
+    
+    if (!$shop_id || !$category_name) {
+        return array('success' => false, 'error' => 'Missing shop_id or category_name');
+    }
+    
+    file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Deleting entire category: " . $category_name . " for shop: " . $shop_id . "\n", FILE_APPEND);
+    
+    $conn->begin_transaction();
+    
+    try {
+        // Get category ID first
+        $cat_stmt = $conn->prepare("SELECT id FROM studio_shop_categories WHERE category_name = ?");
+        $cat_stmt->bind_param("s", $category_name);
+        $cat_stmt->execute();
+        $result = $cat_stmt->get_result();
+        
+        if ($result->num_rows === 0) {
+            $cat_stmt->close();
+            throw new Exception("Category not found: " . $category_name);
+        }
+        
+        $category_row = $result->fetch_assoc();
+        $category_id = $category_row['id'];
+        $cat_stmt->close();
+        
+        file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Found category ID: " . $category_id . "\n", FILE_APPEND);
+        
+        // Delete all images for this category and shop
+        $del_images_stmt = $conn->prepare("DELETE FROM studio_shop_catgorie_images WHERE category_id = ? AND shop_id = ?");
+        $del_images_stmt->bind_param("ii", $category_id, $shop_id);
+        
+        if (!$del_images_stmt->execute()) {
+            throw new Exception("Failed to delete category images: " . $del_images_stmt->error);
+        }
+        
+        $deleted_images_count = $del_images_stmt->affected_rows;
+        $del_images_stmt->close();
+        
+        file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Deleted " . $deleted_images_count . " images from category\n", FILE_APPEND);
+        
+        // Check if this category is used by other shops
+        $check_stmt = $conn->prepare("SELECT COUNT(*) as count FROM studio_shop_catgorie_images WHERE category_id = ?");
+        $check_stmt->bind_param("i", $category_id);
+        $check_stmt->execute();
+        $check_result = $check_stmt->get_result();
+        $remaining_usage = $check_result->fetch_assoc()['count'];
+        $check_stmt->close();
+        
+        // If no other shops use this category, delete the category itself
+        if ($remaining_usage == 0) {
+            $del_category_stmt = $conn->prepare("DELETE FROM studio_shop_categories WHERE id = ?");
+            $del_category_stmt->bind_param("i", $category_id);
+            
+            if (!$del_category_stmt->execute()) {
+                throw new Exception("Failed to delete category: " . $del_category_stmt->error);
+            }
+            
+            $del_category_stmt->close();
+            file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Deleted category itself as it was not used by other shops\n", FILE_APPEND);
+        } else {
+            file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Category still used by " . $remaining_usage . " other entries, keeping category record\n", FILE_APPEND);
+        }
+        
+        $conn->commit();
+        
+        return array(
+            'success' => true, 
+            'message' => 'Category deleted successfully',
+            'deleted_images' => $deleted_images_count,
+            'category_completely_removed' => ($remaining_usage == 0)
+        );
+        
+    } catch (Exception $e) {
+        $conn->rollback();
+        file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Delete category error: " . $e->getMessage() . "\n", FILE_APPEND);
+        return array('success' => false, 'error' => $e->getMessage());
+    }
+}
+
+function delete_main_gallery_image($data) {
+    global $conn;
+    
+    // Initialize database connection if not exists
+    if (!isset($conn) || !$conn) {
+        // Environment detection
+        if (!isset($_SERVER['HTTP_HOST']) || $_SERVER['HTTP_HOST'] === 'localhost:8080' || $_SERVER['HTTP_HOST'] === 'localhost') {
+            // Local environment (including WP-CLI)
+            $host = "db";
+            $db_name = "wordpress_678";
+            $username = "wp_user";
+            $password = "password";
+        } else {
+            // Server environment
+            $host = "localhost";
+            $db_name = "xb592942_sugamonavishop";
+            $username = "xb592942_sugamo";
+            $password = "Sugamonavi12345";
+        }
+        
+        $conn = new mysqli($host, $username, $password, $db_name);
+        
+        if ($conn->connect_error) {
+            return array('success' => false, 'error' => 'Database connection failed: ' . $conn->connect_error);
+        }
+    }
+    
+    $image_id = $data['image_id'] ?? null;
+    
+    if (!$image_id) {
+        return array('success' => false, 'error' => 'Missing image_id');
+    }
+    
+    // Get image URL before deletion for file cleanup
+    $get_stmt = $conn->prepare("SELECT image_url FROM studio_shop_images WHERE id = ?");
+    $get_stmt->bind_param("i", $image_id);
+    $get_stmt->execute();
+    $result = $get_stmt->get_result();
+    
+    if ($result->num_rows === 0) {
+        $get_stmt->close();
+        return array('success' => false, 'error' => 'Image not found');
+    }
+    
+    $image_row = $result->fetch_assoc();
+    $image_url = $image_row['image_url'];
+    $get_stmt->close();
+    
+    // Delete from database
+    $del_stmt = $conn->prepare("DELETE FROM studio_shop_images WHERE id = ?");
+    $del_stmt->bind_param("i", $image_id);
+    
+    if ($del_stmt->execute()) {
+        $del_stmt->close();
+        
+        // Optional: Delete physical file (extract filename from URL)
+        $filename = basename($image_url);
+        $upload_dir = get_upload_directory();
+        $filepath = $upload_dir . $filename;
+        if (file_exists($filepath)) {
+            unlink($filepath);
+        }
+        
+        return array('success' => true, 'message' => 'Main gallery image deleted successfully');
+    } else {
+        $error = $del_stmt->error;
+        $del_stmt->close();
+        return array('success' => false, 'error' => $error);
+    }
+}
+
+function delete_shop($data) {
+    global $conn;
+    
+    // Initialize database connection if not exists
+    if (!isset($conn) || !$conn) {
+        // Environment detection
+        if (!isset($_SERVER['HTTP_HOST']) || $_SERVER['HTTP_HOST'] === 'localhost:8080' || $_SERVER['HTTP_HOST'] === 'localhost') {
+            // Local environment (including WP-CLI)
+            $host = "db";
+            $db_name = "wordpress_678";
+            $username = "wp_user";
+            $password = "password";
+        } else {
+            // Server environment
+            $host = "localhost";
+            $db_name = "xb592942_sugamonavishop";
+            $username = "xb592942_sugamo";
+            $password = "Sugamonavi12345";
+        }
+        
+        $conn = new mysqli($host, $username, $password, $db_name);
+        
+        if ($conn->connect_error) {
+            return array('success' => false, 'error' => 'Database connection failed: ' . $conn->connect_error);
+        }
+    }
+    
+    $shop_id = $data['shop_id'] ?? null;
+    
+    if (!$shop_id) {
+        return array('success' => false, 'error' => 'Missing shop_id');
+    }
+    
+    $conn->begin_transaction();
+    
+    try {
+        // Get shop name for confirmation
+        $name_stmt = $conn->prepare("SELECT name FROM studio_shops WHERE id = ?");
+        $name_stmt->bind_param("i", $shop_id);
+        $name_stmt->execute();
+        $result = $name_stmt->get_result();
+        
+        if ($result->num_rows === 0) {
+            $name_stmt->close();
+            throw new Exception("Shop not found with ID: " . $shop_id);
+        }
+        
+        $shop_row = $result->fetch_assoc();
+        $shop_name = $shop_row['name'];
+        $name_stmt->close();
+        
+        // Delete all category images for this shop
+        $del_cat_images_stmt = $conn->prepare("DELETE FROM studio_shop_catgorie_images WHERE shop_id = ?");
+        $del_cat_images_stmt->bind_param("i", $shop_id);
+        $del_cat_images_stmt->execute();
+        $deleted_cat_images_count = $del_cat_images_stmt->affected_rows;
+        $del_cat_images_stmt->close();
+        
+        // Delete all main gallery images for this shop
+        $del_main_images_stmt = $conn->prepare("DELETE FROM studio_shop_images WHERE shop_id = ?");
+        $del_main_images_stmt->bind_param("i", $shop_id);
+        $del_main_images_stmt->execute();
+        $deleted_main_images_count = $del_main_images_stmt->affected_rows;
+        $del_main_images_stmt->close();
+        
+        // Delete the shop itself
+        $del_shop_stmt = $conn->prepare("DELETE FROM studio_shops WHERE id = ?");
+        $del_shop_stmt->bind_param("i", $shop_id);
+        
+        if (!$del_shop_stmt->execute()) {
+            throw new Exception("Failed to delete shop: " . $del_shop_stmt->error);
+        }
+        
+        $del_shop_stmt->close();
+        
+        // Clean up unused categories (categories with no images)
+        $cleanup_stmt = $conn->prepare("
+            DELETE FROM studio_shop_categories 
+            WHERE id NOT IN (
+                SELECT DISTINCT category_id FROM studio_shop_catgorie_images
+            )
+        ");
+        $cleanup_stmt->execute();
+        $cleaned_categories = $cleanup_stmt->affected_rows;
+        $cleanup_stmt->close();
+        
+        $conn->commit();
+        
+        return array(
+            'success' => true, 
+            'message' => 'Shop deleted successfully',
+            'shop_name' => $shop_name,
+            'deleted_category_images' => $deleted_cat_images_count,
+            'deleted_main_images' => $deleted_main_images_count,
+            'cleaned_categories' => $cleaned_categories
+        );
+        
+    } catch (Exception $e) {
+        $conn->rollback();
+        return array('success' => false, 'error' => $e->getMessage());
+    }
+}

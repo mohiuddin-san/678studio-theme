@@ -8,6 +8,104 @@ Author: Your Name
 
 defined('ABSPATH') or die('No direct access allowed.');
 
+// Include API helper
+require_once plugin_dir_path(__FILE__) . 'includes/api-helper.php';
+
+// AJAX handler for internal API calls
+add_action('wp_ajax_studio_shop_internal_api', 'handle_studio_shop_internal_api');
+add_action('wp_ajax_nopriv_studio_shop_internal_api', 'handle_studio_shop_internal_api');
+
+function handle_studio_shop_internal_api() {
+    // Check if data comes from FormData (POST) or JSON
+    if (isset($_POST['endpoint'])) {
+        // FormData submission - build data array from POST parameters
+        $endpoint = $_POST['endpoint'];
+        $data = array();
+        
+        // Extract all POST parameters except 'action' and 'endpoint'
+        foreach ($_POST as $key => $value) {
+            if ($key !== 'action' && $key !== 'endpoint') {
+                $data[$key] = $value;
+            }
+        }
+        
+        // Handle special case where data is JSON encoded
+        if (isset($_POST['data'])) {
+            $json_data = json_decode(stripslashes($_POST['data']), true);
+            if ($json_data) {
+                $data = array_merge($data, $json_data);
+            }
+        }
+        
+        error_log('FormData API Call - Endpoint: ' . $endpoint);
+        error_log('FormData API Call - Data: ' . json_encode($data, JSON_UNESCAPED_UNICODE));
+        
+    } else {
+        // JSON submission (fallback)
+        $input = json_decode(file_get_contents('php://input'), true);
+        
+        if (!$input || !isset($input['endpoint']) || !isset($input['data'])) {
+            wp_die(json_encode(['success' => false, 'error' => 'Invalid request data']));
+        }
+        
+        $endpoint = $input['endpoint'];
+        $data = $input['data'];
+        
+        error_log('JSON API Call - Endpoint: ' . $endpoint);
+        error_log('JSON API Call - Data: ' . json_encode($data, JSON_UNESCAPED_UNICODE));
+    }
+    
+    $result = make_internal_api_call($endpoint, $data);
+    
+    // API call completed
+    error_log('API Call Result: ' . json_encode($result, JSON_UNESCAPED_UNICODE));
+    
+    wp_die(json_encode($result));
+}
+
+// AJAX handler for deleting category images
+add_action('wp_ajax_delete_category_image', 'handle_delete_category_image');
+add_action('wp_ajax_nopriv_delete_category_image', 'handle_delete_category_image');
+
+function handle_delete_category_image() {
+    // Verify nonce
+    if (!wp_verify_nonce($_POST['_ajax_nonce'], 'studio_shop_nonce')) {
+        wp_die(json_encode(['success' => false, 'error' => 'Security check failed']));
+    }
+    
+    $image_id = isset($_POST['image_id']) ? intval($_POST['image_id']) : 0;
+    
+    if (!$image_id) {
+        wp_die(json_encode(['success' => false, 'error' => 'Missing image ID']));
+    }
+    
+    $result = delete_category_image(['image_id' => $image_id]);
+    
+    wp_die(json_encode($result));
+}
+
+// AJAX handler for deleting entire categories
+add_action('wp_ajax_delete_category', 'handle_delete_category');
+add_action('wp_ajax_nopriv_delete_category', 'handle_delete_category');
+
+function handle_delete_category() {
+    // Verify nonce
+    if (!wp_verify_nonce($_POST['_ajax_nonce'], 'studio_shop_nonce')) {
+        wp_die(json_encode(['success' => false, 'error' => 'Security check failed']));
+    }
+    
+    $shop_id = isset($_POST['shop_id']) ? intval($_POST['shop_id']) : 0;
+    $category_name = isset($_POST['category_name']) ? sanitize_text_field($_POST['category_name']) : '';
+    
+    if (!$shop_id || !$category_name) {
+        wp_die(json_encode(['success' => false, 'error' => 'Missing shop ID or category name']));
+    }
+    
+    $result = delete_entire_category(['shop_id' => $shop_id, 'category_name' => $category_name]);
+    
+    wp_die(json_encode($result));
+}
+
 // Add admin menu for Studio Shops
 add_action('admin_menu', 'studio_shops_menu');
 function studio_shops_menu() {
@@ -22,8 +120,28 @@ function studio_shops_menu() {
     );
 }
 
+// Get API base URL based on environment
+function get_api_base_url() {
+    // Check if we're in Docker environment (server-side call)
+    if (defined('WP_HOME')) {
+        $wp_home = WP_HOME;
+        if (strpos($wp_home, 'localhost:8080') !== false) {
+            // Use site URL for server-side API calls in Docker
+            return home_url('/api/');
+        }
+    }
+    
+    if ($_SERVER['HTTP_HOST'] === 'localhost:8080' || $_SERVER['HTTP_HOST'] === 'localhost') {
+        // Use home_url to ensure proper URL construction
+        return home_url('/api/');
+    } else {
+        return 'https://678photo.com/api/';
+    }
+}
+
 // Admin page rendering and form handling
 function studio_shops_admin_page() {
+    $api_base_url = get_api_base_url();
     ?>
     <div class="wrap">
         <h1><?php esc_html_e('Studio Shops Manager', 'studio-shops'); ?></h1>
@@ -34,6 +152,11 @@ function studio_shops_admin_page() {
                 <select name="shop_id" id="shop-id-select">
                     <option value="">Select a Shop</option>
                 </select>
+                <button type="button" id="delete-shop-btn" style="margin-left: 15px; padding: 8px 16px; background: #666; color: white; border: none; border-radius: 4px; cursor: pointer; display: none;"
+                        onmouseover="this.style.background='#555'" 
+                        onmouseout="this.style.background='#666'">
+                    🗑️ このショップを削除
+                </button>
             </div>
         </div>
 
@@ -42,11 +165,28 @@ function studio_shops_admin_page() {
         $is_update_mode = isset($_POST['update_mode']) && $_POST['update_mode'] === 'on';
         
         if (isset($_POST['submit_shop']) && check_admin_referer('studio_shops_save', 'studio_shops_nonce')) {
+            // Immediate debug log to confirm form processing
+            wp_log_debug('🔥 FORM SUBMITTED - Studio Shop Manager Processing Started');
+            file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Form submitted\n", FILE_APPEND);
             // Debug: Log all POST data at the very start
             error_log('=== FORM SUBMISSION DEBUG START ===');
             error_log('POST data: ' . print_r($_POST, true));
             error_log('FILES data: ' . print_r($_FILES, true));
             error_log('Update mode: ' . ($is_update_mode ? 'YES' : 'NO'));
+            error_log('Category names from POST: ' . (isset($_POST['category_name']) ? print_r($_POST['category_name'], true) : 'NOT SET'));
+            error_log('Gallery images files: ' . (isset($_FILES['gallery_images']) ? 'SET - ' . count($_FILES['gallery_images']['name']) . ' entries' : 'NOT SET'));
+            if (isset($_FILES['gallery_images'])) {
+                error_log('Gallery images detailed structure:');
+                foreach ($_FILES['gallery_images']['name'] as $index => $names) {
+                    if (is_array($names)) {
+                        error_log("  Index {$index}: " . count($names) . " files - " . print_r($names, true));
+                        error_log("  Errors at index {$index}: " . print_r($_FILES['gallery_images']['error'][$index], true));
+                    } else {
+                        error_log("  Index {$index}: Single file - {$names}");
+                        error_log("  Error at index {$index}: " . $_FILES['gallery_images']['error'][$index]);
+                    }
+                }
+            }
             error_log('=== FORM SUBMISSION DEBUG END ===');
             
             // Debug display for admin  
@@ -100,10 +240,15 @@ function studio_shops_admin_page() {
 
                 // Handle main gallery images FIRST
                 $main_gallery_images = [];
+                file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Starting main gallery processing\n", FILE_APPEND);
+                error_log('=== MAIN GALLERY PROCESSING START ===');
+                file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - FILES keys: " . implode(', ', array_keys($_FILES)) . "\n", FILE_APPEND);
                 error_log('DEBUG: $_FILES[gallery_images_flat] = ' . print_r($_FILES['gallery_images_flat'] ?? 'NOT SET', true));
                 error_log('DEBUG: Full $_FILES dump: ' . print_r($_FILES, true));
+                error_log('DEBUG: $_FILES keys: ' . implode(', ', array_keys($_FILES)));
                 
                 if (!empty($_FILES['gallery_images_flat'])) {
+                    file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Found gallery_images_flat files\n", FILE_APPEND);
                     error_log('Processing main gallery images...');
                     $gallery_flat_files = $_FILES['gallery_images_flat'];
                     
@@ -119,6 +264,7 @@ function studio_shops_admin_page() {
                                     $image_type = $gallery_flat_files['type'][$i];
                                     $base64_image = 'data:' . $image_type . ';base64,' . base64_encode($image_data);
                                     $main_gallery_images[] = $base64_image;
+                                    file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Processed image: " . $gallery_flat_files['name'][$i] . " (Size: " . strlen($base64_image) . " chars)\n", FILE_APPEND);
                                     error_log("Successfully processed image: " . $gallery_flat_files['name'][$i] . " (Size: " . strlen($base64_image) . " chars)");
                                 } else {
                                     error_log("ERROR: Temp file does not exist: " . $tmp_name);
@@ -147,13 +293,19 @@ function studio_shops_admin_page() {
                     }
                     error_log("Total main gallery images processed: " . count($main_gallery_images));
                 } else {
+                    file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - No gallery_images_flat files found\n", FILE_APPEND);
                     error_log('No main gallery images found in $_FILES[gallery_images_flat]');
                     if (isset($_FILES['gallery_images_flat'])) {
+                        file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - gallery_images_flat exists but empty\n", FILE_APPEND);
                         error_log('gallery_images_flat exists but no valid files: ' . print_r($_FILES['gallery_images_flat'], true));
                     } else {
+                        file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - gallery_images_flat field not found\n", FILE_APPEND);
                         error_log('gallery_images_flat field not found in $_FILES');
                     }
                 }
+                error_log('=== MAIN GALLERY PROCESSING END ===');
+                error_log('Final main_gallery_images count: ' . count($main_gallery_images));
+                file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Final main_gallery_images count: " . count($main_gallery_images) . "\n", FILE_APPEND);
 
                 // Now create the API data with the processed main gallery images
                 $api_data = [
@@ -179,19 +331,17 @@ function studio_shops_admin_page() {
                 echo '<div id="loader" style="padding:10px; font-weight:bold; color:blue;">Processing shop data, please wait...</div>';
 
                 // Send API request for shop creation or update
-                $api_url = $is_update_mode ? 
-                    'https://678photo.com/api/update_shop_details.php' : 
-                    'https://678photo.com/api/studio_shop.php';
-
-                error_log('Sending to API: ' . $api_url);
+                $api_endpoint = $is_update_mode ? 'update_shop_details.php' : 'studio_shop.php';
+                
+                error_log('Making internal API call to: ' . $api_endpoint);
                 error_log('API Data being sent: ' . json_encode($api_data, JSON_UNESCAPED_UNICODE));
                 
-                $response = wp_remote_post($api_url, [
-                    'method' => 'POST',
-                    'headers' => ['Content-Type' => 'application/json'],
-                    'body' => json_encode($api_data),
-                    'timeout' => 60
-                ]);
+                // Make internal API call
+                file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Calling API endpoint: " . $api_endpoint . "\n", FILE_APPEND);
+                file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - API data gallery_images count: " . (isset($api_data['gallery_images']) ? count($api_data['gallery_images']) : '0') . "\n", FILE_APPEND);
+                $response_body = make_internal_api_call($api_endpoint, $api_data);
+                file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - API response: " . json_encode($response_body) . "\n", FILE_APPEND);
+                $response = array('body' => json_encode($response_body));
 
                 error_log('Raw API Response: ' . print_r($response, true));
                 
@@ -208,6 +358,15 @@ function studio_shops_admin_page() {
                             // Prepare category gallery payload
                             $category_gallery = [];
                             $has_category_images = false;
+                            
+                            file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - === CATEGORY PROCESSING START ===\n", FILE_APPEND);
+                            file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Category names: " . print_r($category_names, true) . "\n", FILE_APPEND);
+                            file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Gallery files keys: " . (isset($gallery_files['name']) ? implode(', ', array_keys($gallery_files['name'])) : 'NO FILES') . "\n", FILE_APPEND);
+                            if (isset($gallery_files['name'])) {
+                                foreach ($gallery_files['name'] as $idx => $files) {
+                                    file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Gallery files[{$idx}]: " . (is_array($files) ? count($files) . ' files: ' . implode(', ', $files) : 'Not array: ' . $files) . "\n", FILE_APPEND);
+                                }
+                            }
                             
                             error_log('Processing categories: ' . print_r($category_names, true));
                             error_log('Gallery files structure: ' . print_r($gallery_files, true));
@@ -238,20 +397,28 @@ function studio_shops_admin_page() {
 
                                 // Process all files for all indices of this category
                                 foreach ($indices as $cat_index) {
+                                    error_log("DEBUG: Processing category {$cat_name} at index {$cat_index}");
+                                    error_log("DEBUG: gallery_files structure at index {$cat_index}: " . print_r($gallery_files['name'][$cat_index] ?? 'NOT SET', true));
+                                    
                                     if (isset($gallery_files['name'][$cat_index]) && is_array($gallery_files['name'][$cat_index])) {
+                                        file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Found files for category {$cat_name} at index {$cat_index}: " . count($gallery_files['name'][$cat_index]) . " files\n", FILE_APPEND);
                                         error_log("Found files for category {$cat_name} at index {$cat_index}: " . print_r($gallery_files['name'][$cat_index], true));
                                         foreach ($gallery_files['name'][$cat_index] as $img_index => $img_name) {
+                                            file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Processing file {$img_index}: {$img_name}, error: " . $gallery_files['error'][$cat_index][$img_index] . "\n", FILE_APPEND);
                                             error_log("Processing file {$img_index}: {$img_name}, error: " . $gallery_files['error'][$cat_index][$img_index]);
                                             if (!empty($img_name) && $gallery_files['error'][$cat_index][$img_index] === UPLOAD_ERR_OK) {
                                                 $tmp_name = $gallery_files['tmp_name'][$cat_index][$img_index];
+                                                file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Temp file: {$tmp_name}, exists: " . (file_exists($tmp_name) ? 'YES' : 'NO') . "\n", FILE_APPEND);
                                                 if (file_exists($tmp_name)) {
                                                     $image_data = file_get_contents($tmp_name);
                                                     $image_type = $gallery_files['type'][$cat_index][$img_index];
                                                     $base64_image = 'data:' . $image_type . ';base64,' . base64_encode($image_data);
                                                     $category_gallery[$cat_name][] = $base64_image;
                                                     $has_category_images = true;
+                                                    file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - SUCCESS: Category image processed: {$cat_name} - {$img_name} (Base64 length: " . strlen($base64_image) . ")\n", FILE_APPEND);
                                                     error_log("SUCCESS: Category image processed: {$cat_name} - {$img_name} (Base64 length: " . strlen($base64_image) . ")");
                                                 } else {
+                                                    file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - ERROR: Temp file not found: {$tmp_name}\n", FILE_APPEND);
                                                     error_log("ERROR: Temp file not found: {$tmp_name}");
                                                 }
                                             } else {
@@ -264,6 +431,8 @@ function studio_shops_admin_page() {
                                 }
                             }
                             
+                            file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Has category images: " . ($has_category_images ? 'YES' : 'NO') . "\n", FILE_APPEND);
+                            file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Category gallery count: " . count($category_gallery) . "\n", FILE_APPEND);
                             error_log('Category gallery data: ' . print_r($category_gallery, true));
                             error_log('Has category images: ' . ($has_category_images ? 'YES' : 'NO'));
 
@@ -294,24 +463,25 @@ function studio_shops_admin_page() {
                             }
 
                             // Send category images to the appropriate API
-                            $category_api_url = $is_update_mode ? 
-                                'https://678photo.com/api/update_shop_category_images.php' : 
-                                'https://678photo.com/api/category_image_uploader.php';
+                            $category_api_endpoint = $is_update_mode ? 
+                                'update_shop_category_images.php' : 
+                                'category_image_uploader.php';
 
                             if (!$has_category_images || empty($final_payload['gallery'])) {
                                 // No category images to process, skip API call
+                                file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Skipping category API call - has_category_images: " . ($has_category_images ? 'YES' : 'NO') . ", gallery count: " . count($final_payload['gallery']) . "\n", FILE_APPEND);
                                 error_log('Skipping category API call - has_category_images: ' . ($has_category_images ? 'YES' : 'NO') . ', gallery count: ' . count($final_payload['gallery']));
                                 $category_success = true;
                             } else {
-                                error_log('Sending category images to API: ' . $category_api_url);
+                                file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Sending category images to API: " . $category_api_endpoint . "\n", FILE_APPEND);
+                                file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Category payload gallery count: " . count($final_payload['gallery']) . "\n", FILE_APPEND);
+                                error_log('Sending category images to API: ' . $category_api_endpoint);
                                 error_log('Category payload: ' . print_r($final_payload, true));
                                 
-                                $image_response = wp_remote_post($category_api_url, [
-                                    'method' => 'POST',
-                                    'headers' => ['Content-Type' => 'application/json'],
-                                    'body' => json_encode($final_payload),
-                                    'timeout' => 60
-                                ]);
+                                // Make internal API call
+                                $image_response_body = make_internal_api_call($category_api_endpoint, $final_payload);
+                                file_put_contents('/tmp/debug_studio_shop.log', date('Y-m-d H:i:s') . " - Category API response: " . json_encode($image_response_body) . "\n", FILE_APPEND);
+                                $image_response = array('body' => json_encode($image_response_body));
 
                                 if (is_wp_error($image_response)) {
                                     error_log('Category image API error: ' . $image_response->get_error_message());
@@ -330,7 +500,7 @@ function studio_shops_admin_page() {
                                             
                                             // Try to delete existing category images before inserting new ones
                                             $delete_payload = ['shop_id' => $shop_id];
-                                            $delete_response = wp_remote_post('https://678photo.com/api/delete_shop_category_images.php', [
+                                            $delete_response = wp_remote_post($api_base_url . 'delete_shop_category_images.php', [
                                                 'method' => 'POST',
                                                 'headers' => ['Content-Type' => 'application/json'],
                                                 'body' => json_encode($delete_payload),
@@ -390,6 +560,34 @@ function studio_shops_admin_page() {
                             // Show final success message
                             if ($main_success && $category_success) {
                                 echo '<div class="updated"><p>' . esc_html__($is_update_mode ? 'Shop updated successfully!' : 'Shop created successfully!', 'studio-shops') . '</p></div>';
+                                
+                                // Add JavaScript to refresh shop list after successful creation/update
+                                if (!$is_update_mode) {
+                                    echo '<script>
+                                        // Refresh shop list after new shop creation
+                                        if (typeof fetchShops === "function") {
+                                            setTimeout(() => {
+                                                console.log("Refreshing shop list after successful creation...");
+                                                
+                                                // Show loading indicator
+                                                const shopSelect = document.getElementById("shop-id-select");
+                                                if (shopSelect) {
+                                                    shopSelect.innerHTML = "<option value=\"\">🔄 Updating shop list...</option>";
+                                                }
+                                                
+                                                // Refresh the shop list
+                                                fetchShops().then(() => {
+                                                    console.log("Shop list refreshed successfully");
+                                                }).catch(error => {
+                                                    console.error("Failed to refresh shop list:", error);
+                                                    if (shopSelect) {
+                                                        shopSelect.innerHTML = "<option value=\"\">Select a Shop</option>";
+                                                    }
+                                                });
+                                            }, 1000);
+                                        }
+                                    </script>';
+                                }
                             }
                         } else {
                             echo '<div class="error"><p>' . esc_html__('Operation failed: Shop ID not returned from API.', 'studio-shops') . '</p></div>';
@@ -407,108 +605,382 @@ function studio_shops_admin_page() {
             <?php wp_nonce_field('studio_shops_save', 'studio_shops_nonce'); ?>
             <input type="hidden" name="update_mode" id="update_mode" value="<?php echo $is_update_mode ? 'on' : 'off'; ?>">
             <input type="hidden" name="shop_id" id="shop_id" value="">
-            <table class="form-table">
-                <tr><th><label for="name">Name</label></th><td><input type="text" name="name" id="name" required></td></tr>
-                <tr><th><label for="address">Address</label></th><td><textarea name="address" id="address" required></textarea></td></tr>
-                <tr><th><label for="phone">Phone</label></th><td><input type="text" name="phone" id="phone"></td></tr>
-                <tr><th><label for="nearest_station">Nearest Station</label></th><td><input type="text" name="nearest_station" id="nearest_station"></td></tr>
-                <tr><th><label for="business_hours">Business Hours</label></th><td><input type="text" name="business_hours" id="business_hours"></td></tr>
-                <tr><th><label for="holidays">Holidays</label></th><td><input type="text" name="holidays" id="holidays"></td></tr>
-                <tr><th><label for="map_url">Map Embed Code</label></th><td><textarea name="map_url" id="map_url" rows="4" cols="50" placeholder="Paste your map embed code (e.g., Google Maps iframe)"></textarea></td></tr>     
-                <tr><th><label for="company_email">Company Email</label></th><td><input type="email" name="company_email" id="company_email"></td></tr>
-            </table>
-
-            <h3>Main Gallery (no category)</h3>
-            <p><input type="file" name="gallery_images_flat[]" multiple accept="image/*" id="main-gallery-input"></p>
-            <div id="main-gallery-preview"></div>
-
-            <h3>Gallery by Category</h3>
-            <div id="existing-categories-section" style="margin-bottom: 20px;">
-                <h4>Existing Categories</h4>
-                <p><em>Select from existing categories or create new ones below:</em></p>
-                <div id="existing-categories-list" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
-                    <!-- Categories will be populated here -->
-                </div>
-            </div>
-            
-            <div id="category-gallery-wrapper">
-                <div class="category-gallery-block" data-category-id="">
-                    <div class="category-input-section">
-                        <label>Category:</label>
-                        <select name="category_name[]" class="category-select" style="width: 200px; margin-right: 10px;">
-                            <option value="">Choose existing or type new...</option>
-                        </select>
-                        <input type="text" class="new-category-input" placeholder="Or type new category name" style="width: 200px; margin-left: 10px;">
+            <!-- Shop Basic Information Section -->
+            <div style="margin: 30px 0; padding: 25px; border: 2px solid #666; border-radius: 12px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                <h3 style="margin: 0 0 20px 0; color: #333; font-size: 20px; font-weight: 600; display: flex; align-items: center;">
+                    🏪 ショップ基本情報
+                </h3>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <!-- Left Column -->
+                    <div>
+                        <div style="margin-bottom: 15px;">
+                            <label for="name" style="display: block; margin-bottom: 5px; font-weight: 500; color: #333;">
+                                🏢 ショップ名 <span style="color: #dc3232;">*</span>
+                            </label>
+                            <input type="text" name="name" id="name" required 
+                                   style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; transition: border-color 0.3s ease;"
+                                   onfocus="this.style.borderColor='#666'" 
+                                   onblur="this.style.borderColor='#ddd'">
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <label for="phone" style="display: block; margin-bottom: 5px; font-weight: 500; color: #333;">
+                                📞 電話番号
+                            </label>
+                            <input type="text" name="phone" id="phone" 
+                                   style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; transition: border-color 0.3s ease;"
+                                   onfocus="this.style.borderColor='#666'" 
+                                   onblur="this.style.borderColor='#ddd'">
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <label for="nearest_station" style="display: block; margin-bottom: 5px; font-weight: 500; color: #333;">
+                                🚃 最寄り駅
+                            </label>
+                            <input type="text" name="nearest_station" id="nearest_station" 
+                                   style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; transition: border-color 0.3s ease;"
+                                   onfocus="this.style.borderColor='#666'" 
+                                   onblur="this.style.borderColor='#ddd'">
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <label for="company_email" style="display: block; margin-bottom: 5px; font-weight: 500; color: #333;">
+                                📧 会社メールアドレス
+                            </label>
+                            <input type="email" name="company_email" id="company_email" 
+                                   style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; transition: border-color 0.3s ease;"
+                                   onfocus="this.style.borderColor='#666'" 
+                                   onblur="this.style.borderColor='#ddd'">
+                        </div>
                     </div>
-                    <input type="file" name="gallery_images[0][]" multiple accept="image/*" class="category-image-input">
-                    <div class="category-preview" data-index="0"></div>
-                    <button type="button" class="delete-category button">Delete Category</button>
+                    
+                    <!-- Right Column -->
+                    <div>
+                        <div style="margin-bottom: 15px;">
+                            <label for="address" style="display: block; margin-bottom: 5px; font-weight: 500; color: #333;">
+                                📍 住所 <span style="color: #dc3232;">*</span>
+                            </label>
+                            <textarea name="address" id="address" required rows="3"
+                                      style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; resize: vertical; transition: border-color 0.3s ease;"
+                                      onfocus="this.style.borderColor='#28a745'" 
+                                      onblur="this.style.borderColor='#ddd'"></textarea>
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <label for="business_hours" style="display: block; margin-bottom: 5px; font-weight: 500; color: #333;">
+                                🕐 営業時間
+                            </label>
+                            <input type="text" name="business_hours" id="business_hours" 
+                                   placeholder="例: 9:00-18:00"
+                                   style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; transition: border-color 0.3s ease;"
+                                   onfocus="this.style.borderColor='#666'" 
+                                   onblur="this.style.borderColor='#ddd'">
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <label for="holidays" style="display: block; margin-bottom: 5px; font-weight: 500; color: #333;">
+                                🗓️ 定休日
+                            </label>
+                            <input type="text" name="holidays" id="holidays" 
+                                   placeholder="例: 日曜日、祝日"
+                                   style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; transition: border-color 0.3s ease;"
+                                   onfocus="this.style.borderColor='#666'" 
+                                   onblur="this.style.borderColor='#ddd'">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Map Embed Code (Full Width) -->
+                <div style="margin-bottom: 15px;">
+                    <label for="map_url" style="display: block; margin-bottom: 5px; font-weight: 500; color: #333;">
+                        🗺️ 地図埋め込みコード
+                    </label>
+                    <textarea name="map_url" id="map_url" rows="4" 
+                              placeholder="Paste your map embed code (e.g., Google Maps iframe)"
+                              style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; resize: vertical; transition: border-color 0.3s ease;"
+                              onfocus="this.style.borderColor='#28a745'" 
+                              onblur="this.style.borderColor='#ddd'"></textarea>
+                    <small style="display: block; margin-top: 5px; color: #666;">
+                        Google Mapsのiframeコードなどを貼り付けてください
+                    </small>
                 </div>
             </div>
-            <p><button type="button" id="add-category-block" class="button">+ Add Category</button></p>
 
-            <p class="submit">
-                <input type="submit" name="submit_shop" id="submit_shop" class="button button-primary" value="<?php echo $is_update_mode ? 'Update Shop' : 'Add Shop'; ?>">
-            </p>
+            <!-- Main Gallery Section -->
+            <div id="main-gallery-section" style="margin: 30px 0; padding: 25px; border: 2px solid #666; border-radius: 12px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                <h3 style="margin: 0 0 20px 0; color: #333; font-size: 20px; font-weight: 600; display: flex; align-items: center;">
+                    🖼️ メイン画像（1枚のみ）
+                </h3>
+                
+                <!-- 現在のメイン画像表示エリア -->
+                <div id="current-main-image-section" style="margin-bottom: 20px;">
+                    <h4 style="margin: 0 0 15px 0; color: #333; font-size: 16px;">📷 現在のメイン画像</h4>
+                    <div id="current-main-image-container">
+                        <p id="no-main-image-message" style="color: #666; font-style: italic; padding: 15px; background: #fafafa; border: 1px dashed #ddd; border-radius: 6px; text-align: center;">
+                            メイン画像が設定されていません
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- ファイル選択エリア -->
+                <div>
+                    <label for="main-gallery-input" style="display: block; margin-bottom: 8px; font-weight: 500; color: #333;">
+                        🔄 メイン画像を変更/設定：
+                    </label>
+                    <input type="file" name="gallery_images_flat[]" accept="image/*" id="main-gallery-input" 
+                           style="padding: 8px; border: 2px dashed #666; border-radius: 6px; background: white; width: 100%; max-width: 400px;">
+                    <small style="display: block; margin-top: 5px; color: #666;">
+                        新しい画像を選択すると、現在の画像と置き換えられます
+                    </small>
+                    
+                    <!-- 新規画像プレビュー -->
+                    <div id="main-gallery-preview" style="margin-top: 15px; display: none;">
+                        <!-- プレビューがここに表示される -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gallery by Category Section -->
+            <div style="margin: 30px 0; padding: 25px; border: 2px solid #666; border-radius: 12px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                <h3 style="margin: 0 0 20px 0; color: #333; font-size: 20px; font-weight: 600; display: flex; align-items: center;">
+                    📁 カテゴリー別ギャラリー
+                </h3>
+                
+                <!-- 既存カテゴリー表示エリア -->
+                <div id="existing-categories-section" style="margin-bottom: 25px;">
+                    <h4 style="margin: 0 0 15px 0; color: #333; font-size: 16px;">📂 既存のカテゴリー</h4>
+                    <div id="existing-categories-container">
+                        <!-- 既存カテゴリーがここに表示される -->
+                        <p id="no-categories-message" style="color: #666; font-style: italic; padding: 15px; background: #fafafa; border: 1px dashed #ddd; border-radius: 6px; text-align: center;">
+                            カテゴリーが登録されていません
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- 新規カテゴリー追加エリア -->
+                <div id="new-category-section" style="border: 2px dashed #666; padding: 20px; border-radius: 8px; background: white;">
+                    <h4 style="margin: 0 0 20px 0; color: #333; font-size: 16px;">➕ 新しいカテゴリーを追加</h4>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                        <div>
+                            <label for="new-category-name" style="display: block; margin-bottom: 5px; font-weight: 500; color: #333;">
+                                🏷️ カテゴリー名
+                            </label>
+                            <input type="text" id="new-category-name" placeholder="例: ポートレート、風景写真" 
+                                   style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; transition: border-color 0.3s ease;"
+                                   onfocus="this.style.borderColor='#666'" 
+                                   onblur="this.style.borderColor='#ddd'">
+                        </div>
+                        
+                        <div>
+                            <label for="new-category-images" style="display: block; margin-bottom: 5px; font-weight: 500; color: #333;">
+                                🖼️ 画像ファイル
+                            </label>
+                            <input type="file" id="new-category-images" multiple accept="image/*"
+                                   style="width: 100%; padding: 8px; border: 2px dashed #666; border-radius: 6px; background: white;">
+                            <small style="display: block; margin-top: 5px; color: #666;">複数の画像を同時に選択できます</small>
+                        </div>
+                    </div>
+                    
+                    <div id="new-category-preview" style="margin: 15px 0; min-height: 120px; border: 1px dashed #ddd; padding: 15px; border-radius: 6px; background: #fafafa;">
+                        <p style="color: #999; text-align: center; margin: 40px 0;">選択した画像のプレビューがここに表示されます</p>
+                    </div>
+                    
+                    <div style="text-align: right;">
+                        <button type="button" id="clear-new-category-btn" class="button" style="margin-right: 10px; padding: 10px 20px; border-radius: 6px;">
+                            🔄 クリア
+                        </button>
+                        <button type="button" id="add-new-category-btn" class="button button-primary" disabled
+                                style="padding: 10px 20px; border-radius: 6px; background: #666; border-color: #666;">
+                            ➕ このカテゴリーを追加
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Section -->
+            <div style="margin: 30px 0; padding: 20px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 12px; text-align: center; border: 2px solid #666;">
+                <input type="submit" name="submit_shop" id="submit_shop" 
+                       value="<?php echo $is_update_mode ? '🔄 ショップを更新' : '✨ ショップを登録'; ?>"
+                       style="background: linear-gradient(135deg, #666 0%, #555 100%); color: white; border: none; padding: 15px 40px; font-size: 16px; font-weight: 600; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(102, 102, 102, 0.3); transition: all 0.3s ease; text-transform: none;"
+                       onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 12px rgba(102, 102, 102, 0.4)'"
+                       onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px rgba(102, 102, 102, 0.3)'"
+                       onmousedown="this.style.transform='translateY(0)'"
+                       onmouseup="this.style.transform='translateY(-2px)'">
+            </div>
         </form>
 
         <style>
+            /* 既存カテゴリー表示スタイル */
+            .category-item {
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                padding: 15px;
+                margin-bottom: 15px;
+                background: white;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            
+            .category-item h5 {
+                margin: 0 0 10px 0;
+                padding: 8px 12px;
+                background: #f0f6ff;
+                border-left: 4px solid #0073aa;
+                border-radius: 4px;
+                font-size: 16px;
+                color: #0073aa;
+            }
+            
+            .category-images {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                margin-bottom: 15px;
+                min-height: 120px;
+                padding: 10px;
+                background: #fafafa;
+                border: 1px dashed #ddd;
+                border-radius: 4px;
+            }
+            
+            .category-image-item {
+                position: relative;
+                display: inline-block;
+            }
+            
+            .category-image-item img {
+                width: 100px;
+                height: 100px;
+                object-fit: cover;
+                border: 2px solid #ddd;
+                border-radius: 6px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+            
+            .category-image-item img:hover {
+                border-color: #0073aa;
+                transform: scale(1.05);
+            }
+            
+            .delete-image-btn {
+                position: absolute;
+                top: -8px;
+                right: -8px;
+                background: #dc3232;
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 24px;
+                height: 24px;
+                font-size: 14px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                transition: all 0.2s ease;
+            }
+            
+            .delete-image-btn:hover {
+                background: #a00;
+                transform: scale(1.1);
+            }
+            
+            .category-actions {
+                text-align: right;
+                border-top: 1px solid #eee;
+                padding-top: 10px;
+            }
+            
+            .delete-category-btn {
+                background: #dc3232;
+                color: white;
+                border: none;
+                padding: 8px 15px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 13px;
+                transition: background-color 0.2s ease;
+            }
+            
+            .delete-category-btn:hover {
+                background: #a00;
+            }
+            
+            /* 新規カテゴリー追加スタイル */
             .image-preview {
                 display: inline-block;
                 position: relative;
                 margin: 5px;
             }
+            
             .image-preview img {
-                width: 100px;
-                height: 100px;
+                width: 80px;
+                height: 80px;
                 object-fit: cover;
-                border: 1px solid #ccc;
+                border: 2px solid #0073aa;
                 border-radius: 4px;
             }
-            .remove-image, .delete-category {
-                background: red;
-                color: white;
-                border: none;
-                border-radius: 50%;
-                font-size: 14px;
-                width: 20px;
-                height: 20px;
-                cursor: pointer;
+            
+            .remove-preview-btn {
                 position: absolute;
                 top: -8px;
                 right: -8px;
+                background: #dc3232;
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 20px;
+                height: 20px;
+                font-size: 12px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
-            .delete-category {
+            
+            /* メッセージスタイル */
+            .success-message {
+                background: #d4edda;
+                color: #155724;
+                border: 1px solid #c3e6cb;
+                padding: 10px 15px;
                 border-radius: 4px;
-                width: auto;
-                height: auto;
-                padding: 5px 10px;
-                position: static;
-                margin-top: 5px;
+                margin: 10px 0;
+            }
+            
+            .error-message {
+                background: #f8d7da;
+                color: #721c24;
+                border: 1px solid #f5c6cb;
+                padding: 10px 15px;
+                border-radius: 4px;
+                margin: 10px 0;
             }
         </style>
 
         <script>
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('studio-shops-manager.js loaded');
+            // Plugin initialized
             
             // Global variable to store all categories
             window.allCategories = new Set();
 
-            // Debug DOM structure
-            console.log('update-mode:', document.getElementById('update-mode'));
-            console.log('shop-selector:', document.getElementById('shop-selector'));
-            console.log('shop-id-select:', document.getElementById('shop-id-select'));
-            console.log('shop-form:', document.getElementById('shop-form'));
-            console.log('main-gallery-preview:', document.getElementById('main-gallery-preview'));
-            console.log('category-gallery-wrapper:', document.getElementById('category-gallery-wrapper'));
+            // DOM elements initialized
 
             const updateCheckbox = document.getElementById('update-mode');
             const shopSelector = document.getElementById('shop-selector');
             const shopSelect = document.getElementById('shop-id-select');
             const form = document.getElementById('shop-form');
             const mainGalleryPreview = document.getElementById('main-gallery-preview');
-            const categoryGalleryWrapper = document.getElementById('category-gallery-wrapper');
+            const existingCategoriesContainer = document.getElementById('existing-categories-container');
+            const newCategoryNameInput = document.getElementById('new-category-name');
+            const newCategoryImagesInput = document.getElementById('new-category-images');
+            const newCategoryPreview = document.getElementById('new-category-preview');
+            const addNewCategoryBtn = document.getElementById('add-new-category-btn');
+            const clearNewCategoryBtn = document.getElementById('clear-new-category-btn');
 
             // Initialize shopsData to store shop details
             window.shopsData = [];
@@ -529,17 +1001,30 @@ function studio_shops_admin_page() {
                 document.getElementById('map_url').value = '';
                 document.getElementById('company_email').value = '';
                 
+                // Reset delete button state
+                const deleteBtn = document.getElementById('delete-shop-btn');
+                if (deleteBtn) {
+                    deleteBtn.innerHTML = '🗑️ このショップを削除';
+                    deleteBtn.disabled = false;
+                    deleteBtn.style.display = 'none';
+                }
+                
                 if (!preserveFiles) {
                     document.getElementById('main-gallery-input').value = '';
                     mainGalleryPreview.innerHTML = '<p>No images selected.</p>';
-                    categoryGalleryWrapper.innerHTML = `
-                        <div class="category-gallery-block" data-category-id="">
-                            <input type="text" name="category_name[]" placeholder="Category Name" required>
-                            <input type="file" name="gallery_images[0][]" multiple accept="image/*" class="category-image-input">
-                            <div class="category-preview" data-index="0"></div>
-                            <button type="button" class="delete-category button">Delete Category</button>
-                        </div>
-                    `;
+                    
+                    // Reset new category section
+                    if (newCategoryNameInput) newCategoryNameInput.value = '';
+                    if (newCategoryImagesInput) newCategoryImagesInput.value = '';
+                    if (newCategoryPreview) {
+                        newCategoryPreview.innerHTML = '<p style="color: #999; text-align: center; margin: 40px 0;">選択した画像のプレビューがここに表示されます</p>';
+                    }
+                    if (addNewCategoryBtn) addNewCategoryBtn.disabled = true;
+                    
+                    // Clear existing categories display
+                    if (existingCategoriesContainer) {
+                        existingCategoriesContainer.innerHTML = '<p id="no-categories-message" style="color: #666; font-style: italic;">カテゴリーが登録されていません</p>';
+                    }
                 }
             }
 
@@ -551,52 +1036,28 @@ function studio_shops_admin_page() {
                     return;
                 }
                 
-                // Process category names: merge select and text inputs
-                const categoryBlocks = document.querySelectorAll('.category-gallery-block');
-                const processedCategories = [];
-                let hasError = false;
-                
-                categoryBlocks.forEach((block, index) => {
-                    const select = block.querySelector('.category-select');
-                    const textInput = block.querySelector('.new-category-input');
-                    let categoryName = '';
-                    
-                    if (select && select.value.trim()) {
-                        categoryName = select.value.trim();
-                    } else if (textInput && textInput.value.trim()) {
-                        categoryName = textInput.value.trim();
-                    }
-                    
-                    if (categoryName) {
-                        // Check for duplicates
-                        if (processedCategories.includes(categoryName)) {
-                            alert(`Error: Category "${categoryName}" is duplicated. Please use unique category names.`);
-                            hasError = true;
-                            return;
-                        }
-                        processedCategories.push(categoryName);
-                        
-                        // Update the hidden input for form submission
-                        const hiddenInput = document.createElement('input');
-                        hiddenInput.type = 'hidden';
-                        hiddenInput.name = 'category_name[]';
-                        hiddenInput.value = categoryName;
-                        form.appendChild(hiddenInput);
-                    }
-                });
-                
-                if (hasError) {
-                    e.preventDefault();
-                    return;
-                }
-                
-                console.log('Processed categories for submission:', processedCategories);
+                // New UI doesn't use category blocks anymore
+                console.log('Form submission - Update mode:', updateCheckbox.checked);
             });
 
+            // Get API base URL based on environment
+            function getApiBaseUrl() {
+                const host = window.location.hostname;
+                const port = window.location.port;
+                if (host === 'localhost' && (port === '8080' || port === '')) {
+                    return 'http://localhost:8080/api/';
+                } else {
+                    return 'https://678photo.com/api/';
+                }
+            }
+            
+            const apiBaseUrl = getApiBaseUrl();
+            // API Base URL set
+            
             // Fetch shop list
             async function fetchShops() {
                 try {
-                    const response = await fetch('https://678photo.com/api/get_all_studio_shop.php?t=' + new Date().getTime(), {
+                    const response = await fetch(apiBaseUrl + 'get_all_studio_shop.php?t=' + new Date().getTime(), {
                         cache: 'no-store'
                     });
                     console.log('Shop List API Response:', response);
@@ -605,16 +1066,20 @@ function studio_shops_admin_page() {
                     }
                     const data = await response.json();
                     console.log('Shop List API Data:', data);
+                    console.log('DEBUG: First shop category_images:', data.shops && data.shops[0] ? data.shops[0].category_images : 'undefined');
                     if (data.success && data.shops) {
                         window.shopsData = data.shops;
                         populateDropdown(data.shops);
+                        return true; // Return success
                     } else {
                         console.error('Failed to fetch shops:', data.error || 'No shops found');
                         alert('Failed to load shop list');
+                        return false;
                     }
                 } catch (error) {
                     console.error('Error fetching shops:', error);
                     alert('Failed to load shop list');
+                    return false;
                 }
             }
 
@@ -704,6 +1169,7 @@ function studio_shops_admin_page() {
             // Populate form with shop details
             function updateShopDetails(shopId) {
                 console.log('Updating shop details for shopId:', shopId);
+                console.log('DEBUG: Available shops data:', window.shopsData);
                 resetForm(true); // Reset form but preserve files
                 document.getElementById('shop_id').value = shopId;
 
@@ -715,11 +1181,13 @@ function studio_shops_admin_page() {
                 const shop = window.shopsData.find(s => s.id == shopId);
                 if (!shop) {
                     console.error('Shop not found for ID:', shopId);
+                    console.error('Available shop IDs:', window.shopsData.map(s => s.id));
                     alert('Shop data not found');
                     return;
                 }
 
                 console.log('Populating form with shop data:', shop);
+                console.log('DEBUG: Shop category_images:', shop.category_images);
                 document.getElementById('name').value = shop.name || '';
                 document.getElementById('address').value = shop.address || '';
                 document.getElementById('phone').value = shop.phone || '';
@@ -729,93 +1197,11 @@ function studio_shops_admin_page() {
                 document.getElementById('map_url').value = shop.map_url || '';
                 document.getElementById('company_email').value = shop.company_email || '';
 
-                // Populate main gallery images from image_urls
-                mainGalleryPreview.innerHTML = '';
-                if (shop.image_urls && shop.image_urls.length > 0) {
-                    shop.image_urls.forEach((imageUrl, index) => {
-                        const div = document.createElement('div');
-                        div.classList.add('image-preview');
-                        div.innerHTML = `
-                            <img src="${imageUrl}" alt="Main Gallery Image" style="width: 100px; height: 100px; object-fit: cover; border: 1px solid #ccc; border-radius: 4px;">
-                            <button type="button" class="remove-main-image" data-type="main" data-shop-id="${shop.id}" data-image-url="${imageUrl}" data-index="${index}">×</button>
-                        `;
-                        mainGalleryPreview.appendChild(div);
-                    });
-                } else {
-                    mainGalleryPreview.innerHTML = '<p>No main gallery images available.</p>';
-                }
+                // Populate current main image
+                renderCurrentMainImage(shop.main_gallery_images || shop.image_urls || [], shop.id);
 
-                // Populate category gallery from category_images
-                categoryGalleryWrapper.innerHTML = '';
-                if (shop.category_images && Object.keys(shop.category_images).length > 0) {
-                    let index = 0;
-                    for (const [categoryName, images] of Object.entries(shop.category_images)) {
-                        const block = document.createElement('div');
-                        block.classList.add('category-gallery-block');
-                        block.dataset.categoryId = ''; // Fetch category IDs if available from API
-                        block.innerHTML = `
-                            <div class="category-input-section">
-                                <label>Category:</label>
-                                <select name="category_name[]" class="category-select" style="width: 200px; margin-right: 10px;">
-                                    <option value="${categoryName}" selected>${categoryName}</option>
-                                </select>
-                                <input type="text" class="new-category-input" placeholder="Or type new category name" style="width: 200px; margin-left: 10px; display: none;">
-                            </div>
-                            <input type="file" name="gallery_images[${index}][]" multiple accept="image/*" class="category-image-input">
-                            <div class="category-preview" data-index="${index}"></div>
-                            <button type="button" class="delete-category button">Delete Category</button>
-                        `;
-                        categoryGalleryWrapper.appendChild(block);
-
-                        const preview = block.querySelector('.category-preview');
-                        if (images && images.length > 0) {
-                            images.forEach((imageUrl, imgIndex) => {
-                                const div = document.createElement('div');
-                                div.classList.add('image-preview');
-                                div.innerHTML = `
-                                    <img src="${imageUrl}" alt="Category Image">
-                                    <button type="button" class="remove-image" data-type="category" data-index="${imgIndex}" data-image-id="">×</button>
-                                `;
-                                preview.appendChild(div);
-                            });
-                        } else {
-                            preview.innerHTML = '<p>No images available for this category.</p>';
-                        }
-                        
-                        // Setup event listeners for this block
-                        setupCategoryBlockListeners(block);
-                        index++;
-                    }
-                    
-                    // Update category selectors after populating existing categories
-                    setTimeout(() => {
-                        updateCategorySelectors();
-                    }, 100);
-                } else {
-                    categoryGalleryWrapper.innerHTML = `
-                        <div class="category-gallery-block" data-category-id="">
-                            <div class="category-input-section">
-                                <label>Category:</label>
-                                <select name="category_name[]" class="category-select" style="width: 200px; margin-right: 10px;">
-                                    <option value="">Choose existing or type new...</option>
-                                </select>
-                                <input type="text" class="new-category-input" placeholder="Or type new category name" style="width: 200px; margin-left: 10px;">
-                            </div>
-                            <input type="file" name="gallery_images[0][]" multiple accept="image/*" class="category-image-input">
-                            <div class="category-preview" data-index="0"></div>
-                            <button type="button" class="delete-category button">Delete Category</button>
-                        </div>
-                    `;
-                    
-                    // Setup listeners for the default block
-                    setTimeout(() => {
-                        const defaultBlock = categoryGalleryWrapper.querySelector('.category-gallery-block');
-                        if (defaultBlock) {
-                            setupCategoryBlockListeners(defaultBlock);
-                            updateCategorySelectors();
-                        }
-                    }, 100);
-                }
+                // 既存カテゴリーの表示処理（シンプル版）
+                renderExistingCategories(shop.category_images || {});
             }
 
             // Toggle update mode
@@ -825,81 +1211,180 @@ function studio_shops_admin_page() {
                 document.getElementById('update_mode').value = updateCheckbox.checked ? 'on' : 'off';
                 document.getElementById('submit_shop').value = updateCheckbox.checked ? 'Update Shop' : 'Add Shop';
                 shopSelect.value = ''; // Reset shop selection
+                
+                // Reset delete button state
+                const deleteBtn = document.getElementById('delete-shop-btn');
+                deleteBtn.style.display = 'none';
+                deleteBtn.innerHTML = '🗑️ このショップを削除';
+                deleteBtn.disabled = false;
+                
                 updateShopDetails(''); // Reset form
             });
 
             // Populate form on shop selection
             shopSelect.addEventListener('change', (event) => {
-                console.log('Shop selected:', event.target.value);
+                console.log('DEBUG: Shop selected:', event.target.value);
+                console.log('DEBUG: Event target:', event.target);
+                console.log('DEBUG: Available options:');
+                Array.from(event.target.options).forEach((opt, i) => {
+                    console.log(`  ${i}: value="${opt.value}" text="${opt.text}"`);
+                });
                 updateShopDetails(event.target.value);
+                
+                // Show/hide delete button based on shop selection
+                const deleteBtn = document.getElementById('delete-shop-btn');
+                if (event.target.value && event.target.value !== '') {
+                    // Reset delete button state and show it
+                    deleteBtn.innerHTML = '🗑️ このショップを削除';
+                    deleteBtn.disabled = false;
+                    deleteBtn.style.display = 'inline-block';
+                } else {
+                    deleteBtn.style.display = 'none';
+                }
             });
 
-            // Add new category block
-            document.getElementById('add-category-block').addEventListener('click', () => {
-                let index = categoryGalleryWrapper.children.length;
-                let block = document.createElement('div');
-                block.classList.add('category-gallery-block');
-                block.dataset.categoryId = '';
-                block.innerHTML = `
-                    <div class="category-input-section">
-                        <label>Category:</label>
-                        <select name="category_name[]" class="category-select" style="width: 200px; margin-right: 10px;">
-                            <option value="">Choose existing or type new...</option>
-                        </select>
-                        <input type="text" class="new-category-input" placeholder="Or type new category name" style="width: 200px; margin-left: 10px;">
-                    </div>
-                    <input type="file" name="gallery_images[${index}][]" multiple accept="image/*" class="category-image-input">
-                    <div class="category-preview" data-index="${index}"></div>
-                    <button type="button" class="delete-category button">Delete Category</button>
-                `;
-                categoryGalleryWrapper.appendChild(block);
+            // Shop deletion functionality
+            document.getElementById('delete-shop-btn').addEventListener('click', function() {
+                const shopId = document.getElementById('shop-id-select').value;
                 
-                // Add event listeners for the new block first
-                setupCategoryBlockListeners(block);
-                
-                // Then update the new category select with existing categories
-                setTimeout(() => {
-                    updateCategorySelectors();
-                }, 100);
-            });
-            
-            // Setup event listeners for category input interaction
-            function setupCategoryBlockListeners(block) {
-                const select = block.querySelector('.category-select');
-                const textInput = block.querySelector('.new-category-input');
-                
-                // When select changes, clear text input
-                select.addEventListener('change', () => {
-                    if (select.value) {
-                        textInput.value = '';
-                        textInput.style.display = 'none';
-                    } else {
-                        textInput.style.display = 'inline-block';
-                    }
-                });
-                
-                // When text input gets focus, clear select
-                textInput.addEventListener('focus', () => {
-                    select.value = '';
-                });
-                
-                // Show/hide text input based on select value
-                if (select.value) {
-                    textInput.style.display = 'none';
-                } else {
-                    textInput.style.display = 'inline-block';
+                if (!shopId) {
+                    alert('削除するショップを選択してください');
+                    return;
                 }
-            }
-            
-            // Setup listeners for initial category blocks
-            document.querySelectorAll('.category-gallery-block').forEach(block => {
-                setupCategoryBlockListeners(block);
+                
+                // Get shop name for confirmation
+                const shopSelect = document.getElementById('shop-id-select');
+                const shopName = shopSelect.options[shopSelect.selectedIndex].text;
+                
+                // Double confirmation
+                if (!confirm(`ショップ「${shopName}」を完全に削除しますか？\n\n⚠️ この操作は取り消せません。\n・ショップの基本情報\n・すべてのメイン画像\n・すべてのカテゴリー画像\n・関連するすべてのデータ\n\nが永久に削除されます。`)) {
+                    return;
+                }
+                
+                if (!confirm(`本当に削除しますか？\n最終確認：ショップ「${shopName}」を削除します。`)) {
+                    return;
+                }
+                
+                // Show loading state
+                this.innerHTML = '⏳ 削除中...';
+                this.disabled = true;
+                
+                // API call to delete shop
+                const data = new FormData();
+                data.append('action', 'studio_shop_internal_api');
+                data.append('endpoint', 'delete_shop.php');
+                data.append('shop_id', shopId);
+                
+                console.log('Sending delete shop request with shop_id:', shopId);
+                
+                fetch(ajaxurl, {
+                    method: 'POST',
+                    body: data
+                })
+                .then(response => {
+                    console.log('Delete shop response status:', response.status);
+                    return response.text();
+                })
+                .then(text => {
+                    console.log('Delete shop raw response:', text);
+                    let result;
+                    try {
+                        result = JSON.parse(text);
+                    } catch (e) {
+                        throw new Error('Invalid JSON response: ' + text);
+                    }
+                    return result;
+                })
+                .then(result => {
+                    console.log('Delete shop parsed result:', result);
+                    if (result.success) {
+                        showMessage(`ショップ「${result.shop_name}」を削除しました`, 'success');
+                        
+                        // Reset form and UI
+                        document.getElementById('update-mode').checked = false;
+                        document.getElementById('shop-selector').style.display = 'none';
+                        document.getElementById('update_mode').value = 'off';
+                        document.getElementById('submit_shop').value = 'Add Shop';
+                        
+                        // Reset delete button state
+                        this.innerHTML = '🗑️ このショップを削除';
+                        this.disabled = false;
+                        this.style.display = 'none';
+                        
+                        // Reload shop list
+                        fetchShops();
+                        
+                        // Reset form
+                        updateShopDetails('');
+                    } else {
+                        this.innerHTML = '🗑️ このショップを削除';
+                        this.disabled = false;
+                        showMessage('削除に失敗しました: ' + result.error, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('削除エラー:', error);
+                    this.innerHTML = '🗑️ このショップを削除';
+                    this.disabled = false;
+                    showMessage('削除に失敗しました', 'error');
+                });
             });
+
+            // Old add-category-block functionality removed - using new UI structure
+            
+            // Old category block listeners removed - using new UI structure
 
             // Main gallery preview for new uploads
-            document.getElementById('main-gallery-input').addEventListener('change', function () {
-                handleFilePreview(this, mainGalleryPreview, 'main');
-            });
+            const mainGalleryInput = document.getElementById('main-gallery-input');
+            if (mainGalleryInput) {
+                mainGalleryInput.addEventListener('change', function () {
+                    const files = Array.from(this.files);
+                    const previewContainer = document.getElementById('main-gallery-preview');
+                    
+                    if (files.length === 0) {
+                        previewContainer.style.display = 'none';
+                        previewContainer.innerHTML = '';
+                        return;
+                    }
+                    
+                    // 1つの画像のみ処理
+                    const file = files[0]; // 最初の画像のみ使用
+                    
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        previewContainer.style.display = 'block';
+                        previewContainer.innerHTML = `
+                            <div style="padding: 15px; background: #fff8e1; border: 2px dashed #ffc107; border-radius: 6px; text-align: center;">
+                                <p style="margin: 0 0 10px 0; color: #e65100; font-weight: 500;">📋 プレビュー: 新しいメイン画像</p>
+                                <div style="position: relative; display: inline-block;">
+                                    <img src="${e.target.result}" alt="新しいメイン画像のプレビュー" 
+                                         style="width: 120px; height: 120px; object-fit: cover; border: 2px solid #ffc107; border-radius: 8px;">
+                                    <button type="button" class="remove-main-preview-btn" data-index="0"
+                                            style="position: absolute; top: -8px; right: -8px; background: #dc3232; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;"
+                                            onmouseover="this.style.background='#a00'; this.style.transform='scale(1.1)'"
+                                            onmouseout="this.style.background='#dc3232'; this.style.transform='scale(1)'">
+                                        ×
+                                    </button>
+                                </div>
+                                <p style="margin: 10px 0 0 0; color: #666; font-size: 12px;">保存すると現在の画像と置き換えられます</p>
+                            </div>
+                        `;
+                    };
+                    reader.readAsDataURL(file);
+                });
+                
+                // 新規メイン画像プレビューの削除機能（1つの画像のみ）
+                document.getElementById('main-gallery-preview').addEventListener('click', function(e) {
+                    if (e.target.classList.contains('remove-main-preview-btn')) {
+                        // 画像を完全にクリア
+                        mainGalleryInput.value = '';
+                        
+                        // プレビューを隠す
+                        document.getElementById('main-gallery-preview').style.display = 'none';
+                        document.getElementById('main-gallery-preview').innerHTML = '';
+                    }
+                });
+            }
 
             // Category gallery preview for new uploads
             document.addEventListener('change', (e) => {
@@ -919,7 +1404,7 @@ function studio_shops_admin_page() {
                     
                     if (categoryId) {
                         if (confirm('Are you sure you want to delete this category?')) {
-                            fetch('https://678photo.com/api/delete_category.php', {
+                            fetch(apiBaseUrl + 'delete_category.php', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({ category_id: categoryId })
@@ -953,7 +1438,7 @@ function studio_shops_admin_page() {
                     
                     if (confirm('Are you sure you want to delete this main gallery image?')) {
                         // Call API to delete main gallery image
-                        fetch('https://678photo.com/api/delete_shop_main_image.php', {
+                        fetch(apiBaseUrl + 'delete_shop_main_image.php', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ 
@@ -995,10 +1480,22 @@ function studio_shops_admin_page() {
 
                     if (imageId) {
                         if (confirm('Are you sure you want to delete this image?')) {
-                            fetch('https://678photo.com/api/delete_category_image.php', {
+                            // Use internal API for local environment
+                            const isLocal = window.location.hostname === 'localhost';
+                            const apiUrl = isLocal ? 
+                                '<?php echo admin_url('admin-ajax.php'); ?>?action=studio_shop_internal_api' : 
+                                apiBaseUrl + 'delete_category_image.php';
+                            
+                            const requestBody = isLocal ? {
+                                action: 'studio_shop_internal_api',
+                                endpoint: 'delete_category_image.php',
+                                data: { image_id: imageId }
+                            } : { image_id: imageId };
+                            
+                            fetch(apiUrl, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ image_id: imageId })
+                                body: JSON.stringify(requestBody)
                             })
                             .then(response => response.json())
                             .then(data => {
@@ -1056,14 +1553,600 @@ function studio_shops_admin_page() {
                 });
             }
 
-            // Initialize category block listeners first
-            setTimeout(() => {
-                document.querySelectorAll('.category-gallery-block').forEach(block => {
-                    setupCategoryBlockListeners(block);
+            // 現在のメイン画像を表示する関数（1枚のみ対応）
+            function renderCurrentMainImage(imageData, shopId) {
+                const container = document.getElementById('current-main-image-container');
+                const noMessage = document.getElementById('no-main-image-message');
+                
+                if (!container) {
+                    console.error('メイン画像コンテナが見つかりません');
+                    return;
+                }
+                
+                // 画像データをチェック（1枚のみ）
+                const hasImage = imageData && Array.isArray(imageData) && imageData.length > 0;
+                
+                if (!hasImage) {
+                    // 画像が無い場合
+                    container.innerHTML = '<p id="no-main-image-message" style="color: #666; font-style: italic; padding: 15px; background: #fafafa; border: 1px dashed #ddd; border-radius: 6px; text-align: center;">メイン画像が設定されていません</p>';
+                    return;
+                }
+                
+                // 最初（メイン）の画像のみ使用
+                const imageItem = imageData[0];
+                const imageUrl = typeof imageItem === 'object' ? imageItem.url : imageItem;
+                const imageId = typeof imageItem === 'object' ? imageItem.id : null;
+                
+                // 1枚の画像を表示
+                container.innerHTML = `
+                    <div style="display: flex; justify-content: center; padding: 15px; background: #fafafa; border: 1px dashed #ddd; border-radius: 6px;">
+                        <div class="main-image-item" style="position: relative; display: inline-block;" data-image-id="${imageId || ''}">
+                            <img src="${imageUrl}" alt="現在のメイン画像" 
+                                 onclick="showMainImagePreview('${imageUrl}', 1)"
+                                 style="width: 150px; height: 150px; object-fit: cover; border: 2px solid #666; border-radius: 8px; cursor: pointer; transition: all 0.3s ease;"
+                                 onmouseover="this.style.borderColor='#333'; this.style.transform='scale(1.05)'"
+                                 onmouseout="this.style.borderColor='#666'; this.style.transform='scale(1)'">
+                            <button type="button" class="delete-main-image-btn" 
+                                    onclick="deleteMainImage('${imageUrl}', 0, ${shopId}, this)"
+                                    title="この画像を削除"
+                                    style="position: absolute; top: -8px; right: -8px; background: #dc3232; color: white; border: none; border-radius: 50%; width: 28px; height: 28px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: all 0.2s ease;"
+                                    onmouseover="this.style.background='#a00'; this.style.transform='scale(1.1)'"
+                                    onmouseout="this.style.background='#dc3232'; this.style.transform='scale(1)'">
+                                ×
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // メインギャラリー画像プレビュー表示（グローバル関数）
+            window.showMainImagePreview = function(imageUrl, imageNumber) {
+                const previewWindow = window.open('', '_blank', 'width=800,height=600,scrollbars=yes');
+                previewWindow.document.write(`
+                    <html>
+                        <head><title>メインギャラリー - 画像 ${imageNumber}</title></head>
+                        <body style="margin:0; background:#f0f0f0; display:flex; justify-content:center; align-items:center; min-height:100vh;">
+                            <div style="text-align:center; background:white; padding:20px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+                                <h3 style="margin-top:0;">メインギャラリー - 画像 ${imageNumber}</h3>
+                                <img src="${imageUrl}" style="max-width:100%; max-height:80vh; border:1px solid #ddd; border-radius:4px;">
+                                <p><button onclick="window.close()" style="margin-top:15px; padding:8px 20px; background:#0073aa; color:white; border:none; border-radius:4px; cursor:pointer;">閉じる</button></p>
+                            </div>
+                        </body>
+                    </html>
+                `);
+            }
+            
+            // メインギャラリー画像削除（グローバル関数）
+            window.deleteMainImage = function(imageUrl, imageIndex, shopId, buttonElement) {
+                if (!confirm(`メインギャラリーから画像を削除しますか？`)) {
+                    return;
+                }
+                
+                // Loading状態を表示
+                buttonElement.innerHTML = '⏳';
+                buttonElement.disabled = true;
+                
+                // Find image ID from data attribute
+                const imageItem = buttonElement.closest('.main-image-item');
+                const imageId = imageItem.dataset.imageId;
+                
+                if (!imageId) {
+                    // Fallback to DOM-only deletion if no ID available
+                    imageItem.remove();
+                    updateMainGalleryEmptyState();
+                    showMessage('画像を削除しました', 'success');
+                    return;
+                }
+                
+                // API call to delete main gallery image
+                const data = new FormData();
+                data.append('action', 'studio_shop_internal_api');
+                data.append('endpoint', 'delete_main_gallery_image.php');
+                data.append('image_id', imageId);
+                
+                fetch(ajaxurl, {
+                    method: 'POST',
+                    body: data
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        // Remove from DOM on successful deletion
+                        imageItem.remove();
+                        updateMainGalleryEmptyState();
+                        showMessage('画像を削除しました', 'success');
+                    } else {
+                        // Reset button on failure
+                        buttonElement.innerHTML = '×';
+                        buttonElement.disabled = false;
+                        showMessage('削除に失敗しました: ' + result.error, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('削除エラー:', error);
+                    buttonElement.innerHTML = '×';
+                    buttonElement.disabled = false;
+                    showMessage('削除に失敗しました', 'error');
+                });
+            }
+            
+            function updateMainGalleryEmptyState() {
+                const container = document.getElementById('current-main-image-container');
+                const remainingImages = container.querySelectorAll('.main-image-item');
+                if (remainingImages.length === 0) {
+                    container.innerHTML = '<p id="no-main-image-message" style="color: #666; font-style: italic; padding: 15px; background: #fafafa; border: 1px dashed #ddd; border-radius: 6px; text-align: center;">メイン画像が設定されていません</p>';
+                }
+            }
+
+            // 既存カテゴリーを表示する関数（シンプル版）
+            function renderExistingCategories(categoryImages) {
+                // renderExistingCategories called
+                
+                const container = document.getElementById('existing-categories-container');
+                const noMessage = document.getElementById('no-categories-message');
+                
+                if (!container) {
+                    console.error('既存カテゴリーコンテナが見つかりません');
+                    return;
+                }
+                
+                // カテゴリーデータをチェック
+                const hasCategories = categoryImages && 
+                    typeof categoryImages === 'object' && 
+                    Object.keys(categoryImages).length > 0;
+                
+                if (!hasCategories) {
+                    // カテゴリーが無い場合
+                    container.innerHTML = '<p id="no-categories-message" style="color: #666; font-style: italic;">カテゴリーが登録されていません</p>';
+                    return;
+                }
+                
+                // メッセージを隠す
+                if (noMessage) {
+                    noMessage.style.display = 'none';
+                }
+                
+                // カテゴリー表示を構築
+                let html = '';
+                // Building category display
+                
+                Object.keys(categoryImages).forEach(categoryName => {
+                    const images = categoryImages[categoryName];
+                    if (!images || !Array.isArray(images) || images.length === 0) {
+                        return; // 画像が無いカテゴリーはスキップ
+                    }
+                    
+                    html += `
+                        <div class="category-item" data-category="${categoryName}">
+                            <h5>📁 ${categoryName}</h5>
+                            <div class="category-images">
+                    `;
+                    
+                    // 画像を表示
+                    images.forEach((imageData, index) => {
+                        const imageUrl = typeof imageData === 'string' ? imageData : imageData.url;
+                        const imageId = typeof imageData === 'object' ? imageData.id : null;
+                        
+                        if (imageUrl) {
+                            html += `
+                                <div class="category-image-item" data-image-id="${imageId}" data-image-url="${imageUrl}">
+                                    <img src="${imageUrl}" alt="${categoryName} 画像 ${index + 1}" 
+                                         onclick="showImagePreview('${imageUrl}', '${categoryName}')">
+                                    <button type="button" class="delete-image-btn" 
+                                            onclick="deleteImage('${imageId}', '${categoryName}', this)"
+                                            title="この画像を削除">
+                                        ×
+                                    </button>
+                                </div>
+                            `;
+                        }
+                    });
+                    
+                    html += `
+                            </div>
+                            <div class="category-actions">
+                                <button type="button" class="delete-category-btn" 
+                                        onclick="deleteCategory('${categoryName}', this)"
+                                        title="このカテゴリーと全ての画像を削除">
+                                    🗑️ カテゴリーを削除
+                                </button>
+                            </div>
+                        </div>
+                    `;
                 });
                 
-                // Then fetch shops and update selectors
-                fetchShops();
+                console.log('Generated HTML:', html);
+                console.log('Container element:', container);
+                
+                if (html) {
+                    container.innerHTML = html;
+                    console.log('HTML inserted into container');
+                } else {
+                    console.log('No HTML generated - keeping default message');
+                }
+                
+                console.log('既存カテゴリー表示完了:', Object.keys(categoryImages).length, 'カテゴリー');
+            }
+            
+            // 画像プレビュー表示（グローバル関数として定義）
+            window.showImagePreview = function(imageUrl, categoryName) {
+                // 簡単なプレビュー表示（モーダルまたは新規タブ）
+                const previewWindow = window.open('', '_blank', 'width=800,height=600,scrollbars=yes');
+                previewWindow.document.write(`
+                    <html>
+                        <head><title>${categoryName} - 画像プレビュー</title></head>
+                        <body style="margin:0; background:#f0f0f0; display:flex; justify-content:center; align-items:center; min-height:100vh;">
+                            <div style="text-align:center; background:white; padding:20px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+                                <h3 style="margin-top:0;">${categoryName}</h3>
+                                <img src="${imageUrl}" style="max-width:100%; max-height:80vh; border:1px solid #ddd; border-radius:4px;">
+                                <p><button onclick="window.close()" style="margin-top:15px; padding:8px 20px; background:#0073aa; color:white; border:none; border-radius:4px; cursor:pointer;">閉じる</button></p>
+                            </div>
+                        </body>
+                    </html>
+                `);
+            }
+            
+            // 個別画像削除（グローバル関数として定義）
+            window.deleteImage = function(imageId, categoryName, buttonElement) {
+                if (!imageId) {
+                    alert('画像IDが取得できませんでした');
+                    return;
+                }
+                
+                if (!confirm(`「${categoryName}」から画像を削除しますか？`)) {
+                    return;
+                }
+                
+                // 画像削除開始
+                
+                // Loading状態を表示
+                buttonElement.innerHTML = '⏳';
+                buttonElement.disabled = true;
+                
+                // APIを呼び出して削除
+                fetch('/wp-admin/admin-ajax.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        action: 'delete_category_image',
+                        image_id: imageId,
+                        _ajax_nonce: '<?php echo wp_create_nonce("studio_shop_nonce"); ?>'
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // 削除結果を処理
+                    if (data.success) {
+                        // DOM要素を削除
+                        const imageItem = buttonElement.closest('.category-image-item');
+                        imageItem.remove();
+                        
+                        // 成功メッセージを表示
+                        showMessage('画像を削除しました', 'success');
+                        
+                        // カテゴリーに画像が無くなった場合の処理
+                        const categoryItem = buttonElement.closest('.category-item');
+                        const remainingImages = categoryItem.querySelectorAll('.category-image-item');
+                        if (remainingImages.length === 0) {
+                            // カテゴリー全体を削除するか確認
+                            if (confirm(`「${categoryName}」に画像が無くなりました。カテゴリー自体も削除しますか？`)) {
+                                categoryItem.remove();
+                                
+                                // カテゴリーが全て無くなった場合
+                                const container = document.getElementById('existing-categories-container');
+                                if (container.children.length === 0) {
+                                    container.innerHTML = '<p id="no-categories-message" style="color: #666; font-style: italic;">カテゴリーが登録されていません</p>';
+                                }
+                            }
+                        }
+                    } else {
+                        alert('画像の削除に失敗しました: ' + (data.error || 'Unknown error'));
+                        buttonElement.innerHTML = '×';
+                        buttonElement.disabled = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('削除エラー:', error);
+                    alert('画像の削除中にエラーが発生しました');
+                    buttonElement.innerHTML = '×';
+                    buttonElement.disabled = false;
+                });
+            }
+            
+            // カテゴリー全体削除（グローバル関数として定義）
+            window.deleteCategory = function(categoryName, buttonElement) {
+                if (!confirm(`カテゴリー「${categoryName}」とその中の全ての画像を削除しますか？\n\nこの操作は取り消せません。`)) {
+                    return;
+                }
+                
+                // カテゴリー削除開始
+                
+                // Loading状態を表示
+                const originalText = buttonElement.innerHTML;
+                buttonElement.innerHTML = '⏳ 削除中...';
+                buttonElement.disabled = true;
+                
+                // 現在選択されているショップIDを取得
+                const shopId = document.getElementById('shop_id').value;
+                if (!shopId) {
+                    alert('ショップが選択されていません');
+                    buttonElement.innerHTML = originalText;
+                    buttonElement.disabled = false;
+                    return;
+                }
+                
+                // APIを呼び出してカテゴリー削除
+                fetch('/wp-admin/admin-ajax.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        action: 'delete_category',
+                        shop_id: shopId,
+                        category_name: categoryName,
+                        _ajax_nonce: '<?php echo wp_create_nonce("studio_shop_nonce"); ?>'
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // カテゴリー削除結果を処理
+                    if (data.success) {
+                        // DOM要素を削除
+                        const categoryItem = buttonElement.closest('.category-item');
+                        categoryItem.remove();
+                        
+                        // 成功メッセージを表示
+                        showMessage(`カテゴリー「${categoryName}」を削除しました`, 'success');
+                        
+                        // カテゴリーが全て無くなった場合
+                        const container = document.getElementById('existing-categories-container');
+                        if (container.children.length === 0) {
+                            container.innerHTML = '<p id="no-categories-message" style="color: #666; font-style: italic;">カテゴリーが登録されていません</p>';
+                        }
+                    } else {
+                        alert('カテゴリーの削除に失敗しました: ' + (data.error || 'Unknown error'));
+                        buttonElement.innerHTML = originalText;
+                        buttonElement.disabled = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('カテゴリー削除エラー:', error);
+                    alert('カテゴリーの削除中にエラーが発生しました');
+                    buttonElement.innerHTML = originalText;
+                    buttonElement.disabled = false;
+                });
+            }
+            
+            // メッセージ表示関数
+            function showMessage(message, type = 'info') {
+                const existingMessages = document.querySelectorAll('.temp-message');
+                existingMessages.forEach(msg => msg.remove());
+                
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `temp-message ${type === 'success' ? 'success-message' : 'error-message'}`;
+                messageDiv.textContent = message;
+                messageDiv.style.position = 'fixed';
+                messageDiv.style.top = '20px';
+                messageDiv.style.right = '20px';
+                messageDiv.style.zIndex = '9999';
+                messageDiv.style.maxWidth = '400px';
+                
+                document.body.appendChild(messageDiv);
+                
+                // 3秒後に自動削除
+                setTimeout(() => {
+                    if (messageDiv.parentNode) {
+                        messageDiv.remove();
+                    }
+                }, 3000);
+            }
+
+            // New category image preview handler
+            if (newCategoryImagesInput) {
+                newCategoryImagesInput.addEventListener('change', function() {
+                    newCategoryPreview.innerHTML = '';
+                    const files = Array.from(this.files);
+                    
+                    if (files.length === 0) {
+                        newCategoryPreview.innerHTML = '<p style="color: #999; text-align: center; margin: 40px 0;">選択した画像のプレビューがここに表示されます</p>';
+                        addNewCategoryBtn.disabled = true;
+                        return;
+                    }
+                    
+                    // Enable add button if we have name and images
+                    if (newCategoryNameInput.value.trim()) {
+                        addNewCategoryBtn.disabled = false;
+                    }
+                    
+                    files.forEach((file, index) => {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            const preview = document.createElement('div');
+                            preview.className = 'image-preview';
+                            preview.innerHTML = `
+                                <img src="${e.target.result}" alt="Preview ${index + 1}">
+                                <button type="button" class="remove-preview-btn" data-index="${index}">×</button>
+                            `;
+                            newCategoryPreview.appendChild(preview);
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                });
+            }
+            
+            // New category name input handler
+            if (newCategoryNameInput) {
+                newCategoryNameInput.addEventListener('input', function() {
+                    // Enable add button if we have name and images
+                    if (this.value.trim() && newCategoryImagesInput.files.length > 0) {
+                        addNewCategoryBtn.disabled = false;
+                    } else {
+                        addNewCategoryBtn.disabled = true;
+                    }
+                });
+            }
+            
+            // Clear new category button handler
+            if (clearNewCategoryBtn) {
+                clearNewCategoryBtn.addEventListener('click', function() {
+                    newCategoryNameInput.value = '';
+                    newCategoryImagesInput.value = '';
+                    newCategoryPreview.innerHTML = '<p style="color: #999; text-align: center; margin: 40px 0;">選択した画像のプレビューがここに表示されます</p>';
+                    addNewCategoryBtn.disabled = true;
+                });
+            }
+            
+            // Add new category button handler
+            if (addNewCategoryBtn) {
+                addNewCategoryBtn.addEventListener('click', function() {
+                    const categoryName = newCategoryNameInput.value.trim();
+                    const files = Array.from(newCategoryImagesInput.files);
+                    
+                    if (!categoryName || files.length === 0) {
+                        alert('カテゴリー名と画像を入力してください');
+                        return;
+                    }
+                    
+                    // Get current shop ID
+                    const shopId = document.getElementById('shop_id').value;
+                    if (!shopId) {
+                        alert('ショップが選択されていません');
+                        return;
+                    }
+                    
+                    // Adding new category
+                    
+                    // Disable button during processing
+                    addNewCategoryBtn.disabled = true;
+                    addNewCategoryBtn.innerHTML = '⏳ 処理中...';
+                    
+                    // Convert files to base64
+                    const promises = files.map(file => {
+                        return new Promise((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.onload = (e) => resolve(e.target.result);
+                            reader.onerror = reject;
+                            reader.readAsDataURL(file);
+                        });
+                    });
+                    
+                    Promise.all(promises).then(base64Images => {
+                        // Prepare data for API
+                        const categoryData = {
+                            shop_id: shopId,
+                            gallery: [{
+                                category_name: categoryName,
+                                images: base64Images
+                            }]
+                        };
+                        
+                        // Sending to API
+                        
+                        // Call internal API via AJAX
+                        const formData = new FormData();
+                        formData.append('action', 'studio_shop_internal_api');
+                        formData.append('endpoint', 'category_image_uploader.php');
+                        formData.append('data', JSON.stringify(categoryData));
+                        
+                        fetch('/wp-admin/admin-ajax.php', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => {
+                            // Response received
+                            if (!response.ok) {
+                                throw new Error('HTTP error! status: ' + response.status);
+                            }
+                            return response.text(); // Get text first to debug
+                        })
+                        .then(text => {
+                            // Processing response
+                            try {
+                                return JSON.parse(text);
+                            } catch (e) {
+                                console.error('JSON parse error:', e);
+                                console.error('Response was:', text);
+                                throw new Error('Invalid JSON response');
+                            }
+                        })
+                        .then(result => {
+                            console.log('Category upload result:', result);
+                            
+                            if (result && result.success) {
+                                // Show success message
+                                showMessage('カテゴリー「' + categoryName + '」を追加しました', 'success');
+                                
+                                // Clear the form
+                                clearNewCategoryBtn.click();
+                                
+                                // First refresh the shops list to get updated data
+                                fetchShops().then(() => {
+                                    // Then update the shop details with fresh data
+                                    setTimeout(() => {
+                                        updateShopDetails(shopId);
+                                    }, 500);
+                                });
+                            } else {
+                                alert('カテゴリーの追加に失敗しました: ' + (result.error || 'Unknown error'));
+                            }
+                            
+                            // Re-enable button
+                            addNewCategoryBtn.innerHTML = '➕ このカテゴリーを追加';
+                            addNewCategoryBtn.disabled = newCategoryNameInput.value.trim() && newCategoryImagesInput.files.length > 0 ? false : true;
+                        })
+                        .catch(error => {
+                            console.error('Category upload error:', error);
+                            alert('カテゴリーのアップロード中にエラーが発生しました');
+                            addNewCategoryBtn.innerHTML = '➕ このカテゴリーを追加';
+                            addNewCategoryBtn.disabled = false;
+                        });
+                    }).catch(error => {
+                        console.error('File reading error:', error);
+                        alert('画像の読み込みに失敗しました');
+                        addNewCategoryBtn.innerHTML = '➕ このカテゴリーを追加';
+                        addNewCategoryBtn.disabled = false;
+                    });
+                });
+            }
+            
+            // Handle preview image removal for new category
+            newCategoryPreview.addEventListener('click', function(e) {
+                if (e.target.classList.contains('remove-preview-btn')) {
+                    const index = parseInt(e.target.dataset.index);
+                    const dt = new DataTransfer();
+                    const files = Array.from(newCategoryImagesInput.files);
+                    
+                    files.forEach((file, i) => {
+                        if (i !== index) {
+                            dt.items.add(file);
+                        }
+                    });
+                    
+                    newCategoryImagesInput.files = dt.files;
+                    
+                    // Refresh preview
+                    if (newCategoryImagesInput.files.length > 0) {
+                        newCategoryImagesInput.dispatchEvent(new Event('change'));
+                    } else {
+                        newCategoryPreview.innerHTML = '<p style="color: #999; text-align: center; margin: 40px 0;">選択した画像のプレビューがここに表示されます</p>';
+                        addNewCategoryBtn.disabled = true;
+                    }
+                }
+            });
+
+            // Initialize - fetch shops on page load
+            setTimeout(() => {
+                console.log('Fetching shops on page load...');
+                console.log('shopSelect element:', shopSelect);
+                console.log('fetchShops function exists:', typeof fetchShops);
+                if (shopSelect && typeof fetchShops === 'function') {
+                    fetchShops();
+                } else {
+                    console.error('Cannot fetch shops - missing elements or functions');
+                }
             }, 100);
         });
         </script>
