@@ -103,16 +103,30 @@ function process_and_save_images($images, $shop_id, $category_id = null) {
             $filename = $prefix . '_' . time() . '_' . $index . '.' . $image_type;
             $filepath = $upload_dir . $filename;
             
-            // Generate URL using WordPress uploads directory
-            $wp_upload_dir = wp_upload_dir();
-            $url = $wp_upload_dir['baseurl'] . '/studio-shops/' . $filename;
-            
-            // Base64データをそのまま保存（ファイルシステムを使わない）
-            $image_urls[] = array(
-                'filename' => $filename,
-                'url' => $image_data, // Base64データをそのまま保存
-                'filepath' => $filepath
-            );
+            // Save the actual file to filesystem
+            if (file_put_contents($filepath, $decoded_image) !== false) {
+                // Generate URL using WordPress uploads directory
+                $wp_upload_dir = wp_upload_dir();
+                $url = $wp_upload_dir['baseurl'] . '/studio-shops/' . $filename;
+                
+                // Store the file URL instead of Base64 data
+                $image_urls[] = array(
+                    'filename' => $filename,
+                    'url' => $url, // Store the file URL
+                    'filepath' => $filepath
+                );
+                
+                wp_debug_log_info("Image file saved successfully", [
+                    'filename' => $filename,
+                    'url' => $url,
+                    'file_size' => filesize($filepath)
+                ]);
+            } else {
+                wp_debug_log_error("Failed to save image file", [
+                    'filename' => $filename,
+                    'filepath' => $filepath
+                ]);
+            }
         }
     }
     
@@ -594,7 +608,31 @@ function delete_gallery_images($data) {
     
     try {
         if ($delete_all) {
-            // Delete all gallery images for this shop
+            // First get all image URLs for physical file deletion
+            $get_stmt = $conn->prepare("SELECT image_url FROM studio_shop_images WHERE shop_id = ?");
+            $get_stmt->bind_param("i", $shop_id);
+            $get_stmt->execute();
+            $result = $get_stmt->get_result();
+            $image_urls = $result->fetch_all(MYSQLI_ASSOC);
+            $get_stmt->close();
+            
+            // Delete physical files
+            $wp_upload_dir = wp_upload_dir();
+            $upload_dir = $wp_upload_dir['basedir'] . '/studio-shops/';
+            $deleted_files = 0;
+            
+            foreach ($image_urls as $row) {
+                $image_url = $row['image_url'];
+                if (!empty($image_url) && strpos($image_url, 'data:image') !== 0) {
+                    $filename = basename($image_url);
+                    $filepath = $upload_dir . $filename;
+                    if (file_exists($filepath) && unlink($filepath)) {
+                        $deleted_files++;
+                    }
+                }
+            }
+            
+            // Delete all gallery images from database
             $stmt = $conn->prepare("DELETE FROM studio_shop_images WHERE shop_id = ?");
             $stmt->bind_param("i", $shop_id);
             $result = $stmt->execute();
@@ -602,7 +640,8 @@ function delete_gallery_images($data) {
             if ($result) {
                 $deleted_count = $stmt->affected_rows;
                 $stmt->close();
-                return array('success' => true, 'message' => "ギャラリー画像を{$deleted_count}枚削除しました。");
+                wp_debug_log_info("Deleted gallery images", ['db_count' => $deleted_count, 'file_count' => $deleted_files]);
+                return array('success' => true, 'message' => "ギャラリー画像を{$deleted_count}枚削除しました。（ファイル{$deleted_files}個削除）");
             } else {
                 $stmt->close();
                 return array('success' => false, 'error' => 'Failed to delete gallery images');
@@ -663,12 +702,23 @@ function delete_main_gallery_image($data) {
     if ($del_stmt->execute()) {
         $del_stmt->close();
         
-        // Optional: Delete physical file (extract filename from URL)
-        $filename = basename($image_url);
-        $upload_dir = get_upload_directory();
-        $filepath = $upload_dir . $filename;
-        if (file_exists($filepath)) {
-            unlink($filepath);
+        // Delete physical file if it exists
+        if (!empty($image_url) && strpos($image_url, 'data:image') !== 0) {
+            // This is a file URL, not Base64 data
+            $filename = basename($image_url);
+            $wp_upload_dir = wp_upload_dir();
+            $upload_dir = $wp_upload_dir['basedir'] . '/studio-shops/';
+            $filepath = $upload_dir . $filename;
+            
+            if (file_exists($filepath)) {
+                if (unlink($filepath)) {
+                    wp_debug_log_info("Physical image file deleted", ['filepath' => $filepath]);
+                } else {
+                    wp_debug_log_error("Failed to delete physical image file", ['filepath' => $filepath]);
+                }
+            } else {
+                wp_debug_log_info("Physical image file not found (may be Base64 data)", ['filepath' => $filepath]);
+            }
         }
         
         // キャッシュをクリア
@@ -719,7 +769,31 @@ function delete_shop($data) {
         // Skip category images deletion - table doesn't exist in simplified system
         $deleted_cat_images_count = 0;
         
-        // Delete all main gallery images for this shop
+        // Get all main gallery images for physical file deletion
+        $get_main_images_stmt = $conn->prepare("SELECT image_url FROM studio_shop_images WHERE shop_id = ?");
+        $get_main_images_stmt->bind_param("i", $shop_id);
+        $get_main_images_stmt->execute();
+        $main_images_result = $get_main_images_stmt->get_result();
+        $main_image_urls = $main_images_result->fetch_all(MYSQLI_ASSOC);
+        $get_main_images_stmt->close();
+        
+        // Delete physical main gallery image files
+        $wp_upload_dir = wp_upload_dir();
+        $upload_dir = $wp_upload_dir['basedir'] . '/studio-shops/';
+        $deleted_main_files = 0;
+        
+        foreach ($main_image_urls as $row) {
+            $image_url = $row['image_url'];
+            if (!empty($image_url) && strpos($image_url, 'data:image') !== 0) {
+                $filename = basename($image_url);
+                $filepath = $upload_dir . $filename;
+                if (file_exists($filepath) && unlink($filepath)) {
+                    $deleted_main_files++;
+                }
+            }
+        }
+        
+        // Delete all main gallery images from database
         $del_main_images_stmt = $conn->prepare("DELETE FROM studio_shop_images WHERE shop_id = ?");
         $del_main_images_stmt->bind_param("i", $shop_id);
         $del_main_images_stmt->execute();
@@ -749,12 +823,19 @@ function delete_shop($data) {
         // WordPressアクションを発火
         do_action('studio_shop_deleted', $shop_id, $shop_name);
         
+        wp_debug_log_info("Shop deleted successfully", [
+            'shop_name' => $shop_name,
+            'deleted_main_images_db' => $deleted_main_images_count,
+            'deleted_main_files' => $deleted_main_files
+        ]);
+        
         return array(
             'success' => true, 
             'message' => 'Shop deleted successfully',
             'shop_name' => $shop_name,
             'deleted_category_images' => $deleted_cat_images_count,
             'deleted_main_images' => $deleted_main_images_count,
+            'deleted_main_files' => $deleted_main_files,
             'cleaned_categories' => $cleaned_categories
         );
         
