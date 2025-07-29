@@ -21,11 +21,6 @@ get_header(); ?>
       <h1 class="gallery-header__title">Gallery</h1>
       <div class="gallery-header__filters">
         <div class="gallery-select-wrapper">
-          <select class="gallery-select" id="category-filter">
-            <option value="all">ALL</option>
-          </select>
-        </div>
-        <div class="gallery-select-wrapper">
           <select class="gallery-select" id="studio-filter">
             <option value="all">全スタジオ</option>
             <!-- Options will be populated dynamically via JavaScript -->
@@ -88,7 +83,6 @@ document.addEventListener('DOMContentLoaded', function() {
   if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
     gsap.registerPlugin(ScrollTrigger);
   }
-  const categoryFilter = document.getElementById('category-filter');
   const studioFilter = document.getElementById('studio-filter');
   const galleryGrid = document.getElementById('gallery-grid');
 
@@ -122,6 +116,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
       if (data.success && data.data.shops) {
         shopsData = data.data.shops;
+        
+        // デバッグ: main_imageがあるかをチェック
+        console.log('DEBUG - Loaded shops data:', shopsData.length, 'shops');
+        shopsData.forEach((shop, index) => {
+          console.log(`DEBUG - Shop ${index + 1} (ID: ${shop.id}): name="${shop.name}", has_main_image=${!!(shop.main_image)}`);
+          if (shop.main_image) {
+            console.log(`DEBUG - Shop ${shop.id} main_image length:`, shop.main_image.length);
+            console.log(`DEBUG - Shop ${shop.id} main_image starts with:`, shop.main_image.substring(0, 50));
+          }
+        });
+        
         populateStudioFilter();
         updateGallery(); // Initial gallery population
       } else {
@@ -151,68 +156,10 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Function to update category filter based on selected shop
-  function updateCategoryFilter(shopId) {
-    // Clear existing categories
-    categoryFilter.innerHTML = '<option value="all">ALL</option>';
-
-    if (shopId === 'all') {
-      // For 'all' studios, collect all unique categories
-      const categories = new Set();
-      shopsData.forEach(shop => {
-        if (shop.category_images && typeof shop.category_images === 'object') {
-          Object.keys(shop.category_images).forEach(category => {
-            categories.add(category);
-          });
-        }
-      });
-      if (categories.size === 0) {
-        const option = document.createElement('option');
-        option.value = 'no-category';
-        option.textContent = 'No category';
-        option.disabled = true;
-        categoryFilter.appendChild(option);
-      } else {
-        categories.forEach(category => {
-          const option = document.createElement('option');
-          option.value = category;
-          option.textContent = category;
-          categoryFilter.appendChild(option);
-        });
-      }
-    } else {
-      // For specific shop
-      const shop = shopsData.find(s => s.id.toString() === shopId);
-      if (shop && shop.category_images && typeof shop.category_images === 'object') {
-        const categories = Object.keys(shop.category_images);
-        if (categories.length === 0) {
-          const option = document.createElement('option');
-          option.value = 'no-category';
-          option.textContent = 'No category';
-          option.disabled = true;
-          categoryFilter.appendChild(option);
-        } else {
-          categories.forEach(category => {
-            const option = document.createElement('option');
-            option.value = category;
-            option.textContent = category;
-            categoryFilter.appendChild(option);
-          });
-        }
-      } else {
-        const option = document.createElement('option');
-        option.value = 'no-category';
-        option.textContent = 'No category';
-        option.disabled = true;
-        categoryFilter.appendChild(option);
-      }
-    }
-  }
 
   // Function to update gallery
   function updateGallery() {
     const selectedStudio = studioFilter.value;
-    const selectedCategory = categoryFilter.value;
 
     // Add updating class for smooth transition
     galleryGrid.classList.add('updating');
@@ -221,26 +168,19 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
       galleryGrid.innerHTML = '';
 
-      // Update categories when studio changes
-      updateCategoryFilter(selectedStudio);
-
       // Create all gallery items at once
       let imageCount = 0;
       shopsData.forEach(shop => {
         // Filter by studio
         if (selectedStudio === 'all' || shop.id.toString() === selectedStudio) {
-          // Handle only category images
-          if (shop.category_images && typeof shop.category_images === 'object') {
-            Object.entries(shop.category_images).forEach(([category, images]) => {
-              if (selectedCategory === 'all' || selectedCategory === category) {
-                if (Array.isArray(images)) {
-                  images.forEach((image, index) => {
-                    const alt = `${category} Image ${index + 1} from ${shop.name}`;
-                    createGalleryItem(image, alt);
-                    imageCount++;
-                  });
-                }
-              }
+          // Handle main gallery images (simplified gallery system)
+          if (shop.main_gallery_images && Array.isArray(shop.main_gallery_images)) {
+            shop.main_gallery_images.forEach((image, index) => {
+              // Check if image has url property (new structure) or is direct URL (old structure)
+              const imageUrl = (typeof image === 'object' && image.url) ? image.url : image;
+              const alt = `Gallery Image ${index + 1} from ${shop.name}`;
+              createGalleryItem(imageUrl, alt);
+              imageCount++;
             });
           }
         }
@@ -251,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       // If no images are found, display a message
       if (imageCount === 0) {
-        galleryGrid.innerHTML = '<p>No images available for the selected filters.</p>';
+        galleryGrid.innerHTML = '<p>選択したスタジオに画像がありません。</p>';
       } else {
         // Setup beautiful fade animations
         setupScrollAnimations();
@@ -423,7 +363,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Event listeners for filters
   studioFilter.addEventListener('change', updateGallery);
-  categoryFilter.addEventListener('change', updateGallery);
 
   // Add resize handler for responsive layout updates
   let resizeTimer;
