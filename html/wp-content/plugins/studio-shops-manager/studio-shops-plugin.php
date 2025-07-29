@@ -423,6 +423,89 @@ function studio_shops_page() {
             }
         };
         
+        // Global function for loadShopData
+        function loadShopData(shopId) {
+            jQuery.ajax({
+                url: '<?php echo admin_url("admin-ajax.php"); ?>',
+                type: 'POST',
+                data: {
+                    action: 'studio_shop_internal_api',
+                    endpoint: 'get_all_studio_shop.php'
+                },
+                timeout: 10000,
+                success: function(data) {
+                    if (data.success && data.shops) {
+                        const shop = data.shops.find(s => s.id == shopId);
+                        if (shop) {
+                            // Set form fields
+                            document.getElementById('name').value = shop.name || '';
+                            document.getElementById('address').value = shop.address || '';
+                            document.getElementById('phone').value = shop.phone || '';
+                            document.getElementById('nearest_station').value = shop.nearest_station || '';
+                            document.getElementById('business_hours').value = shop.business_hours || '';
+                            document.getElementById('holidays').value = shop.holidays || '';
+                            document.getElementById('map_url').value = shop.map_url || '';
+                            document.getElementById('company_email').value = shop.company_email || '';
+                            document.getElementById('shop_id').value = shop.id;
+                            
+                            // Gallery images preview
+                            const galleryPreview = document.getElementById('gallery-preview');
+                            
+                            if (shop.main_gallery_images && shop.main_gallery_images.length > 0) {
+                                let galleryHtml = '<div style="margin-bottom: 15px; padding: 15px; background: #f8f8f8; border: 2px solid #666; border-radius: 8px;"><p style="margin: 0 0 15px 0; font-weight: bold; color: #333; font-size: 16px;">📸 現在のギャラリー画像 (' + shop.main_gallery_images.length + '枚):</p></div>';
+                                
+                                shop.main_gallery_images.forEach((image, index) => {
+                                    const imageUrl = image.url || image.image_url || image;
+                                    const imageId = image.id || index;
+                                    
+                                    galleryHtml += '<div style="position: relative; background: white; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s;" data-image-id="' + imageId + '"><img src="' + imageUrl + '" alt="ギャラリー画像 ' + (index + 1) + '" style="width: 100%; height: 100px; object-fit: cover; display: block; cursor: pointer;" loading="lazy" onclick="window.open(this.src, \'_blank\')"><div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6); color: white; padding: 2px; text-align: center; font-size: 11px;">' + (index + 1) + '</div><button onclick="deleteMainGalleryImage(' + imageId + ')" style="position: absolute; top: 4px; right: 4px; background: rgba(255,0,0,0.8); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; transition: background 0.2s;" title="この画像を削除">×</button></div>';
+                                });
+                                
+                                galleryPreview.innerHTML = galleryHtml;
+                            } else {
+                                galleryPreview.innerHTML = '<p style="color: #666; font-style: italic; margin-top: 10px;">ギャラリー画像は設定されていません。</p>';
+                            }
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert('ショップデータの読み込みに失敗しました: ' + error);
+                }
+            });
+        }
+
+        // Global function for deleteMainGalleryImage
+        function deleteMainGalleryImage(imageId) {
+            if (!confirm('この画像を削除しますか？\\n\\nこの操作は取り消すことができません。')) {
+                return;
+            }
+            
+            jQuery.ajax({
+                url: '<?php echo admin_url("admin-ajax.php"); ?>',
+                type: 'POST',
+                data: {
+                    action: 'studio_shop_internal_api',
+                    endpoint: 'delete_main_gallery_image.php',
+                    image_id: imageId
+                },
+                timeout: 10000,
+                success: function(data) {
+                    if (data.success) {
+                        alert(data.message);
+                        const shopId = document.getElementById('shop-id-select').value;
+                        if (shopId) {
+                            loadShopData(shopId);
+                        }
+                    } else {
+                        alert('削除に失敗しました: ' + (data.error || 'Unknown error'));
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert('削除リクエストでエラーが発生しました: ' + error);
+                }
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             // 自動テスト: ギャラリー画像問題の検出と修正
             setTimeout(function() {
