@@ -120,7 +120,7 @@ $current_page = $shop_data['current_page'];
       <div class="studio-card">
         <div class="studio-card__image">
           <img
-            src="<?php echo !empty($shop['image_urls']) ? esc_url($shop['image_urls'][0]) : get_template_directory_uri() . '/assets/images/cardpic-sample.jpg'; ?>"
+            src="<?php echo !empty($shop['main_image']) ? esc_url($shop['main_image']) : (!empty($shop['image_urls']) ? esc_url($shop['image_urls'][0]) : get_template_directory_uri() . '/assets/images/cardpic-sample.jpg'); ?>"
             alt="スタジオ写真">
           <div class="studio-card__location"><?php echo esc_html($shop['nearest_station'] ?? 'N/A'); ?></div>
         </div>

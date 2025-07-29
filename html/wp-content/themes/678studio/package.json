@@ -8,11 +8,11 @@
     "build": "gulp build",
     "watch": "gulp watch",
     "sass": "gulp sass",
-    "wp-logs:analyze": "node ../../../../../../scripts/analyze-wp-logs.js",
-    "wp-logs:errors": "node ../../../../../../scripts/analyze-wp-logs.js --level ERROR",
-    "wp-logs:summary": "node ../../../../../../scripts/analyze-wp-logs.js --hours 1",
-    "wp-logs:component": "node ../../../../../../scripts/analyze-wp-logs.js --component",
-    "wp-logs:cleanup": "node ../../../../../../scripts/analyze-wp-logs.js --cleanup"
+    "wp-logs:analyze": "node ../../../../scripts/analyze-wp-logs.js",
+    "wp-logs:errors": "node ../../../../scripts/analyze-wp-logs.js --level ERROR",
+    "wp-logs:summary": "node ../../../../scripts/analyze-wp-logs.js --hours 1",
+    "wp-logs:component": "node ../../../../scripts/analyze-wp-logs.js --component",
+    "wp-logs:cleanup": "node ../../../../scripts/analyze-wp-logs.js --cleanup"
   },
   "keywords": ["wordpress", "theme", "scss", "gulp", "678studio"],
   "author": "678 Studio Team",

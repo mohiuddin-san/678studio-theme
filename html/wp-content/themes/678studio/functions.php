@@ -51,11 +51,16 @@ function get_studio_data_from_local_api() {
         // データベースから直接取得
         global $wpdb;
         
-        // ショップ一覧を取得
+        // 文字エンコーディングを確保
+        $wpdb->query("SET NAMES utf8mb4");
+        
+        // ショップ一覧を取得（main_imageフィールドを追加）
         $shops = $wpdb->get_results("
-            SELECT id, name, address, phone, nearest_station, business_hours, holidays, map_url, created_at, company_email  
+            SELECT id, name, address, phone, nearest_station, business_hours, holidays, map_url, created_at, company_email, main_image  
             FROM studio_shops
         ", ARRAY_A);
+        
+        // Note: main_imageフィールドを含む完全なショップデータを取得
         
         if ($wpdb->last_error) {
             return ['shops' => [], 'error' => 'Database error: ' . $wpdb->last_error];
@@ -82,26 +87,8 @@ function get_studio_data_from_local_api() {
             $shop['image_urls'] = $image_urls;
             $shop['main_gallery_images'] = $image_data;
             
-            // カテゴリー画像
-            $category_images = $wpdb->get_results($wpdb->prepare("
-                SELECT c.category_name, i.image_url, i.id as image_id
-                FROM studio_shop_catgorie_images i
-                JOIN studio_shop_categories c ON i.category_id = c.id
-                WHERE i.shop_id = %d
-            ", $shop_id), ARRAY_A);
-            
-            $category_data = [];
-            foreach ($category_images as $row) {
-                $category = $row['category_name'];
-                if (!isset($category_data[$category])) {
-                    $category_data[$category] = [];
-                }
-                $category_data[$category][] = [
-                    'url' => $row['image_url'],
-                    'id' => $row['image_id']
-                ];
-            }
-            $shop['category_images'] = $category_data;
+            // カテゴリー機能は廃止されました（シンプルギャラリーシステム）
+            $shop['category_images'] = [];
         }
         
         $data = [
@@ -215,6 +202,43 @@ function manual_clear_studio_cache() {
 }
 add_action('admin_init', 'manual_clear_studio_cache');
 
+/**
+ * Studio Detail ページ用: 個別ショップデータ取得
+ * @param int $shop_id ショップID
+ * @return array ショップデータとエラー情報
+ */
+function get_studio_shop_by_id($shop_id) {
+    // 個別ショップキャッシュをチェック
+    $cache_key = 'studio_shop_' . $shop_id;
+    $cached_shop = get_transient($cache_key);
+    
+    if ($cached_shop !== false) {
+        return ['shop' => $cached_shop, 'error' => null];
+    }
+    
+    // 統一キャッシュシステムから全ショップデータを取得
+    $all_shops_data = get_cached_studio_data();
+    
+    if (isset($all_shops_data['error'])) {
+        return ['shop' => null, 'error' => $all_shops_data['error']];
+    }
+    
+    if (!isset($all_shops_data['shops']) || !is_array($all_shops_data['shops'])) {
+        return ['shop' => null, 'error' => 'No shops data available'];
+    }
+    
+    // 指定IDのショップを検索
+    foreach ($all_shops_data['shops'] as $shop) {
+        if (isset($shop['id']) && intval($shop['id']) === intval($shop_id)) {
+            // 個別キャッシュに保存 (5分)
+            set_transient($cache_key, $shop, 300);
+            return ['shop' => $shop, 'error' => null];
+        }
+    }
+    
+    return ['shop' => null, 'error' => 'Shop not found'];
+}
+
 // Ajax用のスクリプトをエンキュー（ギャラリーページでのみ）
 function enqueue_gallery_scripts() {
     if (is_page_template('page-photo-gallery.php')) {
@@ -288,7 +312,7 @@ function ajax_studio_search() {
 <div class="studio-card">
   <div class="studio-card__image">
     <img
-      src="<?php echo !empty($shop['image_urls']) ? esc_url($shop['image_urls'][0]) : get_template_directory_uri() . '/assets/images/cardpic-sample.jpg'; ?>"
+      src="<?php echo !empty($shop['main_image']) ? esc_url($shop['main_image']) : (!empty($shop['image_urls']) ? esc_url($shop['image_urls'][0]) : get_template_directory_uri() . '/assets/images/cardpic-sample.jpg'); ?>"
       alt="スタジオ写真">
     <div class="studio-card__location"><?php echo esc_html($shop['nearest_station'] ?? 'N/A'); ?></div>
   </div>

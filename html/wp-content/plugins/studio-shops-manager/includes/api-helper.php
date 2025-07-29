@@ -10,20 +10,20 @@ require_once ABSPATH . 'api/config/common_functions.php';
 
 /**
  * Get or create database connection
- * @return mysqli Database connection
+ * @return PDO Database connection
  * @throws Exception If connection fails
  */
 function get_db_connection() {
-    global $conn;
+    static $mysqli_conn = null;
     
-    if (isset($conn) && $conn && $conn->ping()) {
-        return $conn;
+    if ($mysqli_conn !== null) {
+        return $mysqli_conn;
     }
     
     // Environment detection
     if (!isset($_SERVER['HTTP_HOST']) || $_SERVER['HTTP_HOST'] === 'localhost:8080' || $_SERVER['HTTP_HOST'] === 'localhost') {
-        // Local environment (including WP-CLI)
-        $host = "db";
+        // Local environment (Docker)
+        $host = "mysql-678studio";
         $db_name = "wordpress_678";
         $username = "wp_user";
         $password = "password";
@@ -35,14 +35,31 @@ function get_db_connection() {
         $password = "Sugamonavi12345";
     }
     
-    $conn = new mysqli($host, $username, $password, $db_name);
-    
-    if ($conn->connect_error) {
-        throw new Exception('Database connection failed: ' . $conn->connect_error);
+    try {
+        $mysqli_conn = new mysqli($host, $username, $password, $db_name);
+        
+        if ($mysqli_conn->connect_error) {
+            throw new Exception('Database connection failed: ' . $mysqli_conn->connect_error);
+        }
+        
+        // 文字セット設定を強化
+        if (!$mysqli_conn->set_charset("utf8mb4")) {
+            throw new Exception("Error loading character set utf8mb4: " . $mysqli_conn->error);
+        }
+        
+        // 追加の文字エンコーディング設定
+        $mysqli_conn->query("SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci");
+        $mysqli_conn->query("SET CHARACTER SET utf8mb4");
+        
+        return $mysqli_conn;
+    } catch(Exception $e) {
+        throw new Exception('Database connection failed: ' . $e->getMessage());
     }
-    
-    return $conn;
 }
+
+// Note: get_upload_directory() function is provided by api/config/common_functions.php
+
+// Note: generate_image_url() function is provided by api/config/common_functions.php
 
 /**
  * Process and save base64 images
@@ -54,10 +71,17 @@ function get_db_connection() {
  */
 function process_and_save_images($images, $shop_id, $category_id = null) {
     $image_urls = array();
-    $upload_dir = get_upload_directory();
+    
+    // Use WordPress uploads directory for better compatibility
+    $wp_upload_dir = wp_upload_dir();
+    $upload_dir = $wp_upload_dir['basedir'] . '/studio-shops/';
+    
     
     if (!is_dir($upload_dir)) {
-        mkdir($upload_dir, 0755, true);
+        if (!wp_mkdir_p($upload_dir)) {
+            error_log("ERROR - Could not create upload directory: " . $upload_dir);
+            return array();
+        }
     }
     
     foreach ($images as $index => $image_data) {
@@ -78,15 +102,17 @@ function process_and_save_images($images, $shop_id, $category_id = null) {
             $prefix = $category_id ? 'category_' . $shop_id . '_' . $category_id : 'shop_' . $shop_id;
             $filename = $prefix . '_' . time() . '_' . $index . '.' . $image_type;
             $filepath = $upload_dir . $filename;
-            $url = generate_image_url($filename);
             
-            if (file_put_contents($filepath, $decoded_image) !== false) {
-                $image_urls[] = array(
-                    'filename' => $filename,
-                    'url' => $url,
-                    'filepath' => $filepath
-                );
-            }
+            // Generate URL using WordPress uploads directory
+            $wp_upload_dir = wp_upload_dir();
+            $url = $wp_upload_dir['baseurl'] . '/studio-shops/' . $filename;
+            
+            // Base64データをそのまま保存（ファイルシステムを使わない）
+            $image_urls[] = array(
+                'filename' => $filename,
+                'url' => $image_data, // Base64データをそのまま保存
+                'filepath' => $filepath
+            );
         }
     }
     
@@ -104,19 +130,22 @@ function process_and_save_images($images, $shop_id, $category_id = null) {
 function insert_images_to_db($conn, $processed_images, $shop_id, $category_id = null) {
     $inserted_urls = array();
     
+    
     foreach ($processed_images as $image_info) {
         if ($category_id) {
             // Category image
-            $stmt = $conn->prepare("INSERT INTO studio_shop_catgorie_images (shop_id, category_id, image_url) VALUES (?, ?, ?)");
+            $stmt = $conn->prepare("INSERT INTO studio_shop_catgorie_images (shop_id, category_id, image_url, created_at) VALUES (?, ?, ?, NOW())");
             $stmt->bind_param("iis", $shop_id, $category_id, $image_info['url']);
         } else {
-            // Main gallery image
-            $stmt = $conn->prepare("INSERT INTO studio_shop_images (shop_id, image_url) VALUES (?, ?)");
+            // Main gallery image - ギャラリー画像をBase64として保存
+            $stmt = $conn->prepare("INSERT INTO studio_shop_images (shop_id, image_url, created_at) VALUES (?, ?, NOW())");
             $stmt->bind_param("is", $shop_id, $image_info['url']);
         }
         
         if ($stmt->execute()) {
             $inserted_urls[] = $image_info['url'];
+        } else {
+            error_log("ERROR - insert_images_to_db: Failed to insert image: " . $stmt->error);
         }
         $stmt->close();
     }
@@ -177,8 +206,12 @@ function make_internal_api_call($endpoint, $data = array()) {
                 return delete_category_image($data);
             case 'delete_main_gallery_image.php':
                 return delete_main_gallery_image($data);
+            case 'delete_gallery_image.php':
+                return delete_gallery_images($data);
             case 'delete_shop.php':
                 return delete_shop($data);
+            case 'get_all_studio_shop.php':
+                return get_all_studio_shops($data);
             default:
                 return array(
                     'success' => false,
@@ -196,6 +229,13 @@ function make_internal_api_call($endpoint, $data = array()) {
 function create_studio_shop($data) {
     global $conn;
     
+    try {
+        $conn = get_db_connection();
+    } catch (Exception $e) {
+        error_log("ERROR - create_studio_shop: Database connection failed: " . $e->getMessage());
+        return array('success' => false, 'error' => $e->getMessage());
+    }
+    
     // Validation
     if (empty(trim($data['name'])) || empty(trim($data['address']))) {
         return array(
@@ -206,22 +246,25 @@ function create_studio_shop($data) {
     
     // Sanitize
     $company_email = isset($data['company_email']) ? filter_var(trim($data['company_email']), FILTER_SANITIZE_EMAIL) : null;
-    $phone = isset($data['phone']) ? filter_var(trim($data['phone']), FILTER_SANITIZE_STRING) : null;
-    $nearest_station = isset($data['nearest_station']) ? filter_var(trim($data['nearest_station']), FILTER_SANITIZE_STRING) : null;
-    $business_hours = isset($data['business_hours']) ? filter_var(trim($data['business_hours']), FILTER_SANITIZE_STRING) : null;
-    $holidays = isset($data['holidays']) ? filter_var(trim($data['holidays']), FILTER_SANITIZE_STRING) : null;
+    $phone = isset($data['phone']) ? sanitize_text_field(trim($data['phone'])) : null;
+    $nearest_station = isset($data['nearest_station']) ? sanitize_text_field(trim($data['nearest_station'])) : null;
+    $business_hours = isset($data['business_hours']) ? sanitize_text_field(trim($data['business_hours'])) : null;
+    $holidays = isset($data['holidays']) ? sanitize_text_field(trim($data['holidays'])) : null;
     $map_url = isset($data['map_url']) ? filter_var(trim($data['map_url']), FILTER_SANITIZE_URL) : null;
     
     // Begin transaction
-    $conn->begin_transaction();
+    $conn->autocommit(false);
     
     try {
+        // Handle main image
+        $main_image = isset($data['main_image']) ? $data['main_image'] : null;
+        
         // Insert shop
         $stmt = $conn->prepare("INSERT INTO studio_shops 
-            (name, address, company_email, phone, nearest_station, business_hours, holidays, map_url, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+            (name, address, company_email, phone, nearest_station, business_hours, holidays, map_url, main_image, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
         
-        $stmt->bind_param("ssssssss", $data['name'], $data['address'], $company_email, $phone, $nearest_station, $business_hours, $holidays, $map_url);
+        $stmt->bind_param("sssssssss", $data['name'], $data['address'], $company_email, $phone, $nearest_station, $business_hours, $holidays, $map_url, $main_image);
         
         if (!$stmt->execute()) {
             throw new Exception("Shop insert failed: " . $stmt->error);
@@ -234,11 +277,22 @@ function create_studio_shop($data) {
         $image_urls = array();
         
         if (isset($data['gallery_images']) && is_array($data['gallery_images']) && !empty($data['gallery_images'])) {
+            wp_debug_log_info("Processing gallery images", ['gallery_count' => count($data['gallery_images']), 'shop_id' => $shop_id]);
             $processed_images = process_and_save_images($data['gallery_images'], $shop_id);
+            wp_debug_log_info("Processed gallery images", ['processed_count' => count($processed_images), 'shop_id' => $shop_id]);
             $image_urls = insert_images_to_db($conn, $processed_images, $shop_id);
+            wp_debug_log_info("Inserted gallery images to DB", ['inserted_count' => count($image_urls), 'shop_id' => $shop_id]);
         }
         
         $conn->commit();
+        
+        // キャッシュをクリア
+        if (function_exists('clear_studio_data_cache')) {
+            clear_studio_data_cache();
+        }
+        
+        // WordPressアクションを発火
+        do_action('studio_shop_created', $shop_id);
         
         return array(
             'success' => true,
@@ -280,23 +334,33 @@ function update_studio_shop($data) {
     
     // Sanitize
     $company_email = isset($data['company_email']) ? filter_var(trim($data['company_email']), FILTER_SANITIZE_EMAIL) : null;
-    $phone = isset($data['phone']) ? filter_var(trim($data['phone']), FILTER_SANITIZE_STRING) : null;
-    $nearest_station = isset($data['nearest_station']) ? filter_var(trim($data['nearest_station']), FILTER_SANITIZE_STRING) : null;
-    $business_hours = isset($data['business_hours']) ? filter_var(trim($data['business_hours']), FILTER_SANITIZE_STRING) : null;
-    $holidays = isset($data['holidays']) ? filter_var(trim($data['holidays']), FILTER_SANITIZE_STRING) : null;
+    $phone = isset($data['phone']) ? sanitize_text_field(trim($data['phone'])) : null;
+    $nearest_station = isset($data['nearest_station']) ? sanitize_text_field(trim($data['nearest_station'])) : null;
+    $business_hours = isset($data['business_hours']) ? sanitize_text_field(trim($data['business_hours'])) : null;
+    $holidays = isset($data['holidays']) ? sanitize_text_field(trim($data['holidays'])) : null;
     $map_url = isset($data['map_url']) ? filter_var(trim($data['map_url']), FILTER_SANITIZE_URL) : null;
     
     // Begin transaction
-    $conn->begin_transaction();
+    $conn->autocommit(false);
     
     try {
-        // Update shop
-        $stmt = $conn->prepare("UPDATE studio_shops SET 
-            name = ?, address = ?, company_email = ?, phone = ?, nearest_station = ?, 
-            business_hours = ?, holidays = ?, map_url = ?, updated_at = NOW()
-            WHERE id = ?");
+        // Handle main image
+        $main_image = isset($data['main_image']) ? $data['main_image'] : null;
         
-        $stmt->bind_param("ssssssssi", $data['name'], $data['address'], $company_email, $phone, $nearest_station, $business_hours, $holidays, $map_url, $shop_id);
+        // Update shop (only update main_image if provided)
+        if ($main_image) {
+            $stmt = $conn->prepare("UPDATE studio_shops SET 
+                name = ?, address = ?, company_email = ?, phone = ?, nearest_station = ?, 
+                business_hours = ?, holidays = ?, map_url = ?, main_image = ?, updated_at = NOW()
+                WHERE id = ?");
+            $stmt->bind_param("sssssssssi", $data['name'], $data['address'], $company_email, $phone, $nearest_station, $business_hours, $holidays, $map_url, $main_image, $shop_id);
+        } else {
+            $stmt = $conn->prepare("UPDATE studio_shops SET 
+                name = ?, address = ?, company_email = ?, phone = ?, nearest_station = ?, 
+                business_hours = ?, holidays = ?, map_url = ?, updated_at = NOW()
+                WHERE id = ?");
+            $stmt->bind_param("ssssssssi", $data['name'], $data['address'], $company_email, $phone, $nearest_station, $business_hours, $holidays, $map_url, $shop_id);
+        }
         
         if (!$stmt->execute()) {
             throw new Exception("Shop update failed: " . $stmt->error);
@@ -313,6 +377,14 @@ function update_studio_shop($data) {
         
         $conn->commit();
         
+        // キャッシュをクリア
+        if (function_exists('clear_studio_data_cache')) {
+            clear_studio_data_cache();
+        }
+        
+        // WordPressアクションを発火
+        do_action('studio_shop_updated', $shop_id);
+        
         return array(
             'success' => true,
             'message' => 'Shop updated successfully',
@@ -327,6 +399,7 @@ function update_studio_shop($data) {
 }
 
 function upload_category_images($data) {
+    
     try {
         $conn = get_db_connection();
     } catch (Exception $e) {
@@ -347,15 +420,15 @@ function upload_category_images($data) {
             $category_name = $category_data['category_name'];
             $images = $category_data['images'];
             
-            // Insert or get category
-            $cat_stmt = $conn->prepare("INSERT IGNORE INTO studio_shop_categories (category_name) VALUES (?)");
-            $cat_stmt->bind_param("s", $category_name);
+            // Insert or get category (shop-specific)
+            $cat_stmt = $conn->prepare("INSERT IGNORE INTO studio_shop_categories (shop_id, category_name) VALUES (?, ?)");
+            $cat_stmt->bind_param("is", $shop_id, $category_name);
             $cat_stmt->execute();
             $cat_stmt->close();
             
             // Get category ID
-            $cat_id_stmt = $conn->prepare("SELECT id FROM studio_shop_categories WHERE category_name = ?");
-            $cat_id_stmt->bind_param("s", $category_name);
+            $cat_id_stmt = $conn->prepare("SELECT id FROM studio_shop_categories WHERE shop_id = ? AND category_name = ?");
+            $cat_id_stmt->bind_param("is", $shop_id, $category_name);
             $cat_id_stmt->execute();
             $result = $cat_id_stmt->get_result();
             $category_id = $result->fetch_assoc()['id'];
@@ -367,6 +440,14 @@ function upload_category_images($data) {
         }
         
         $conn->commit();
+        
+        // キャッシュをクリア
+        if (function_exists('clear_studio_data_cache')) {
+            clear_studio_data_cache();
+        }
+        
+        // WordPressアクションを発火
+        do_action('studio_category_updated', $shop_id);
         
         return array('success' => true, 'message' => 'Category images uploaded successfully');
         
@@ -396,6 +477,12 @@ function delete_category_image($data) {
     
     if ($del_stmt->execute()) {
         $del_stmt->close();
+        
+        // キャッシュをクリア
+        if (function_exists('clear_studio_data_cache')) {
+            clear_studio_data_cache();
+        }
+        
         return array('success' => true, 'message' => 'Image deleted from category');
     } else {
         $error = $del_stmt->error;
@@ -469,6 +556,14 @@ function delete_entire_category($data) {
         
         $conn->commit();
         
+        // キャッシュをクリア
+        if (function_exists('clear_studio_data_cache')) {
+            clear_studio_data_cache();
+        }
+        
+        // WordPressアクションを発火
+        do_action('studio_category_deleted', $shop_id, $category_name);
+        
         return array(
             'success' => true, 
             'message' => 'Category deleted successfully',
@@ -479,6 +574,57 @@ function delete_entire_category($data) {
     } catch (Exception $e) {
         $conn->rollback();
         return array('success' => false, 'error' => $e->getMessage());
+    }
+}
+
+function delete_gallery_images($data) {
+    try {
+        $conn = get_db_connection();
+    } catch (Exception $e) {
+        return array('success' => false, 'error' => $e->getMessage());
+    }
+    
+    $shop_id = $data['shop_id'] ?? null;
+    $image_id = $data['image_id'] ?? null;
+    $delete_all = isset($data['delete_all']) && $data['delete_all'];
+    
+    if (!$shop_id) {
+        return array('success' => false, 'error' => 'Shop ID is required');
+    }
+    
+    try {
+        if ($delete_all) {
+            // Delete all gallery images for this shop
+            $stmt = $conn->prepare("DELETE FROM studio_shop_images WHERE shop_id = ?");
+            $stmt->bind_param("i", $shop_id);
+            $result = $stmt->execute();
+            
+            if ($result) {
+                $deleted_count = $stmt->affected_rows;
+                $stmt->close();
+                return array('success' => true, 'message' => "ギャラリー画像を{$deleted_count}枚削除しました。");
+            } else {
+                $stmt->close();
+                return array('success' => false, 'error' => 'Failed to delete gallery images');
+            }
+        } elseif ($image_id) {
+            // Delete single image by ID
+            $stmt = $conn->prepare("DELETE FROM studio_shop_images WHERE id = ? AND shop_id = ?");
+            $stmt->bind_param("ii", $image_id, $shop_id);
+            $result = $stmt->execute();
+            
+            if ($result && $stmt->affected_rows > 0) {
+                $stmt->close();
+                return array('success' => true, 'message' => 'ギャラリー画像を削除しました。');
+            } else {
+                $stmt->close();
+                return array('success' => false, 'error' => 'Image not found or failed to delete');
+            }
+        } else {
+            return array('success' => false, 'error' => 'Either image_id or delete_all parameter is required');
+        }
+    } catch(Exception $e) {
+        return array('success' => false, 'error' => 'Database error: ' . $e->getMessage());
     }
 }
 
@@ -525,6 +671,11 @@ function delete_main_gallery_image($data) {
             unlink($filepath);
         }
         
+        // キャッシュをクリア
+        if (function_exists('clear_studio_data_cache')) {
+            clear_studio_data_cache();
+        }
+        
         return array('success' => true, 'message' => 'Main gallery image deleted successfully');
     } else {
         $error = $del_stmt->error;
@@ -541,6 +692,7 @@ function delete_shop($data) {
     }
     
     $shop_id = $data['shop_id'] ?? null;
+    
     
     if (!$shop_id) {
         return array('success' => false, 'error' => 'Missing shop_id');
@@ -564,12 +716,8 @@ function delete_shop($data) {
         $shop_name = $shop_row['name'];
         $name_stmt->close();
         
-        // Delete all category images for this shop
-        $del_cat_images_stmt = $conn->prepare("DELETE FROM studio_shop_catgorie_images WHERE shop_id = ?");
-        $del_cat_images_stmt->bind_param("i", $shop_id);
-        $del_cat_images_stmt->execute();
-        $deleted_cat_images_count = $del_cat_images_stmt->affected_rows;
-        $del_cat_images_stmt->close();
+        // Skip category images deletion - table doesn't exist in simplified system
+        $deleted_cat_images_count = 0;
         
         // Delete all main gallery images for this shop
         $del_main_images_stmt = $conn->prepare("DELETE FROM studio_shop_images WHERE shop_id = ?");
@@ -588,18 +736,18 @@ function delete_shop($data) {
         
         $del_shop_stmt->close();
         
-        // Clean up unused categories (categories with no images)
-        $cleanup_stmt = $conn->prepare("
-            DELETE FROM studio_shop_categories 
-            WHERE id NOT IN (
-                SELECT DISTINCT category_id FROM studio_shop_catgorie_images
-            )
-        ");
-        $cleanup_stmt->execute();
-        $cleaned_categories = $cleanup_stmt->affected_rows;
-        $cleanup_stmt->close();
+        // Skip category cleanup - simplified system doesn't use categories
+        $cleaned_categories = 0;
         
         $conn->commit();
+        
+        // キャッシュをクリア
+        if (function_exists('clear_studio_data_cache')) {
+            clear_studio_data_cache();
+        }
+        
+        // WordPressアクションを発火
+        do_action('studio_shop_deleted', $shop_id, $shop_name);
         
         return array(
             'success' => true, 
@@ -613,5 +761,59 @@ function delete_shop($data) {
     } catch (Exception $e) {
         $conn->rollback();
         return array('success' => false, 'error' => $e->getMessage());
+    }
+}
+
+function get_all_studio_shops($data) {
+    try {
+        $conn = get_db_connection();
+    } catch (Exception $e) {
+        return array('success' => false, 'error' => $e->getMessage());
+    }
+    
+    try {
+        // Get all shops with their basic information
+        $stmt = $conn->prepare("SELECT id, name, address, phone, nearest_station, business_hours, holidays, map_url, company_email, main_image, created_at FROM studio_shops ORDER BY created_at DESC");
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $shops_data = $result->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+        
+        $shops = array();
+        foreach ($shops_data as $row) {
+            // Get gallery images for each shop
+            $img_stmt = $conn->prepare("SELECT id, image_url FROM studio_shop_images WHERE shop_id = ? ORDER BY created_at ASC");
+            $img_stmt->bind_param("i", $row['id']);
+            $img_stmt->execute();
+            $img_result = $img_stmt->get_result();
+            $images = $img_result->fetch_all(MYSQLI_ASSOC);
+            wp_debug_log_info("Shop gallery images retrieved", ['shop_id' => $row['id'], 'image_count' => count($images)]);
+            $img_stmt->close();
+            
+            $image_urls = array();
+            $main_gallery_images = array();
+            foreach ($images as $img_row) {
+                $image_urls[] = $img_row['image_url'];
+                $main_gallery_images[] = array(
+                    'id' => $img_row['id'],
+                    'url' => $img_row['image_url']
+                );
+            }
+            
+            $row['image_urls'] = $image_urls;
+            $row['main_gallery_images'] = $main_gallery_images;
+            $row['category_images'] = array(); // Legacy compatibility
+            
+            $shops[] = $row;
+        }
+        
+        return array(
+            'success' => true,
+            'message' => 'Shops retrieved successfully',
+            'shops' => $shops
+        );
+        
+    } catch (Exception $e) {
+        return array('success' => false, 'error' => 'Database query failed: ' . $e->getMessage());
     }
 }

@@ -6,71 +6,36 @@
 
 get_header();
 
-// Function to fetch shop data by ID with caching
+// Function to fetch shop data by ID using unified caching system
 function fetch_studio_shop_by_id($shop_id) {
-    // Debug: Log fetch attempt
-    wp_log_debug("Fetching shop data for ID: $shop_id");
-    
-    // Check cache first
+    // 個別ショップキャッシュをチェック
     $cache_key = 'studio_shop_' . $shop_id;
     $cached_shop = get_transient($cache_key);
     
     if ($cached_shop !== false) {
-        wp_log_debug("Shop data found in cache for ID: $shop_id");
         return ['shop' => $cached_shop, 'error' => null];
     }
     
-    wp_log_debug("No cached data found for shop ID: $shop_id, fetching from API");
+    // 統一キャッシュシステムから全ショップデータを取得
+    $all_shops_data = get_cached_studio_data();
     
-    // Fetch from API if not cached
-    $api_url = 'https://678photo.com/api/get_all_studio_shop.php';
-    
-    wp_log_debug("Making API request to: $api_url");
-
-    $response = wp_remote_get($api_url, [
-        'timeout' => 15,
-        'sslverify' => false
-    ]);
-
-    if (is_wp_error($response)) {
-        wp_log_error("API request failed: " . $response->get_error_message());
-        return ['shop' => null, 'error' => $response->get_error_message()];
-    }
-    $body = wp_remote_retrieve_body($response);
-    wp_log_debug("API response received, body length: " . strlen($body));
-    
-    $data = json_decode($body, true);
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        wp_log_error("JSON decode error: " . json_last_error_msg());
-        return ['shop' => null, 'error' => 'Invalid JSON response'];
-    }
-    if (!isset($data['shops']) || !is_array($data['shops'])) {
-        wp_log_error("No shops array found in API response");
-        wp_log_debug("API response structure: " . print_r(array_keys($data), true));
-        return ['shop' => null, 'error' => 'No shops found in API response'];
+    if (isset($all_shops_data['error'])) {
+        return ['shop' => null, 'error' => $all_shops_data['error']];
     }
     
-    wp_log_debug("Found " . count($data['shops']) . " shops in API response");
+    if (!isset($all_shops_data['shops']) || !is_array($all_shops_data['shops'])) {
+        return ['shop' => null, 'error' => 'No shops data available'];
+    }
     
-    // Cache all shops for future use
-    // Use shorter cache time in development (5 minutes), longer in production (1 hour)
-    $cache_time = (defined('WP_DEBUG') && WP_DEBUG) ? 5 * MINUTE_IN_SECONDS : HOUR_IN_SECONDS;
-    
-    foreach ($data['shops'] as $shop) {
-        set_transient('studio_shop_' . $shop['id'], $shop, $cache_time);
-        if ($shop['id'] == $shop_id) {
-            $found_shop = $shop;
-            wp_log_debug("Found target shop: " . $shop['name'] . " (ID: " . $shop['id'] . ")");
-            wp_log_debug("Shop data: " . json_encode($shop, JSON_UNESCAPED_UNICODE));
+    // 指定IDのショップを検索
+    foreach ($all_shops_data['shops'] as $shop) {
+        if (isset($shop['id']) && intval($shop['id']) === intval($shop_id)) {
+            // 個別キャッシュに保存 (5分)
+            set_transient($cache_key, $shop, 300);
+            return ['shop' => $shop, 'error' => null];
         }
     }
     
-    if (isset($found_shop)) {
-        wp_log_debug("Returning shop data for ID: $shop_id");
-        return ['shop' => $found_shop, 'error' => null];
-    }
-    
-    wp_log_error("Shop not found for ID: $shop_id");
     return ['shop' => null, 'error' => 'Shop not found'];
 }
 
@@ -102,7 +67,11 @@ $shop_id = isset($_GET['shop_id']) ? intval($_GET['shop_id']) : 0;
 
 // Clear cache if requested (for admins only)
 if (isset($_GET['clear_cache']) && current_user_can('administrator')) {
-    wp_log_debug("Cache cleared for shop ID: $shop_id by admin");
+    // 統一キャッシュシステムをクリア
+    if (function_exists('clear_studio_data_cache')) {
+        clear_studio_data_cache();
+    }
+    // 個別キャッシュもクリア
     delete_transient('studio_shop_' . $shop_id);
     wp_redirect(remove_query_arg('clear_cache'));
     exit;
@@ -157,7 +126,7 @@ $map_embed_url = get_map_embed_url($shop);
       </div>
       <div class="store-hero__image">
         <img
-          src="<?php echo !empty($shop['image_urls'][0]) ? esc_url($shop['image_urls'][0]) : get_template_directory_uri() . '/assets/images/cardpic-sample.jpg'; ?>"
+          src="<?php echo !empty($shop['main_image']) ? esc_url($shop['main_image']) : (!empty($shop['image_urls'][0]) ? esc_url($shop['image_urls'][0]) : get_template_directory_uri() . '/assets/images/cardpic-sample.jpg'); ?>"
           alt="店舗内観" class="store-hero__image-img">
       </div>
     </div>
@@ -174,7 +143,7 @@ $map_embed_url = get_map_embed_url($shop);
       <dl class="store-basic-info__list">
         <div class="store-basic-info__item">
           <dt class="store-basic-info__label">店舗名</dt>
-          <dd class="store-basic-info__data">えがお写真館</dd>
+          <dd class="store-basic-info__data"><?php echo esc_html($shop['name'] ?? 'N/A'); ?></dd>
         </div>
         <div class="store-basic-info__item">
           <dt class="store-basic-info__label">住所</dt>
@@ -216,20 +185,33 @@ $map_embed_url = get_map_embed_url($shop);
       <div class="store-gallery__track">
         <?php 
         $gallery_images = [];
-        if (!empty($shop['category_images']) && is_array($shop['category_images'])) {
-            foreach ($shop['category_images'] as $category => $images) {
-                if (is_array($images)) {
-                    $gallery_images = array_merge($gallery_images, $images);
+        
+        // メインギャラリー画像を収集（簡素化されたギャラリーシステム）
+        if (!empty($shop['main_gallery_images']) && is_array($shop['main_gallery_images'])) {
+            foreach ($shop['main_gallery_images'] as $image) {
+                // 新しいデータ構造では $image['url'] に画像URLが含まれる
+                if (is_array($image) && isset($image['url'])) {
+                    $gallery_images[] = $image['url'];
+                } elseif (is_string($image)) {
+                    // 後方互換性のため
+                    $gallery_images[] = $image;
                 }
             }
         }
-        if (empty($gallery_images)) {
-            $gallery_images = array_fill(0, 10, get_template_directory_uri() . '/assets/images/grayscale.jpg');
-        }
-        foreach ($gallery_images as $index => $image): 
+        
+        // 重複を除去
+        $gallery_images = array_unique($gallery_images);
+        
+        // 画像の表示
+        if (empty($gallery_images)): ?>
+          <div class="store-gallery__no-images">
+            <p>まだギャラリーに画像が登録されていません。</p>
+          </div>
+        <?php else:
+          foreach ($gallery_images as $index => $image_url): 
         ?>
           <div class="store-gallery__item">
-            <img src="<?php echo esc_url($image); ?>" alt="ギャラリー画像 <?php echo $index + 1; ?>" data-full-image="<?php echo esc_url($image); ?>">
+            <img src="<?php echo esc_url($image_url); ?>" alt="ギャラリー画像 <?php echo $index + 1; ?>" data-full-image="<?php echo esc_url($image_url); ?>">
             <div class="store-gallery__overlay">
               <svg class="store-gallery__icon" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="16" cy="16" r="10" stroke="white" stroke-width="2"/>
@@ -237,7 +219,9 @@ $map_embed_url = get_map_embed_url($shop);
               </svg>
             </div>
           </div>
-        <?php endforeach; ?>
+        <?php 
+          endforeach; 
+        endif; ?>
       </div>
     </div>
   </section>
@@ -298,6 +282,21 @@ $map_embed_url = get_map_embed_url($shop);
   height: 400px !important;
   max-width: 100%;
   border: 0;
+}
+
+/* Style for no images message */
+.store-gallery__no-images {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+  font-size: 16px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+.store-gallery__no-images p {
+  margin: 0;
 }
 </style>
 
