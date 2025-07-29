@@ -592,6 +592,7 @@ function studio_shops_page() {
                     }
                     
                     WPDebugLogger.log('loadShopData parsed data', data);
+                    console.log(data);
                     if (data.success && data.shops) {
                         const shop = data.shops.find(s => s.id == shopId);
                         if (shop) {
