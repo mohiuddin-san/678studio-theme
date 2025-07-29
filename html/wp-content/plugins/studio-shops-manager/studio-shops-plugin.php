@@ -651,6 +651,52 @@ function studio_shops_page() {
                 }
             });
 
+            // Delete shop button event handler
+            deleteShopBtn.addEventListener('click', function() {
+                const shopId = shopSelect.value;
+                if (!shopId) {
+                    alert('削除するショップが選択されていません。');
+                    return;
+                }
+                
+                const shopName = shopSelect.options[shopSelect.selectedIndex].text;
+                if (!confirm('ショップ「' + shopName + '」を完全に削除しますか？\\n\\nこの操作は取り消すことができません。\\n・ショップ情報\\n・ギャラリー画像\\n・カテゴリー画像\\nすべてのデータが削除されます。')) {
+                    return;
+                }
+                
+                jQuery.ajax({
+                    url: '<?php echo admin_url("admin-ajax.php"); ?>',
+                    type: 'POST',
+                    data: {
+                        action: 'studio_shop_internal_api',
+                        endpoint: 'delete_shop.php',
+                        shop_id: shopId
+                    },
+                    timeout: 15000,
+                    dataType: 'json',
+                    success: function(data) {
+                        console.log('Delete shop response:', data);
+                        if (data && data.success) {
+                            alert('ショップ「' + shopName + '」を削除しました。\\n\\n削除されたデータ:\\n・メイン画像: ' + (data.deleted_main_images || 0) + '枚\\n・カテゴリー画像: ' + (data.deleted_category_images || 0) + '枚');
+                            
+                            // Reset form and reload shop list
+                            clearForm();
+                            shopSelect.value = '';
+                            deleteShopBtn.style.display = 'none';
+                            loadShopList();
+                        } else {
+                            const errorMsg = data && data.error ? data.error : (data && data.message ? data.message : 'Unknown error');
+                            alert('ショップの削除に失敗しました: ' + errorMsg);
+                            console.error('Delete shop failed:', data);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Delete shop AJAX error:', xhr.responseText);
+                        alert('削除リクエストでエラーが発生しました: ' + error + '\\n\\nレスポンス: ' + xhr.responseText);
+                    }
+                });
+            });
+
             function loadShopData(shopId) {
                 fetch('/wp-admin/admin-ajax.php', {
                     method: 'POST',
