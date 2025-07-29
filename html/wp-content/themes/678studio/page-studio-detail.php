@@ -39,26 +39,46 @@ function fetch_studio_shop_by_id($shop_id) {
     return ['shop' => null, 'error' => 'Shop not found'];
 }
 
-// Function to extract and validate map embed URL
-function get_map_embed_url($shop) {
-    $map_url = !empty($shop['map_url']) ? $shop['map_url'] : '';
-
-    // Check if map_url contains an iframe tag
-    if (preg_match('/<iframe[^>]+src=["\'](.*?)["\']/i', $map_url, $matches)) {
-        $map_url = $matches[1]; // Extract the src attribute
+// Function to extract and validate map embed content
+function get_map_embed_content($shop) {
+    $map_url = !empty($shop['map_url']) ? trim($shop['map_url']) : '';
+    
+    if (empty($map_url)) {
+        return null;
     }
 
-    // Validate the extracted or direct map_url
-    if (!empty($map_url) && filter_var($map_url, FILTER_VALIDATE_URL) && strpos($map_url, 'google.com/maps/embed') !== false) {
-        return $map_url;
+    // Check if map_url contains a complete iframe tag
+    if (strpos($map_url, '<iframe') !== false && strpos($map_url, '</iframe>') !== false) {
+        // Fix common spacing issues in iframe tags
+        $fixed_map_url = $map_url;
+        $fixed_map_url = str_replace('<iframesrc=', '<iframe src=', $fixed_map_url);
+        $fixed_map_url = preg_replace('/(<iframe[^>]*?)([a-z]+="[^"]*")([a-z]+=)/i', '$1$2 $3', $fixed_map_url);
+        $fixed_map_url = preg_replace('/([a-z]+="[^"]*")([a-z]+=)/i', '$1 $2', $fixed_map_url);
+        
+        // Extract src URL for validation
+        if (preg_match('/src\s*=\s*["\']([^"\']+)["\']/i', $fixed_map_url, $matches)) {
+            $src_url = $matches[1];
+            if (filter_var($src_url, FILTER_VALIDATE_URL) && 
+                (strpos($src_url, 'google.com/maps/embed') !== false || 
+                 strpos($src_url, 'maps.google.com') !== false)) {
+                return [
+                    'type' => 'iframe',
+                    'content' => $fixed_map_url
+                ];
+            }
+        }
+    }
+    
+    // Check if it's a direct embed URL
+    if (filter_var($map_url, FILTER_VALIDATE_URL) && 
+        (strpos($map_url, 'google.com/maps/embed') !== false || 
+         strpos($map_url, 'maps.google.com') !== false)) {
+        return [
+            'type' => 'url',
+            'content' => $map_url
+        ];
     }
 
-    // Log invalid map_url for debugging
-    if (!empty($map_url)) {
-        error_log('Invalid map_url for shop_id ' . $shop['id'] . ': ' . $map_url);
-    }
-
-    // Return null if no valid embed URL
     return null;
 }
 
@@ -90,7 +110,7 @@ if (!$shop) {
     wp_die('指定された店舗が見つかりませんでした。', 'エラー', ['response' => 404]);
 }
 
-$map_embed_url = get_map_embed_url($shop);
+$map_embed_data = get_map_embed_content($shop);
 
 // SEO情報は統一システム（StudioSEOManager）で自動処理されます
 
@@ -99,9 +119,8 @@ $map_embed_url = get_map_embed_url($shop);
 //     echo '<div style="background: #fff; padding: 10px; border: 1px solid #ccc; margin: 20px;">';
 //     echo '<h3>Debug Info</h3>';
 //     echo '<p>Shop ID: ' . esc_html($shop_id) . '</p>';
-//     echo '<p>Map Embed URL: ' . esc_html($map_embed_url ?: 'None') . '</p>';
+//     echo '<p>Map Embed Data: ' . esc_html($map_embed_data ? $map_embed_data['type'] . ' - ' . substr($map_embed_data['content'], 0, 200) . '...' : 'None') . '</p>';
 //     echo '<p>Map URL from API: ' . esc_html($shop['map_url'] ?? 'None') . '</p>';
-//     echo '<p>Shop Data: <pre>' . esc_html(print_r($shop, true)) . '</pre></p>';
 //     echo '</div>';
 // }
 // ?>
@@ -125,9 +144,29 @@ $map_embed_url = get_map_embed_url($shop);
         <h1 class="store-hero__title">ロクナナハチ撮影店舗</h1>
       </div>
       <div class="store-hero__image">
-        <img
-          src="<?php echo !empty($shop['main_image']) ? esc_url($shop['main_image']) : (!empty($shop['image_urls'][0]) ? esc_url($shop['image_urls'][0]) : get_template_directory_uri() . '/assets/images/cardpic-sample.jpg'); ?>"
-          alt="店舗内観" class="store-hero__image-img">
+        <?php
+        // メイン画像の表示優先順位: main_image -> image_urls[0] -> デフォルト画像
+        $hero_image_src = '';
+        if (!empty($shop['main_image'])) {
+            // Base64データかURLかを判定
+            if (strpos($shop['main_image'], 'data:image') === 0) {
+                $hero_image_src = $shop['main_image']; // Base64データはそのまま使用
+            } else {
+                $hero_image_src = esc_url($shop['main_image']); // URLの場合はエスケープ
+            }
+        } elseif (!empty($shop['image_urls']) && !empty($shop['image_urls'][0])) {
+            // ギャラリー画像をフォールバック
+            if (strpos($shop['image_urls'][0], 'data:image') === 0) {
+                $hero_image_src = $shop['image_urls'][0];
+            } else {
+                $hero_image_src = esc_url($shop['image_urls'][0]);
+            }
+        } else {
+            // デフォルト画像
+            $hero_image_src = get_template_directory_uri() . '/assets/images/cardpic-sample.jpg';
+        }
+        ?>
+        <img src="<?php echo $hero_image_src; ?>" alt="店舗内観" class="store-hero__image-img">
       </div>
     </div>
   </section>
@@ -209,9 +248,21 @@ $map_embed_url = get_map_embed_url($shop);
           </div>
         <?php else:
           foreach ($gallery_images as $index => $image_url): 
+            // ギャラリー画像のBase64データかURLかを判定
+            $gallery_image_src = '';
+            $gallery_image_full = '';
+            if (strpos($image_url, 'data:image') === 0) {
+                // Base64データはそのまま使用
+                $gallery_image_src = $image_url;
+                $gallery_image_full = $image_url;
+            } else {
+                // URLの場合はエスケープ
+                $gallery_image_src = esc_url($image_url);
+                $gallery_image_full = esc_url($image_url);
+            }
         ?>
           <div class="store-gallery__item">
-            <img src="<?php echo esc_url($image_url); ?>" alt="ギャラリー画像 <?php echo $index + 1; ?>" data-full-image="<?php echo esc_url($image_url); ?>">
+            <img src="<?php echo $gallery_image_src; ?>" alt="ギャラリー画像 <?php echo $index + 1; ?>" data-full-image="<?php echo $gallery_image_full; ?>">
             <div class="store-gallery__overlay">
               <svg class="store-gallery__icon" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="16" cy="16" r="10" stroke="white" stroke-width="2"/>
@@ -237,10 +288,42 @@ $map_embed_url = get_map_embed_url($shop);
 
       <!-- Google Map -->
       <div class="store-access__map">
-        <?php if ($map_embed_url): ?>
-        <iframe src="<?php echo esc_url($map_embed_url); ?>" width="100%" height="400" style="border:0; display: block;"
-          allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-        </iframe>
+        <?php if ($map_embed_data): ?>
+          <?php if ($map_embed_data['type'] === 'iframe'): ?>
+            <!-- Complete iframe tag from database -->
+            <div class="map-iframe-container">
+              <?php 
+              // Output iframe with proper sanitization
+              echo wp_kses($map_embed_data['content'], [
+                'iframe' => [
+                  'src' => true,
+                  'width' => true,
+                  'height' => true,
+                  'style' => true,
+                  'allowfullscreen' => true,
+                  'loading' => true,
+                  'referrerpolicy' => true,
+                  'frameborder' => true,
+                  'border' => true,
+                  'class' => true,
+                  'id' => true,
+                  'title' => true,
+                  'scrolling' => true,
+                  'marginwidth' => true,
+                  'marginheight' => true
+                ]
+              ]);
+              ?>
+            </div>
+          <?php else: ?>
+            <!-- Direct URL -->
+            <iframe src="<?php echo esc_url($map_embed_data['content']); ?>" 
+                    width="100%" height="400" 
+                    style="border:0; display: block;"
+                    allowfullscreen="" loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+          <?php endif; ?>
         <?php else: ?>
         <p>地図を表示できません。以下のリンクからアクセスしてください：<br>
           <a href="<?php echo esc_url($shop['map_url'] ?? 'https://maps.app.goo.gl/659nXgwsXYb3dbYH7'); ?>"
@@ -282,6 +365,20 @@ $map_embed_url = get_map_embed_url($shop);
   height: 400px !important;
   max-width: 100%;
   border: 0;
+}
+
+/* Container for embedded iframe from database */
+.map-iframe-container {
+  width: 100%;
+  height: 400px;
+  overflow: hidden;
+}
+
+.map-iframe-container iframe {
+  width: 100% !important;
+  height: 400px !important;
+  border: 0 !important;
+  display: block !important;
 }
 
 /* Style for no images message */

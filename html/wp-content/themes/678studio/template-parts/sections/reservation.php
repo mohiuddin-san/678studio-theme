@@ -24,7 +24,7 @@
 
     <div class="contact-search">
       <label for="store-select" class="contact-search__label">選択店舗 (必須)</label>
-      <select class="contact-select" id="shop-dropdown" name="shop-id" required>
+      <select class="contact-select" id="store-select" name="shop-id" required>
         <option value="">ご予約・お問い合わせの店舗をお選びください</option>
       </select>
       <div class="error-message" id="store-error" style="display: none;">
@@ -67,7 +67,7 @@
       <div class="form-step" id="formStep">
         <div class="form-container">
           <h1>オンライン予約フォーム</h1>
-           <form id="inquiry-form" method="post" action="">
+           <form id="reservationForm" method="post" action="">
             <div class="input-field">
               <label for="name">お名前 (必須)</label>
               <input type="text" id="name" name="name" placeholder="例: 山田 花子" required>
@@ -106,18 +106,37 @@
             </div>
 
             <div class="input-field">
-              <label for="reservation_time_from">開始時間（必須）</label>
-              <input type="time" id="reservation_time_from" name="reservation_time_from" min="09:00" max="18:00" required>
-              <div class="error-message" id="reservation_time_from-error" style="display: none;">
+              <label for="reservation_time">開始時間（必須）</label>
+              <select id="reservation_time" name="reservation_time" required>
+                <option value="">時間を選択してください</option>
+                <option value="08:00">8:00</option>
+                <option value="08:30">8:30</option>
+                <option value="09:00">9:00</option>
+                <option value="09:30">9:30</option>
+                <option value="10:00">10:00</option>
+                <option value="10:30">10:30</option>
+                <option value="11:00">11:00</option>
+                <option value="11:30">11:30</option>
+                <option value="12:00">12:00</option>
+                <option value="12:30">12:30</option>
+                <option value="13:00">13:00</option>
+                <option value="13:30">13:30</option>
+                <option value="14:00">14:00</option>
+                <option value="14:30">14:30</option>
+                <option value="15:00">15:00</option>
+                <option value="15:30">15:30</option>
+                <option value="16:00">16:00</option>
+                <option value="16:30">16:30</option>
+                <option value="17:00">17:00</option>
+                <option value="17:30">17:30</option>
+                <option value="18:00">18:00</option>
+                <option value="18:30">18:30</option>
+                <option value="19:00">19:00</option>
+                <option value="19:30">19:30</option>
+                <option value="20:00">20:00</option>
+              </select>
+              <div class="error-message" id="reservation_time-error" style="display: none;">
                 開始時間を選択してください
-              </div>
-            </div>
-
-            <div class="input-field">
-              <label for="reservation_time_to">終了時間（必須）</label>
-              <input type="time" id="reservation_time_to" name="reservation_time_to" min="09:00" max="20:00" required>
-              <div class="error-message" id="reservation_time_to-error" style="display: none;">
-                終了時間を選択してください
               </div>
             </div>
 
@@ -191,12 +210,7 @@
 
             <div class="confirmation-step__item">
               <span class="confirmation-step__label">開始時間</span>
-              <span class="confirmation-step__value" id="confirmTimeFrom"></span>
-            </div>
-
-            <div class="confirmation-step__item">
-              <span class="confirmation-step__label">終了時間</span>
-              <span class="confirmation-step__value" id="confirmTimeTo"></span>
+              <span class="confirmation-step__value" id="confirmTime"></span>
             </div>
             
             <div class="confirmation-step__item confirmation-step__item--textarea">

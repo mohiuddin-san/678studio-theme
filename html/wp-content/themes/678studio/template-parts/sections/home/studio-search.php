@@ -119,9 +119,29 @@ $current_page = $shop_data['current_page'];
       <?php foreach ($shops as $shop): ?>
       <div class="studio-card">
         <div class="studio-card__image">
-          <img
-            src="<?php echo !empty($shop['main_image']) ? esc_url($shop['main_image']) : (!empty($shop['image_urls']) ? esc_url($shop['image_urls'][0]) : get_template_directory_uri() . '/assets/images/cardpic-sample.jpg'); ?>"
-            alt="スタジオ写真">
+          <?php
+          // メイン画像の表示優先順位: main_image -> image_urls[0] -> デフォルト画像
+          $image_src = '';
+          if (!empty($shop['main_image'])) {
+              // Base64データかURLかを判定
+              if (strpos($shop['main_image'], 'data:image') === 0) {
+                  $image_src = $shop['main_image']; // Base64データはそのまま使用
+              } else {
+                  $image_src = esc_url($shop['main_image']); // URLの場合はエスケープ
+              }
+          } elseif (!empty($shop['image_urls']) && !empty($shop['image_urls'][0])) {
+              // ギャラリー画像をフォールバック
+              if (strpos($shop['image_urls'][0], 'data:image') === 0) {
+                  $image_src = $shop['image_urls'][0];
+              } else {
+                  $image_src = esc_url($shop['image_urls'][0]);
+              }
+          } else {
+              // デフォルト画像
+              $image_src = get_template_directory_uri() . '/assets/images/cardpic-sample.jpg';
+          }
+          ?>
+          <img src="<?php echo $image_src; ?>" alt="スタジオ写真">
           <div class="studio-card__location"><?php echo esc_html($shop['nearest_station'] ?? 'N/A'); ?></div>
         </div>
         <div class="studio-card__content">
