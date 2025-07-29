@@ -521,7 +521,7 @@ function studio_shops_page() {
             });
 
             function loadShopList() {
-                fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
+                fetch('<?php echo admin_url("admin-ajax.php"); ?>', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: 'action=studio_shop_internal_api&endpoint=get_all_studio_shop.php'
