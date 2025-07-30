@@ -500,6 +500,111 @@ function studio_shops_page() {
     });
   }
 
+  // Function to update only gallery preview while preserving form state
+  function updateGalleryOnly(shopId) {
+    if (!shopId) return;
+    
+    fetch('/wp-admin/admin-ajax.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'action=studio_shop_internal_api&endpoint=get_all_studio_shop.php'
+      })
+      .then(response => response.text())
+      .then(responseText => {
+        let data;
+        try {
+          data = JSON.parse(responseText);
+        } catch (e) {
+          return;
+        }
+        
+        if (data.success && data.shops) {
+          const shop = data.shops.find(s => s.id == shopId);
+          if (shop) {
+            // Update only gallery preview, keep form state intact
+            const galleryPreview = document.getElementById('gallery-preview');
+            
+            if (shop.main_gallery_images && shop.main_gallery_images.length > 0) {
+              let galleryHtml = '<div style="margin-bottom: 15px; padding: 15px; background: #f8f8f8; border: 2px solid #666; border-radius: 8px;"><p style="margin: 0 0 15px 0; font-weight: bold; color: #333; font-size: 16px;">📸 現在のギャラリー画像 (' + shop.main_gallery_images.length + '枚):</p></div>';
+              
+              shop.main_gallery_images.forEach((image, index) => {
+                const imageUrl = image.url || image.image_url || image.image_data || image.data || image;
+                const imageId = image.id || index;
+                
+                galleryHtml += '<div class="gallery-item" style="position: relative; background: white; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s;" data-image-id="' + imageId + '"><img class="gallery-image" src="' + imageUrl + '" alt="ギャラリー画像 ' + (index + 1) + '" style="width: 100%; height: 100px; object-fit: cover; display: block; cursor: pointer;" loading="lazy" data-url="' + imageUrl + '"><div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6); color: white; padding: 2px; text-align: center; font-size: 11px;">' + (index + 1) + '</div><button class="delete-gallery-image" style="position: absolute; top: 4px; right: 4px; background: rgba(255,0,0,0.8); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; transition: background 0.2s;" data-image-id="' + imageId + '" title="この画像を削除">×</button></div>';
+              });
+              
+              galleryHtml += '<div style="grid-column: 1 / -1; margin-top: 15px;"><button class="delete-all-gallery" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; border: none; padding: 8px 16px; font-size: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; margin-bottom: 10px; transition: all 0.3s ease;">🗑️ ギャラリー画像を全て削除</button></div>';
+              
+              galleryPreview.innerHTML = galleryHtml;
+              
+              // Add event listeners after HTML is inserted
+              setTimeout(() => {
+                // Gallery item hover effects
+                const galleryItems = galleryPreview.querySelectorAll('.gallery-item');
+                galleryItems.forEach(item => {
+                  item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.05)';
+                    this.style.boxShadow = '0 3px 6px rgba(0,0,0,0.2)';
+                  });
+                  item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                    this.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+                  });
+                });
+                
+                // Gallery image click to open
+                const galleryImages = galleryPreview.querySelectorAll('.gallery-image');
+                galleryImages.forEach(img => {
+                  img.addEventListener('click', function() {
+                    window.open(this.getAttribute('data-url'), '_blank');
+                  });
+                });
+                
+                // Delete buttons
+                const deleteButtons = galleryPreview.querySelectorAll('.delete-gallery-image');
+                deleteButtons.forEach(btn => {
+                  btn.addEventListener('mouseenter', function() {
+                    this.style.background = 'rgba(255,0,0,1)';
+                  });
+                  btn.addEventListener('mouseleave', function() {
+                    this.style.background = 'rgba(255,0,0,0.8)';
+                  });
+                  btn.addEventListener('click', function() {
+                    const imageId = this.getAttribute('data-image-id');
+                    deleteGalleryImage(imageId);
+                  });
+                });
+                
+                // Delete all button
+                const deleteAllBtn = galleryPreview.querySelector('.delete-all-gallery');
+                if (deleteAllBtn) {
+                  deleteAllBtn.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-1px)';
+                    this.style.boxShadow = '0 4px 8px rgba(220,53,69,0.3)';
+                  });
+                  deleteAllBtn.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = 'none';
+                  });
+                  deleteAllBtn.addEventListener('click', function() {
+                    deleteAllGalleryImages();
+                  });
+                }
+              }, 10);
+            } else {
+              galleryPreview.innerHTML = '<p style="color: #666; font-style: italic; margin-top: 10px;">ギャラリー画像は設定されていません。</p>';
+            }
+          }
+        }
+      })
+      .catch(error => {
+        console.error('Gallery update failed:', error);
+      });
+  }
+
   // Global function for deleteMainGalleryImage
   function deleteMainGalleryImage(imageId) {
     if (!confirm('この画像を削除しますか？\\n\\nこの操作は取り消すことができません。')) {
@@ -520,7 +625,7 @@ function studio_shops_page() {
           alert(data.message);
           const shopId = document.getElementById('shop-id-select').value;
           if (shopId) {
-            loadShopData(shopId);
+            updateGalleryOnly(shopId);
           }
         } else {
           alert('削除に失敗しました: ' + (data.error || 'Unknown error'));
@@ -888,7 +993,7 @@ function studio_shops_page() {
         if (data.success) {
           alert(data.message);
           const shopId = document.getElementById('shop-id-select').value;
-          loadShopData(shopId);
+          updateGalleryOnly(shopId);
         } else {
           alert('削除に失敗しました: ' + (data.error || 'Unknown error'));
         }
@@ -923,7 +1028,7 @@ function studio_shops_page() {
       .then(data => {
         if (data.success) {
           alert(data.message);
-          loadShopData(shopId);
+          updateGalleryOnly(shopId);
         } else {
           alert('削除に失敗しました: ' + (data.error || 'Unknown error'));
         }
