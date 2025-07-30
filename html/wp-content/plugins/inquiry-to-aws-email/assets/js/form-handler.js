@@ -1,6 +1,4 @@
 jQuery(document).ready(function($) {
-    // Debug siaes_ajax object
-    console.log('siaes_ajax:', siaes_ajax);
 
     // Function to fetch fresh nonce
     function getFreshNonce() {
@@ -19,7 +17,6 @@ jQuery(document).ready(function($) {
                 },
                 success: function(response) {
                     if (response.success && response.data.nonce) {
-                        console.log('Refreshed nonce:', response.data.nonce);
                         siaes_ajax.nonce = response.data.nonce;
                         resolve(response.data.nonce);
                     } else {
@@ -107,7 +104,6 @@ jQuery(document).ready(function($) {
             $('#confirmationStep').show();
         }
         
-        console.log('Showing confirmation step for form ' + formId);
         return true;
     }
 
@@ -127,9 +123,6 @@ jQuery(document).ready(function($) {
                 formData = formData.filter(function(item) { return !(item.name === 'shop-id' && item.value === ''); });
                 // 正しいshop-idを追加
                 formData.push({ name: 'shop-id', value: shopId });
-                console.log('Manually added/updated shop-id:', shopId);
-            } else {
-                console.error('Store not selected - cannot get shop-id');
             }
         }
         
@@ -137,9 +130,6 @@ jQuery(document).ready(function($) {
         formData.push({ name: 'page_id', value: siaes_ajax.page_id });
         formData.push({ name: 'nonce', value: nonce });
 
-        // Debug: Log serialized form data
-        console.log('Submitting form data for ' + formId + ':', formData);
-        console.log('Shop-id in formData:', formData.find(function(item) { return item.name === 'shop-id'; }));
 
         var $submitButton = $('#submitButton');
         var originalButtonText = $submitButton.text();
@@ -182,20 +172,17 @@ jQuery(document).ready(function($) {
     $('#inquiryForm, #reservationForm').on('submit', function(e) {
         e.preventDefault();
         var formId = $(this).attr('id');
-        console.log('Confirm button clicked for form ' + formId);
         validateAndShowConfirmation(formId);
     });
 
     // Handle back button
     $('#backButton').on('click', function() {
-        console.log('Back button clicked');
         $('#confirmationStep').hide();
         $('#formStep').show();
     });
 
     // Handle final submission
     $('#submitButton').on('click', function() {
-        console.log('Submit button clicked');
         var formId = $('#inquiryForm').length && $('#formStep').find('#inquiryForm').length ? 'inquiryForm' : 'reservationForm';
         getFreshNonce()
             .then(nonce => submitForm(formId, nonce))
@@ -203,7 +190,6 @@ jQuery(document).ready(function($) {
                 console.error('Form submission aborted for ' + formId + ':', error);
                 var formNonce = $('#' + formId + ' input[name="nonce"]').val();
                 if (formNonce) {
-                    console.log('Using form nonce as fallback for ' + formId + ':', formNonce);
                     submitForm(formId, formNonce);
                 } else {
                     alert('Error: Unable to validate security token. Please refresh the page.');
