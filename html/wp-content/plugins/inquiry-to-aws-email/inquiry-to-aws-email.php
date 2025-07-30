@@ -327,30 +327,21 @@ function siaes_send_emails($form_data, $page_slug) {
     $company_name = '';
     $fixed_source_email = 'info@678photo.com'; // Fixed source email for all SES emails
 
-    $api_url = 'https://678photo.com/api/get_all_studio_shop.php';
-    siaes_debug_log("Fetching shop data from API: $api_url");
-
-    $response = wp_remote_get($api_url, [
-        'timeout' => 30,
-        'sslverify' => true
-    ]);
-
-    if (is_wp_error($response)) {
-        siaes_debug_log("API request failed: " . $response->get_error_message());
-        $company_email = get_option('siaes_fallback_email', 'info@san-developer.com');
-        $company_name = get_option('siaes_company_name', 'KOKENSHA');
-    } else {
-        $response_code = wp_remote_retrieve_response_code($response);
-        $response_body = wp_remote_retrieve_body($response);
-        siaes_debug_log("API response code: $response_code");
-        siaes_debug_log("API response body: " . substr($response_body, 0, 500));
-
-        if ($response_code === 200) {
-            $data = json_decode($response_body, true);
-            siaes_debug_log("API response received successfully");
-
-            if (isset($data['shops']) && is_array($data['shops'])) {
-                foreach ($data['shops'] as $shop) {
+    // Get shop data from local API function instead of HTTP request
+    siaes_debug_log("Getting shop data from local API function for shop ID: $shop_id");
+    
+    // Include the API helper file
+    $api_helper_path = WP_PLUGIN_DIR . '/studio-shops-manager/includes/api-helper.php';
+    if (file_exists($api_helper_path)) {
+        include_once $api_helper_path;
+        
+        // Call the function directly if it exists
+        if (function_exists('get_all_studio_shops')) {
+            $shops_data = get_all_studio_shops([]);
+            siaes_debug_log("Shop data retrieved from local function");
+            
+            if (isset($shops_data['shops']) && is_array($shops_data['shops'])) {
+                foreach ($shops_data['shops'] as $shop) {
                     if ($shop['id'] == $shop_id) {
                         $company_email = $shop['company_email'];
                         $company_name = $shop['name'];
@@ -359,17 +350,16 @@ function siaes_send_emails($form_data, $page_slug) {
                     }
                 }
             }
-
-            if (empty($company_email)) {
-                siaes_debug_log("No company email found for shop ID: $shop_id. Using fallback.");
-                $company_email = get_option('siaes_fallback_email', 'info@san-developer.com');
-                $company_name = get_option('siaes_company_name', 'KOKENSHA');
-            }
         } else {
-            siaes_debug_log("API request failed with HTTP code: $response_code");
-            $company_email = get_option('siaes_fallback_email', 'info@san-developer.com');
-            $company_name = get_option('siaes_company_name', 'KOKENSHA');
+            siaes_debug_log("get_all_studio_shops function not found");
         }
+    }
+    
+    // Fallback if no email found
+    if (empty($company_email)) {
+        siaes_debug_log("No company email found for shop ID: $shop_id. Using fallback.");
+        $company_email = get_option('siaes_fallback_email', 'info@san-developer.com');
+        $company_name = get_option('siaes_company_name', 'KOKENSHA');
     }
 
     siaes_debug_log("Using company email (destination): $company_email, company name: $company_name");
@@ -452,7 +442,11 @@ function siaes_send_emails($form_data, $page_slug) {
         ]);
 
         // Send email to company
-        $ses_client->sendEmail([
+        siaes_debug_log('🔄 Attempting to send company email to: ' . $company_email . ' from: ' . $fixed_source_email);
+        siaes_debug_log('📧 Company email subject: ' . $company_subject . ' (' . $page_slug . ')');
+        siaes_debug_log('📝 Company email body preview: ' . substr($company_message, 0, 200) . '...');
+        
+        $result = $ses_client->sendEmail([
             'Source' => $fixed_source_email, // Use fixed source email
             'Destination' => ['ToAddresses' => [$company_email]], // Dynamic company email as destination
             'Message' => [
@@ -460,11 +454,13 @@ function siaes_send_emails($form_data, $page_slug) {
                 'Body' => ['Text' => ['Data' => $company_message, 'Charset' => 'UTF-8']],
             ],
         ]);
-        siaes_debug_log('✅ Company email sent to: ' . $company_email . ' from: ' . $fixed_source_email);
+        siaes_debug_log('✅ Company email sent successfully. MessageId: ' . $result['MessageId']);
 
         // Send thank-you email to user if email is provided
         if (!empty($form_data['email'])) {
-            $ses_client->sendEmail([
+            siaes_debug_log('🔄 Attempting to send thank-you email to: ' . $form_data['email'] . ' from: ' . $fixed_source_email);
+            
+            $user_result = $ses_client->sendEmail([
                 'Source' => $fixed_source_email, // Use fixed source email (info@678photo.com)
                 'Destination' => ['ToAddresses' => [$form_data['email']]],
                 'Message' => [
@@ -472,7 +468,7 @@ function siaes_send_emails($form_data, $page_slug) {
                     'Body' => ['Text' => ['Data' => $thank_you_message, 'Charset' => 'UTF-8']],
                 ],
             ]);
-            siaes_debug_log('✅ Thank-you email sent to user: ' . $form_data['email'] . ' from: ' . $fixed_source_email);
+            siaes_debug_log('✅ Thank-you email sent successfully. MessageId: ' . $user_result['MessageId']);
         } else {
             siaes_debug_log('⚠️ No user email provided, skipping thank-you email.');
         }

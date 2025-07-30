@@ -68,6 +68,9 @@
         <div class="form-container">
           <h1>オンライン予約フォーム</h1>
            <form id="reservationForm" method="post" action="">
+            <!-- 隠しフィールドで店舗IDを送信 -->
+            <input type="hidden" name="shop-id" id="hidden-shop-id" value="">
+            
             <div class="input-field">
               <label for="name">お名前 (必須)</label>
               <input type="text" id="name" name="name" placeholder="例: 山田 花子" required>
