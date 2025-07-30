@@ -1,4 +1,4 @@
-.PHONY: help up down sync deploy reset logs status restart shell wp db-backup db-restore clean ssh-setup
+.PHONY: help up down sync deploy reset logs status restart shell wp db-backup db-restore clean ssh-setup server-backup backup-from-prod
 
 # デフォルトターゲット
 help:
@@ -9,8 +9,11 @@ help:
 	@echo "  make down        - 環境を停止"
 	@echo "  make ssh-setup   - SSH認証を自動設定"
 	@echo "  make sync        - 本番→ローカル同期"
-	@echo "  make deploy      - ローカル→本番デプロイ（選択的）"
+	@echo "  make deploy      - ローカル→本番デプロイ（テーマのみ）"
+	@echo "  make deploy-full - フルデプロイ（バックアップ＋全データ）"
 	@echo "  make deploy-file - 単一ファイルをデプロイ"
+	@echo "  make server-backup - サーバー側でバックアップを作成"
+	@echo "  make backup-from-prod - サーバーからローカルにバックアップ"
 	@echo "  make restart     - 環境を再起動"
 	@echo "  make shell       - WordPressコンテナにアクセス"
 	@echo "  make wp          - WP-CLIコマンドを実行"
@@ -59,10 +62,16 @@ sync:
 		echo "❌ 同期を中止しました"; \
 	fi
 
-# ローカル→本番デプロイ
+# ローカル→本番デプロイ（テーマのみ）
 deploy:
 	@echo "🚀 ローカル→本番デプロイを実行します"
 	@./scripts/deploy-to-prod.sh
+
+# フルデプロイ（バックアップ＋テーマ＋DB＋プラグイン）
+deploy-full:
+	@echo "🚀 フルデプロイメント（バックアップ付き）を実行します"
+	@echo "⚠️  本番環境のバックアップを取得後、ローカル環境で上書きします"
+	@./scripts/deploy-full.sh
 
 # 単一ファイルデプロイ
 deploy-file:
@@ -146,3 +155,30 @@ clean:
 	else \
 		echo "❌ クリーンアップを中止しました"; \
 	fi
+
+# サーバー側でバックアップを作成
+server-backup:
+	@echo "💾 サーバー側でバックアップを作成します..."
+	@echo "📍 保存先: 678photo.com/public_html/backups/"
+	@if [ ! -f ".env.deploy" ]; then \
+		echo "❌ .env.deployが見つかりません。make ssh-setup を実行してください"; \
+		exit 1; \
+	fi
+	@source .env.deploy && \
+	ssh -p $$SSH_PORT -i $$COMPANY_SSH_KEY $$SSH_USER@$$SSH_HOST \
+		"if [ -f /home/$$SSH_USER/server-backup.sh ]; then \
+			bash /home/$$SSH_USER/server-backup.sh; \
+		else \
+			echo '❌ server-backup.shが見つかりません'; \
+			echo 'スクリプトをアップロードします...'; \
+			exit 1; \
+		fi" || \
+	(echo "📤 バックアップスクリプトをアップロード中..." && \
+		source .env.deploy && \
+		scp -P $$SSH_PORT -i $$COMPANY_SSH_KEY scripts/server-backup.sh $$SSH_USER@$$SSH_HOST:/home/$$SSH_USER/ && \
+		ssh -p $$SSH_PORT -i $$COMPANY_SSH_KEY $$SSH_USER@$$SSH_HOST "bash /home/$$SSH_USER/server-backup.sh")
+
+# サーバーからローカルにバックアップ
+backup-from-prod:
+	@echo "📥 サーバーからローカルにバックアップを取得します..."
+	@./scripts/backup-from-prod.sh

@@ -9,9 +9,9 @@ if (!isset($_SERVER['HTTP_HOST']) || $_SERVER['HTTP_HOST'] === 'localhost:8080' 
 } else {
     // サーバー環境の設定
     $host = "localhost";
-    $db_name = "xb592942_sugamonavishop";
-    $username = "xb592942_sugamo";
-    $password = "Sugamonavi12345";
+    $db_name = "xb592942_1qqor";
+    $username = "xb592942_hwnzr";
+    $password = "bplyipjee2";
 }
 
 $conn = new mysqli($host, $username, $password, $db_name);

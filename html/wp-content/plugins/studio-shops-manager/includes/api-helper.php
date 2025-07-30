@@ -30,9 +30,9 @@ function get_db_connection() {
     } else {
         // Server environment
         $host = "localhost";
-        $db_name = "xb592942_sugamonavishop";
-        $username = "xb592942_sugamo";
-        $password = "Sugamonavi12345";
+        $db_name = "xb592942_1qqor";
+        $username = "xb592942_hwnzr";
+        $password = "bplyipjee2";
     }
     
     try {
