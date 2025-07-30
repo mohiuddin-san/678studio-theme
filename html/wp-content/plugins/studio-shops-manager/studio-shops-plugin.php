@@ -799,55 +799,48 @@ function studio_shops_page() {
     });
 
     function loadShopList() {
-      return new Promise((resolve, reject) => {
-        fetch('<?php echo admin_url("admin-ajax.php"); ?>', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: 'action=studio_shop_internal_api&endpoint=get_all_studio_shop.php'
-          })
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('HTTP ' + response.status + ': ' + response.statusText);
-            }
-            return response.text();
-          })
-          .then(responseText => {
-            // Shop list response received
+      fetch('<?php echo admin_url("admin-ajax.php"); ?>', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: 'action=studio_shop_internal_api&endpoint=get_all_studio_shop.php'
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('HTTP ' + response.status + ': ' + response.statusText);
+          }
+          return response.text();
+        })
+        .then(responseText => {
+          // Shop list response received
 
-            let data;
-            try {
-              data = JSON.parse(responseText);
-            } catch (e) {
-              WPDebugLogger.error('JSON parse failed in loadShopList', {
-                error: e.message,
-                response: responseText
-              });
-              reject(e);
-              return;
-            }
-
-            if (data.success && data.shops) {
-              shopSelect.innerHTML = '<option value="">Select a Shop</option>';
-              data.shops.forEach(shop => {
-                const option = document.createElement('option');
-                option.value = shop.id;
-                option.textContent = shop.name;
-                shopSelect.appendChild(option);
-              });
-              resolve(data.shops);
-            } else {
-              reject(new Error('Failed to load shops'));
-            }
-          })
-          .catch(error => {
-            WPDebugLogger.error('Error loading shops', {
-              error: error.message
+          let data;
+          try {
+            data = JSON.parse(responseText);
+          } catch (e) {
+            WPDebugLogger.error('JSON parse failed in loadShopList', {
+              error: e.message,
+              response: responseText
             });
-            reject(error);
+            throw new Error('Invalid JSON response');
+          }
+
+          if (data.success && data.shops) {
+            shopSelect.innerHTML = '<option value="">Select a Shop</option>';
+            data.shops.forEach(shop => {
+              const option = document.createElement('option');
+              option.value = shop.id;
+              option.textContent = shop.name;
+              shopSelect.appendChild(option);
+            });
+          }
+        })
+        .catch(error => {
+          WPDebugLogger.error('Error loading shops', {
+            error: error.message
           });
-      });
+        });
     }
 
     shopSelect.addEventListener('change', function() {
@@ -1075,6 +1068,30 @@ function studio_shops_page() {
       document.getElementById('holidays').value = '';
       document.getElementById('map_url').value = '';
       document.getElementById('company_email').value = '';
+      // Clear main image preview
+      const mainImagePreview = document.getElementById('main-image-preview');
+      if (mainImagePreview) mainImagePreview.innerHTML = '';
+      // Clear gallery preview
+      const galleryPreview = document.getElementById('gallery-preview');
+      if (galleryPreview) galleryPreview.innerHTML = '';
+    }
+
+    // Main image preview update
+    const mainImageInput = document.getElementById('main_image');
+    const mainImagePreview = document.getElementById('main-image-preview');
+    if (mainImageInput && mainImagePreview) {
+      mainImageInput.addEventListener('change', function(e) {
+        if (e.target.files && e.target.files[0]) {
+          const reader = new FileReader();
+          reader.onload = function(ev) {
+            mainImagePreview.innerHTML =
+              '<div style="margin-top: 10px; padding: 10px; background: #f0f8ff; border: 2px solid #0073aa; border-radius: 8px;"><p style="margin: 0 0 10px 0; font-weight: bold; color: #0073aa;">📸 新しいメイン画像プレビュー:</p><img src="' +
+              ev.target.result +
+              '" alt="新しいメイン画像" style="width: 200px; height: 150px; object-fit: cover; border-radius: 6px; border: 3px solid #0073aa;"><p style="margin: 10px 0 0 0; font-size: 12px; color: #666;">この画像が保存後にメイン画像として設定されます。</p></div>';
+          };
+          reader.readAsDataURL(e.target.files[0]);
+        }
+      });
     }
   });
 
