@@ -126,8 +126,8 @@ function studio_shops_page() {
             <div>
                 <label><input type="checkbox" id="update-mode" name="update_mode"> Update Existing Shop</label>
                 <div id="shop-selector" style="display:none; margin-top:10px;">
-                    <select name="shop_id" id="shop-id-select">
-                        <option value="">Select a Shop</option>
+                    <select name="shop_id" id="shop-id-select" style="border: 2px solid #ddd; padding: 8px; border-radius: 4px;">
+                        <option value="">ショップを選択してください（必須）</option>
                     </select>
                     <button type="button" id="delete-shop-btn" style="margin-left: 15px; padding: 8px 16px; background: #666; color: white; border: none; border-radius: 4px; cursor: pointer; display: none;"
                             onmouseover="this.style.background='#555'" 
@@ -164,54 +164,59 @@ function studio_shops_page() {
 
                 // Validate shop_id for update mode
                 if ($is_update_mode && empty($shop_id)) {
-                    echo '<div class="error"><p>' . esc_html__('Error: Shop ID is missing during update.', 'studio-shops') . '</p></div>';
+                    echo '<div class="error"><p>更新モードではショップを選択してください。</p></div>';
+                    // Stop processing to prevent further errors
+                    return;
                 } else {
-                    // Handle main image
-                    $main_image = null;
+                    // Handle main image - optimized direct file processing
+                    $main_image_processed = null;
                     if (isset($_FILES['main_image']) && $_FILES['main_image']['error'] === UPLOAD_ERR_OK) {
-                        $tmp_name = $_FILES['main_image']['tmp_name'];
-                        if (file_exists($tmp_name)) {
-                            $image_data = file_get_contents($tmp_name);
-                            $image_type = $_FILES['main_image']['type'];
-                            $main_image = 'data:' . $image_type . ';base64,' . base64_encode($image_data);
+                        // Process main image directly to file system
+                        $main_image_files = process_and_save_uploaded_files([$_FILES['main_image']], $shop_id ?: 0);
+                        if (!empty($main_image_files)) {
+                            $main_image_processed = $main_image_files[0]['url'];
                         }
                     }
                     
-                    // Handle main gallery images
-                    $main_gallery_images = [];
+                    // Handle main gallery images - optimized direct file processing
+                    $gallery_images_processed = [];
                     
                     if (!empty($_FILES['gallery_images_flat'])) {
+                        // Prepare files array for processing
+                        $files_to_process = [];
                         $gallery_flat_files = $_FILES['gallery_images_flat'];
                         
                         // Check if it's a single file or multiple files
                         if (is_array($gallery_flat_files['name'])) {
-                            // Multiple files
+                            // Multiple files - convert to individual file format
                             for ($i = 0; $i < count($gallery_flat_files['name']); $i++) {
                                 if ($gallery_flat_files['error'][$i] === UPLOAD_ERR_OK) {
-                                    $tmp_name = $gallery_flat_files['tmp_name'][$i];
-                                    if (file_exists($tmp_name)) {
-                                        $image_data = file_get_contents($tmp_name);
-                                        $image_type = $gallery_flat_files['type'][$i];
-                                        $base64_image = 'data:' . $image_type . ';base64,' . base64_encode($image_data);
-                                        $main_gallery_images[] = $base64_image;
-                                    }
+                                    $files_to_process[] = [
+                                        'name' => $gallery_flat_files['name'][$i],
+                                        'type' => $gallery_flat_files['type'][$i],
+                                        'tmp_name' => $gallery_flat_files['tmp_name'][$i],
+                                        'error' => $gallery_flat_files['error'][$i],
+                                        'size' => $gallery_flat_files['size'][$i]
+                                    ];
                                 }
                             }
                         } else {
                             // Single file
                             if ($gallery_flat_files['error'] === UPLOAD_ERR_OK) {
-                                $tmp_name = $gallery_flat_files['tmp_name'];
-                                if (file_exists($tmp_name)) {
-                                    $image_data = file_get_contents($tmp_name);
-                                    $image_type = $gallery_flat_files['type'];
-                                    $base64_image = 'data:' . $image_type . ';base64,' . base64_encode($image_data);
-                                    $main_gallery_images[] = $base64_image;
-                                }
+                                $files_to_process[] = $gallery_flat_files;
+                            }
+                        }
+                        
+                        // Process all gallery files at once
+                        if (!empty($files_to_process)) {
+                            $processed_gallery = process_and_save_uploaded_files($files_to_process, $shop_id ?: 0);
+                            foreach ($processed_gallery as $processed_file) {
+                                $gallery_images_processed[] = $processed_file['url'];
                             }
                         }
                     }
 
-                    // Create the API data
+                    // Create the API data - using processed URLs
                     $api_data = [
                         'name' => $name,
                         'address' => $address,
@@ -221,12 +226,12 @@ function studio_shops_page() {
                         'holidays' => $holidays,
                         'map_url' => $map_url,
                         'company_email' => $company_email,
-                        'gallery_images' => $main_gallery_images
+                        'gallery_images' => $gallery_images_processed
                     ];
                     
                     // Add main image if provided
-                    if ($main_image) {
-                        $api_data['main_image'] = $main_image;
+                    if ($main_image_processed) {
+                        $api_data['main_image'] = $main_image_processed;
                     }
 
                     if ($is_update_mode) {
@@ -590,6 +595,20 @@ function studio_shops_page() {
             const shopSelect = document.getElementById('shop-id-select');
             const deleteShopBtn = document.getElementById('delete-shop-btn');
             const submitBtn = document.getElementById('submit_shop');
+            
+            // Form submission validation
+            const form = document.querySelector('form[method="post"]');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    // Check if update mode is enabled but no shop is selected
+                    if (updateModeCheckbox.checked && !shopSelect.value) {
+                        e.preventDefault();
+                        alert('更新モードではショップを選択してください。');
+                        shopSelect.focus();
+                        return false;
+                    }
+                });
+            }
 
             updateModeCheckbox.addEventListener('change', function() {
                 if (this.checked) {
@@ -645,9 +664,15 @@ function studio_shops_page() {
                 if (this.value) {
                     deleteShopBtn.style.display = 'inline-block';
                     loadShopData(this.value);
+                    // Visual feedback for selected shop
+                    this.style.borderColor = '#0073aa';
+                    this.style.backgroundColor = '#f0f8ff';
                 } else {
                     deleteShopBtn.style.display = 'none';
                     clearForm();
+                    // Reset visual styling
+                    this.style.borderColor = '#ddd';
+                    this.style.backgroundColor = '#fff';
                 }
             });
 

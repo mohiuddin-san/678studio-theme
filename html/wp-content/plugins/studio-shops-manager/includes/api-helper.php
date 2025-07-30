@@ -62,6 +62,75 @@ function get_db_connection() {
 // Note: generate_image_url() function is provided by api/config/common_functions.php
 
 /**
+ * Process and save uploaded file images directly
+ * @param array $files File upload data array ($_FILES format)
+ * @param int $shop_id Shop ID
+ * @param int $category_id Category ID (optional)
+ * @return array Array of saved image URLs
+ * @throws Exception If image processing fails
+ */
+function process_and_save_uploaded_files($files, $shop_id, $category_id = null) {
+    $image_urls = array();
+    
+    // Use WordPress uploads directory for better compatibility
+    $wp_upload_dir = wp_upload_dir();
+    $upload_dir = $wp_upload_dir['basedir'] . '/studio-shops/';
+    
+    if (!is_dir($upload_dir)) {
+        if (!wp_mkdir_p($upload_dir)) {
+            error_log("ERROR - Could not create upload directory: " . $upload_dir);
+            return array();
+        }
+    }
+    
+    foreach ($files as $index => $file_data) {
+        // Handle $_FILES format directly
+        if (isset($file_data['tmp_name']) && isset($file_data['type']) && isset($file_data['error'])) {
+            if ($file_data['error'] !== UPLOAD_ERR_OK || !file_exists($file_data['tmp_name'])) {
+                continue;
+            }
+            
+            $image_type = strtolower(pathinfo($file_data['name'], PATHINFO_EXTENSION));
+            
+            if (!in_array($image_type, ['png', 'jpg', 'jpeg', 'gif'])) {
+                continue;
+            }
+            
+            $prefix = $category_id ? 'category_' . $shop_id . '_' . $category_id : 'shop_' . $shop_id;
+            $filename = $prefix . '_' . time() . '_' . $index . '.' . $image_type;
+            $filepath = $upload_dir . $filename;
+            
+            // Move uploaded file directly
+            if (move_uploaded_file($file_data['tmp_name'], $filepath)) {
+                // Generate URL using WordPress uploads directory
+                $wp_upload_dir = wp_upload_dir();
+                $url = $wp_upload_dir['baseurl'] . '/studio-shops/' . $filename;
+                
+                // Store the file URL
+                $image_urls[] = array(
+                    'filename' => $filename,
+                    'url' => $url,
+                    'filepath' => $filepath
+                );
+                
+                wp_debug_log_info("Image file saved successfully", [
+                    'filename' => $filename,
+                    'url' => $url,
+                    'file_size' => filesize($filepath)
+                ]);
+            } else {
+                wp_debug_log_error("Failed to save image file", [
+                    'filename' => $filename,
+                    'filepath' => $filepath
+                ]);
+            }
+        }
+    }
+    
+    return $image_urls;
+}
+
+/**
  * Process and save base64 images
  * @param array $images Base64 image data array
  * @param int $shop_id Shop ID
@@ -284,18 +353,32 @@ function create_studio_shop($data) {
         $shop_id = $stmt->insert_id;
         $stmt->close();
         
-        // Handle main image - convert Base64 to file URL using actual shop_id
+        // Handle main image - support both URL and Base64 formats
         if (isset($data['main_image']) && !empty($data['main_image'])) {
-            // Process main image as Base64 and convert to file
-            $processed_main_images = process_and_save_images([$data['main_image']], $shop_id, null);
-            if (!empty($processed_main_images)) {
-                $main_image_url = $processed_main_images[0]['url'];
-                
+            $main_image_url = null;
+            
+            // Check if the input is already a URL (from optimized frontend processing)
+            if (filter_var($data['main_image'], FILTER_VALIDATE_URL) || strpos($data['main_image'], '/wp-content/') === 0) {
+                // URL format: use directly
+                $main_image_url = $data['main_image'];
+                wp_debug_log_info("Main image received as URL", ['url' => $main_image_url, 'shop_id' => $shop_id]);
+            } else {
+                // Base64 format: process using existing function
+                $processed_main_images = process_and_save_images([$data['main_image']], $shop_id, null);
+                if (!empty($processed_main_images)) {
+                    $main_image_url = $processed_main_images[0]['url'];
+                    wp_debug_log_info("Main image processed from Base64", ['url' => $main_image_url, 'shop_id' => $shop_id]);
+                }
+            }
+            
+            if ($main_image_url) {
                 // Update shop with main image URL
                 $update_stmt = $conn->prepare("UPDATE studio_shops SET main_image = ? WHERE id = ?");
                 $update_stmt->bind_param("si", $main_image_url, $shop_id);
                 if (!$update_stmt->execute()) {
                     wp_debug_log_error("Failed to update main image", ['shop_id' => $shop_id, 'error' => $update_stmt->error]);
+                } else {
+                    wp_debug_log_info("Main image updated successfully", ['shop_id' => $shop_id, 'url' => $main_image_url]);
                 }
                 $update_stmt->close();
             }
@@ -305,11 +388,39 @@ function create_studio_shop($data) {
         $image_urls = array();
         
         if (isset($data['gallery_images']) && is_array($data['gallery_images']) && !empty($data['gallery_images'])) {
-            wp_debug_log_info("Processing gallery images", ['gallery_count' => count($data['gallery_images']), 'shop_id' => $shop_id]);
-            $processed_images = process_and_save_images($data['gallery_images'], $shop_id);
-            wp_debug_log_info("Processed gallery images", ['processed_count' => count($processed_images), 'shop_id' => $shop_id]);
-            $image_urls = insert_images_to_db($conn, $processed_images, $shop_id);
-            wp_debug_log_info("Inserted gallery images to DB", ['inserted_count' => count($image_urls), 'shop_id' => $shop_id]);
+            wp_debug_log_info("Processing gallery images (create)", ['gallery_count' => count($data['gallery_images']), 'shop_id' => $shop_id]);
+            
+            $url_images = [];
+            $base64_images = [];
+            
+            // Separate URL and Base64 images
+            foreach ($data['gallery_images'] as $image) {
+                if (filter_var($image, FILTER_VALIDATE_URL) || strpos($image, '/wp-content/') === 0) {
+                    $url_images[] = ['url' => $image];
+                } else {
+                    $base64_images[] = $image;
+                }
+            }
+            
+            $processed_images = [];
+            
+            // Process Base64 images if any
+            if (!empty($base64_images)) {
+                $processed_base64 = process_and_save_images($base64_images, $shop_id);
+                $processed_images = array_merge($processed_images, $processed_base64);
+                wp_debug_log_info("Processed Base64 gallery images (create)", ['count' => count($processed_base64), 'shop_id' => $shop_id]);
+            }
+            
+            // Add URL images directly
+            if (!empty($url_images)) {
+                $processed_images = array_merge($processed_images, $url_images);
+                wp_debug_log_info("Added URL gallery images (create)", ['count' => count($url_images), 'shop_id' => $shop_id]);
+            }
+            
+            if (!empty($processed_images)) {
+                $image_urls = insert_images_to_db($conn, $processed_images, $shop_id);
+                wp_debug_log_info("Inserted gallery images to DB (create)", ['inserted_count' => count($image_urls), 'shop_id' => $shop_id]);
+            }
         }
         
         $conn->commit();
@@ -384,28 +495,73 @@ function update_studio_shop($data) {
         }
         $stmt->close();
         
-        // Handle main image if provided - convert Base64 to file URL
+        // Handle main image if provided - support both URL and Base64 formats
         if (isset($data['main_image']) && !empty($data['main_image'])) {
-            // Process main image as Base64 and convert to file
-            $processed_main_images = process_and_save_images([$data['main_image']], $shop_id, null);
-            if (!empty($processed_main_images)) {
-                $main_image_url = $processed_main_images[0]['url'];
-                
+            $main_image_url = null;
+            
+            // Check if the input is already a URL (from optimized frontend processing)
+            if (filter_var($data['main_image'], FILTER_VALIDATE_URL) || strpos($data['main_image'], '/wp-content/') === 0) {
+                // URL format: use directly
+                $main_image_url = $data['main_image'];
+                wp_debug_log_info("Main image received as URL (update)", ['url' => $main_image_url, 'shop_id' => $shop_id]);
+            } else {
+                // Base64 format: process using existing function
+                $processed_main_images = process_and_save_images([$data['main_image']], $shop_id, null);
+                if (!empty($processed_main_images)) {
+                    $main_image_url = $processed_main_images[0]['url'];
+                    wp_debug_log_info("Main image processed from Base64 (update)", ['url' => $main_image_url, 'shop_id' => $shop_id]);
+                }
+            }
+            
+            if ($main_image_url) {
                 // Update shop with main image URL
                 $update_stmt = $conn->prepare("UPDATE studio_shops SET main_image = ? WHERE id = ?");
                 $update_stmt->bind_param("si", $main_image_url, $shop_id);
                 if (!$update_stmt->execute()) {
-                    wp_debug_log_error("Failed to update main image", ['shop_id' => $shop_id, 'error' => $update_stmt->error]);
+                    wp_debug_log_error("Failed to update main image (update)", ['shop_id' => $shop_id, 'error' => $update_stmt->error]);
+                } else {
+                    wp_debug_log_info("Main image updated successfully (update)", ['shop_id' => $shop_id, 'url' => $main_image_url]);
                 }
                 $update_stmt->close();
             }
         }
         
-        // Handle gallery images (ADD to existing images, don't replace)
+        // Handle gallery images (ADD to existing images, don't replace) - support both URL and Base64 formats
         $image_urls = array();
         if (isset($data['gallery_images']) && is_array($data['gallery_images']) && !empty($data['gallery_images'])) {
-            $processed_images = process_and_save_images($data['gallery_images'], $shop_id);
-            $image_urls = insert_images_to_db($conn, $processed_images, $shop_id);
+            wp_debug_log_info("Processing gallery images (update)", ['gallery_count' => count($data['gallery_images']), 'shop_id' => $shop_id]);
+            
+            $url_images = [];
+            $base64_images = [];
+            
+            // Separate URL and Base64 images
+            foreach ($data['gallery_images'] as $image) {
+                if (filter_var($image, FILTER_VALIDATE_URL) || strpos($image, '/wp-content/') === 0) {
+                    $url_images[] = ['url' => $image];
+                } else {
+                    $base64_images[] = $image;
+                }
+            }
+            
+            $processed_images = [];
+            
+            // Process Base64 images if any
+            if (!empty($base64_images)) {
+                $processed_base64 = process_and_save_images($base64_images, $shop_id);
+                $processed_images = array_merge($processed_images, $processed_base64);
+                wp_debug_log_info("Processed Base64 gallery images", ['count' => count($processed_base64), 'shop_id' => $shop_id]);
+            }
+            
+            // Add URL images directly
+            if (!empty($url_images)) {
+                $processed_images = array_merge($processed_images, $url_images);
+                wp_debug_log_info("Added URL gallery images", ['count' => count($url_images), 'shop_id' => $shop_id]);
+            }
+            
+            if (!empty($processed_images)) {
+                $image_urls = insert_images_to_db($conn, $processed_images, $shop_id);
+                wp_debug_log_info("Inserted gallery images to DB (update)", ['inserted_count' => count($image_urls), 'shop_id' => $shop_id]);
+            }
         }
         
         $conn->commit();
