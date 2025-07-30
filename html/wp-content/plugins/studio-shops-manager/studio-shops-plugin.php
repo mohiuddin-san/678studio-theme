@@ -533,10 +533,10 @@ function studio_shops_page() {
                 const imageUrl = image.url || image.image_url || image.image_data || image.data || image;
                 const imageId = image.id || index;
                 
-                galleryHtml += '<div class="gallery-item" style="position: relative; background: white; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s;" data-image-id="' + imageId + '"><img class="gallery-image" src="' + imageUrl + '" alt="ギャラリー画像 ' + (index + 1) + '" style="width: 100%; height: 100px; object-fit: cover; display: block; cursor: pointer;" loading="lazy" data-url="' + imageUrl + '"><div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6); color: white; padding: 2px; text-align: center; font-size: 11px;">' + (index + 1) + '</div><button class="delete-gallery-image" style="position: absolute; top: 4px; right: 4px; background: rgba(255,0,0,0.8); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; transition: background 0.2s;" data-image-id="' + imageId + '" title="この画像を削除">×</button></div>';
+                galleryHtml += '<div class="gallery-item" style="position: relative; background: white; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s;" data-image-id="' + imageId + '"><img class="gallery-image" src="' + imageUrl + '" alt="ギャラリー画像 ' + (index + 1) + '" style="width: 100%; height: 100px; object-fit: cover; display: block; cursor: pointer;" loading="lazy" data-url="' + imageUrl + '"><div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6); color: white; padding: 2px; text-align: center; font-size: 11px;">' + (index + 1) + '</div><button type="button" class="delete-gallery-image" style="position: absolute; top: 4px; right: 4px; background: rgba(255,0,0,0.8); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; transition: background 0.2s;" data-image-id="' + imageId + '" title="この画像を削除">×</button></div>';
               });
               
-              galleryHtml += '<div style="grid-column: 1 / -1; margin-top: 15px;"><button class="delete-all-gallery" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; border: none; padding: 8px 16px; font-size: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; margin-bottom: 10px; transition: all 0.3s ease;">🗑️ ギャラリー画像を全て削除</button></div>';
+              galleryHtml += '<div style="grid-column: 1 / -1; margin-top: 15px;"><button type="button" class="delete-all-gallery" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; border: none; padding: 8px 16px; font-size: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; margin-bottom: 10px; transition: all 0.3s ease;">🗑️ ギャラリー画像を全て削除</button></div>';
               
               galleryPreview.innerHTML = galleryHtml;
               
@@ -638,6 +638,50 @@ function studio_shops_page() {
   }
 
   document.addEventListener('DOMContentLoaded', function() {
+    // State restoration after page reload
+    const restoreState = function() {
+      const lastUpdateMode = localStorage.getItem('studioShops_lastUpdateMode');
+      const lastSelectedShop = localStorage.getItem('studioShops_lastSelectedShop');
+      
+      if (lastUpdateMode === 'true' && lastSelectedShop) {
+        const updateCheckbox = document.getElementById('update-mode');
+        const shopSelector = document.getElementById('shop-selector');
+        const shopSelect = document.getElementById('shop-id-select');
+        const submitBtn = document.getElementById('submit_shop');
+        
+        if (updateCheckbox && shopSelector && shopSelect && submitBtn) {
+          // Restore update mode
+          updateCheckbox.checked = true;
+          shopSelector.style.display = 'block';
+          submitBtn.value = '🔄 ショップを更新';
+          
+          // Load shop list first, then select the shop
+          loadShopList().then(() => {
+            setTimeout(() => {
+              shopSelect.value = lastSelectedShop;
+              shopSelect.style.borderColor = '#0073aa';
+              shopSelect.style.backgroundColor = '#f0f8ff';
+              
+              const deleteShopBtn = document.getElementById('delete-shop-btn');
+              if (deleteShopBtn) {
+                deleteShopBtn.style.display = 'inline-block';
+              }
+              
+              // Load shop data to show current state
+              loadShopData(lastSelectedShop);
+              
+              // Clear stored state after successful restoration
+              localStorage.removeItem('studioShops_lastUpdateMode');
+              localStorage.removeItem('studioShops_lastSelectedShop');
+            }, 500);
+          });
+        }
+      }
+    };
+    
+    // Execute state restoration after a short delay
+    setTimeout(restoreState, 100);
+    
     // 自動テスト: ギャラリー画像問題の検出と修正
     setTimeout(function() {
       const updateCheckbox = document.getElementById('update-mode');
@@ -941,18 +985,71 @@ function studio_shops_page() {
                   const imageUrl = image.url || image.image_url || image.image_data || image.data || image;
                   const imageId = image.id || index;
 
-                  galleryHtml +=
-                    '<div style="position: relative; background: white; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform=\'scale(1.05)\'; this.style.boxShadow=\'0 3px 6px rgba(0,0,0,0.2)\'" onmouseout="this.style.transform=\'scale(1)\'; this.style.boxShadow=\'0 1px 3px rgba(0,0,0,0.1)\'" data-image-id="' +
-                    imageId + '"><img src="' + imageUrl + '" alt="ギャラリー画像 ' + (index + 1) +
-                    '" style="width: 100%; height: 100px; object-fit: cover; display: block; cursor: pointer;" loading="lazy" onclick="window.open(this.src, \'_blank\')"><div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6); color: white; padding: 2px; text-align: center; font-size: 11px;">' +
-                    (index + 1) + '</div><button onclick="deleteGalleryImage(' + imageId +
-                    ')" style="position: absolute; top: 4px; right: 4px; background: rgba(255,0,0,0.8); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; transition: background 0.2s;" onmouseover="this.style.background=\'rgba(255,0,0,1)\'" onmouseout="this.style.background=\'rgba(255,0,0,0.8)\'" title="この画像を削除">×</button></div>';
+                  galleryHtml += '<div class="gallery-item" style="position: relative; background: white; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s;" data-image-id="' + imageId + '"><img class="gallery-image" src="' + imageUrl + '" alt="ギャラリー画像 ' + (index + 1) + '" style="width: 100%; height: 100px; object-fit: cover; display: block; cursor: pointer;" loading="lazy" data-url="' + imageUrl + '"><div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6); color: white; padding: 2px; text-align: center; font-size: 11px;">' + (index + 1) + '</div><button type="button" class="delete-gallery-image" style="position: absolute; top: 4px; right: 4px; background: rgba(255,0,0,0.8); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; transition: background 0.2s;" data-image-id="' + imageId + '" title="この画像を削除">×</button></div>';
                 });
 
-                galleryHtml +=
-                  '<div style="grid-column: 1 / -1; margin-top: 15px;"><button onclick="deleteAllGalleryImages()" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; border: none; padding: 8px 16px; font-size: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; margin-bottom: 10px; transition: all 0.3s ease;" onmouseover="this.style.transform=\'translateY(-1px)\'; this.style.boxShadow=\'0 4px 8px rgba(220,53,69,0.3)\'" onmouseout="this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'none\'">🗑️ ギャラリー画像を全て削除</button><div style="font-size: 13px; color: #666; padding: 10px; background: #fff; border-radius: 4px; border: 1px solid #ddd;">💡 新しい画像をアップロードすると、既存の画像に追加されます。<br>⚠️ 削除した画像は復元できません。</div></div>';
+                galleryHtml += '<div style="grid-column: 1 / -1; margin-top: 15px;"><button type="button" class="delete-all-gallery" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; border: none; padding: 8px 16px; font-size: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; margin-bottom: 10px; transition: all 0.3s ease;">🗑️ ギャラリー画像を全て削除</button><div style="font-size: 13px; color: #666; padding: 10px; background: #fff; border-radius: 4px; border: 1px solid #ddd;">💡 新しい画像をアップロードすると、既存の画像に追加されます。<br>⚠️ 削除した画像は復元できません。</div></div>';
 
                 galleryPreview.innerHTML = galleryHtml;
+                
+                // Add event listeners after HTML is inserted (same as updateGalleryOnly)
+                setTimeout(() => {
+                  // Gallery item hover effects
+                  const galleryItems = galleryPreview.querySelectorAll('.gallery-item');
+                  galleryItems.forEach(item => {
+                    item.addEventListener('mouseenter', function() {
+                      this.style.transform = 'scale(1.05)';
+                      this.style.boxShadow = '0 3px 6px rgba(0,0,0,0.2)';
+                    });
+                    item.addEventListener('mouseleave', function() {
+                      this.style.transform = 'scale(1)';
+                      this.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+                    });
+                  });
+                  
+                  // Gallery image click to open
+                  const galleryImages = galleryPreview.querySelectorAll('.gallery-image');
+                  galleryImages.forEach(img => {
+                    img.addEventListener('click', function() {
+                      window.open(this.getAttribute('data-url'), '_blank');
+                    });
+                  });
+                  
+                  // Delete buttons
+                  const deleteButtons = galleryPreview.querySelectorAll('.delete-gallery-image');
+                  deleteButtons.forEach(btn => {
+                    btn.addEventListener('mouseenter', function() {
+                      this.style.background = 'rgba(255,0,0,1)';
+                    });
+                    btn.addEventListener('mouseleave', function() {
+                      this.style.background = 'rgba(255,0,0,0.8)';
+                    });
+                    btn.addEventListener('click', function(event) {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      const imageId = this.getAttribute('data-image-id');
+                      deleteGalleryImage(imageId);
+                    });
+                  });
+                  
+                  // Delete all button
+                  const deleteAllBtn = galleryPreview.querySelector('.delete-all-gallery');
+                  if (deleteAllBtn) {
+                    deleteAllBtn.addEventListener('mouseenter', function() {
+                      this.style.transform = 'translateY(-1px)';
+                      this.style.boxShadow = '0 4px 8px rgba(220,53,69,0.3)';
+                    });
+                    deleteAllBtn.addEventListener('mouseleave', function() {
+                      this.style.transform = 'translateY(0)';
+                      this.style.boxShadow = 'none';
+                    });
+                    deleteAllBtn.addEventListener('click', function(event) {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      deleteAllGalleryImages();
+                    });
+                  }
+                }, 10);
               } else {
                 galleryPreview.innerHTML =
                   '<p style="color: #666; font-style: italic; margin-top: 10px;">ギャラリー画像は設定されていません。</p>';
@@ -981,8 +1078,16 @@ function studio_shops_page() {
 
     const formData = new FormData();
     formData.append('action', 'studio_shop_internal_api');
-    formData.append('endpoint', 'delete_main_gallery_image.php');
+    formData.append('endpoint', 'delete_gallery_image.php');
     formData.append('image_id', imageId);
+    
+    // Get shop_id from the current selected shop
+    const shopId = document.getElementById('shop-id-select').value;
+    if (!shopId) {
+      alert('ショップが選択されていません。');
+      return;
+    }
+    formData.append('shop_id', shopId);
 
     fetch('/wp-admin/admin-ajax.php', {
         method: 'POST',
@@ -992,7 +1097,9 @@ function studio_shops_page() {
       .then(data => {
         if (data.success) {
           alert(data.message);
-          const shopId = document.getElementById('shop-id-select').value;
+          // Save current state for potential page reload
+          localStorage.setItem('studioShops_lastUpdateMode', 'true');
+          localStorage.setItem('studioShops_lastSelectedShop', shopId);
           updateGalleryOnly(shopId);
         } else {
           alert('削除に失敗しました: ' + (data.error || 'Unknown error'));
