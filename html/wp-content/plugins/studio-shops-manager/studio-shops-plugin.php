@@ -799,48 +799,55 @@ function studio_shops_page() {
     });
 
     function loadShopList() {
-      fetch('<?php echo admin_url("admin-ajax.php"); ?>', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          body: 'action=studio_shop_internal_api&endpoint=get_all_studio_shop.php'
-        })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('HTTP ' + response.status + ': ' + response.statusText);
-          }
-          return response.text();
-        })
-        .then(responseText => {
-          // Shop list response received
+      return new Promise((resolve, reject) => {
+        fetch('<?php echo admin_url("admin-ajax.php"); ?>', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: 'action=studio_shop_internal_api&endpoint=get_all_studio_shop.php'
+          })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('HTTP ' + response.status + ': ' + response.statusText);
+            }
+            return response.text();
+          })
+          .then(responseText => {
+            // Shop list response received
 
-          let data;
-          try {
-            data = JSON.parse(responseText);
-          } catch (e) {
-            WPDebugLogger.error('JSON parse failed in loadShopList', {
-              error: e.message,
-              response: responseText
-            });
-            throw new Error('Invalid JSON response');
-          }
+            let data;
+            try {
+              data = JSON.parse(responseText);
+            } catch (e) {
+              WPDebugLogger.error('JSON parse failed in loadShopList', {
+                error: e.message,
+                response: responseText
+              });
+              reject(e);
+              return;
+            }
 
-          if (data.success && data.shops) {
-            shopSelect.innerHTML = '<option value="">Select a Shop</option>';
-            data.shops.forEach(shop => {
-              const option = document.createElement('option');
-              option.value = shop.id;
-              option.textContent = shop.name;
-              shopSelect.appendChild(option);
+            if (data.success && data.shops) {
+              shopSelect.innerHTML = '<option value="">Select a Shop</option>';
+              data.shops.forEach(shop => {
+                const option = document.createElement('option');
+                option.value = shop.id;
+                option.textContent = shop.name;
+                shopSelect.appendChild(option);
+              });
+              resolve(data.shops);
+            } else {
+              reject(new Error('Failed to load shops'));
+            }
+          })
+          .catch(error => {
+            WPDebugLogger.error('Error loading shops', {
+              error: error.message
             });
-          }
-        })
-        .catch(error => {
-          WPDebugLogger.error('Error loading shops', {
-            error: error.message
+            reject(error);
           });
-        });
+      });
     }
 
     shopSelect.addEventListener('change', function() {
