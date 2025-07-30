@@ -534,7 +534,7 @@ function studio_shops_page() {
                         return response.text();
                     })
                     .then(responseText => {
-                        // Auto-diagnostics response received
+                        WPDebugLogger.log('Auto-diagnostics raw response', {preview: responseText.substring(0, 100)});
                         
                         let data;
                         try {
@@ -546,14 +546,14 @@ function studio_shops_page() {
                         
                         if (data.success && data.shops && data.shops.length > 0) {
                             const testShop = data.shops[0];
-                            // Auto-test with shop data
+                            WPDebugLogger.log('Auto-test with shop', {id: testShop.id, name: testShop.name});
                             
                             // ギャラリー画像があるかチェック
                             if (testShop.main_gallery_images && testShop.main_gallery_images.length > 0) {
-                                // Gallery images found for display test
+                                WPDebugLogger.log('Gallery images found, testing display');
                                 // ここで表示テストを実行
                             } else {
-                                // No gallery images available for test
+                                WPDebugLogger.log('No gallery images found for auto-test');
                             }
                         }
                     })
@@ -635,7 +635,7 @@ function studio_shops_page() {
                     return response.text();
                 })
                 .then(responseText => {
-                    // Shop list response received
+                    WPDebugLogger.log('loadShopList raw response', {preview: responseText.substring(0, 200)});
                     
                     let data;
                     try {
@@ -735,7 +735,7 @@ function studio_shops_page() {
                     return response.text();
                 })
                 .then(responseText => {
-                    // Shop data response received
+                    WPDebugLogger.log('loadShopData raw response', {preview: responseText.substring(0, 200)});
                     
                     let data;
                     try {
@@ -746,6 +746,7 @@ function studio_shops_page() {
                     }
                     
                     WPDebugLogger.log('loadShopData parsed data', data);
+                    console.log(data);
                     if (data.success && data.shops) {
                         const shop = data.shops.find(s => s.id == shopId);
                         if (shop) {

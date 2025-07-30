@@ -113,7 +113,11 @@ function process_and_save_uploaded_files($files, $shop_id, $category_id = null) 
                     'filepath' => $filepath
                 );
                 
-                // Image file saved successfully
+                wp_debug_log_info("Image file saved successfully", [
+                    'filename' => $filename,
+                    'url' => $url,
+                    'file_size' => filesize($filepath)
+                ]);
             } else {
                 wp_debug_log_error("Failed to save image file", [
                     'filename' => $filename,
@@ -181,7 +185,11 @@ function process_and_save_images($images, $shop_id, $category_id = null) {
                     'filepath' => $filepath
                 );
                 
-                // Image file saved successfully
+                wp_debug_log_info("Image file saved successfully", [
+                    'filename' => $filename,
+                    'url' => $url,
+                    'file_size' => filesize($filepath)
+                ]);
             } else {
                 wp_debug_log_error("Failed to save image file", [
                     'filename' => $filename,
@@ -380,7 +388,7 @@ function create_studio_shop($data) {
         $image_urls = array();
         
         if (isset($data['gallery_images']) && is_array($data['gallery_images']) && !empty($data['gallery_images'])) {
-            // Processing gallery images for creation
+            wp_debug_log_info("Processing gallery images (create)", ['gallery_count' => count($data['gallery_images']), 'shop_id' => $shop_id]);
             
             $url_images = [];
             $base64_images = [];
@@ -400,18 +408,18 @@ function create_studio_shop($data) {
             if (!empty($base64_images)) {
                 $processed_base64 = process_and_save_images($base64_images, $shop_id);
                 $processed_images = array_merge($processed_images, $processed_base64);
-                // Processed Base64 gallery images
+                wp_debug_log_info("Processed Base64 gallery images (create)", ['count' => count($processed_base64), 'shop_id' => $shop_id]);
             }
             
             // Add URL images directly
             if (!empty($url_images)) {
                 $processed_images = array_merge($processed_images, $url_images);
-                // Added URL gallery images
+                wp_debug_log_info("Added URL gallery images (create)", ['count' => count($url_images), 'shop_id' => $shop_id]);
             }
             
             if (!empty($processed_images)) {
                 $image_urls = insert_images_to_db($conn, $processed_images, $shop_id);
-                // Gallery images inserted to database
+                wp_debug_log_info("Inserted gallery images to DB (create)", ['inserted_count' => count($image_urls), 'shop_id' => $shop_id]);
             }
         }
         
@@ -521,7 +529,7 @@ function update_studio_shop($data) {
         // Handle gallery images (ADD to existing images, don't replace) - support both URL and Base64 formats
         $image_urls = array();
         if (isset($data['gallery_images']) && is_array($data['gallery_images']) && !empty($data['gallery_images'])) {
-            // Processing gallery images for update
+            wp_debug_log_info("Processing gallery images (update)", ['gallery_count' => count($data['gallery_images']), 'shop_id' => $shop_id]);
             
             $url_images = [];
             $base64_images = [];
@@ -541,18 +549,18 @@ function update_studio_shop($data) {
             if (!empty($base64_images)) {
                 $processed_base64 = process_and_save_images($base64_images, $shop_id);
                 $processed_images = array_merge($processed_images, $processed_base64);
-                // Processed Base64 gallery images for update
+                wp_debug_log_info("Processed Base64 gallery images", ['count' => count($processed_base64), 'shop_id' => $shop_id]);
             }
             
             // Add URL images directly
             if (!empty($url_images)) {
                 $processed_images = array_merge($processed_images, $url_images);
-                // Added URL gallery images for update
+                wp_debug_log_info("Added URL gallery images", ['count' => count($url_images), 'shop_id' => $shop_id]);
             }
             
             if (!empty($processed_images)) {
                 $image_urls = insert_images_to_db($conn, $processed_images, $shop_id);
-                // Gallery images inserted to database for update
+                wp_debug_log_info("Inserted gallery images to DB (update)", ['inserted_count' => count($image_urls), 'shop_id' => $shop_id]);
             }
         }
         
@@ -807,7 +815,7 @@ function delete_gallery_images($data) {
             if ($result) {
                 $deleted_count = $stmt->affected_rows;
                 $stmt->close();
-                // Gallery images deleted
+                wp_debug_log_info("Deleted gallery images", ['db_count' => $deleted_count, 'file_count' => $deleted_files]);
                 return array('success' => true, 'message' => "ギャラリー画像を{$deleted_count}枚削除しました。（ファイル{$deleted_files}個削除）");
             } else {
                 $stmt->close();
@@ -1035,7 +1043,7 @@ function get_all_studio_shops($data) {
             $img_stmt->execute();
             $img_result = $img_stmt->get_result();
             $images = $img_result->fetch_all(MYSQLI_ASSOC);
-            // Shop gallery images retrieved from database
+            wp_debug_log_info("Shop gallery images retrieved", ['shop_id' => $row['id'], 'image_count' => count($images)]);
             $img_stmt->close();
             
             $image_urls = array();
