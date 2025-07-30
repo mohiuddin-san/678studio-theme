@@ -90,9 +90,11 @@ document.addEventListener('DOMContentLoaded', () => {
             contactDetails.style.display = 'flex';
         }
         
-        const imageUrl = shop.image_urls && shop.image_urls.length > 0 
-            ? shop.image_urls[0] 
-            : '/wp-content/themes/678studio/assets/images/cardpic-sample.jpg';
+        const imageUrl = shop.main_image 
+            ? shop.main_image 
+            : (shop.image_urls && shop.image_urls.length > 0 
+                ? shop.image_urls[0] 
+                : '/wp-content/themes/678studio/assets/images/cardpic-sample.jpg');
         imageElement.src = imageUrl;
         tableCells[0].textContent = shop.name || 'N/A';
         tableCells[1].textContent = shop.address || 'N/A';
@@ -107,7 +109,17 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         console.log('Attaching event listener to select:', select);
         select.addEventListener('change', (event) => {
-            updateContactDetails(event.target.value);
+            const shopId = event.target.value;
+            updateContactDetails(shopId);
+            
+            // 隠しフィールドにも店舗IDを設定
+            const hiddenShopId = document.getElementById('hidden-shop-id');
+            if (hiddenShopId) {
+                hiddenShopId.value = shopId;
+                console.log('Hidden shop-id updated to:', shopId);
+            } else {
+                console.error('Hidden shop-id field not found');
+            }
         });
     }
 

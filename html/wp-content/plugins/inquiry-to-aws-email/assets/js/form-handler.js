@@ -53,10 +53,10 @@ jQuery(document).ready(function($) {
             }
         });
 
-        // Check for shop-id (inquiryForm) or store (reservationForm)
-        var shopField = formId === 'inquiryForm' ? 'shop-id' : 'store';
+        // Check for shop-id (both forms use shop-id)
+        var shopField = 'shop-id';
         // store-selectはフォームの外にあるため、グローバルに検索
-        var $storeSelect = formId === 'inquiryForm' ? $('#store-select') : $form.find('#store-select');
+        var $storeSelect = $('#store-select');
         var shopId = $storeSelect.val();
         
         // shop-id の取得が成功
@@ -83,14 +83,18 @@ jQuery(document).ready(function($) {
         // inquiry-form.jsの確認画面表示機能を使用
         if (formId === 'inquiryForm' && typeof window.showInquiryConfirmation === 'function') {
             window.showInquiryConfirmation();
+        } else if (formId === 'reservationForm') {
+            // 予約フォームの場合はreservation-form.jsに任せる（すでに処理済み）
+            $('#formStep').hide();
+            $('#confirmationStep').show();
         } else {
-            // 予約フォームの場合は既存の処理
+            // その他のフォームの場合の既存の処理
             // Populate confirmation step
             $('#confirmName').text($form.find('#name').val());
             $('#confirmKana').text($form.find('#kana').val());
             $('#confirmContact').text($form.find('#contact').val() || 'N/A');
             $('#confirmEmail').text($form.find('#email').val());
-            $('#confirmStore').text($form.find('#store-select option:selected').text());
+            $('#confirmStore').text($('#store-select option:selected').text());
             $('#confirmNotes').text($form.find('#notes').val() || 'N/A');
 
             if (formId === 'reservationForm') {
@@ -111,12 +115,31 @@ jQuery(document).ready(function($) {
     function submitForm(formId, nonce) {
         var $form = $('#' + formId);
         var formData = $form.serializeArray();
+        
+        // shop-idが含まれていない場合、手動で追加（両フォーム対応）
+        var shopIdFound = formData.some(function(item) { return item.name === 'shop-id'; });
+        var shopIdEmpty = formData.some(function(item) { return item.name === 'shop-id' && item.value === ''; });
+        
+        if (!shopIdFound || shopIdEmpty) {
+            var shopId = $('#store-select').val();
+            if (shopId) {
+                // 空のshop-idを削除
+                formData = formData.filter(function(item) { return !(item.name === 'shop-id' && item.value === ''); });
+                // 正しいshop-idを追加
+                formData.push({ name: 'shop-id', value: shopId });
+                console.log('Manually added/updated shop-id:', shopId);
+            } else {
+                console.error('Store not selected - cannot get shop-id');
+            }
+        }
+        
         formData.push({ name: 'action', value: 'siaes_submit_form' });
         formData.push({ name: 'page_id', value: siaes_ajax.page_id });
         formData.push({ name: 'nonce', value: nonce });
 
         // Debug: Log serialized form data
         console.log('Submitting form data for ' + formId + ':', formData);
+        console.log('Shop-id in formData:', formData.find(function(item) { return item.name === 'shop-id'; }));
 
         var $submitButton = $('#submitButton');
         var originalButtonText = $submitButton.text();
