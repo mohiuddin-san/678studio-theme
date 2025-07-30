@@ -18,9 +18,9 @@ if (!isset($_SERVER['HTTP_HOST']) || $_SERVER['HTTP_HOST'] === 'localhost:8080' 
 } else {
     // Server environment
     $servername = "localhost";
-    $username = "xb592942_sugamo";
-    $password = "Sugamonavi12345";
-    $dbname = "xb592942_sugamonavishop";
+    $username = "xb592942_hwnzr";
+    $password = "bplyipjee2";
+    $dbname = "xb592942_1qqor";
 }
 
 try {
