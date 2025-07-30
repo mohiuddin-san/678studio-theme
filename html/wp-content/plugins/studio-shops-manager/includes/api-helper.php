@@ -270,15 +270,12 @@ function create_studio_shop($data) {
     $conn->autocommit(false);
     
     try {
-        // Handle main image
-        $main_image = isset($data['main_image']) ? $data['main_image'] : null;
-        
-        // Insert shop
+        // Insert shop first without main image
         $stmt = $conn->prepare("INSERT INTO studio_shops 
-            (name, address, company_email, phone, nearest_station, business_hours, holidays, map_url, main_image, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+            (name, address, company_email, phone, nearest_station, business_hours, holidays, map_url, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())");
         
-        $stmt->bind_param("sssssssss", $data['name'], $data['address'], $company_email, $phone, $nearest_station, $business_hours, $holidays, $map_url, $main_image);
+        $stmt->bind_param("ssssssss", $data['name'], $data['address'], $company_email, $phone, $nearest_station, $business_hours, $holidays, $map_url);
         
         if (!$stmt->execute()) {
             throw new Exception("Shop insert failed: " . $stmt->error);
@@ -286,6 +283,23 @@ function create_studio_shop($data) {
         
         $shop_id = $stmt->insert_id;
         $stmt->close();
+        
+        // Handle main image - convert Base64 to file URL using actual shop_id
+        if (isset($data['main_image']) && !empty($data['main_image'])) {
+            // Process main image as Base64 and convert to file
+            $processed_main_images = process_and_save_images([$data['main_image']], $shop_id, null);
+            if (!empty($processed_main_images)) {
+                $main_image_url = $processed_main_images[0]['url'];
+                
+                // Update shop with main image URL
+                $update_stmt = $conn->prepare("UPDATE studio_shops SET main_image = ? WHERE id = ?");
+                $update_stmt->bind_param("si", $main_image_url, $shop_id);
+                if (!$update_stmt->execute()) {
+                    wp_debug_log_error("Failed to update main image", ['shop_id' => $shop_id, 'error' => $update_stmt->error]);
+                }
+                $update_stmt->close();
+            }
+        }
         
         // Handle gallery images
         $image_urls = array();
@@ -358,29 +372,34 @@ function update_studio_shop($data) {
     $conn->autocommit(false);
     
     try {
-        // Handle main image
-        $main_image = isset($data['main_image']) ? $data['main_image'] : null;
-        
-        // Update shop (only update main_image if provided)
-        if ($main_image) {
-            $stmt = $conn->prepare("UPDATE studio_shops SET 
-                name = ?, address = ?, company_email = ?, phone = ?, nearest_station = ?, 
-                business_hours = ?, holidays = ?, map_url = ?, main_image = ?, updated_at = NOW()
-                WHERE id = ?");
-            $stmt->bind_param("sssssssssi", $data['name'], $data['address'], $company_email, $phone, $nearest_station, $business_hours, $holidays, $map_url, $main_image, $shop_id);
-        } else {
-            $stmt = $conn->prepare("UPDATE studio_shops SET 
-                name = ?, address = ?, company_email = ?, phone = ?, nearest_station = ?, 
-                business_hours = ?, holidays = ?, map_url = ?, updated_at = NOW()
-                WHERE id = ?");
-            $stmt->bind_param("ssssssssi", $data['name'], $data['address'], $company_email, $phone, $nearest_station, $business_hours, $holidays, $map_url, $shop_id);
-        }
+        // Update shop basic information first
+        $stmt = $conn->prepare("UPDATE studio_shops SET 
+            name = ?, address = ?, company_email = ?, phone = ?, nearest_station = ?, 
+            business_hours = ?, holidays = ?, map_url = ?, updated_at = NOW()
+            WHERE id = ?");
+        $stmt->bind_param("ssssssssi", $data['name'], $data['address'], $company_email, $phone, $nearest_station, $business_hours, $holidays, $map_url, $shop_id);
         
         if (!$stmt->execute()) {
             throw new Exception("Shop update failed: " . $stmt->error);
         }
-        
         $stmt->close();
+        
+        // Handle main image if provided - convert Base64 to file URL
+        if (isset($data['main_image']) && !empty($data['main_image'])) {
+            // Process main image as Base64 and convert to file
+            $processed_main_images = process_and_save_images([$data['main_image']], $shop_id, null);
+            if (!empty($processed_main_images)) {
+                $main_image_url = $processed_main_images[0]['url'];
+                
+                // Update shop with main image URL
+                $update_stmt = $conn->prepare("UPDATE studio_shops SET main_image = ? WHERE id = ?");
+                $update_stmt->bind_param("si", $main_image_url, $shop_id);
+                if (!$update_stmt->execute()) {
+                    wp_debug_log_error("Failed to update main image", ['shop_id' => $shop_id, 'error' => $update_stmt->error]);
+                }
+                $update_stmt->close();
+            }
+        }
         
         // Handle gallery images (ADD to existing images, don't replace)
         $image_urls = array();
@@ -874,11 +893,22 @@ function get_all_studio_shops($data) {
             $image_urls = array();
             $main_gallery_images = array();
             foreach ($images as $img_row) {
-                $image_urls[] = $img_row['image_url'];
+                // Convert relative paths to absolute URLs for admin display
+                $image_url = $img_row['image_url'];
+                if (strpos($image_url, '/wp-content/') === 0) {
+                    $image_url = home_url($image_url);
+                }
+                
+                $image_urls[] = $image_url;
                 $main_gallery_images[] = array(
                     'id' => $img_row['id'],
-                    'url' => $img_row['image_url']
+                    'url' => $image_url
                 );
+            }
+            
+            // Convert main_image relative path to absolute URL for admin display
+            if (!empty($row['main_image']) && strpos($row['main_image'], '/wp-content/') === 0) {
+                $row['main_image'] = home_url($row['main_image']);
             }
             
             $row['image_urls'] = $image_urls;

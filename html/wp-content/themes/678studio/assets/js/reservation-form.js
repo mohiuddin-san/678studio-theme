@@ -1,5 +1,29 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    // Initialize shopsData as empty array to prevent undefined errors
+    window.shopsData = [];
+    
+    // Fetch shops data from new API
+    async function fetchShops() {
+        try {
+            const response = await fetch('/api/get_all_studio_shop.php');
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
+            if (data.success && data.shops) {
+                window.shopsData = data.shops;
+            } else {
+                console.error('API error:', data.message || 'Unknown error');
+            }
+        } catch (error) {
+            console.error('Fetch error:', error);
+        }
+    }
+
+    // Initialize API call
+    fetchShops();
+
     const form = document.getElementById('reservationForm');
     const formStep = document.getElementById('formStep');
     const confirmationStep = document.getElementById('confirmationStep');
@@ -173,6 +197,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const storeSelect = document.getElementById('store-select');
         if (storeSelect) {
             storeSelect.addEventListener('change', validateAndUpdateButton);
+            
+            // Populate store select options when shops data is available
+            const populateStoreOptions = () => {
+                if (window.shopsData && window.shopsData.length > 0) {
+                    storeSelect.innerHTML = '<option value="">店舗を選択してください</option>';
+                    window.shopsData.forEach(shop => {
+                        const option = document.createElement('option');
+                        option.value = shop.id;
+                        option.textContent = shop.name;
+                        storeSelect.appendChild(option);
+                    });
+                } else {
+                    // Retry after a short delay if data is not loaded yet
+                    setTimeout(populateStoreOptions, 500);
+                }
+            };
+            
+            populateStoreOptions();
         }
     }
 
