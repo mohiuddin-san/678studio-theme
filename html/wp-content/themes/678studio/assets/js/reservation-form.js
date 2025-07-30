@@ -103,32 +103,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // 選択された店舗名を取得
     function getSelectedStoreName() {
         const select = document.getElementById('store-select');
-        console.log('getSelectedStoreName - select element:', select);
         
         if (select && select.value) {
-            console.log('Selected value:', select.value);
-            console.log('Selected index:', select.selectedIndex);
-            
             // 選択されたオプションのテキストを直接取得
             const selectedOption = select.options[select.selectedIndex];
-            console.log('Selected option:', selectedOption);
             
             if (selectedOption && selectedOption.value !== '') {
-                console.log('Option text:', selectedOption.textContent);
                 return selectedOption.textContent;
             }
             
             // フォールバック: window.shopsDataからも試す
             if (window.shopsData) {
-                console.log('Using window.shopsData fallback');
                 const selectedShop = window.shopsData.find(shop => shop.id == select.value);
                 if (selectedShop) {
-                    console.log('Found shop in shopsData:', selectedShop);
                     return selectedShop.name;
                 }
             }
         }
-        console.log('No store name found, returning empty string');
         return '';
     }
 
@@ -150,25 +141,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 確認画面にデータを表示
     function populateConfirmationData(data) {
-        console.log('Populating confirmation data:', data);
-        console.log('Store name retrieved:', data.store);
-        
-        // DOM要素の存在確認
-        const confirmStoreElement = document.getElementById('confirmStore');
-        console.log('confirmStore element:', confirmStoreElement);
-        
         document.getElementById('confirmName').textContent = data.name;
         document.getElementById('confirmKana').textContent = data.kana;
         document.getElementById('confirmContact').textContent = data.contact || '入力なし';
         document.getElementById('confirmEmail').textContent = data.email;
-        
-        if (confirmStoreElement) {
-            confirmStoreElement.textContent = data.store || '選択なし';
-            console.log('Set confirmStore textContent to:', confirmStoreElement.textContent);
-        } else {
-            console.error('confirmStore element not found!');
-        }
-        
+        document.getElementById('confirmStore').textContent = data.store || '選択なし';
         document.getElementById('confirmDate').textContent = formatDate(data.reservation_date);
         document.getElementById('confirmTime').textContent = formatTime(data.reservation_time);
         document.getElementById('confirmNotes').textContent = data.notes || '入力なし';

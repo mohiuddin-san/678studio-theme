@@ -107,7 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!select) {
         console.error('Error: .contact-select not found for event listener');
     } else {
-        console.log('Attaching event listener to select:', select);
         select.addEventListener('change', (event) => {
             const shopId = event.target.value;
             updateContactDetails(shopId);
@@ -116,9 +115,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const hiddenShopId = document.getElementById('hidden-shop-id');
             if (hiddenShopId) {
                 hiddenShopId.value = shopId;
-                console.log('Hidden shop-id updated to:', shopId);
-            } else {
-                console.error('Hidden shop-id field not found');
             }
         });
     }
