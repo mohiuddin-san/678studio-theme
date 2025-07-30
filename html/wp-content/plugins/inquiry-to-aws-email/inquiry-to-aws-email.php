@@ -2,7 +2,7 @@
 /*
 Plugin Name: Standalone Inquiry to AWS Email
 Description: A standalone plugin to handle inquiry and reservation forms with dynamic shop selection and send emails via AWS SES using API-provided emails.
-Version: 1.0.56
+Version: 1.0.61
 Author: Your Name
 */
 
@@ -15,7 +15,7 @@ define('SIAES_PLUGIN_LOADED', true);
 // Debug logging function
 function siaes_debug_log($message) {
     if (defined('WP_DEBUG') && WP_DEBUG) {
-        error_log('[SIAES DEBUG] ' . (is_array($message) ? print_r($message, true) : $message));
+        error_log('[SIAES DEBUG ' . date('Y-m-d H:i:s') . '] ' . (is_array($message) ? print_r($message, true) : $message));
     }
 }
 
@@ -35,6 +35,22 @@ add_action('admin_menu', 'siaes_register_settings');
 function siaes_settings_page() {
     if (!current_user_can('manage_options')) {
         wp_die('Unauthorized access');
+    }
+
+    // Target pages
+    $target_pages = array_map('trim', explode(',', get_option('siaes_pages', '')));
+    if (!$target_pages[0]) $target_pages = [];
+
+    // Page-wise settings
+    $page_settings = get_option('siaes_page_settings', []);
+
+    // Field mapping (slug => fields)
+    $default_fields = [
+        'name', 'kana', 'contact', 'email', 'notes', 'agreement', 'shop-id', 'reservation_date', 'reservation_time_from'
+    ];
+    $page_fields_map = [];
+    foreach ($target_pages as $slug) {
+        $page_fields_map[$slug] = $default_fields;
     }
     ?>
     <div class="wrap">
@@ -61,43 +77,70 @@ function siaes_settings_page() {
                     <th><label for="siaes_pages">Target Pages (comma-separated slugs)</label></th>
                     <td><input type="text" name="siaes_pages" value="<?php echo esc_attr(get_option('siaes_pages')); ?>" class="regular-text"></td>
                 </tr>
-                <tr>
-                    <th><label for="siaes_email_format">Email Format</label></th>
-                    <td><textarea name="siaes_email_format" rows="5" class="large-text"><?php echo esc_textarea(get_option('siaes_email_format', 'New inquiry from [name] for [company-name]')); ?></textarea></td>
-                </tr>
-                <tr>
-                    <th><label for="siaes_company_subject">Company Email Subject</label></th>
-                    <td><input type="text" name="siaes_company_subject" value="<?php echo esc_attr(get_option('siaes_company_subject', 'New Inquiry from [company-name]')); ?>" class="regular-text"></td>
-                </tr>
-                <tr>
-                    <th><label for="siaes_company_name">Default Company Name</label></th>
-                    <td><input type="text" name="siaes_company_name" value="<?php echo esc_attr(get_option('siaes_company_name', 'KOKENSHA')); ?>" class="regular-text"></td>
-                </tr>
-                <tr>
-                    <th><label for="siaes_fallback_email">Fallback Email</label></th>
-                    <td><input type="text" name="siaes_fallback_email" value="<?php echo esc_attr(get_option('siaes_fallback_email', 'info@san-developer.com')); ?>" class="regular-text"></td>
-                </tr>
-                <tr>
-                    <th><label for="siaes_user_reply">User Reply Message</label></th>
-                    <td><textarea name="siaes_user_reply" rows="5" class="large-text"><?php echo esc_textarea(get_option('siaes_user_reply', 'Thank you for your inquiry!')); ?></textarea></td>
-                </tr>
-                <tr>
-                    <th><label for="siaes_append_form_data">Append Form Data</label></th>
-                    <td><input type="checkbox" name="siaes_append_form_data" value="1" <?php checked(get_option('siaes_append_form_data', 1)); ?>></td>
-                </tr>
-                <tr>
-                    <th><label for="siaes_language">Language</label></th>
-                    <td>
-                        <select name="siaes_language">
-                            <option value="english" <?php selected(get_option('siaes_language', 'english'), 'english'); ?>>English</option>
-                            <option value="japanese" <?php selected(get_option('siaes_language', 'english'), 'japanese'); ?>>Japanese</option>
-                        </select>
-                    </td>
-                </tr>
             </table>
+
+            <h2>Page-wise Email Settings</h2>
+            <div id="siaes-page-tabs">
+                <ul>
+                    <?php foreach ($target_pages as $slug): ?>
+                        <li><a href="#tab-<?php echo esc_attr($slug); ?>"><?php echo esc_html($slug); ?></a></li>
+                    <?php endforeach; ?>
+                </ul>
+                <?php foreach ($target_pages as $slug): 
+                    $fields = $page_fields_map[$slug];
+                    $settings = isset($page_settings[$slug]) ? $page_settings[$slug] : [];
+                ?>
+                <div id="tab-<?php echo esc_attr($slug); ?>">
+                    <h3>Fields for <code><?php echo esc_html($slug); ?></code></h3>
+                    <div style="margin-bottom:10px;">
+                        <?php foreach ($fields as $field): ?>
+                            <span style="display:inline-block;background:#f3f3f3;border:1px solid #ccc;padding:2px 8px;margin:2px;border-radius:4px;">
+                                [<?php echo esc_html($field); ?>]
+                            </span>
+                        <?php endforeach; ?>
+                    </div>
+                    <table class="form-table">
+                        <tr>
+                            <th><label>Company Email Subject</label></th>
+                            <td>
+                                <input type="text" name="siaes_page_settings[<?php echo esc_attr($slug); ?>][company_subject]" value="<?php echo esc_attr($settings['company_subject'] ?? ''); ?>" class="regular-text">
+                                <p class="description">Use fields like <code>[name]</code>, <code>[email]</code>, <code>[company-name]</code>, etc.</p>
+                            </td>
+                        </tr>
+                       
+                        <tr>
+                            <th><label>Email Format (Company)</label></th>
+                            <td>
+                                <textarea name="siaes_page_settings[<?php echo esc_attr($slug); ?>][email_format]" rows="4" class="large-text"><?php echo esc_textarea($settings['email_format'] ?? ''); ?></textarea>
+                                <p class="description">Use fields above like <code>[name]</code>, <code>[email]</code>, etc.</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th><label>User Email Subject</label></th>
+                            <td>
+                                <input type="text" name="siaes_page_settings[<?php echo esc_attr($slug); ?>][user_subject]" value="<?php echo esc_attr($settings['user_subject'] ?? ''); ?>" class="regular-text">
+                                <p class="description">Use fields like <code>[name]</code>, <code>[email]</code>, <code>[company-name]</code>, <code>[reservation_date]</code>, etc.</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th><label>User Reply Message</label></th>
+                            <td>
+                                <textarea name="siaes_page_settings[<?php echo esc_attr($slug); ?>][user_reply]" rows="3" class="large-text"><?php echo esc_textarea($settings['user_reply'] ?? ''); ?></textarea>
+                                <p class="description">Exactly what you write here will be sent to the user.</p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <?php endforeach; ?>
+            </div>
             <?php submit_button(); ?>
         </form>
     </div>
+    <script>
+    jQuery(function($){
+        $("#siaes-page-tabs").tabs();
+    });
+    </script>
     <?php
 }
 
@@ -107,13 +150,7 @@ function siaes_register_settings_fields() {
     register_setting('siaes_settings_group', 'siaes_aws_secret_access_key', 'sanitize_text_field');
     register_setting('siaes_settings_group', 'siaes_aws_region', 'sanitize_text_field');
     register_setting('siaes_settings_group', 'siaes_pages', 'sanitize_text_field');
-    register_setting('siaes_settings_group', 'siaes_email_format', 'sanitize_textarea_field');
-    register_setting('siaes_settings_group', 'siaes_company_subject', 'sanitize_text_field');
-    register_setting('siaes_settings_group', 'siaes_company_name', 'sanitize_text_field');
-    register_setting('siaes_settings_group', 'siaes_fallback_email', 'sanitize_email');
-    register_setting('siaes_settings_group', 'siaes_user_reply', 'sanitize_textarea_field');
-    register_setting('siaes_settings_group', 'siaes_append_form_data', 'intval');
-    register_setting('siaes_settings_group', 'siaes_language', 'sanitize_text_field');
+    register_setting('siaes_settings_group', 'siaes_page_settings');
 }
 add_action('admin_init', 'siaes_register_settings_fields');
 
@@ -247,6 +284,12 @@ function siaes_handle_form_submission() {
             return;
         }
 
+        if (!isset($form_data['email']) || !filter_var($form_data['email'], FILTER_VALIDATE_EMAIL)) {
+            siaes_debug_log('ERROR: Invalid or no email provided in form data');
+            wp_send_json_error('Valid email address required');
+            return;
+        }
+
         ob_start();
         try {
             siaes_send_emails($form_data, $page_slug);
@@ -325,109 +368,114 @@ function siaes_send_emails($form_data, $page_slug) {
 
     $company_email = '';
     $company_name = '';
-    $fixed_source_email = 'info@678photo.com'; // Fixed source email for all SES emails
+    $company_phone = '';
+    $company_address = '';
+    $company_hours = '';
+    $fixed_source_email = 'info@678photo.com';
 
-    // Get shop data from local API function instead of HTTP request
-    siaes_debug_log("Getting shop data from local API function for shop ID: $shop_id");
-    
-    // Include the API helper file
+    // Get shop data from local API function
     $api_helper_path = WP_PLUGIN_DIR . '/studio-shops-manager/includes/api-helper.php';
     if (file_exists($api_helper_path)) {
         include_once $api_helper_path;
-        
-        // Call the function directly if it exists
         if (function_exists('get_all_studio_shops')) {
             $shops_data = get_all_studio_shops([]);
             siaes_debug_log("Shop data retrieved from local function");
-            
             if (isset($shops_data['shops']) && is_array($shops_data['shops'])) {
                 foreach ($shops_data['shops'] as $shop) {
                     if ($shop['id'] == $shop_id) {
                         $company_email = $shop['company_email'];
                         $company_name = $shop['name'];
+                        $company_phone = $shop['phone'];
+                        $company_address = $shop['address'];
+                        $company_hours = $shop['business_hours'];
+
+                        // Add to $form_data for shortcode replacement
+                        $form_data['company_name'] = $company_name;
+                        $form_data['company_phone'] = $company_phone;
+                        $form_data['company_address'] = $company_address;
+                        $form_data['company_hours'] = $company_hours;
+                        $form_data['company_email'] = $company_email;
                         siaes_debug_log("Found shop for ID $shop_id: Email=$company_email, Name=$company_name");
                         break;
                     }
                 }
             }
-        } else {
-            siaes_debug_log("get_all_studio_shops function not found");
         }
     }
-    
-    // Fallback if no email found
+
     if (empty($company_email)) {
         siaes_debug_log("No company email found for shop ID: $shop_id. Using fallback.");
         $company_email = get_option('siaes_fallback_email', 'info@san-developer.com');
         $company_name = get_option('siaes_company_name', 'KOKENSHA');
     }
 
-    siaes_debug_log("Using company email (destination): $company_email, company name: $company_name");
-    siaes_debug_log("Using fixed source email: $fixed_source_email");
+    // Validate page slug
+    $target_pages = array_map('trim', explode(',', get_option('siaes_pages', '')));
+    if (!in_array($page_slug, $target_pages)) {
+        siaes_debug_log("ERROR: Invalid page slug '$page_slug' in siaes_send_emails");
+        throw new Exception("Invalid page slug: $page_slug");
+    }
 
-    $email_format = trim(get_option('siaes_email_format', 'New [form_type] from [name] for [company-name]'));
-    $company_subject = get_option('siaes_company_subject', 'New [form_type] from [company-name]');
-    $default_company_name = get_option('siaes_company_name', 'KOKENSHA');
-    $append_form_data = get_option('siaes_append_form_data', 1);
-    $language = get_option('siaes_language', 'english');
+    // Page-wise settings
+    $page_settings = get_option('siaes_page_settings', []);
+    if (!is_array($page_settings)) {
+        siaes_debug_log("WARNING: siaes_page_settings is not an array. Initializing as empty array.");
+        $page_settings = [];
+    }
+    $settings = isset($page_settings[$page_slug]) ? $page_settings[$page_slug] : [];
+    siaes_debug_log("Settings for page slug '$page_slug': " . json_encode($settings));
 
-    $form_type = ($page_slug === 'studio-reservation') ? 'reservation' : 'inquiry';
-    $email_format = str_replace('[form_type]', $form_type, $email_format);
-    $company_subject = str_replace('[form_type]', $form_type, $company_subject);
+    // Company email subject, user email subject, format, user reply
+    $company_subject = !empty($settings['company_subject']) ? $settings['company_subject'] : 'New Inquiry from ' . $page_slug;
+    $user_subject = !empty($settings['user_subject']) ? $settings['user_subject'] : 'Thank You for Your Inquiry';
+    $company_message = $settings['email_format'] ?? '';
+    $user_reply_final = $settings['user_reply'] ?? '';
 
-    $labels = [
-        'english' => [
-            'form_data_label' => '==== Form Data ====',
-            'thank_you_subject' => 'Thank You for Your ' . ucfirst($form_type),
-            'contact_us' => 'We will get back to you soon. Contact us at %s for further assistance.'
-        ],
-        'japanese' => [
-            'form_data_label' => '==== フォームデータ ====',
-            'thank_you_subject' => ($form_type === 'reservation') ? 'ご予約ありがとうございます' : 'お問い合わせありがとうございます',
-            'contact_us' => '近日中に対応いたします。さらにサポートが必要な場合は、%sまでご連絡ください。'
-        ]
-    ];
+    siaes_debug_log("Before shortcode replacement - Company subject: $company_subject");
+    siaes_debug_log("Before shortcode replacement - User subject: $user_subject");
+    siaes_debug_log("Form data for shortcode replacement: " . json_encode($form_data));
 
-    $company_subject = str_replace('[company-name]', $company_name ?: $default_company_name, $company_subject);
-    $company_message = $email_format;
-    $company_message = str_replace('[company-name]', $company_name ?: $default_company_name, $company_message);
-    $company_message = str_replace('[company-email]', $company_email, $company_message);
-
+    // Replace shortcodes in subjects and company message
     foreach ($form_data as $key => $value) {
+        $company_subject = str_replace("[$key]", $value, $company_subject);
+        $user_subject = str_replace("[$key]", $value, $user_subject);
         $company_message = str_replace("[$key]", $value, $company_message);
-    }
-
-    if ($append_form_data) {
-        $company_message .= "\n\n" . $labels[$language]['form_data_label'] . "\n";
-        foreach ($form_data as $key => $value) {
-            $company_message .= "$key: $value\n";
-        }
-    }
-
-    $user_reply_raw = get_option('siaes_user_reply', 'Thank you for your [form_type]!');
-    $user_reply_final = str_replace('[form_type]', $form_type, $user_reply_raw);
-    foreach ($form_data as $key => $value) {
         $user_reply_final = str_replace("[$key]", $value, $user_reply_final);
     }
+    $company_subject = str_replace('[company-name]', $company_name, $company_subject);
+    $user_subject = str_replace('[company-name]', $company_name, $user_subject);
+    $company_message = str_replace('[company-name]', $company_name, $company_message);
+    $user_reply_final = str_replace('[company-name]', $company_name, $user_reply_final);
 
+    // Log after replacement
+    siaes_debug_log("After shortcode replacement - Company subject: $company_subject");
+    siaes_debug_log("After shortcode replacement - User subject: $user_subject");
+
+    // Fallback if subjects are empty
+    if (empty($company_subject)) {
+        siaes_debug_log("ERROR: Company subject is empty after processing. Using fallback.");
+        $company_subject = 'New Inquiry';
+    }
+    if (empty($user_subject)) {
+        siaes_debug_log("ERROR: User subject is empty after processing. Using fallback.");
+        $user_subject = 'Thank You for Your Inquiry';
+    }
+
+    // User reply message
     $thank_you_message = $user_reply_final;
+    $append_form_data = false; // Set to true if you want to append form data
     if ($append_form_data) {
-        $thank_you_message .= "\n\n" . $labels[$language]['form_data_label'] . "\n";
+        $thank_you_message .= "\n\nSubmitted Data:\n";
         foreach ($form_data as $key => $value) {
             $thank_you_message .= "$key: $value\n";
         }
     }
-    $thank_you_message .= "\n" . sprintf($labels[$language]['contact_us'], $fixed_source_email);
-
+    
     $autoload_path = plugin_dir_path(__FILE__) . 'vendor/autoload.php';
     siaes_debug_log('Autoload path: ' . $autoload_path);
     if (!file_exists($autoload_path)) {
         siaes_debug_log('ERROR: AWS SDK autoload.php not found');
         throw new Exception('AWS SDK not found');
-    }
-    if (!is_readable($autoload_path)) {
-        siaes_debug_log('ERROR: AWS SDK autoload.php not readable');
-        throw new Exception('AWS SDK autoload.php not readable');
     }
     require_once $autoload_path;
 
@@ -445,10 +493,10 @@ function siaes_send_emails($form_data, $page_slug) {
         siaes_debug_log('🔄 Attempting to send company email to: ' . $company_email . ' from: ' . $fixed_source_email);
         siaes_debug_log('📧 Company email subject: ' . $company_subject . ' (' . $page_slug . ')');
         siaes_debug_log('📝 Company email body preview: ' . substr($company_message, 0, 200) . '...');
-        
+
         $result = $ses_client->sendEmail([
-            'Source' => $fixed_source_email, // Use fixed source email
-            'Destination' => ['ToAddresses' => [$company_email]], // Dynamic company email as destination
+            'Source' => $fixed_source_email,
+            'Destination' => ['ToAddresses' => [$company_email]],
             'Message' => [
                 'Subject' => ['Data' => $company_subject . ' (' . $page_slug . ')', 'Charset' => 'UTF-8'],
                 'Body' => ['Text' => ['Data' => $company_message, 'Charset' => 'UTF-8']],
@@ -457,39 +505,49 @@ function siaes_send_emails($form_data, $page_slug) {
         siaes_debug_log('✅ Company email sent successfully. MessageId: ' . $result['MessageId']);
 
         // Send thank-you email to user if email is provided
-        if (!empty($form_data['email'])) {
+        if (!empty($form_data['email']) && filter_var($form_data['email'], FILTER_VALIDATE_EMAIL)) {
             siaes_debug_log('🔄 Attempting to send thank-you email to: ' . $form_data['email'] . ' from: ' . $fixed_source_email);
-            
+            siaes_debug_log('📧 User email subject: ' . $user_subject);
+            siaes_debug_log('📝 User email body preview: ' . substr($thank_you_message, 0, 200) . '...');
+
             $user_result = $ses_client->sendEmail([
-                'Source' => $fixed_source_email, // Use fixed source email (info@678photo.com)
+                'Source' => $fixed_source_email,
                 'Destination' => ['ToAddresses' => [$form_data['email']]],
                 'Message' => [
-                    'Subject' => ['Data' => $labels[$language]['thank_you_subject'], 'Charset' => 'UTF-8'],
+                    'Subject' => ['Data' => $user_subject, 'Charset' => 'UTF-8'],
                     'Body' => ['Text' => ['Data' => $thank_you_message, 'Charset' => 'UTF-8']],
                 ],
             ]);
             siaes_debug_log('✅ Thank-you email sent successfully. MessageId: ' . $user_result['MessageId']);
         } else {
-            siaes_debug_log('⚠️ No user email provided, skipping thank-you email.');
+            siaes_debug_log('⚠️ Invalid or no user email provided: ' . ($form_data['email'] ?? 'Not set'));
         }
     } catch (Exception $e) {
         siaes_debug_log('❌ Failed to send email: ' . $e->getMessage() . ' (Code: ' . $e->getCode() . ')');
         throw new Exception('Failed to send email: ' . $e->getMessage());
     }
 }
+
 // Admin notices for debugging
 function siaes_admin_notices() {
     if (defined('WP_DEBUG') && WP_DEBUG) {
         $target_pages = get_option('siaes_pages', '');
+        $page_settings = get_option('siaes_page_settings', []);
         if (empty($target_pages)) {
             echo '<div class="notice notice-warning"><p><strong>SIAES Plugin:</strong> No target pages configured. Please configure form pages in the settings.</p></div>';
         }
-
+        foreach (array_map('trim', explode(',', $target_pages)) as $slug) {
+            if (empty($page_settings[$slug]['company_subject'])) {
+                echo '<div class="notice notice-warning"><p><strong>SIAES Plugin:</strong> No company email subject configured for page slug: ' . esc_html($slug) . '</p></div>';
+            }
+            if (empty($page_settings[$slug]['user_subject'])) {
+                echo '<div class="notice notice-warning"><p><strong>SIAES Plugin:</strong> No user email subject configured for page slug: ' . esc_html($slug) . '</p></div>';
+            }
+        }
         $aws_key = get_option('siaes_aws_access_key_id');
         if (empty($aws_key)) {
             echo '<div class="notice notice-warning"><p><strong>SIAES Plugin:</strong> AWS credentials not configured. Please configure AWS settings.</p></div>';
         }
-
         echo '<div class="notice notice-info"><p><strong>SIAES Debug:</strong> AJAX URL: ' . admin_url('admin-ajax.php') . '</p></div>';
     }
 }
@@ -542,3 +600,31 @@ function siaes_test_ses_credentials() {
     }
 }
 add_action('wp_ajax_siaes_test_ses', 'siaes_test_ses_credentials');
+
+// Test email sending
+function siaes_test_email_sending() {
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Unauthorized');
+        return;
+    }
+    try {
+        $form_data = [
+            'name' => 'Test User',
+            'kana' => 'テストユーザー',
+            'contact' => '123-456-7890',
+            'email' => 'test@example.com',
+            'notes' => 'Test notes',
+            'shop-id' => 1,
+            'reservation_date' => '2025-08-01',
+            'reservation_time_from' => '10:00'
+        ];
+        $page_slug = 'test-page';
+        siaes_send_emails($form_data, $page_slug);
+        wp_send_json_success('Test email sent successfully');
+    } catch (Exception $e) {
+        siaes_debug_log('Test email error: ' . $e->getMessage());
+        wp_send_json_error('Test email failed: ' . $e->getMessage());
+    }
+}
+add_action('wp_ajax_siaes_test_email', 'siaes_test_email_sending');
+?>
