@@ -172,7 +172,34 @@ deploy_plugins() {
     print_success "Plugins deployed successfully"
 }
 
-# --- 5. Deploy Database ---
+# --- 5. Deploy API Files ---
+deploy_api_files() {
+    print_step "Deploying API files to production..."
+    
+    local api_dir="$PROJECT_ROOT/html/api"
+    
+    if [[ ! -d "$api_dir" ]]; then
+        print_warning "No API directory found, skipping..."
+        return
+    fi
+    
+    # Count API files
+    local api_file_count=$(find "$api_dir" -type f | wc -l)
+    print_info "Found $api_file_count API files to deploy"
+    
+    # Deploy API files
+    rsync -avz --progress \
+        --exclude="*.log" \
+        --exclude="cache/" \
+        --exclude=".DS_Store" \
+        -e "ssh -p $SSH_PORT -i $COMPANY_SSH_KEY" \
+        "$api_dir/" \
+        "$SSH_USER@$SSH_HOST:$REMOTE_PATH/api/"
+    
+    print_success "API files deployed successfully"
+}
+
+# --- 6. Deploy Database ---
 deploy_database() {
     print_step "Deploying database to production..."
     
@@ -221,7 +248,7 @@ deploy_database() {
     print_success "Database deployed successfully"
 }
 
-# --- 6. Deploy Uploads (Optional) ---
+# --- 7. Deploy Uploads (Optional) ---
 deploy_uploads() {
     print_step "Deploying media uploads..."
     
@@ -239,7 +266,7 @@ deploy_uploads() {
     print_success "Media uploads deployed successfully"
 }
 
-# --- 7. Post-deployment Tasks ---
+# --- 8. Post-deployment Tasks ---
 post_deployment() {
     print_step "Running post-deployment tasks..."
     
@@ -271,6 +298,7 @@ show_summary() {
     echo "  ✅ Server backup created at: $SERVER_BACKUP_DIR"
     echo "  ✅ Theme deployed"
     echo "  ✅ Plugins deployed"
+    echo "  ✅ API files deployed"
     echo "  ✅ Database deployed"
     echo "  ✅ Permissions set"
     echo ""
@@ -353,6 +381,7 @@ main() {
     build_assets
     deploy_theme
     deploy_plugins
+    deploy_api_files
     
     if [[ "$skip_db" != true ]]; then
         deploy_database
