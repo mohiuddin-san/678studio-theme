@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchShops() {
         try {
             // Use local JSON for testing
-            const response = await fetch('https://678photo.com/api/get_all_studio_shop.php');
+            const response = await fetch('/api/get_all_studio_shop.php');
             console.log('API response:', response);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);

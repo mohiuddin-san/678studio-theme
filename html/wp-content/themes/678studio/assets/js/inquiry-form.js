@@ -1,4 +1,30 @@
-document.addEventListener('DOMContentLoaded', () => {
+jQuery(document).ready(function($) {
+    // form-handler.jsとの競合を防ぐため、少し遅延させる
+    setTimeout(function() {
+
+    // Initialize shopsData as empty array to prevent undefined errors
+    window.shopsData = [];
+    
+    // Fetch shops data from new API
+    async function fetchShops() {
+        try {
+            const response = await fetch('/api/get_all_studio_shop.php');
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
+            if (data.success && data.shops) {
+                window.shopsData = data.shops;
+            } else {
+                console.error('API error:', data.message || 'Unknown error');
+            }
+        } catch (error) {
+            console.error('Fetch error:', error);
+        }
+    }
+
+    // Initialize API call
+    fetchShops();
 
     const form = document.getElementById('inquiryForm');
     const formStep = document.getElementById('formStep');
@@ -28,12 +54,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (form) {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
+            e.stopPropagation(); // イベントの伝播を停止
 
             // バリデーション
             if (validateForm()) {
-                showConfirmationStep();
+                window.showInquiryConfirmation();
             }
         });
+        
+        // 確認ボタンのクリック処理を削除
+        // form-handler.jsが処理するため、ここでは何もしない
     }
 
     // バリデーション関数（フォーム送信時用）
@@ -41,8 +71,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return validateAndUpdateButton();
     }
 
-    // 確認画面を表示
-    function showConfirmationStep() {
+    // 確認画面を表示（グローバルに公開）
+    window.showInquiryConfirmation = function() {
 
         // フォームデータを収集
         const formData = collectFormData();
@@ -102,34 +132,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 送信ボタンの処理
+    // 注意: 実際の送信処理はform-handler.jsが担当します
+    // ここではUI状態の管理のみを行います
     if (submitButton) {
-        submitButton.addEventListener('click', () => {
+        // form-handler.jsの送信完了イベントをリスニング
+        $(document).on('siaes:submission:success', function(e, data) {
+            // フォームをリセット
+            form.reset();
+            confirmationStep.style.display = 'none';
+            formStep.style.display = 'block';
             
-            // ローディング状態にする
-            submitButton.textContent = '送信中...';
-            submitButton.disabled = true;
-
-            // 実際の送信処理（ここではアラートで代用）
-            setTimeout(() => {
-                alert('お問い合わせを受け付けました。\\nありがとうございます。');
-                
-                // フォームをリセット
-                form.reset();
-                confirmationStep.style.display = 'none';
-                formStep.style.display = 'block';
-                
-                // ボタンを元に戻す
-                submitButton.textContent = '送信する';
-                submitButton.disabled = false;
-                
-                // 店舗詳細を非表示にする
-                const contactDetails = document.querySelector('.contact-details');
-                if (contactDetails) {
-                    contactDetails.style.display = 'none';
-                }
-                
-                window.scrollTo(0, 0);
-            }, 2000);
+            // 店舗詳細を非表示にする
+            const contactDetails = document.querySelector('.contact-details');
+            if (contactDetails) {
+                contactDetails.style.display = 'none';
+            }
+            
+            window.scrollTo(0, 0);
+        });
+        
+        $(document).on('siaes:submission:error', function(e, data) {
+            // エラー時の処理はform-handler.jsが担当
+            console.error('Submission error:', data);
         });
     }
 
@@ -151,6 +175,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const storeSelect = document.getElementById('store-select');
         if (storeSelect) {
             storeSelect.addEventListener('change', validateAndUpdateButton);
+            
+            // Populate store select options when shops data is available
+            const populateStoreOptions = () => {
+                if (window.shopsData && window.shopsData.length > 0) {
+                    storeSelect.innerHTML = '<option value="">店舗を選択してください</option>';
+                    window.shopsData.forEach(shop => {
+                        const option = document.createElement('option');
+                        option.value = shop.id;
+                        option.textContent = shop.name;
+                        storeSelect.appendChild(option);
+                    });
+                } else {
+                    // Retry after a short delay if data is not loaded yet
+                    setTimeout(populateStoreOptions, 500);
+                }
+            };
+            
+            populateStoreOptions();
         }
     }
 
@@ -215,4 +257,5 @@ document.addEventListener('DOMContentLoaded', () => {
         return allValid;
     }
 
+    }, 100); // 100ms遅延
 });

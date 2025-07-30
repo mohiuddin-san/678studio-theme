@@ -67,7 +67,7 @@
       <!-- フォーム入力画面 -->
       <div class="form-step" id="formStep">
         <div class="form-container">
-          <form id="inquiry-form" method="post" action="">
+          <form id="inquiryForm" method="post" action="">
             <div class="input-field">
               <label for="name">お名前 (必須)</label>
               <input type="text" id="name" name="name" placeholder="例: 山田 花子" required>

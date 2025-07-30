@@ -19,9 +19,12 @@ include_once("config/db_conection.php");
 // Define table prefix (set to empty string if no prefix is needed)
 $TABLE_PREFIX = ''; // Example: 'wp_' if you have prefix
 
+// Note: Base64 to file conversion is no longer needed after migration
+// All images are now stored as file URLs in the database
+
 try {
     // Fetch all shops
-    $stmt = $conn->prepare("SELECT id, name, address, phone, nearest_station, business_hours, holidays, map_url, created_at, company_email  
+    $stmt = $conn->prepare("SELECT id, name, address, phone, nearest_station, business_hours, holidays, map_url, created_at, company_email, main_image  
                             FROM {$TABLE_PREFIX}studio_shops");
     if (!$stmt->execute()) {
         throw new Exception("Failed to fetch shops: " . $stmt->error);
@@ -51,35 +54,42 @@ try {
         $img_stmt->close();
         $shop['image_urls'] = $image_urls; // Keep for backward compatibility
         $shop['main_gallery_images'] = $image_data; // New structure with IDs
+        
+        // main_image is now already a file URL from database
 
-        // 2️⃣ Category-wise images with category name and image ID
-        $cat_stmt = $conn->prepare("
-            SELECT c.category_name, i.image_url, i.id as image_id
-            FROM {$TABLE_PREFIX}studio_shop_catgorie_images i
-            JOIN {$TABLE_PREFIX}studio_shop_categories c ON i.category_id = c.id
-            WHERE i.shop_id = ?
-        ");
-        $cat_stmt->bind_param("i", $shop_id);
-        if (!$cat_stmt->execute()) {
-            throw new Exception("Failed to fetch category images for shop_id $shop_id: " . $cat_stmt->error);
-        }
-        $cat_result = $cat_stmt->get_result();
-
+        // 2️⃣ Category-wise images with category name and image ID (optional - only if tables exist)
         $category_images = [];
-        while ($row = $cat_result->fetch_assoc()) {
-            $category = $row['category_name'];
-            $img_url = $row['image_url'];
-            $img_id = $row['image_id'];
+        
+        // Check if category tables exist before querying
+        $table_check = $conn->query("SHOW TABLES LIKE '{$TABLE_PREFIX}studio_shop_catgorie_images'");
+        if ($table_check && $table_check->num_rows > 0) {
+            $cat_stmt = $conn->prepare("
+                SELECT c.category_name, i.image_url, i.id as image_id
+                FROM {$TABLE_PREFIX}studio_shop_catgorie_images i
+                JOIN {$TABLE_PREFIX}studio_shop_categories c ON i.category_id = c.id
+                WHERE i.shop_id = ?
+            ");
+            $cat_stmt->bind_param("i", $shop_id);
+            if ($cat_stmt->execute()) {
+                $cat_result = $cat_stmt->get_result();
 
-            if (!isset($category_images[$category])) {
-                $category_images[$category] = [];
+                while ($row = $cat_result->fetch_assoc()) {
+                    $category = $row['category_name'];
+                    $img_url = $row['image_url'];
+                    $img_id = $row['image_id'];
+
+                    if (!isset($category_images[$category])) {
+                        $category_images[$category] = [];
+                    }
+                    $category_images[$category][] = [
+                        'url' => $img_url,
+                        'id' => $img_id
+                    ];
+                }
             }
-            $category_images[$category][] = [
-                'url' => $img_url,
-                'id' => $img_id
-            ];
+            $cat_stmt->close();
         }
-        $cat_stmt->close();
+        
         $shop['category_images'] = $category_images;
 
         $shops[] = $shop;

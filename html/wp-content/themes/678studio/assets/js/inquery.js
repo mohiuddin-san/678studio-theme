@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchShops() {
         try {
-            const response = await fetch('https://678photo.com/api/get_all_studio_shop.php');
+            const response = await fetch('/api/get_all_studio_shop.php');
             console.log('API response:', response);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -80,9 +80,12 @@ document.addEventListener('DOMContentLoaded', () => {
             contactDetails.style.display = 'flex';
         }
         
-        const imageUrl = shop.image_urls && shop.image_urls.length > 0 
-            ? shop.image_urls[0] 
-            : '/wp-content/themes/678studio/assets/images/cardpic-sample.jpg';
+        // メイン画像を使用（main_imageフィールドがある場合はそれを、ない場合はimage_urls[0]を使用）
+        const imageUrl = shop.main_image 
+            ? shop.main_image 
+            : (shop.image_urls && shop.image_urls.length > 0 
+                ? shop.image_urls[0] 
+                : '/wp-content/themes/678studio/assets/images/cardpic-sample.jpg');
         imageElement.src = imageUrl;
         tableCells[0].textContent = shop.name || 'N/A';
         tableCells[1].textContent = shop.address || 'N/A';
