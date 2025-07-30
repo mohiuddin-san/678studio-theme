@@ -12,7 +12,7 @@
 
       <!-- Grid Item 1 (517px wide) -->
       <div class="memorial-photography__item memorial-photography__item--1 scroll-animate-item" data-delay="0">
-        <img src="<?php echo get_template_directory_uri(); ?>/assets/images/gallery_003.png"
+        <img src="<?php echo get_template_directory_uri(); ?>/assets/images/gallery_003.jpg"
           class="memorial-photography__image" alt="記念撮影">
       </div>
 
