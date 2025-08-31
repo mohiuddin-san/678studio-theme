@@ -1483,11 +1483,11 @@ add_action('wp_enqueue_scripts', 'enqueue_inquery_script');
 // SEO Articles Custom Post Type
 require_once get_template_directory() . '/inc/post-types/seo-articles.php';
 
-// パーマリンクをフラッシュ（テーマが有効化された時）
+// パーマリンクをフラッシュ（管理画面メニュー表示のため）
 function flush_rewrite_rules_for_seo_articles() {
-    if (get_option('flush_rewrite_rules_seo_articles') !== 'flushed') {
-        flush_rewrite_rules();
-        update_option('flush_rewrite_rules_seo_articles', 'flushed');
-    }
+    // メニュー表示を強制するため再度フラッシュ
+    delete_option('flush_rewrite_rules_seo_articles');
+    flush_rewrite_rules();
+    update_option('flush_rewrite_rules_seo_articles', 'flushed');
 }
 add_action('init', 'flush_rewrite_rules_for_seo_articles');

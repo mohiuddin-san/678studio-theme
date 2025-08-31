@@ -6,20 +6,20 @@
 
 function register_seo_articles_post_type() {
     $labels = array(
-        'name'                  => 'SEO戦略記事',
-        'singular_name'         => 'SEO戦略記事',
-        'menu_name'             => 'SEO戦略記事',
-        'name_admin_bar'        => 'SEO戦略記事',
+        'name'                  => 'ブログ記事',
+        'singular_name'         => 'ブログ記事',
+        'menu_name'             => 'ブログ記事',
+        'name_admin_bar'        => 'ブログ記事',
         'add_new'               => '新規追加',
-        'add_new_item'          => '新規SEO戦略記事を追加',
-        'new_item'              => '新規SEO戦略記事',
-        'edit_item'             => 'SEO戦略記事を編集',
-        'view_item'             => 'SEO戦略記事を表示',
-        'all_items'             => 'すべてのSEO戦略記事',
-        'search_items'          => 'SEO戦略記事を検索',
-        'parent_item_colon'     => '親SEO戦略記事:',
-        'not_found'             => 'SEO戦略記事が見つかりません',
-        'not_found_in_trash'    => 'ゴミ箱にSEO戦略記事が見つかりません'
+        'add_new_item'          => '新しいブログ記事を追加',
+        'new_item'              => '新しいブログ記事',
+        'edit_item'             => 'ブログ記事を編集',
+        'view_item'             => 'ブログ記事を表示',
+        'all_items'             => 'すべてのブログ記事',
+        'search_items'          => 'ブログ記事を検索',
+        'parent_item_colon'     => '親ブログ記事:',
+        'not_found'             => 'ブログ記事が見つかりません',
+        'not_found_in_trash'    => 'ゴミ箱にブログ記事が見つかりません'
     );
 
     $args = array(
@@ -27,7 +27,7 @@ function register_seo_articles_post_type() {
         'public'                => true,
         'publicly_queryable'    => true,
         'show_ui'               => true,
-        'show_in_menu'          => false, // カスタムメニューで管理
+        'show_in_menu'          => true,
         'query_var'             => true,
         'rewrite'               => array( 'slug' => 'articles' ),
         'capability_type'       => 'post',
@@ -99,7 +99,7 @@ function seo_articles_title_placeholder( $title ) {
     $screen = get_current_screen();
     
     if ( 'seo_articles' == $screen->post_type ) {
-        $title = 'SEO戦略記事のタイトルを入力（例：東京で還暦祝いの記念写真を撮影する完全ガイド）';
+        $title = 'ブログ記事のタイトルを入力（例：東京で還暦祝いの記念写真を撮影する完全ガイド）';
     }
     
     return $title;
@@ -113,7 +113,6 @@ function seo_articles_custom_columns( $columns ) {
     $new_columns = array();
     $new_columns['cb'] = $columns['cb'];
     $new_columns['title'] = $columns['title'];
-    $new_columns['primary_keyword'] = 'プライマリキーワード';
     $new_columns['article_category'] = 'カテゴリー';
     $new_columns['article_tag'] = 'タグ';
     $new_columns['content_strategy'] = '戦略';
@@ -128,14 +127,6 @@ add_filter( 'manage_seo_articles_posts_columns', 'seo_articles_custom_columns' )
  */
 function seo_articles_custom_column_content( $column, $post_id ) {
     switch ( $column ) {
-        case 'primary_keyword':
-            $keyword = get_field('primary_keyword', $post_id);
-            if ($keyword) {
-                echo '<strong>' . esc_html($keyword) . '</strong>';
-            } else {
-                echo '未設定';
-            }
-            break;
         case 'content_strategy':
             $strategy = get_field('content_strategy', $post_id);
             if ($strategy) {
