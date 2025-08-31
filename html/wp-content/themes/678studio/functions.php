@@ -1479,3 +1479,15 @@ true // Load in footer
 }
 }
 add_action('wp_enqueue_scripts', 'enqueue_inquery_script');
+
+// SEO Articles Custom Post Type
+require_once get_template_directory() . '/inc/post-types/seo-articles.php';
+
+// パーマリンクをフラッシュ（テーマが有効化された時）
+function flush_rewrite_rules_for_seo_articles() {
+    if (get_option('flush_rewrite_rules_seo_articles') !== 'flushed') {
+        flush_rewrite_rules();
+        update_option('flush_rewrite_rules_seo_articles', 'flushed');
+    }
+}
+add_action('init', 'flush_rewrite_rules_for_seo_articles');
