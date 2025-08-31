@@ -169,3 +169,4 @@ function seo_articles_custom_column_content( $column, $post_id ) {
     }
 }
 add_action( 'manage_seo_articles_posts_custom_column', 'seo_articles_custom_column_content', 10, 2 );
+

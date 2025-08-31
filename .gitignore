@@ -54,6 +54,27 @@ html/wp-content/upgrade/
 html/debug-logs/
 html/debug.log
 
+# Backup files and directories
+backups/
+documents/
+html/wp-content/updraft/
+html/wp-content/plugins/backwpup/
+html/wp-content/plugins/updraftplus/
+html/wp-content/plugins/gutenberg/
+html/gutenberg.latest.zip
+
+# WordPress core files (updated during reinstall)
+html/wp-admin/
+html/wp-includes/
+html/*.php
+html/*.txt
+html/*.html
+!html/wp-content/
+
+# Sample and script files
+sample-*.html
+scripts/create-sample-posts.php
+
 # Exclude embedded git repositories
 html/wp-content/plugins/inquiry-to-aws-email/vendor/aws/aws-sdk-php/
 html/wp-content/themes/678studio/.git/
