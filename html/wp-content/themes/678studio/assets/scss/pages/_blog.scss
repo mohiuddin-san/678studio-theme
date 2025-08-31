@@ -30,11 +30,6 @@ body.archive[class*="articles"] {
     margin-bottom: 0 !important;
   }
   
-  // 全ての要素をサンセリフ体に統一（ブログページのみ）
-  &.post-type-archive-seo_articles *,
-  &.single-seo_articles * {
-    font-family: v.$ja-sans !important;
-  }
   
   // フッター表示を確実にする（アーカイブページのみ）
   &.post-type-archive-seo_articles footer {

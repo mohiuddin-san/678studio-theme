@@ -6,6 +6,9 @@
 	padding: 0;
 	box-sizing: border-box;
 	
+	// 全ての要素をサンセリフ体（ゴシック体）に統一
+	font-family: $ja-sans !important;
+	
 	// 全ての要素のフォーカスアウトラインを削除
 	&:focus {
 		outline: none !important;
