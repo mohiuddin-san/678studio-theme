@@ -7,6 +7,8 @@
         class="navigation__link">店舗一覧</a></li>
     <li class="navigation__item"><a href="<?php echo esc_url(home_url('/photo-gallery')); ?>"
         class="navigation__link">ギャラリー</a></li>
+    <li class="navigation__item"><a href="<?php echo esc_url(home_url('/articles')); ?>"
+        class="navigation__link">お役立ち情報</a></li>
     <li class="navigation__item"><a href="<?php echo esc_url(home_url('/studio-reservation')); ?>"
         class="navigation__link">ご予約</a></li>
     <li class="navigation__item"><a href="<?php echo esc_url(home_url('/studio-inquery')); ?>"
