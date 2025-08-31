@@ -1483,6 +1483,47 @@ add_action('wp_enqueue_scripts', 'enqueue_inquery_script');
 // SEO Articles Custom Post Type
 require_once get_template_directory() . '/inc/post-types/seo-articles.php';
 
+/**
+ * Fix Gutenberg block editor dependencies
+ */
+function fix_gutenberg_dependencies() {
+    if ( ! is_admin() ) {
+        return;
+    }
+    
+    global $pagenow, $typenow;
+    
+    // すべての投稿タイプの編集画面でGutenbergの依存関係を修正
+    if ( $pagenow === 'post.php' || $pagenow === 'post-new.php' ) {
+        // 必要なGutenbergのスクリプトを正しい順序で読み込む
+        wp_enqueue_script( 'wp-polyfill' );
+        wp_enqueue_script( 'wp-element' );
+        wp_enqueue_script( 'wp-i18n' );
+        wp_enqueue_script( 'wp-hooks' );
+        wp_enqueue_script( 'wp-api-fetch' );
+        wp_enqueue_script( 'wp-data' );
+        wp_enqueue_script( 'wp-compose' );
+        wp_enqueue_script( 'wp-components' );
+        wp_enqueue_script( 'wp-blocks' );
+        wp_enqueue_script( 'wp-block-library' );
+        wp_enqueue_script( 'wp-editor' );
+        wp_enqueue_script( 'wp-edit-post' );
+        wp_enqueue_script( 'wp-format-library' );
+        wp_enqueue_script( 'wp-viewport' );
+        
+        // Gutenbergのスタイルも読み込む
+        wp_enqueue_style( 'wp-block-library' );
+        wp_enqueue_style( 'wp-block-library-theme' );
+        wp_enqueue_style( 'wp-edit-blocks' );
+        wp_enqueue_style( 'wp-editor' );
+        wp_enqueue_style( 'wp-edit-post' );
+        wp_enqueue_style( 'wp-format-library' );
+        wp_enqueue_style( 'wp-components' );
+    }
+}
+add_action( 'admin_enqueue_scripts', 'fix_gutenberg_dependencies', 5 );
+
+
 // パーマリンクをフラッシュ（管理画面メニュー表示のため）
 function flush_rewrite_rules_for_seo_articles() {
     // メニュー表示を強制するため再度フラッシュ
