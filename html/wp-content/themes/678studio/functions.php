@@ -1523,6 +1523,87 @@ function fix_gutenberg_dependencies() {
 }
 add_action( 'admin_enqueue_scripts', 'fix_gutenberg_dependencies', 5 );
 
+/**
+ * Gutenbergエディタでカテゴリーとタグを確実に表示
+ */
+function ensure_taxonomy_support_in_gutenberg() {
+    // SEO記事投稿タイプにタクソノミーサポートを明示的に追加
+    add_post_type_support( 'seo_articles', 'editor' );
+    add_post_type_support( 'seo_articles', 'custom-fields' );
+    
+    // カテゴリーとタグがGutenbergサイドバーに表示されるようにする
+    if ( function_exists( 'register_meta' ) ) {
+        // カテゴリーメタデータの登録
+        register_meta( 'post', 'category', array(
+            'show_in_rest' => true,
+            'single' => false,
+            'type' => 'array',
+            'auth_callback' => function() {
+                return current_user_can( 'edit_posts' );
+            }
+        ));
+        
+        // タグメタデータの登録
+        register_meta( 'post', 'post_tag', array(
+            'show_in_rest' => true,
+            'single' => false,
+            'type' => 'array',
+            'auth_callback' => function() {
+                return current_user_can( 'edit_posts' );
+            }
+        ));
+    }
+}
+add_action( 'init', 'ensure_taxonomy_support_in_gutenberg' );
+
+/**
+ * GutenbergのREST APIでタクソノミーを有効化
+ */
+function enable_taxonomy_rest_support() {
+    global $wp_taxonomies;
+    
+    // カテゴリーとタグをREST APIで利用可能にする
+    if ( isset( $wp_taxonomies['category'] ) ) {
+        $wp_taxonomies['category']->show_in_rest = true;
+        $wp_taxonomies['category']->rest_base = 'categories';
+        $wp_taxonomies['category']->rest_controller_class = 'WP_REST_Terms_Controller';
+    }
+    
+    if ( isset( $wp_taxonomies['post_tag'] ) ) {
+        $wp_taxonomies['post_tag']->show_in_rest = true;
+        $wp_taxonomies['post_tag']->rest_base = 'tags';
+        $wp_taxonomies['post_tag']->rest_controller_class = 'WP_REST_Terms_Controller';
+    }
+}
+add_action( 'init', 'enable_taxonomy_rest_support', 30 );
+
+/**
+ * Gutenbergエディタのサイドバーでタクソノミーパネルを強制表示
+ */
+function force_show_taxonomy_panels_in_gutenberg() {
+    ?>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        // Gutenbergエディタが読み込まれた後に実行
+        if (typeof wp !== 'undefined' && wp.data && wp.data.dispatch) {
+            setTimeout(function() {
+                try {
+                    // タクソノミーパネルを開く
+                    wp.data.dispatch('core/edit-post').openGeneralSidebar('edit-post/document');
+                    
+                    // カテゴリーパネルを有効にする
+                    wp.data.dispatch('core/edit-post').enablePluginDocumentSettingPanel('category-panel-0');
+                    wp.data.dispatch('core/edit-post').enablePluginDocumentSettingPanel('post_tag-panel-0');
+                } catch(e) {
+                    console.log('Taxonomy panels setup: ', e);
+                }
+            }, 1000);
+        }
+    });
+    </script>
+    <?php
+}
+add_action( 'admin_footer', 'force_show_taxonomy_panels_in_gutenberg' );
 
 // パーマリンクをフラッシュ（管理画面メニュー表示のため）
 function flush_rewrite_rules_for_seo_articles() {

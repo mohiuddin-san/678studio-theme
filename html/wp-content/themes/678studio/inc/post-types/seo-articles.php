@@ -65,6 +65,9 @@ function register_seo_articles_taxonomies() {
         ),
         'show_ui'               => true,
         'show_admin_column'     => true,
+        'show_in_rest'          => true,
+        'rest_base'             => 'article-categories',
+        'rest_controller_class' => 'WP_REST_Terms_Controller',
         'query_var'             => true,
         'rewrite'               => array( 'slug' => 'article-category' ),
     ));
@@ -86,6 +89,9 @@ function register_seo_articles_taxonomies() {
         ),
         'show_ui'               => true,
         'show_admin_column'     => true,
+        'show_in_rest'          => true,
+        'rest_base'             => 'article-tags',
+        'rest_controller_class' => 'WP_REST_Terms_Controller',
         'query_var'             => true,
         'rewrite'               => array( 'slug' => 'article-tag' ),
     ));
