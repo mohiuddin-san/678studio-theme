@@ -23,7 +23,7 @@
           <a href="/photo-gallery" class="footer__nav-link">ギャラリー</a>
           <a href="/stores" class="footer__nav-link">写真館検索</a>
           <a href="/studio-reservation" class="footer__nav-link">ご予約</a>
-          <a href="/studio-inquery" class="footer__nav-link">お問合せ</a>
+          <a href="/studio-inquiry" class="footer__nav-link">お問合せ</a>
         </div>
         <div class="footer__nav-row footer__nav-row--secondary">
           <a href="/privacy" class="footer__nav-link">プライバシーポリシー</a>

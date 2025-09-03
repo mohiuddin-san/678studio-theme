@@ -6,9 +6,6 @@
 	padding: 0;
 	box-sizing: border-box;
 	
-	// 全ての要素をサンセリフ体（ゴシック体）に統一
-	font-family: $ja-sans !important;
-	
 	// 全ての要素のフォーカスアウトラインを削除
 	&:focus {
 		outline: none !important;
@@ -19,6 +16,11 @@
 		outline: 2px solid #007bff !important;
 		outline-offset: 2px !important;
 	}
+}
+
+// WordPress管理バー以外の要素にフォントファミリーを適用
+body:not(.wp-admin) *:not(#wpadminbar):not(#wpadminbar *) {
+	font-family: $ja-sans !important;
 }
 
 html {

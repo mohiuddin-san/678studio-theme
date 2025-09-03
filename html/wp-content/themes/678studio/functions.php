@@ -1028,7 +1028,7 @@ class StudioSEOManager {
             $seo_data['description'] = 'ロクナナハチ(678)の撮影予約ページです。還暦、喜寿、米寿のお祝い撮影、遺影撮影、家族写真などシニア向け記念撮影のご予約を承っております。';
             $seo_data['keywords'] = $base_keywords . ',予約,申込み,撮影予約';
             
-        } elseif (is_page('studio-inquery')) {
+        } elseif (is_page('studio-inquiry')) {
             // 問合せページ
             $seo_data['title'] = 'お問合せ | ご質問・ご相談 | ' . $site_name;
             $seo_data['description'] = 'ロクナナハチ(678)へのお問合せページです。シニア向け撮影に関するご質問・ご相談はこちらからお気軽にお問合せください。';
@@ -1381,7 +1381,7 @@ echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   ['url' => home_url('/photo-gallery'), 'priority' => '0.8', 'changefreq' => 'weekly'],
   ['url' => home_url('/stores'), 'priority' => '0.9', 'changefreq' => 'daily'],
   ['url' => home_url('/studio-reservation'), 'priority' => '0.7', 'changefreq' => 'monthly'],
-  ['url' => home_url('/studio-inquery'), 'priority' => '0.6', 'changefreq' => 'monthly']
+  ['url' => home_url('/studio-inquiry'), 'priority' => '0.6', 'changefreq' => 'monthly']
   ];
 
   foreach ($pages as $page) {
@@ -1439,9 +1439,9 @@ if (is_page('studio-reservation')) {
 // 店舗選択用のスクリプト
 wp_enqueue_script(
 'reservation-script',
-get_template_directory_uri() . '/assets/js/inquery.js',
+get_template_directory_uri() . '/assets/js/inquiry.js',
 array(), // Add dependencies if needed
-WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/inquery.js') : '1.0.0',
+WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/inquiry.js') : '1.0.0',
 true // Load in footer
 );
 
@@ -1456,15 +1456,15 @@ true // Load in footer
 }
 }
 add_action('wp_enqueue_scripts', 'enqueue_reservation_script');
-function enqueue_inquery_script() {
-// Check if the current page slug is 'studio-inquery'
-if (is_page('studio-inquery')) {
+function enqueue_inquiry_script() {
+// Check if the current page slug is 'studio-inquiry'
+if (is_page('studio-inquiry')) {
 // 店舗選択用のスクリプト
 wp_enqueue_script(
-'inquery-script',
-get_template_directory_uri() . '/assets/js/inquery.js',
+'inquiry-script',
+get_template_directory_uri() . '/assets/js/inquiry.js',
 array(), // Add dependencies if needed
-WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/inquery.js') : '1.0.0',
+WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/inquiry.js') : '1.0.0',
 true // Load in footer
 );
 
@@ -1476,9 +1476,25 @@ array(), // Add dependencies if needed
 WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/inquiry-form.js') : '1.0.0',
 true // Load in footer
 );
+
+// AWS Email Plugin form handler (temporary fix until plugin settings are configured)
+wp_enqueue_script(
+'siaes-form-handler-fix',
+plugins_url('inquiry-to-aws-email/assets/js/form-handler.js'),
+array('jquery'),
+time(),
+true
+);
+
+// AJAX settings for form handler
+wp_localize_script('siaes-form-handler-fix', 'siaes_ajax', array(
+'ajax_url' => admin_url('admin-ajax.php'),
+'page_id' => get_the_ID(),
+'nonce' => wp_create_nonce('siaes_form_nonce_' . get_the_ID())
+));
 }
 }
-add_action('wp_enqueue_scripts', 'enqueue_inquery_script');
+add_action('wp_enqueue_scripts', 'enqueue_inquiry_script');
 
 // SEO Articles Custom Post Type
 require_once get_template_directory() . '/inc/post-types/seo-articles.php';
@@ -1613,3 +1629,15 @@ function flush_rewrite_rules_for_seo_articles() {
     update_option('flush_rewrite_rules_seo_articles', 'flushed');
 }
 add_action('init', 'flush_rewrite_rules_for_seo_articles');
+
+/**
+ * Add Favicon and Apple Touch Icon
+ */
+function add_custom_favicon() {
+    echo '<link rel="shortcut icon" href="' . get_template_directory_uri() . '/favicon.ico" type="image/x-icon">';
+    echo '<link rel="icon" href="' . get_template_directory_uri() . '/favicon-16x16.png" sizes="16x16" type="image/png">';
+    echo '<link rel="icon" href="' . get_template_directory_uri() . '/favicon-32x32.png" sizes="32x32" type="image/png">';
+    echo '<link rel="apple-touch-icon" href="' . get_template_directory_uri() . '/apple-touch-icon.png" sizes="180x180">';
+    echo '<link rel="manifest" href="' . get_template_directory_uri() . '/site.webmanifest">';
+}
+add_action('wp_head', 'add_custom_favicon');

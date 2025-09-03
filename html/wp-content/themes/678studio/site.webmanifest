@@ -1,0 +1,26 @@
+{
+    "name": "678 Studio",
+    "short_name": "678Studio",
+    "description": "プロフェッショナル写真撮影サービス",
+    "icons": [
+        {
+            "src": "/wp-content/themes/678studio/favicon-16x16.png",
+            "sizes": "16x16",
+            "type": "image/png"
+        },
+        {
+            "src": "/wp-content/themes/678studio/favicon-32x32.png",
+            "sizes": "32x32",
+            "type": "image/png"
+        },
+        {
+            "src": "/wp-content/themes/678studio/apple-touch-icon.png",
+            "sizes": "180x180",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#3F3F3F",
+    "background_color": "#ffffff",
+    "display": "standalone",
+    "start_url": "/"
+}

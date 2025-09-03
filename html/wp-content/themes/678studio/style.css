@@ -29,7 +29,6 @@
   padding: 0;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  font-family: "Noto Sans JP", sans-serif !important;
 }
 *:focus {
   outline: none !important;
@@ -37,6 +36,10 @@
 *:focus-visible {
   outline: 2px solid #007bff !important;
   outline-offset: 2px !important;
+}
+
+body:not(.wp-admin) *:not(#wpadminbar):not(#wpadminbar *) {
+  font-family: "Noto Sans JP", sans-serif !important;
 }
 
 html {
@@ -9220,4 +9223,3 @@ body.single[class*=studio_features] .seo-article-title {
   height: auto;
   opacity: 1;
 }
-/*# sourceMappingURL=style.css.map */
