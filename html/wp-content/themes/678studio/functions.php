@@ -719,18 +719,8 @@ if (!defined('GALLERY_BASE_URL')) {
     define('GALLERY_BASE_URL', 'https://example.com/gallery/');
 }
 
-// === Add Gallery Admin Menu ===
-add_action('admin_menu', function() {
-    add_menu_page(
-        'FTP Gallery Upload',
-        'Gallery Upload',
-        'manage_options',
-        'ftp-gallery-upload',
-        'ftp_gallery_upload_page',
-        'dashicons-upload',
-        20
-    );
-});
+// === Gallery Admin Menu removed ===
+// Gallery Upload menu has been removed - functionality moved to Studio Shops Manager plugin
 
 // === Gallery Admin Upload Page ===
 function ftp_gallery_upload_page() {
