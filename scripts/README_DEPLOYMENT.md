@@ -2,7 +2,7 @@
 
 ## 🚀 フルデプロイメント機能
 
-Xserverへの完全なデプロイメントシステムを実装しました。サーバーのバックアップを取りながら、ローカルのWordPress環境を本番環境へ安全にデプロイできます。
+Xserver への完全なデプロイメントシステムを実装しました。サーバーのバックアップを取りながら、ローカルの WordPress 環境を本番環境へ安全にデプロイできます。
 
 ## 🆕 推奨ワークフロー
 
@@ -17,17 +17,21 @@ make deploy-full
 ## 📋 主な機能
 
 ### 1. サーバーバックアップ
+
 - **`make server-backup`**: サーバー上の`/backups/`ディレクトリに保存（推奨）
 - **`make deploy-full`**: ローカルの`backups/`ディレクトリに保存
-- **`make backup-from-prod`**: ローカルの`backups/db/`と`backups/files/`に保存
+- **`make backup-from-prod`**:
+  ローカルの`backups/db/`と`backups/files/`に保存
 
 ### 2. デプロイ内容
-- **テーマ**: SCSSを自動ビルドして最新版をアップロード
+
+- **テーマ**: SCSS を自動ビルドして最新版をアップロード
 - **プラグイン**: 全プラグインを同期（システムプラグインを除く）
-- **データベース**: URLを自動変換してインポート
+- **データベース**: URL を自動変換してインポート
 - **メディア**: アップロードファイル（オプション）
 
 ### 3. 安全機能
+
 - デプロイ前の確認プロンプト
 - 自動バックアップ作成
 - エラー時の自動停止
@@ -72,17 +76,18 @@ make backup-from-prod
 
 ## ⚙️ 初期設定
 
-### 1. SSH設定（必須）
+### 1. SSH 設定（必須）
 
 ```bash
 make ssh-setup
 ```
 
 以下から選択：
-- `678photo` - 678photo.com用
-- `egao` - egao-salon.jp用
-- `kokensha` - kokensha.com用
-- `xserver` - inside.xsrv.jp用
+
+- `678photo` - 678photo.com 用
+- `egao` - egao-salon.jp 用
+- `kokensha` - kokensha.com 用
+- `xserver` - inside.xsrv.jp 用
 
 ### 2. 設定ファイル
 
@@ -116,6 +121,7 @@ COMPANY_SSH_KEY="/Users/username/.ssh/egao-salon_rsa"
 ### サーバー側バックアップ
 
 `make server-backup`実行時：
+
 ```
 /home/xb592942/678photo.com/public_html/backups/
 └── 678photo_backup_YYYYMMDD_HHMMSS/
@@ -128,14 +134,18 @@ COMPANY_SSH_KEY="/Users/username/.ssh/egao-salon_rsa"
 
 ## ⚠️ 注意事項
 
-### URL変換
-データベースデプロイ時、URLが自動変換されます：
+### URL 変換
+
+データベースデプロイ時、URL が自動変換されます：
+
 - `http://localhost:8080` → `https://678photo.com`
 
 別のドメインの場合は、`scripts/deploy-full.sh` の `REMOTE_URL` を編集してください。
 
 ### 除外ファイル
+
 以下は自動的に除外されます：
+
 - `node_modules/`
 - `.git/`
 - `*.log`
@@ -145,14 +155,17 @@ COMPANY_SSH_KEY="/Users/username/.ssh/egao-salon_rsa"
 詳細は `scripts/deploy-exclude.txt` で設定可能です。
 
 ### パーミッション
+
 デプロイ後、自動的に適切なパーミッションが設定されます：
+
 - ディレクトリ: 755
 - ファイル: 644
 - uploads: 777
 
 ## 🔧 トラブルシューティング
 
-### SSH接続エラー
+### SSH 接続エラー
+
 ```bash
 # SSH鍵の権限を確認
 chmod 600 ~/.ssh/egao-salon_rsa
@@ -162,6 +175,7 @@ make ssh-setup --test
 ```
 
 ### データベースエラー
+
 ```bash
 # ローカルDBの確認
 docker exec 678-wordpress-1 mysql -u wordpress -pwordpress -e "SHOW DATABASES;"
@@ -171,6 +185,7 @@ docker exec 678-wordpress-1 mysql -u wordpress -pwordpress -e "SHOW DATABASES;"
 ```
 
 ### ビルドエラー
+
 ```bash
 # 手動でビルド
 cd html/wp-content/themes/678studio
@@ -183,6 +198,6 @@ npm run build
 問題が発生した場合は、以下を確認してください：
 
 1. `.env.deploy` の設定が正しいか
-2. SSH鍵が適切に設定されているか
+2. SSH 鍵が適切に設定されているか
 3. ローカル環境が起動しているか（`make status`）
 4. エラーログを確認（`make logs`）
