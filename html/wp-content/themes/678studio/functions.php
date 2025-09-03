@@ -485,8 +485,8 @@ function theme_678studio_styles() {
             ['gsap', 'gsap-scrolltrigger'], $scroll_animations_version, true);
     }
     
-    // Enqueue GSAP and gallery slider on store detail pages
-    if (is_page_template('page-store-detail.php') || is_page('store-detail-test')) {
+    // Enqueue GSAP and gallery slider on studio detail pages
+    if (is_page_template('page-studio-detail.php') || is_page('studio-detail')) {
         // GSAP Core
         wp_enqueue_script('gsap', 
             'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js', 
