@@ -617,15 +617,8 @@ add_action('template_redirect', function() {
     }
 });
 
-// Track WordPress errors
-add_filter('wp_die_handler', function($message, $title, $args) {
-    wp_log_error('WordPress die called', [
-        'message' => $message,
-        'title' => $title,
-        'args' => $args
-    ]);
-    return '_default_wp_die_handler';
-}, 10, 3);
+// Track WordPress errors (removed problematic filter)
+// Note: wp_die_handler filter removed to prevent fatal error
 
 // Track slow queries
 add_filter('log_query_custom_data', function($query_data, $query) {

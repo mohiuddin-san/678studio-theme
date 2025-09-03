@@ -159,8 +159,10 @@ deploy_plugins() {
     local plugin_count=$(ls -1 "$PLUGINS_DIR" | wc -l)
     print_info "Found $plugin_count plugins to deploy"
     
-    # Deploy plugins (excluding certain system plugins)
+    # Deploy plugins (excluding certain system plugins and dev files)
+    local exclude_file="$SCRIPT_DIR/deploy-exclude.txt"
     rsync -avz --progress \
+        --exclude-from="$exclude_file" \
         --exclude="akismet/" \
         --exclude="hello.php" \
         --exclude="*.log" \
