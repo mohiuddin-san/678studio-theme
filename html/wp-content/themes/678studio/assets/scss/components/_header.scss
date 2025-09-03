@@ -72,8 +72,19 @@
 				left: 0;
 				width: 100vw;
 				height: 100vh;
+				height: 100dvh; // Dynamic viewport height for better mobile support
 				background: white;
 				z-index: 9999;
+				padding: 0;
+				
+				// ナビゲーション全体を中央に配置
+				.navigation {
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					height: auto; // autoに変更して自然な高さに
+					width: 100%;
+				}
 			}
 		}
 	}

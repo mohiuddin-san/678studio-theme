@@ -261,8 +261,23 @@ br.sp-only {
     left: 0;
     width: 100vw;
     height: 100vh;
+    height: 100dvh;
     background: white;
     z-index: 9999;
+    padding: 0;
+  }
+  .header__navigation-mobile.is-open .navigation {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    height: auto;
+    width: 100%;
   }
 }
 
@@ -320,9 +335,15 @@ br.sp-only {
     -webkit-box-direction: normal;
     -ms-flex-direction: column;
     flex-direction: column;
-    gap: 0;
-    padding: clamp(24px, 8.3333333333vw, 72px) 0;
+    gap: clamp(4.8px, 1.6666666667vw, 14.4px);
+    padding: clamp(24px, 8.3333333333vw, 72px) clamp(12px, 4.1666666667vw, 36px);
     width: 100%;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
   }
 }
 .navigation__link {
@@ -337,8 +358,8 @@ br.sp-only {
 }
 @media (max-width: 767px) {
   .navigation__link {
-    font-size: clamp(12px, 4.1666666667vw, 36px);
-    padding: clamp(12px, 4.1666666667vw, 36px) clamp(12px, 4.1666666667vw, 36px);
+    font-size: clamp(10.8px, 3.75vw, 32.4px);
+    padding: clamp(7.2px, 2.5vw, 21.6px) clamp(12px, 4.1666666667vw, 36px);
     text-align: center;
     font-weight: 500;
   }

@@ -13,9 +13,11 @@
 		// モバイル対応 - フルスクリーン用
 		@include m.mq(md) {
 			flex-direction: column;
-			gap: 0;
-			padding: m.fsm(40) 0;
+			gap: m.fsm(8); // メニュー項目間の間隔を追加
+			padding: m.fsm(40) m.fsm(20); // 上下左右のパディングを設定
 			width: 100%;
+			justify-content: center;
+			align-items: center; // 水平方向も中央揃え
 		}
 	}
 
@@ -34,8 +36,8 @@
 
 		// モバイル対応 - フルスクリーン用
 		@include m.mq(md) {
-			font-size: m.fsm(20);
-			padding: m.fsm(20) m.fsm(20);
+			font-size: m.fsm(18); // サイズを少し小さく
+			padding: m.fsm(12) m.fsm(20); // 上下のパディングを減らす
 			text-align: center;
 			font-weight: 500;
 		}
