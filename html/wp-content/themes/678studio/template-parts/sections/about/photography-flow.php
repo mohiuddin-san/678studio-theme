@@ -36,7 +36,7 @@
           <img class="flow-card__underline"
             src="<?php echo get_template_directory_uri(); ?>/assets/images/underline-long.svg" alt="">
           <p class="flow-card__description">
-            <a href="/stores" style="color: #a5c3cf; text-decoration: underline;">店舗検索</a>よりお近くの店舗をお選びいただき、<a href="/studio-reservation" style="color: #a5c3cf; text-decoration: underline;">ご予約</a>または<a href="/studio-inquery" style="color: #a5c3cf; text-decoration: underline;">お問合せ</a>のページよりご連絡ください。
+            <a href="/stores" style="color: #a5c3cf; text-decoration: underline;">店舗検索</a>よりお近くの店舗をお選びいただき、<a href="/studio-reservation" style="color: #a5c3cf; text-decoration: underline;">ご予約</a>または<a href="/studio-inquiry" style="color: #a5c3cf; text-decoration: underline;">お問合せ</a>のページよりご連絡ください。
           </p>
         </div>
       </div>

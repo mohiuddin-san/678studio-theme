@@ -30,7 +30,7 @@
       <div class="contact-booking__button">
         <?php get_template_part('template-parts/components/camera-button', null, [
           'text' => 'お問い合わせ',
-          'url' => home_url('/studio-inquery/'),
+          'url' => home_url('/studio-inquiry/'),
           'bg_color' => 'contact',
           'icon' => 'home'
         ]); ?>

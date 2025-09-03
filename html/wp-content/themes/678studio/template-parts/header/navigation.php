@@ -11,7 +11,7 @@
         class="navigation__link">お役立ち情報</a></li>
     <li class="navigation__item"><a href="<?php echo esc_url(home_url('/studio-reservation')); ?>"
         class="navigation__link">ご予約</a></li>
-    <li class="navigation__item"><a href="<?php echo esc_url(home_url('/studio-inquery')); ?>"
+    <li class="navigation__item"><a href="<?php echo esc_url(home_url('/studio-inquiry')); ?>"
         class="navigation__link">お問い合わせ</a></li>
   </ul>
 </nav>

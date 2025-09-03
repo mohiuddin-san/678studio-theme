@@ -128,8 +128,27 @@ tar -xzf wordpress_files_$TIMESTAMP.tar.gz -C /target/directory/
 EOF
 
 # --- 4. Set permissions ---
-chmod -R 600 "$BACKUP_DIR"
-chmod 700 "$BACKUP_DIR"
+# Set permissions only on the files we can access
+if [[ -d "$BACKUP_DIR" ]]; then
+    # Set directory permission first
+    chmod 700 "$BACKUP_DIR" 2>/dev/null || print_warning "Could not set permissions on backup directory"
+    
+    # Set permissions on subdirectories
+    if [[ -d "$DB_BACKUP_DIR" ]]; then
+        chmod 700 "$DB_BACKUP_DIR" 2>/dev/null || true
+        chmod 600 "$DB_BACKUP_DIR"/*.gz 2>/dev/null || true
+    fi
+    
+    if [[ -d "$FILES_BACKUP_DIR" ]]; then
+        chmod 700 "$FILES_BACKUP_DIR" 2>/dev/null || true
+        chmod 600 "$FILES_BACKUP_DIR"/*.tar.gz 2>/dev/null || true
+    fi
+    
+    # Set permission on info file
+    if [[ -f "$BACKUP_DIR/backup_info.txt" ]]; then
+        chmod 600 "$BACKUP_DIR/backup_info.txt" 2>/dev/null || true
+    fi
+fi
 
 # --- 5. Clean old backups (keep last 5) ---
 print_info "Cleaning old backups..."

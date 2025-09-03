@@ -21,7 +21,7 @@ services:
       interval: 30s
       timeout: 5s
       retries: 5
-    command: --default-authentication-plugin=mysql_native_password
+    command: --default-authentication-plugin=mysql_native_password --skip-ssl
     dns:
       - 8.8.8.8
 
@@ -67,6 +67,7 @@ services:
     volumes:
       - ./html:/var/www/html:delegated
       - ./db-backup:/backup
+      - ./mysql-client.cnf:/etc/mysql/conf.d/client.cnf:ro
     environment:
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_NAME: wordpress_678

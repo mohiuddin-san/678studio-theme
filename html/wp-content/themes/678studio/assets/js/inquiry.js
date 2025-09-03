@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('inquery.js loaded');
+    console.log('inquiry.js loaded');
 
     // Initialize shopsData as empty array to prevent undefined errors
     window.shopsData = [];
