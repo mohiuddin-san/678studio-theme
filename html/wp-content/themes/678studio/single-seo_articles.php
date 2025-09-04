@@ -95,6 +95,20 @@ $target_conversion = get_field('target_conversion');
                             </div>
                         </div>
                         
+                        <!-- 著者プロフィール -->
+                        <div class="author-profile-section">
+                            <div class="author-profile">
+                                <div class="author-icon">
+                                    <img src="<?php echo get_theme_file_uri('/assets/images/678-editorial-team-icon.svg'); ?>" alt="678編集部" width="60" height="60">
+                                </div>
+                                <div class="author-info">
+                                    <h4 class="author-name">この記事を書いている人</h4>
+                                    <p class="author-title">ロクナナハチ(678)編集部</p>
+                                    <p class="author-description">シニア世代の方々の撮影を行っているフォトスタジオ業界の最新情報や撮影テクニック、スタジオ選びのコツなど、皆様に役立つ情報をお届けしています。</p>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <!-- 記事本文 -->
                         <div class="entry-content">
                             <?php the_content(); ?>
@@ -367,6 +381,39 @@ $target_conversion = get_field('target_conversion');
             </section>
         <?php endif; ?>
         
+        <!-- 関連リンクセクション -->
+        <section class="related-links">
+            <div class="container">
+                <div class="links-grid">
+                    <div class="link-card dark-card">
+                        <div class="card-content">
+                            <div class="card-text">
+                                <span class="card-english">Studio Reservation</span>
+                                <h3>スタジオ予約 <span class="inline-arrow">→</span></h3>
+                            </div>
+                            <div class="card-image">
+                                <img src="<?php echo get_template_directory_uri(); ?>/assets/images/about-1.jpg" alt="スタジオ予約" />
+                            </div>
+                        </div>
+                        <a href="<?php echo home_url('/studio-reservation/'); ?>" class="card-link"></a>
+                    </div>
+                    
+                    <div class="link-card green-card">
+                        <div class="card-content">
+                            <div class="card-text">
+                                <span class="card-english">Contact Us</span>
+                                <h3>お問い合わせ <span class="inline-arrow">→</span></h3>
+                            </div>
+                            <div class="card-image">
+                                <img src="<?php echo get_template_directory_uri(); ?>/assets/images/about-2.jpg" alt="お問い合わせ" />
+                            </div>
+                        </div>
+                        <a href="<?php echo home_url('/contact/'); ?>" class="card-link"></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
     <?php endwhile; ?>
 </main>
 
@@ -520,6 +567,31 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (newActive) {
                             newActive.classList.add('active');
                             newActive.parentElement.classList.add('active'); // li要素にもactiveクラスを追加
+                            
+                            // PC用目次（sticky-toc）の場合、アクティブ項目が見えるようにスクロール
+                            if (toc.id === 'dynamic-toc') {
+                                const tocContainer = toc.closest('.dynamic-toc');
+                                if (tocContainer) {
+                                    const activeItem = newActive.parentElement;
+                                    const containerRect = tocContainer.getBoundingClientRect();
+                                    const itemRect = activeItem.getBoundingClientRect();
+                                    
+                                    // アクティブ項目が目次コンテナの表示範囲外にある場合
+                                    if (itemRect.top < containerRect.top || itemRect.bottom > containerRect.bottom) {
+                                        const itemOffsetTop = activeItem.offsetTop;
+                                        const containerHeight = tocContainer.clientHeight;
+                                        const itemHeight = activeItem.offsetHeight;
+                                        
+                                        // アクティブ項目を目次の中央付近に表示
+                                        const scrollTop = itemOffsetTop - (containerHeight / 2) + (itemHeight / 2);
+                                        
+                                        tocContainer.scrollTo({
+                                            top: Math.max(0, scrollTop),
+                                            behavior: 'smooth'
+                                        });
+                                    }
+                                }
+                            }
                         }
                     });
                 }
