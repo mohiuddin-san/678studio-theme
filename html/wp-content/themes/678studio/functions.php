@@ -1624,3 +1624,381 @@ function add_custom_favicon() {
     echo '<link rel="manifest" href="' . get_template_directory_uri() . '/site.webmanifest">';
 }
 add_action('wp_head', 'add_custom_favicon');
+
+// ============================================
+// AUTOMATIC ENGLISH SLUG GENERATION
+// Google Translate APIを使用した自動英語スラッグ生成
+// ============================================
+
+/**
+ * Google Translate APIを使用してテキストを翻訳
+ */
+function translate_text_to_english($text) {
+    // Google Translate API キー（wp-config.phpに定義）
+    $api_key = defined('GOOGLE_TRANSLATE_API_KEY') ? GOOGLE_TRANSLATE_API_KEY : '';
+    
+    if (empty($api_key)) {
+        error_log('Google Translate API key is not defined in wp-config.php');
+        return false;
+    }
+    
+    // GET メソッドでURLパラメータとして送信（より確実な方法）
+    $url = 'https://translation.googleapis.com/language/translate/v2?' . http_build_query(array(
+        'key' => $api_key,
+        'q' => $text,
+        'source' => 'ja',
+        'target' => 'en',
+        'format' => 'text'
+    ));
+    
+    $response = wp_remote_get($url, array(
+        'timeout' => 15,
+        'headers' => array(
+            'Accept' => 'application/json',
+        )
+    ));
+    
+    if (is_wp_error($response)) {
+        error_log('Google Translate API Error: ' . $response->get_error_message());
+        return false;
+    }
+    
+    $http_code = wp_remote_retrieve_response_code($response);
+    $body = wp_remote_retrieve_body($response);
+    
+    // デバッグ用ログ
+    error_log("Google Translate API Response: HTTP {$http_code}");
+    error_log("Google Translate API Body: " . $body);
+    
+    if ($http_code !== 200) {
+        error_log("Google Translate API HTTP Error: {$http_code}");
+        return false;
+    }
+    
+    $result = json_decode($body, true);
+    
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        error_log('Google Translate API: JSON decode error - ' . json_last_error_msg());
+        return false;
+    }
+    
+    if (isset($result['data']['translations'][0]['translatedText'])) {
+        return $result['data']['translations'][0]['translatedText'];
+    }
+    
+    if (isset($result['error'])) {
+        error_log('Google Translate API Error: ' . $result['error']['message']);
+        return false;
+    }
+    
+    error_log('Google Translate API: Unexpected response format - ' . print_r($result, true));
+    return false;
+}
+
+/**
+ * 翻訳されたテキストをスラッグに変換
+ */
+function create_slug_from_english($english_text) {
+    // 小文字に変換
+    $slug = strtolower($english_text);
+    
+    // 特殊文字を削除またはハイフンに変換
+    $slug = preg_replace('/[^a-z0-9\s\-]/', '', $slug);
+    
+    // スペースをハイフンに変換
+    $slug = preg_replace('/\s+/', '-', trim($slug));
+    
+    // 連続するハイフンを単一のハイフンに
+    $slug = preg_replace('/-+/', '-', $slug);
+    
+    // 前後のハイフンを削除
+    $slug = trim($slug, '-');
+    
+    // 長すぎる場合は短縮（WordPressの推奨は200文字以下）
+    if (strlen($slug) > 100) {
+        $words = explode('-', $slug);
+        $short_slug = '';
+        foreach ($words as $word) {
+            if (strlen($short_slug . '-' . $word) > 100) {
+                break;
+            }
+            $short_slug = empty($short_slug) ? $word : $short_slug . '-' . $word;
+        }
+        $slug = $short_slug;
+    }
+    
+    return $slug;
+}
+
+/**
+ * SEO記事投稿時の自動スラッグ生成
+ */
+function auto_generate_english_slug($post_id, $post, $update) {
+    // 自動保存、リビジョン、ゴミ箱は除外
+    if (wp_is_post_autosave($post_id) || wp_is_post_revision($post_id) || $post->post_status === 'trash') {
+        return;
+    }
+    
+    // seo_articles投稿タイプのみ対象
+    if ($post->post_type !== 'seo_articles') {
+        return;
+    }
+    
+    // 既にカスタムスラッグが設定されている場合はスキップ
+    if (!empty($post->post_name) && $post->post_name !== sanitize_title($post->post_title)) {
+        return;
+    }
+    
+    // タイトルが空の場合はスキップ
+    if (empty($post->post_title)) {
+        return;
+    }
+    
+    // 無限ループ防止
+    remove_action('save_post', 'auto_generate_english_slug', 10, 3);
+    
+    // 英語翻訳を取得
+    $english_title = translate_text_to_english($post->post_title);
+    
+    if ($english_title) {
+        $english_slug = create_slug_from_english($english_title);
+        
+        if (!empty($english_slug)) {
+            // スラッグの重複チェックと調整
+            $unique_slug = wp_unique_post_slug($english_slug, $post_id, $post->post_status, $post->post_type, $post->post_parent);
+            
+            // 投稿を更新
+            wp_update_post(array(
+                'ID' => $post_id,
+                'post_name' => $unique_slug
+            ));
+            
+            // ログに記録
+            error_log("Auto-generated English slug for post {$post_id}: '{$post->post_title}' -> '{$unique_slug}'");
+        }
+    }
+    
+    // フックを再度追加
+    add_action('save_post', 'auto_generate_english_slug', 10, 3);
+}
+add_action('save_post', 'auto_generate_english_slug', 10, 3);
+
+/**
+ * 管理画面に英語スラッグ生成ボタンを追加
+ */
+function add_english_slug_meta_box() {
+    add_meta_box(
+        'english-slug-generator',
+        '英語スラッグ生成',
+        'english_slug_meta_box_callback',
+        'seo_articles',
+        'side',
+        'default'
+    );
+}
+add_action('add_meta_boxes', 'add_english_slug_meta_box');
+
+/**
+ * 英語スラッグ生成メタボックスのコールバック
+ */
+function english_slug_meta_box_callback($post) {
+    ?>
+    <div id="english-slug-generator">
+        <p>タイトルから英語スラッグを自動生成します。</p>
+        <button type="button" id="generate-english-slug" class="button button-secondary">英語スラッグを生成</button>
+        <div id="slug-preview" style="margin-top: 10px; padding: 10px; background: #f9f9f9; border-left: 4px solid #0073aa; display: none;">
+            <strong>生成されたスラッグ:</strong>
+            <div id="slug-text" style="font-family: monospace; margin-top: 5px;"></div>
+        </div>
+    </div>
+    
+    <script>
+    jQuery(document).ready(function($) {
+        // タイトル取得の汎用関数
+        function getCurrentPostTitle() {
+            // 複数の方法でタイトルを取得を試行
+            const selectors = [
+                '#title',                              // クラシックエディタ
+                '.editor-post-title__input',          // Gutenberg (古いバージョン)
+                '[data-type="core/post-title"] textarea', // Gutenberg (新しいバージョン)
+                '.wp-block-post-title',                // ブロックエディタ
+                'h1[data-type="core/post-title"]',     // タイトルブロック
+                '[placeholder*="タイトル"]',            // 日本語プレースホルダー
+                '[placeholder*="Add title"]'           // 英語プレースホルダー
+            ];
+            
+            // セレクタを順番に試す
+            for (const selector of selectors) {
+                const element = $(selector);
+                if (element.length > 0) {
+                    const value = element.val() || element.text() || element.attr('value');
+                    if (value && value.trim()) {
+                        console.log('Title found with selector:', selector, 'Value:', value);
+                        return value.trim();
+                    }
+                }
+            }
+            
+            // WordPress Data APIを使用（Gutenberg）
+            if (typeof wp !== 'undefined' && wp.data && wp.data.select) {
+                try {
+                    const postTitle = wp.data.select('core/editor').getEditedPostAttribute('title');
+                    if (postTitle && postTitle.trim()) {
+                        console.log('Title found via WP Data API:', postTitle);
+                        return postTitle.trim();
+                    }
+                } catch (e) {
+                    console.log('WordPress Data API not available:', e);
+                }
+            }
+            
+            // 最後の手段：ページタイトル要素から取得
+            const pageTitle = $('h1').first().text();
+            if (pageTitle && pageTitle.trim() && !pageTitle.includes('新規投稿') && !pageTitle.includes('Add New')) {
+                console.log('Title found from page h1:', pageTitle);
+                return pageTitle.trim();
+            }
+            
+            return null;
+        }
+
+        $('#generate-english-slug').on('click', function() {
+            const button = $(this);
+            const title = getCurrentPostTitle();
+            
+            if (!title) {
+                alert('タイトルを入力してください。\n\nタイトル入力後に再度お試しください。');
+                
+                // デバッグ情報をコンソールに出力
+                console.log('Debug: Available elements:');
+                console.log('- #title:', $('#title').val());
+                console.log('- .editor-post-title__input:', $('.editor-post-title__input').val());
+                console.log('- [data-type="core/post-title"] textarea:', $('[data-type="core/post-title"] textarea').val());
+                console.log('- All h1 elements:', $('h1').map(function() { return $(this).text(); }).get());
+                
+                return;
+            }
+            
+            button.prop('disabled', true).text('生成中...');
+            
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'generate_english_slug_preview',
+                    title: title,
+                    nonce: '<?php echo wp_create_nonce('generate_english_slug'); ?>'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('#slug-text').text(response.data.slug);
+                        $('#slug-preview').show();
+                        $('#post_name').val(response.data.slug);
+                        $('.edit-slug').show();
+                        $('#editable-post-name').text(response.data.slug);
+                    } else {
+                        alert('スラッグの生成に失敗しました: ' + (response.data || '不明なエラー'));
+                    }
+                },
+                error: function() {
+                    alert('通信エラーが発生しました。');
+                },
+                complete: function() {
+                    button.prop('disabled', false).text('英語スラッグを生成');
+                }
+            });
+        });
+    });
+    </script>
+    <?php
+}
+
+/**
+ * AJAX: 英語スラッグプレビュー生成
+ */
+function ajax_generate_english_slug_preview() {
+    check_ajax_referer('generate_english_slug', 'nonce');
+    
+    if (!current_user_can('edit_posts')) {
+        wp_die('権限がありません。');
+    }
+    
+    $title = sanitize_text_field($_POST['title']);
+    
+    if (empty($title)) {
+        wp_send_json_error('タイトルが空です。');
+    }
+    
+    // API キーの確認
+    $api_key = defined('GOOGLE_TRANSLATE_API_KEY') ? GOOGLE_TRANSLATE_API_KEY : '';
+    if (empty($api_key)) {
+        wp_send_json_error('Google Translate APIキーが設定されていません。wp-config.phpを確認してください。');
+    }
+    
+    // テスト用：APIキーの最初の4文字と最後の4文字を表示
+    $masked_key = substr($api_key, 0, 4) . '...' . substr($api_key, -4);
+    error_log("Using API Key: {$masked_key}");
+    
+    $english_title = translate_text_to_english($title);
+    
+    if (!$english_title) {
+        wp_send_json_error('翻訳に失敗しました。WordPressのエラーログを確認してください。');
+    }
+    
+    $slug = create_slug_from_english($english_title);
+    
+    if (empty($slug)) {
+        wp_send_json_error('スラッグの生成に失敗しました。');
+    }
+    
+    wp_send_json_success(array(
+        'slug' => $slug,
+        'english_title' => $english_title,
+        'api_key_test' => $masked_key
+    ));
+}
+add_action('wp_ajax_generate_english_slug_preview', 'ajax_generate_english_slug_preview');
+
+/**
+ * デバッグ用：Google Translate API テスト関数
+ */
+function test_google_translate_api() {
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+    
+    echo '<div class="wrap"><h1>Google Translate API テスト</h1>';
+    
+    $api_key = defined('GOOGLE_TRANSLATE_API_KEY') ? GOOGLE_TRANSLATE_API_KEY : '';
+    if (empty($api_key)) {
+        echo '<div class="notice notice-error"><p>APIキーが設定されていません。</p></div>';
+        echo '</div>';
+        return;
+    }
+    
+    echo '<p>APIキー: ' . substr($api_key, 0, 4) . '...' . substr($api_key, -4) . '</p>';
+    
+    $test_text = 'テスト';
+    echo '<p>テスト文字列: ' . $test_text . '</p>';
+    
+    $result = translate_text_to_english($test_text);
+    
+    if ($result) {
+        echo '<div class="notice notice-success"><p>翻訳成功: ' . $result . '</p></div>';
+    } else {
+        echo '<div class="notice notice-error"><p>翻訳失敗。エラーログを確認してください。</p></div>';
+    }
+    
+    echo '</div>';
+}
+
+// 管理画面でのテストページ追加
+function add_translate_test_page() {
+    if (current_user_can('manage_options') && isset($_GET['test_translate'])) {
+        add_action('admin_init', function() {
+            test_google_translate_api();
+            exit;
+        });
+    }
+}
+add_action('init', 'add_translate_test_page');
