@@ -5,14 +5,171 @@
 .hero-section {
 	position: relative;
 	width: 100%;
+	height: auto; // コンテンツに応じた高さ
 	overflow: hidden;
 
 	// PC Hero (default - desktop)
 	&__pc {
 		display: block;
+		position: relative;
+		width: 100%;
+		height: 100%;
 
 		@include m.mq(md) {
 			display: none;
+		}
+	}
+
+	// Grid Container - 3つのアイテムを重ねて配置
+	&__grid-container {
+		@include m.design-grid(
+			$cols: (
+				55%,
+				45%,
+			),
+			$rows: (
+				auto,
+			),
+			$gap: 0
+		);
+		width: 100%;
+		min-height: 500px; // 最小高さを確保
+		align-items: center;
+		padding: 0 0 m.fs(60); // 上下にパディング追加
+
+		@include m.mq(md) {
+			display: flex;
+			flex-direction: column;
+			gap: m.fsm(40);
+			padding: m.fsm(40) m.fsm(20);
+			min-height: auto;
+			background-image: url('../images/hero_bg_sp.jpg');
+			background-size: cover;
+			background-position: center;
+		}
+	}
+
+	// Grid Item 1: Background Image
+	&__bg-image {
+		@include m.grid-area(0, 2, 0, 1); // 全体に背景を広げる
+		width: 100%;
+		height: 100%;
+		z-index: 1;
+
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: contain; // 縦横比を保持して全体を表示
+			object-position: center;
+		}
+
+		@include m.mq(md) {
+			display: none; // モバイルでは背景画像要素を非表示
+		}
+	}
+
+	// Grid Item 2: Left Content Area
+	&__content {
+		@include m.grid-area(0, 1, 0, 1);
+		z-index: 2;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: m.fs(40);
+		padding: 0 0 0 m.fs(162, 0.4);
+		width: 100%; // グリッドセル全体を使用
+
+		@include m.mq(md) {
+			align-items: center;
+			text-align: center;
+			padding: 0;
+			gap: m.fsm(30);
+		}
+	}
+
+	// Main Title (SVG)
+	&__main-title {
+		img {
+			max-width: m.fs(450, 0.5);
+			height: auto;
+		}
+	}
+
+	// Sub Text with Blue Background
+	&__sub-text {
+		@include m.breakout-bg('left', 50vw, 84%, #57aace);
+		width: 100%;
+
+		&-content {
+			margin: 0 auto;
+			padding: m.fs(10) m.fs(40);
+			color: white;
+			font-size: m.fs(16, 0.7);
+			font-weight: 400;
+			font-family: v.$ja-sans;
+			line-height: 1.6;
+			text-wrap: nowrap;
+		}
+	}
+
+	// 3 Points Section
+	&__points {
+		img {
+			width: 100%;
+			max-width: m.fs(581.33, 0.74);
+			height: auto;
+		}
+	}
+
+	// Grid Item 3: CTA Button Area (Right Side)
+	&__cta {
+		@include m.grid-area(1, 2, 0, 1);
+		z-index: 2;
+		display: flex;
+		align-items: flex-end;
+		justify-content: flex-end;
+		padding: 0 m.fs(80) m.fs(80, 1) 0;
+		height: 100%;
+
+		@include m.mq(md) {
+			align-items: center;
+			justify-content: center;
+			padding: 0;
+			height: auto;
+		}
+
+		&-button {
+			width: m.fs(300);
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: m.fs(12);
+			padding: m.fs(16) m.fs(32);
+			background: white;
+			color: #3f3f3f;
+			text-decoration: none;
+			border: 1.5px solid #3f3f3f;
+			border-radius: m.fs(30);
+			font-size: m.fs(16);
+			font-weight: 600;
+			font-family: v.$ja-sans;
+			transition: all 0.3s ease;
+
+			&:hover {
+				background: #a99f3c;
+				border: 1.5px solid #a99f3c;
+				color: white;
+			}
+		}
+
+		&-icon {
+			width: m.fs(20);
+			height: m.fs(20);
+			transition: all 0.3s ease;
+		}
+
+		&-button:hover &-icon {
+			filter: brightness(0) invert(1);
 		}
 	}
 
@@ -25,114 +182,99 @@
 		}
 	}
 
-	&__image-container {
-		position: relative;
+	// SP Container
+	&__sp-container {
+		display: flex;
+		flex-direction: column;
+		gap: m.fsm(40);
+		align-items: center;
+	}
+
+	// SP Background Image (top block)
+	&__sp-bg {
+		width: 100%;
+
+		img {
+			width: 100%;
+			height: auto;
+			display: block;
+		}
+	}
+
+	// SP Content
+	&__sp-content {
+		display: flex;
+		flex-direction: column;
+		gap: m.fsm(40);
+		align-items: center;
 		width: 100%;
 	}
 
-	&__image {
-		width: 100%;
-		height: 100%;
-		object-fit: contain;
-		display: block;
-	}
-
-	&__title-image {
-		width: m.fs(285, 0.6);
-		position: absolute;
-		top: m.fs(90, 0.6);
-		left: m.fs(150, 0.6);
-		z-index: 2;
-	}
-
-	&__title-svg {
-		width: 100%;
-		height: 100%;
-		display: block;
-	}
-
-	&__content {
-		position: absolute;
-		bottom: m.fs(100, 0.6);
-		right: m.fs(96, 0.6);
+	// SP Title (SVG)
+	&__sp-title {
 		text-align: center;
-		color: #fff;
-		z-index: 2;
-		width: m.fs(305);
-		padding: 0 m.fs(20);
+
+		img {
+			width: 100%;
+			max-width: m.fsm(320);
+			height: auto;
+		}
 	}
 
-	&__title {
-		font-family: v.$ja;
-		font-size: m.fs(48);
-		font-weight: 700;
-		margin-bottom: m.fs(24);
-		line-height: 1.2;
-	}
-
-	&__subtitle {
-		font-family: v.$ja;
-		font-size: m.fs(20);
+	// SP Subtext
+	&__sp-subtext {
+		@include m.breakout-bg('left', 100vw, 40%, #57aace);
+		color: white;
+		padding: m.fsm(15) m.fsm(20);
+		text-align: center;
+		font-size: m.fsm(16);
 		font-weight: 400;
-		margin-bottom: m.fs(48);
-		line-height: 1.6;
+		font-family: v.$ja-sans;
 	}
 
-	// Mobile specific grid layout
-	&__mobile-grid {
-		display: grid;
-		grid-template-columns: m.fsm(186) m.fsm(237) 1fr;
-		grid-template-rows: m.fsm(369) m.fsm(271) 1fr;
-		width: 100%;
-		height: auto;
-		overflow: hidden;
+	// SP Points (SVG)
+	&__sp-points {
+		text-align: center;
+
+		img {
+			width: 100%;
+			max-width: m.fsm(350);
+			height: auto;
+		}
 	}
 
-	&__mobile-item {
-		&--1 {
-			grid-column: 1 / -1;
-			grid-row: 1 / -1;
-			overflow: hidden;
+	// SP CTA Button
+	&__sp-cta {
+		text-align: center;
+		margin-top: m.fsm(20);
 
-			img {
-				width: 100%;
-				height: 100%;
-				object-fit: cover;
-				display: block;
+		&-button {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: m.fsm(10);
+			padding: m.fsm(14) m.fsm(28);
+			background: #a99f3c;
+			color: white;
+			text-decoration: none;
+			border: 1.5px solid #a99f3c;
+			border-radius: m.fsm(25);
+			font-size: m.fsm(16);
+			font-weight: 600;
+			font-family: v.$ja-sans;
+			transition: all 0.3s ease;
+
+			// タッチフィードバック（短時間の視覚的変化）
+			&:active {
+				transform: scale(0.98);
+				opacity: 0.9;
 			}
 		}
 
-		&--2 {
-			grid-column: 2 / 3;
-			grid-row: 2 / 3;
-			position: relative;
-
-			img {
-				width: 100%;
-				height: 100%;
-				object-fit: contain;
-				display: block;
-			}
-		}
-	}
-
-
-	// Mobile specific adjustments
-	@include m.mq(md) {
-		&__image-container {
-			position: relative;
-			height: 100vh;
-		}
-
-		&__image {
-			object-fit: cover;
-			height: 100%;
-		}
-
-		&__title-image {
-			width: m.fsm(200);
-			top: m.fsm(50);
-			left: m.fsm(30);
+		&-icon {
+			width: m.fsm(18);
+			height: m.fsm(18);
+			filter: brightness(0) invert(1); // アイコンを白に
 		}
 	}
 }

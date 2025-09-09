@@ -2,7 +2,6 @@
 
 <main class="main-content">
   <?php get_template_part('template-parts/sections/home/hero'); ?>
-  <?php get_template_part('template-parts/sections/home/user-count'); ?>
   <?php get_template_part('template-parts/sections/home/media-slider'); ?>
   <?php get_template_part('template-parts/sections/home/thoughts-layout'); ?>
   <?php get_template_part('template-parts/sections/home/thoughts-layout-mobile'); ?>
