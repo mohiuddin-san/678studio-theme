@@ -41,6 +41,209 @@ $breakpoints: (
 	}
 }
 
+// =============================================================================
+// Design Grid Layout Mixins
+// =============================================================================
+
+/**
+ * デザインから簡単にGridレイアウトを作成するmixin
+ * 使用例:
+ * @include figma-grid(
+ *   $cols: (500, 80, 1fr),      // カラム幅 (px値または1fr)
+ *   $rows: (100, 200, auto),    // 行高さ (px値またはauto)
+ *   $gap: 20                    // グリッドギャップ
+ * );
+ */
+@mixin design-grid($cols: (), $rows: (), $gap: 0, $responsive: true) {
+	display: grid;
+
+	// カラムの設定
+	@if length($cols) > 0 {
+		$column-values: ();
+		@each $col in $cols {
+			@if type-of($col) == number and unit($col) == 'px' and $responsive {
+				// px値のみレスポンシブ関数を使用
+				$column-values: append($column-values, fs(strip-unit($col), 0.74));
+			} @else {
+				// px以外（%、fr、auto）やresponsive:falseの場合はそのまま
+				$column-values: append($column-values, $col);
+			}
+		}
+		grid-template-columns: $column-values;
+	}
+
+	// 行の設定
+	@if length($rows) > 0 {
+		$row-values: ();
+		@each $row in $rows {
+			@if type-of($row) == number and unit($row) == 'px' and $responsive {
+				// px値のみレスポンシブ関数を使用
+				$row-values: append($row-values, fs(strip-unit($row), 0.74));
+			} @else {
+				// px以外（%、auto）やresponsive:falseの場合はそのまま
+				$row-values: append($row-values, $row);
+			}
+		}
+		grid-template-rows: $row-values;
+	}
+
+	// ギャップの設定
+	@if $gap > 0 {
+		@if $responsive {
+			gap: fs($gap);
+		} @else {
+			gap: #{$gap}px;
+		}
+	}
+}
+
+/**
+ * グリッドアイテムの配置を簡単に設定するmixin
+ * 使用例:
+ * @include grid-item(
+ *   $col-start: 1,
+ *   $col-end: 3,
+ *   $row-start: 1,
+ *   $row-end: 4
+ * );
+ */
+@mixin grid-item(
+	$col-start: auto,
+	$col-end: auto,
+	$row-start: auto,
+	$row-end: auto
+) {
+	@if $col-start != auto {
+		grid-column-start: $col-start;
+	}
+	@if $col-end != auto {
+		grid-column-end: $col-end;
+	}
+	@if $row-start != auto {
+		grid-row-start: $row-start;
+	}
+	@if $row-end != auto {
+		grid-row-end: $row-end;
+	}
+}
+
+/**
+ * グリッドアイテムの配置を短縮形で設定（0ベースのインデックス）
+ * 使用例:
+ * @include grid-area(0, 2, 0, 3);  // col-start, col-end, row-start, row-end
+ */
+@mixin grid-area($col-start, $col-end, $row-start, $row-end) {
+	grid-column: #{$col-start + 1} / #{$col-end + 1};
+	grid-row: #{$row-start + 1} / #{$row-end + 1};
+}
+
+/**
+ * デザインのオートレイアウトを再現するmixin
+ * 使用例:
+ * @include auto-layout(
+ *   $direction: 'horizontal',  // または 'vertical'
+ *   $gap: 20,
+ *   $padding: 40
+ * );
+ */
+@mixin auto-layout(
+	$direction: 'horizontal',
+	$gap: 0,
+	$padding: null,
+	$align: center,
+	$justify: flex-start
+) {
+	display: flex;
+
+	@if $direction == 'horizontal' {
+		flex-direction: row;
+	} @else if $direction == 'vertical' {
+		flex-direction: column;
+	}
+
+	@if $gap > 0 {
+		gap: fs($gap);
+	}
+
+	@if $padding {
+		@if type-of($padding) == list {
+			padding: fs(nth($padding, 1))
+				fs(nth($padding, 2))
+				fs(nth($padding, 3))
+				fs(nth($padding, 4));
+		} @else {
+			padding: fs($padding);
+		}
+	}
+
+	align-items: $align;
+	justify-content: $justify;
+}
+
+/**
+ * コンテナ突き抜け背景mixin
+ * 
+ * 仕組み：
+ * 画面全体                    コンテナ
+ * |--------------------------|
+ * |        |  Container  |   |
+ * |        |     50%     |   |  ← コンテナは画面の中央にある
+ * |        |             |   |
+ * |--------------------------|
+ *          ↑             ↑
+ *       25%            75%
+ * 
+ * calc(-50vw + 50%)の計算：
+ * - 50vw = 画面幅の50%（画面中央まで）
+ * - 50% = コンテナ中央からの位置
+ * - -50vw + 50% = コンテナ左端から画面左端までの距離
+ * 
+ * 使用例:
+ * @include breakout-bg('left', 50vw, 84%, #57aace);  // 左に50vw幅、84%からオフセット
+ * @include breakout-bg('right', 30vw, 20%, red);     // 右に30vw幅、20%からオフセット
+ * @include breakout-bg('both', 100vw, 50%, blue);    // 両端まで全幅
+ * 
+ * パラメータ説明:
+ * @param {String} $direction - 'left', 'right', または 'both' - 突き抜ける方向
+ * @param {String} $width - 幅（vw単位） - 画面幅に対する絶対的なサイズ
+ * @param {String} $offset - オフセット（%単位） - コンテナ内での開始位置（0%=左端, 50%=中央, 100%=右端）
+ * @param {Color} $bg-color - 背景色
+ * 
+ * 例: @include breakout-bg('left', 100vw, 40%, #57aace);
+ * → コンテナの40%の位置から左に画面全幅まで青色で突き抜け
+ */
+@mixin breakout-bg($direction: 'left', $width: 50vw, $offset: 50%, $bg-color: #57aace) {
+	position: relative;
+	
+	&::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		height: 100%;
+		background-color: $bg-color;
+		z-index: -1;
+		
+		@if $direction == 'left' {
+			left: calc(-50vw + #{$offset});
+			width: $width;
+		} @else if $direction == 'right' {
+			right: calc(-50vw + #{$offset});
+			width: $width;
+		} @else if $direction == 'both' {
+			left: calc(-50vw + 50%);
+			right: calc(-50vw + 50%);
+		}
+	}
+}
+
+// ユニット削除関数
+@function strip-unit($number) {
+	@if type-of($number) == 'number' and not unitless($number) {
+		@return math.div($number, $number * 0 + 1);
+	}
+	@return $number;
+}
+
 /**
  * シンプル化したレスポンシブサイズ関数 - 縮小率を直接指定可能
  * 
@@ -81,7 +284,6 @@ $breakpoints: (
 	// 360px以下では段階的に縮小、それ以上では比率維持
 	@return clamp(#{$size-480 * 0.6}px, #{$vw-ratio}vw, #{$size-480 * 1.8}px);
 }
-
 
 // Flexbox center mixin
 @mixin flex-center {
