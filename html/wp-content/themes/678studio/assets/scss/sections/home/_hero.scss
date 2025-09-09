@@ -33,9 +33,9 @@
 			$gap: 0
 		);
 		width: 100%;
-		min-height: 500px; // 最小高さを確保
+		min-height: auto; // 最小高さを削除してコンテンツに応じた高さに
 		align-items: center;
-		padding: 0 0 m.fs(60); // 上下にパディング追加
+		padding: 0; // パディングを削除
 
 		@include m.mq(md) {
 			display: flex;
@@ -58,8 +58,8 @@
 
 		img {
 			width: 100%;
-			height: 100%;
-			object-fit: contain; // 縦横比を保持して全体を表示
+			height: auto; // 高さを自動にして縦横比を保持
+			object-fit: cover; // coverに変更して隙間を埋める
 			object-position: center;
 		}
 
