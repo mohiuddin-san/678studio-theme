@@ -24,6 +24,7 @@
 @use 'sections/home/about';
 @use 'sections/home/recommend';
 @use 'sections/home/studio-search';
+@use 'sections/stores/store-search';
 @use 'sections/home/thoughts-layout-mobile';
 @use 'sections/home/about-mobile';
 @use 'sections/home/gallery';
@@ -35,6 +36,7 @@
 @use 'pages/home';
 @use 'pages/about' as about-page;
 @use 'pages/single-store';
+@use 'pages/single-studio-shops';
 @use 'pages/reservation';
 @use 'pages/gallery' as gallery-page;
 @use 'pages/gallery-animations';

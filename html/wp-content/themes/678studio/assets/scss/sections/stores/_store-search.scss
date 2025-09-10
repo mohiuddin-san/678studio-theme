@@ -14,7 +14,6 @@
 	}
 
 	&__container {
-		max-width: 1200px;
 		margin: 0 auto;
 		padding: m.fs(72, 0.6) m.fs(20);
 		display: flex;
@@ -267,19 +266,38 @@
 		}
 	}
 
-	// カードエリア
-	&__cards {
+	// カードエリア wrapper
+	&__cards-wrapper {
+		display: flex;
+		justify-content: center; // コンテナ全体を中央に配置
 		width: 100%;
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: m.fs(24, 0.4);
-		margin-bottom: m.fs(60, 0.5);
+	}
 
-		// モバイル対応 - 1列レイアウト
+	&__cards {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: flex-start; // カード自体は左から並ぶ
+		gap: m.fs(26);
+		margin-bottom: m.fs(60, 0.5);
+		max-width: calc(#{m.fs(356)} * 3 + #{m.fs(26)} * 2);
+		width: 100%;
+
+		// 2枚並びの画面幅での調整
+		@media (max-width: calc(#{m.fs(356)} * 3 + #{m.fs(26)} * 2 + 100px)) and (min-width: calc(#{m.fs(356)} * 2 + #{m.fs(26)} + 60px)) {
+			max-width: calc(#{m.fs(356)} * 2 + #{m.fs(26)});
+		}
+
+		// 1枚並びの画面幅での調整
+		@media (max-width: calc(#{m.fs(356)} * 2 + #{m.fs(26)} + 60px)) {
+			max-width: #{m.fs(356)};
+		}
+
+		// モバイル対応
 		@include m.mq(md) {
-			grid-template-columns: 1fr;
 			gap: m.fsm(20);
 			margin-bottom: m.fsm(40);
+			max-width: none;
+			justify-content: flex-start;
 		}
 	}
 
@@ -300,30 +318,176 @@
 	}
 }
 
+// ストアセクション（認定店・登録店舗）
+.store-section {
+	width: 100%;
+	margin-bottom: m.fs(80, 0.6);
+
+	// モバイル対応
+	@include m.mq(md) {
+		margin-bottom: m.fsm(60);
+	}
+
+	&__header {
+		text-align: center;
+		margin-bottom: m.fs(40, 0.5);
+
+		// モバイル対応
+		@include m.mq(md) {
+			margin-bottom: m.fsm(30);
+		}
+	}
+
+	&__badge {
+		display: inline-flex;
+		align-items: center;
+		gap: m.fs(12);
+		font-size: m.fs(32, 0.8);
+		font-weight: 700;
+		font-family: v.$ja-sans;
+		margin-bottom: m.fs(16, 0.4);
+
+		// モバイル対応
+		@include m.mq(md) {
+			gap: m.fsm(10);
+			font-size: m.fsm(28);
+			margin-bottom: m.fsm(12);
+		}
+
+		&--certified {
+			color: #333;
+		}
+
+		&--regular {
+			color: #333;
+		}
+
+		&-icon {
+			width: m.fs(36);
+			height: m.fs(36);
+			flex-shrink: 0;
+
+			// モバイル対応
+			@include m.mq(md) {
+				width: m.fsm(32);
+				height: m.fsm(32);
+			}
+		}
+	}
+
+	&__description {
+		font-size: m.fs(16);
+		color: #666;
+		font-family: v.$ja-sans;
+		line-height: 1.6;
+		margin: 0 auto;
+		padding: m.fs(20) m.fs(20);
+
+		// モバイル対応
+		@include m.mq(md) {
+			font-size: m.fsm(14);
+			padding: 0 m.fsm(20);
+		}
+	}
+
+	&__cards {
+		width: 100%;
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: m.fs(24, 0.4);
+
+		// モバイル対応 - 1列レイアウト
+		@include m.mq(md) {
+			grid-template-columns: 1fr;
+			gap: m.fsm(20);
+		}
+	}
+
+	// 認定店セクション専用スタイル
+	&--certified {
+		.studio-card {
+			border: 2px solid rgba(58, 137, 255, 0.1);
+		}
+	}
+
+	// 登録店舗セクション専用スタイル
+	&--regular {
+		.studio-card {
+			border: 1px solid #e5e7eb;
+
+			&:hover {
+				border-color: #d1d5db;
+				transform: translateY(-1px);
+			}
+		}
+	}
+}
+
 // スタジオカード
 .studio-card {
-	display: grid;
-	grid-template-rows: auto 1fr;
+	display: flex;
+	flex-direction: column;
 	background: #fff;
-	aspect-ratio: 3/4;
 	border-radius: m.fs(10, 0.5);
 	padding: m.fs(16, 0.5);
 	text-align: center;
-	overflow: visible;
-	position: relative;
-	z-index: 1;
-	box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+	width: m.fs(356);
+	flex-shrink: 0;
+	min-height: m.fs(450);
 
 	// モバイル対応
 	@include m.mq(md) {
 		border-radius: m.fsm(10);
 		padding: m.fsm(16);
+		width: 100%;
+	}
+
+	// 登録店カードのみアスペクト比を維持とposition相対指定
+	&--regular {
+		aspect-ratio: unset; // アスペクト比を解除
+		position: relative;
+		padding: 0; // パディングリセット
+		min-height: m.fs(380); // 認定店の450pxより小さく設定
+
+		@include m.mq(md) {
+			min-height: m.fsm(360);
+		}
+
+		// 内部コンテンツのパディング
+		.studio-card__content {
+			padding: m.fs(16, 0.5);
+
+			@include m.mq(md) {
+				padding: m.fsm(16);
+			}
+		}
+	}
+
+	// 最寄り駅ラベル（左上のタグ）
+	&__station-label {
+		position: absolute;
+		top: 0;
+		left: 0;
+		background-color: #a99f3c;
+		color: #fff;
+		padding: m.fs(8, 0.4) m.fs(16, 0.4);
+		font-size: m.fs(14, 0.6);
+		font-weight: 600;
+		font-family: v.$ja-sans;
+		border-radius: m.fs(10, 0.5) 0 m.fs(10, 0.5) 0;
+		z-index: 1;
+
+		// モバイル対応
+		@include m.mq(md) {
+			padding: m.fsm(6) m.fsm(12);
+			font-size: m.fsm(12);
+			border-radius: m.fsm(10) 0 m.fsm(10) 0;
+		}
 	}
 
 	&__image {
 		position: relative;
 		width: 100%;
-		aspect-ratio: 16/9; // 画像の縦横比を設定
 		background: #e0e0e0;
 		overflow: hidden;
 		border-radius: m.fs(6, 0.5);
@@ -366,15 +530,38 @@
 	}
 
 	&__content {
-		display: grid;
-		grid-template-rows: auto 1fr auto;
+		display: flex;
+		flex-direction: column;
 		gap: m.fs(12, 0.4);
 		padding: m.fs(16, 0.4);
+		width: 100%;
+		flex: 1;
 
 		// モバイル対応
 		@include m.mq(md) {
-			gap: m.fsm(30);
+			gap: m.fsm(12);
 			padding: m.fsm(16);
+		}
+
+		// 登録店舗カードの場合、上部にパディングを追加（タグ用スペース）
+		.studio-card--regular & {
+			padding-top: m.fs(48, 0.5);
+
+			@include m.mq(md) {
+				padding-top: m.fsm(40);
+			}
+		}
+	}
+
+	// 認定店カード専用のコンテンツレイアウト調整
+	&--certified &__content {
+		display: flex;
+		flex-direction: column;
+		gap: m.fs(12, 0.4);
+
+		@include m.mq(md) {
+			gap: m.fsm(16);
+			padding: m.fsm(12);
 		}
 	}
 
@@ -384,11 +571,71 @@
 		color: #333;
 		font-family: v.$ja-sans;
 		letter-spacing: m.fs(1);
+		@include m.design-grid(
+			$cols: (
+				auto,
+				auto,
+			),
+			$gap: 8
+		);
+		align-items: center;
+		justify-content: center;
+		justify-items: center;
 
 		// モバイル対応
 		@include m.mq(md) {
 			font-size: m.fsm(18);
 			letter-spacing: m.fsm(1);
+			// gapはdesign-gridミックスインで管理
+		}
+	}
+
+	// 認定店カードの店舗名を調整
+	&--certified &__name {
+		font-size: m.fs(16, 0.6);
+		@include m.design-grid(
+			$cols: (
+				auto,
+				auto,
+			),
+			$gap: 6
+		);
+
+		// モバイル対応
+		@include m.mq(md) {
+			font-size: m.fsm(15);
+			// gapはdesign-gridミックスインで管理
+		}
+	}
+
+	&__certified-badge {
+		display: inline-flex;
+		align-items: center;
+		width: m.fs(20);
+		height: m.fs(20);
+		flex-shrink: 0;
+
+		// モバイル対応
+		@include m.mq(md) {
+			width: m.fsm(18);
+			height: m.fsm(18);
+		}
+
+		img {
+			width: 100%;
+			height: 100%;
+		}
+	}
+
+	// 認定店カードの認定バッジを小さく
+	&--certified &__certified-badge {
+		width: m.fs(16);
+		height: m.fs(16);
+
+		// モバイル対応
+		@include m.mq(md) {
+			width: m.fsm(15);
+			height: m.fsm(15);
 		}
 	}
 
@@ -441,11 +688,147 @@
 		}
 	}
 
+	// 新しいレイアウト用スタイル
+	&__info-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: m.fs(8, 0.2);
+		margin: m.fs(6, 0.3) 0;
+		justify-items: center;
+
+		// モバイル対応
+		@include m.mq(md) {
+			// gapはdesign-gridミックスインで管理
+			margin: m.fsm(3) 0;
+			gap: m.fsm(8);
+		}
+	}
+
+	&__info-item {
+		display: flex;
+		gap: m.fs(4, 0.2);
+		align-items: center;
+		font-size: m.fs(14);
+		color: #666;
+
+		// モバイル対応
+		@include m.mq(md) {
+			gap: m.fsm(4」);
+			font-size: m.fsm(14);
+		}
+	}
+
+	&__info-icon {
+		width: m.fs(14);
+		height: m.fs(14);
+		flex-shrink: 0;
+
+		// モバイル対応
+		@include m.mq(md) {
+			width: m.fsm(14);
+			height: m.fsm(14);
+		}
+	}
+
+	&__info-text {
+		font-family: v.$ja-sans;
+		font-weight: 400;
+		word-break: break-word;
+	}
+
+	&__introduction {
+		margin: 0;
+		font-size: m.fs(14);
+		line-height: 1.4;
+		color: #666;
+		text-align: left;
+		padding: 0 m.fs(4, 0.3);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		padding-bottom: m.fs(8, 0.3);
+		font-family: v.$ja-sans;
+
+		// モバイル対応
+		@include m.mq(md) {
+			font-size: m.fsm(14);
+			padding: 0 m.fsm(3);
+			line-height: 1.8;
+		}
+	}
+
+	&__buttons {
+		display: flex;
+		gap: m.fs(4, 0.2);
+		margin-top: auto;
+
+		// モバイル対応
+		@include m.mq(md) {
+			gap: m.fsm(8);
+		}
+	}
+
+	&__button-item {
+		width: 50%;
+
+		.certified-card-button {
+			width: 100%;
+			font-size: m.fs(16);
+			padding: m.fs(8, 0.4) m.fs(12, 0.4);
+			min-height: auto; // 最小高さ制限を解除
+			background: white;
+			text-decoration: none;
+			border-radius: 50px;
+			font-weight: 600;
+			font-family: v.$ja-sans;
+			transition: all 0.3s ease;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+
+			// ご予約相談ボタン
+			&--booking {
+				color: #a99f3c;
+				border: 1.5px solid #a99f3c;
+
+				&:hover {
+					background: #a99f3c;
+					border-color: #a99f3c;
+					color: white;
+				}
+			}
+
+			// お問い合わせボタン
+			&--contact {
+				color: #57aace;
+				border: 1.5px solid #57aace;
+
+				&:hover {
+					background: #57aace;
+					border-color: #57aace;
+					color: white;
+				}
+			}
+
+			// モバイル対応
+			@include m.mq(md) {
+				font-size: m.fsm(14);
+				padding: m.fsm(7) m.fsm(10);
+				border-radius: 50px;
+			}
+		}
+	}
+
+	// 既存のcontact-btnスタイル（登録店用）
 	&__contact-btn {
 		// camera-buttonコンポーネントを使用するため、独自スタイルは削除
 		width: 100%;
-		display: flex;
-		justify-content: center;
+		@include m.design-grid(
+			$cols: (
+				1fr,
+			),
+			$gap: 0
+		);
+		justify-items: center;
 		overflow: visible;
 		padding: m.fs(8, 0.3);
 
@@ -499,7 +882,7 @@
 		border-color: #f3f4f6;
 		color: #d1d5db;
 		cursor: not-allowed;
-		
+
 		svg {
 			opacity: 0.5;
 		}
@@ -508,7 +891,7 @@
 	&--prev,
 	&--next {
 		padding: m.fs(10, 0.3);
-		
+
 		// モバイル対応
 		@include m.mq(md) {
 			padding: m.fsm(10);
@@ -518,7 +901,7 @@
 			width: m.fs(16, 0.3);
 			height: m.fs(16, 0.3);
 			fill: currentColor;
-			
+
 			// モバイル対応
 			@include m.mq(md) {
 				width: m.fsm(16);

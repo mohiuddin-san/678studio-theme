@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
     animationDuration: 1.5,
     animationDelay: 0.08,
     initialBlur: 10, // pixels
-    gridRowHeight: 20, // Should match CSS grid-auto-rows
+    gridRowHeight: 5, // Should match CSS grid-auto-rows (5px)
     gridGap: 24 // Should match CSS gap
   };
 
@@ -117,15 +117,6 @@ document.addEventListener('DOMContentLoaded', function() {
       if (data.success && data.data.shops) {
         shopsData = data.data.shops;
         
-        // デバッグ: main_imageがあるかをチェック
-        console.log('DEBUG - Loaded shops data:', shopsData.length, 'shops');
-        shopsData.forEach((shop, index) => {
-          console.log(`DEBUG - Shop ${index + 1} (ID: ${shop.id}): name="${shop.name}", has_main_image=${!!(shop.main_image)}`);
-          if (shop.main_image) {
-            console.log(`DEBUG - Shop ${shop.id} main_image length:`, shop.main_image.length);
-            console.log(`DEBUG - Shop ${shop.id} main_image starts with:`, shop.main_image.substring(0, 50));
-          }
-        });
         
         populateStudioFilter();
         updateGallery(); // Initial gallery population
@@ -189,15 +180,19 @@ document.addEventListener('DOMContentLoaded', function() {
       // Remove updating class
       galleryGrid.classList.remove('updating');
 
+      // Force column count consistency
+      enforceColumnCount();
+
       // If no images are found, display a message
       if (imageCount === 0) {
         galleryGrid.innerHTML = '<p>選択したスタジオに画像がありません。</p>';
       } else {
-        // Setup beautiful fade animations
+        // Setup scroll animations (CSS columns handle layout automatically)
         setupScrollAnimations();
       }
     }, 150);
   }
+
 
   // Setup masonry layout
   function setupMasonryLayout() {
@@ -215,23 +210,32 @@ document.addEventListener('DOMContentLoaded', function() {
       const checkAllLoaded = () => {
         loadedCount++;
         if (loadedCount === images.length) {
-          // Add a small delay to ensure layout is stable
-          setTimeout(() => {
-            calculateMasonryLayout();
-            resolve();
-          }, 50);
+          // Use requestAnimationFrame to ensure all layouts are complete
+          requestAnimationFrame(() => {
+            setTimeout(() => {
+              calculateMasonryLayout();
+              resolve();
+            }, 100); // Slightly longer delay for better layout stability
+          });
         }
       };
 
       images.forEach(img => {
-        if (img.complete && img.naturalHeight > 0) {
+        if (img.complete && img.naturalHeight > 0 && img.naturalWidth > 0) {
+          // Image is already loaded
           checkAllLoaded();
         } else {
+          // Wait for image to load
           img.addEventListener('load', () => {
-            // Ensure image has rendered before calculating
-            requestAnimationFrame(checkAllLoaded);
+            // Double-check that dimensions are available
+            if (img.naturalHeight > 0 && img.naturalWidth > 0) {
+              checkAllLoaded();
+            }
           });
-          img.addEventListener('error', checkAllLoaded); // Handle broken images
+          img.addEventListener('error', () => {
+            // Handle broken images - use default dimensions
+            checkAllLoaded();
+          });
         }
       });
     });
@@ -245,6 +249,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Get grid properties
     const gridComputedStyle = window.getComputedStyle(galleryGrid);
     const gridColumnGap = parseInt(gridComputedStyle.getPropertyValue('gap')) || CONFIG.gridGap;
+    const actualGridRowHeight = parseInt(gridComputedStyle.getPropertyValue('grid-auto-rows')) || CONFIG.gridRowHeight;
 
     // Determine number of columns based on screen size
     const columns = getColumnCount();
@@ -256,34 +261,51 @@ document.addEventListener('DOMContentLoaded', function() {
       const img = item.querySelector('img');
       if (!img) return;
 
-      // Use actual rendered dimensions instead of natural dimensions
-      const actualHeight = img.offsetHeight || img.getBoundingClientRect().height;
-      const actualWidth = img.offsetWidth || img.getBoundingClientRect().width;
-
-      // If image hasn't loaded yet, wait for it
-      if (actualHeight === 0 || actualWidth === 0) {
-        const imgHeight = img.naturalHeight || 200;
-        const imgWidth = img.naturalWidth || 200;
-        const itemWidth = galleryGrid.offsetWidth / columns - (gridColumnGap * (columns - 1)) / columns;
-        const calculatedHeight = (imgHeight / imgWidth) * itemWidth;
+      // Calculate the proper dimensions
+      const containerWidth = galleryGrid.offsetWidth;
+      const itemWidth = (containerWidth - (gridColumnGap * (columns - 1))) / columns;
+      
+      // Get image natural dimensions
+      const naturalWidth = img.naturalWidth;
+      const naturalHeight = img.naturalHeight;
+      
+      if (naturalWidth && naturalHeight) {
+        // Calculate the proper height based on aspect ratio
+        const aspectRatio = naturalHeight / naturalWidth;
+        const calculatedHeight = itemWidth * aspectRatio;
+        
+        // Set the image dimensions explicitly
+        img.style.width = '100%';
+        img.style.height = 'auto';
+        
+        // Force the item to have the correct height
         item.style.height = calculatedHeight + 'px';
+        
+        // Calculate grid row span needed
+        const rowSpan = Math.ceil(calculatedHeight / actualGridRowHeight);
+        
+        // Find the shortest column
+        const shortestColumnIndex = columnHeights.indexOf(Math.min(...columnHeights));
+        
+        // Apply grid positioning
+        item.style.gridColumn = shortestColumnIndex + 1;
+        item.style.gridRowEnd = `span ${rowSpan}`;
+        
+        // Update column height
+        columnHeights[shortestColumnIndex] += calculatedHeight + gridColumnGap;
+      } else {
+        // Fallback for images that haven't loaded
+        const fallbackHeight = 200;
+        item.style.height = fallbackHeight + 'px';
+        
+        const rowSpan = Math.ceil(fallbackHeight / actualGridRowHeight);
+        const shortestColumnIndex = columnHeights.indexOf(Math.min(...columnHeights));
+        
+        item.style.gridColumn = shortestColumnIndex + 1;
+        item.style.gridRowEnd = `span ${rowSpan}`;
+        
+        columnHeights[shortestColumnIndex] += fallbackHeight + gridColumnGap;
       }
-
-      // Get the actual item height (including image + any padding)
-      const itemHeight = item.offsetHeight || item.getBoundingClientRect().height;
-
-      // Find the shortest column
-      const shortestColumnIndex = columnHeights.indexOf(Math.min(...columnHeights));
-
-      // Calculate grid row span needed to fit the actual height
-      const rowSpan = Math.ceil(itemHeight / CONFIG.gridRowHeight);
-
-      // Apply grid positioning
-      item.style.gridColumn = shortestColumnIndex + 1;
-      item.style.gridRowEnd = `span ${rowSpan}`;
-
-      // Update column height
-      columnHeights[shortestColumnIndex] += itemHeight + gridColumnGap;
     });
   }
 
@@ -369,14 +391,34 @@ document.addEventListener('DOMContentLoaded', function() {
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
+      // Force column count consistency on resize
+      enforceColumnCount();
+      
       if (typeof ScrollTrigger !== 'undefined') {
         ScrollTrigger.refresh();
       }
     }, 250);
   });
 
+  // Function to force grid column consistency
+  function enforceColumnCount() {
+    const width = window.innerWidth;
+    let expectedColumns;
+    
+    if (width <= 479) expectedColumns = 1;      // sm
+    else if (width <= 767) expectedColumns = 2; // md
+    else if (width <= 1023) expectedColumns = 3; // lg
+    else expectedColumns = 4;                    // xl
+    
+    // Force grid template columns with !important
+    galleryGrid.style.setProperty('grid-template-columns', `repeat(${expectedColumns}, 1fr)`, 'important');
+  }
+
   // Load studio data and initialize gallery
   loadStudioData();
+  
+  // Initial column count enforcement
+  enforceColumnCount();
 
   // Lightbox functionality
   const lightbox = document.getElementById('galleryLightbox');

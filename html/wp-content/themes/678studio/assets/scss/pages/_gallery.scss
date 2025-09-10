@@ -155,21 +155,24 @@
 	padding: 0 m.fs(80, 0.5);
 
 	&__inner {
-		column-count: 4;
-		column-gap: m.fs(24, 0.5);
-
-		@include m.mq(lg) {
-			column-count: 3;
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: m.fs(24, 0.5);
+		
+		// より具体的なブレークポイントでカラム数を制御
+		@media (max-width: 1023px) {
+			grid-template-columns: repeat(3, 1fr);
+			gap: m.fs(20, 0.5);
 		}
 
-		@include m.mq(md) {
-			column-count: 2;
-			column-gap: m.fs(16, 0.5);
+		@media (max-width: 767px) {
+			grid-template-columns: repeat(2, 1fr);
+			gap: m.fs(16, 0.5);
 		}
 
-		@include m.mq(sm) {
-			column-count: 1;
-			column-gap: m.fs(12, 0.5);
+		@media (max-width: 479px) {
+			grid-template-columns: repeat(1, 1fr);
+			gap: m.fs(12, 0.5);
 		}
 	}
 
@@ -178,18 +181,8 @@
 		overflow: hidden;
 		cursor: pointer;
 		z-index: 1;
-		display: inline-block;
+		display: block;
 		width: 100%;
-		margin-bottom: m.fs(24, 0.5);
-		break-inside: avoid;
-
-		@include m.mq(md) {
-			margin-bottom: m.fs(16, 0.5);
-		}
-
-		@include m.mq(sm) {
-			margin-bottom: m.fs(12, 0.5);
-		}
 
 		img {
 			width: 100%;

@@ -21,6 +21,9 @@ function add_studio_gallery_metabox() {
 function studio_gallery_metabox_callback($post) {
     wp_nonce_field('studio_gallery_metabox', 'studio_gallery_nonce');
     
+    // 認定店かどうかをチェック
+    $is_certified = get_field('is_certified_store', $post->ID) ?: false;
+    
     // 保存された画像IDを取得
     $gallery_ids = get_post_meta($post->ID, '_gallery_image_ids', true);
     if (empty($gallery_ids)) {
@@ -30,9 +33,18 @@ function studio_gallery_metabox_callback($post) {
     }
     
     ?>
-    <div id="studio-gallery-container">
+    <div id="studio-gallery-container" class="<?php echo $is_certified ? 'certified-store' : 'non-certified-store'; ?>">
+        <!-- 認定店状態の表示 -->
+        <div id="certification-status" style="margin-bottom: 15px; padding: 10px; border-radius: 5px; <?php echo $is_certified ? 'background-color: #e7f5e7; border: 1px solid #4caf50; color: #2e7d32;' : 'background-color: #f5f5f5; border: 1px solid #ccc; color: #666;'; ?>">
+            <?php if ($is_certified): ?>
+                <strong>✓ 認定店</strong> - ギャラリー機能が利用できます
+            <?php else: ?>
+                <strong>⚠ 一般店</strong> - ギャラリー機能を利用するには「基本情報」タブで認定店として設定してください
+            <?php endif; ?>
+        </div>
+        
         <div class="gallery-toolbar" style="margin-bottom: 20px;">
-            <button type="button" class="button button-primary" id="add-gallery-images">
+            <button type="button" class="button button-primary" id="add-gallery-images" <?php echo $is_certified ? '' : 'disabled'; ?>>
                 画像を追加
             </button>
             <span id="gallery-count" style="margin-left: 15px; font-weight: 500;">
@@ -40,7 +52,7 @@ function studio_gallery_metabox_callback($post) {
             </span>
         </div>
         
-        <div id="gallery-images" class="gallery-images" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; min-height: 100px; border: 2px dashed #ddd; border-radius: 8px; padding: 20px; background: #fafafa;">
+        <div id="gallery-images" class="gallery-images" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; min-height: 100px; border: 2px dashed #ddd; border-radius: 8px; padding: 20px; <?php echo $is_certified ? 'background: #fafafa;' : 'background: #f0f0f0; opacity: 0.6; pointer-events: none;'; ?>">
             <?php if (!empty($gallery_ids) && $gallery_ids[0] !== ''): ?>
                 <?php foreach ($gallery_ids as $image_id): ?>
                     <?php if ($image_id): ?>
@@ -55,8 +67,13 @@ function studio_gallery_metabox_callback($post) {
                 <?php endforeach; ?>
             <?php else: ?>
                 <div class="no-images-placeholder" style="grid-column: 1 / -1; text-align: center; color: #999; font-style: italic; padding: 40px 20px;">
-                    まだ画像が追加されていません。<br>
-                    「画像を追加」ボタンをクリックして画像をアップロードしてください。
+                    <?php if ($is_certified): ?>
+                        まだ画像が追加されていません。<br>
+                        「画像を追加」ボタンをクリックして画像をアップロードしてください。
+                    <?php else: ?>
+                        ギャラリー機能は認定店のみ利用可能です。<br>
+                        基本情報タブで「認定店として設定する」をONにしてください。
+                    <?php endif; ?>
                 </div>
             <?php endif; ?>
         </div>
@@ -67,6 +84,86 @@ function studio_gallery_metabox_callback($post) {
     <script>
     jQuery(document).ready(function($) {
         var frame;
+        
+        // 認定店スイッチの変更を監視
+        function updateGalleryState() {
+            // ACFの認定店フィールドを監視
+            var isCertified = false;
+            
+            // ACFのtrue_falseフィールドを取得
+            var certifiedField = $('[data-name="is_certified_store"] input[type="checkbox"]');
+            if (certifiedField.length) {
+                isCertified = certifiedField.is(':checked');
+            }
+            
+            var $container = $('#studio-gallery-container');
+            var $statusDiv = $('#certification-status');
+            var $addButton = $('#add-gallery-images');
+            var $galleryImages = $('#gallery-images');
+            var $placeholder = $('.no-images-placeholder');
+            
+            if (isCertified) {
+                // 認定店の場合
+                $container.removeClass('non-certified-store').addClass('certified-store');
+                $statusDiv.html('<strong>✓ 認定店</strong> - ギャラリー機能が利用できます')
+                    .css({
+                        'background-color': '#e7f5e7',
+                        'border': '1px solid #4caf50',
+                        'color': '#2e7d32'
+                    });
+                $addButton.prop('disabled', false);
+                $galleryImages.css({
+                    'background': '#fafafa',
+                    'opacity': '1',
+                    'pointer-events': 'auto'
+                });
+                
+                // プレースホルダーメッセージを更新
+                if ($placeholder.length && $('#gallery-images .gallery-image-item').length === 0) {
+                    $placeholder.html('まだ画像が追加されていません。<br>「画像を追加」ボタンをクリックして画像をアップロードしてください。');
+                }
+            } else {
+                // 一般店の場合
+                $container.removeClass('certified-store').addClass('non-certified-store');
+                $statusDiv.html('<strong>⚠ 一般店</strong> - ギャラリー機能を利用するには「基本情報」タブで認定店として設定してください')
+                    .css({
+                        'background-color': '#f5f5f5',
+                        'border': '1px solid #ccc',
+                        'color': '#666'
+                    });
+                $addButton.prop('disabled', true);
+                $galleryImages.css({
+                    'background': '#f0f0f0',
+                    'opacity': '0.6',
+                    'pointer-events': 'none'
+                });
+                
+                // プレースホルダーメッセージを更新
+                if ($placeholder.length) {
+                    $placeholder.html('ギャラリー機能は認定店のみ利用可能です。<br>基本情報タブで「認定店として設定する」をONにしてください。');
+                }
+                
+                // 既存の画像がある場合もプレースホルダーを表示
+                if ($('#gallery-images .gallery-image-item').length > 0 && $placeholder.length === 0) {
+                    $('#gallery-images').append('<div class="no-images-placeholder" style="grid-column: 1 / -1; text-align: center; color: #999; font-style: italic; padding: 40px 20px;">ギャラリー機能は認定店のみ利用可能です。<br>基本情報タブで「認定店として設定する」をONにしてください。</div>');
+                }
+            }
+        }
+        
+        // 初期状態をチェック
+        updateGalleryState();
+        
+        // ACFフィールドの変更を監視（適切なタイミングで実行）
+        setTimeout(function() {
+            $(document).on('change', '[data-name="is_certified_store"] input[type="checkbox"]', function() {
+                updateGalleryState();
+            });
+            
+            // ACFのUI switcher変更も監視
+            $(document).on('click', '[data-name="is_certified_store"] .acf-switch-slider', function() {
+                setTimeout(updateGalleryState, 100);
+            });
+        }, 1000);
         
         // 画像追加ボタンのクリックイベント
         $('#add-gallery-images').on('click', function(e) {
@@ -176,6 +273,47 @@ function studio_gallery_metabox_callback($post) {
     
     .remove-image:hover {
         background: rgba(255,0,0,1) !important;
+    }
+    
+    /* 認定店状態のスタイル */
+    .non-certified-store .gallery-images {
+        position: relative;
+        transition: all 0.3s ease;
+    }
+    
+    .non-certified-store .gallery-images::after {
+        content: "認定店のみ利用可能";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(255, 255, 255, 0.9);
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-weight: bold;
+        color: #666;
+        border: 1px solid #ddd;
+        z-index: 10;
+        pointer-events: none;
+    }
+    
+    .certified-store .gallery-images {
+        transition: all 0.3s ease;
+    }
+    
+    /* ボタン状態 */
+    #add-gallery-images:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background: #f0f0f0 !important;
+        border-color: #ddd !important;
+        color: #999 !important;
+    }
+    
+    /* 認定店状態表示 */
+    #certification-status {
+        transition: all 0.3s ease;
+        font-size: 14px;
     }
     </style>
     <?php

@@ -41,6 +41,23 @@ acf_add_local_field_group(array(
             'readonly' => 1,
         ),
         array(
+            'key' => 'field_studio_store_name',
+            'label' => '店舗名',
+            'name' => 'store_name',
+            'type' => 'text',
+            'instructions' => '店舗の名前を入力してください（管理画面のタイトルも自動更新されます）',
+            'required' => 1,
+            'conditional_logic' => 0,
+            'wrapper' => array(
+                'width' => '100',
+            ),
+            'default_value' => '',
+            'placeholder' => '例：678スタジオ渋谷店',
+            'prepend' => '',
+            'append' => '',
+            'maxlength' => '',
+        ),
+        array(
             'key' => 'field_studio_address',
             'label' => '住所',
             'name' => 'address',
@@ -55,7 +72,7 @@ acf_add_local_field_group(array(
             'placeholder' => '例: 東京都渋谷区〇〇1-2-3 〇〇ビル4F',
             'maxlength' => '',
             'rows' => 2,
-            'new_lines' => 'br',
+            'new_lines' => '',
         ),
         array(
             'key' => 'field_studio_phone',
@@ -210,6 +227,368 @@ acf_add_local_field_group(array(
             'placeholder' => '都道府県を選択してください',
         ),
         
+        // 認定店設定
+        array(
+            'key' => 'field_studio_certified_store',
+            'label' => '認定店',
+            'name' => 'is_certified_store',
+            'type' => 'true_false',
+            'instructions' => 'チェックすると認定店として扱われ、追加機能が利用できます',
+            'required' => 0,
+            'conditional_logic' => 0,
+            'wrapper' => array(
+                'width' => '50',
+            ),
+            'message' => '認定店として設定する',
+            'default_value' => 0,
+            'ui' => 1,
+            'ui_on_text' => '認定店',
+            'ui_off_text' => '一般店',
+        ),
+        
+        // 店舗紹介（基本情報タブに配置）
+        array(
+            'key' => 'field_studio_introduction',
+            'label' => '店舗紹介',
+            'name' => 'store_introduction',
+            'type' => 'textarea',
+            'instructions' => '店舗の詳細な紹介文を入力してください',
+            'required' => 0,
+            'conditional_logic' => 0,
+            'wrapper' => array(
+                'width' => '',
+            ),
+            'default_value' => '',
+            'placeholder' => '店舗の特徴や強み、サービス内容について詳しく記述してください',
+            'maxlength' => '',
+            'rows' => 6,
+            'new_lines' => 'br',
+        ),
+        
+        // 認定店情報タブ
+        array(
+            'key' => 'field_studio_tab_certified',
+            'label' => '認定店情報',
+            'name' => '',
+            'type' => 'tab',
+            'placement' => 'top',
+            'endpoint' => 0,
+            'conditional_logic' => array(
+                array(
+                    array(
+                        'field' => 'field_studio_certified_store',
+                        'operator' => '==',
+                        'value' => '1',
+                    ),
+                ),
+            ),
+        ),
+        // 撮影プラン1
+        array(
+            'key' => 'field_studio_plan1_title',
+            'label' => '撮影プラン1 - タイトル',
+            'name' => 'plan1_name',
+            'type' => 'text',
+            'instructions' => '1つ目の撮影プランのタイトル',
+            'required' => 0,
+            'conditional_logic' => array(
+                array(
+                    array(
+                        'field' => 'field_studio_certified_store',
+                        'operator' => '==',
+                        'value' => '1',
+                    ),
+                ),
+            ),
+            'wrapper' => array(
+                'width' => '60',
+            ),
+            'default_value' => '',
+            'placeholder' => '例: ベーシックプラン',
+        ),
+        array(
+            'key' => 'field_studio_plan1_price',
+            'label' => '撮影プラン1 - 料金',
+            'name' => 'plan1_price',
+            'type' => 'number',
+            'instructions' => '料金を数字のみで入力（¥マークは自動で付加されます）',
+            'required' => 0,
+            'conditional_logic' => array(
+                array(
+                    array(
+                        'field' => 'field_studio_certified_store',
+                        'operator' => '==',
+                        'value' => '1',
+                    ),
+                ),
+            ),
+            'wrapper' => array(
+                'width' => '20',
+            ),
+            'default_value' => '',
+            'placeholder' => '10000',
+            'prepend' => '¥',
+            'append' => '円',
+            'min' => 0,
+            'max' => '',
+            'step' => 1000,
+        ),
+        array(
+            'key' => 'field_studio_plan1_duration',
+            'label' => '撮影プラン1 - 目安時間',
+            'name' => 'plan1_duration',
+            'type' => 'number',
+            'instructions' => '撮影の目安時間を分単位で入力してください',
+            'required' => 0,
+            'conditional_logic' => array(
+                array(
+                    array(
+                        'field' => 'field_studio_certified_store',
+                        'operator' => '==',
+                        'value' => '1',
+                    ),
+                ),
+            ),
+            'wrapper' => array(
+                'width' => '20',
+            ),
+            'default_value' => '',
+            'placeholder' => '30',
+            'append' => '分',
+            'min' => 5,
+            'max' => 300,
+            'step' => 5,
+        ),
+        array(
+            'key' => 'field_studio_plan1_description',
+            'label' => '撮影プラン1 - 詳細',
+            'name' => 'plan1_description',
+            'type' => 'textarea',
+            'instructions' => 'プランの内容や特徴を詳しく記述してください',
+            'required' => 0,
+            'conditional_logic' => array(
+                array(
+                    array(
+                        'field' => 'field_studio_certified_store',
+                        'operator' => '==',
+                        'value' => '1',
+                    ),
+                ),
+            ),
+            'wrapper' => array(
+                'width' => '',
+            ),
+            'default_value' => '',
+            'placeholder' => 'プランに含まれる内容、撮影時間、カット数など',
+            'maxlength' => '',
+            'rows' => 4,
+            'new_lines' => 'br',
+        ),
+        
+        // 撮影プラン2
+        array(
+            'key' => 'field_studio_plan2_title',
+            'label' => '撮影プラン2 - タイトル',
+            'name' => 'plan2_name',
+            'type' => 'text',
+            'instructions' => '2つ目の撮影プランのタイトル（任意）',
+            'required' => 0,
+            'conditional_logic' => array(
+                array(
+                    array(
+                        'field' => 'field_studio_certified_store',
+                        'operator' => '==',
+                        'value' => '1',
+                    ),
+                ),
+            ),
+            'wrapper' => array(
+                'width' => '60',
+            ),
+            'default_value' => '',
+            'placeholder' => '例: スタンダードプラン',
+        ),
+        array(
+            'key' => 'field_studio_plan2_price',
+            'label' => '撮影プラン2 - 料金',
+            'name' => 'plan2_price',
+            'type' => 'number',
+            'instructions' => '料金を数字のみで入力（¥マークは自動で付加されます）',
+            'required' => 0,
+            'conditional_logic' => array(
+                array(
+                    array(
+                        'field' => 'field_studio_certified_store',
+                        'operator' => '==',
+                        'value' => '1',
+                    ),
+                ),
+            ),
+            'wrapper' => array(
+                'width' => '20',
+            ),
+            'default_value' => '',
+            'placeholder' => '20000',
+            'prepend' => '¥',
+            'append' => '円',
+            'min' => 0,
+            'max' => '',
+            'step' => 1000,
+        ),
+        array(
+            'key' => 'field_studio_plan2_duration',
+            'label' => '撮影プラン2 - 目安時間',
+            'name' => 'plan2_duration',
+            'type' => 'number',
+            'instructions' => '撮影の目安時間を分単位で入力してください',
+            'required' => 0,
+            'conditional_logic' => array(
+                array(
+                    array(
+                        'field' => 'field_studio_certified_store',
+                        'operator' => '==',
+                        'value' => '1',
+                    ),
+                ),
+            ),
+            'wrapper' => array(
+                'width' => '20',
+            ),
+            'default_value' => '',
+            'placeholder' => '60',
+            'append' => '分',
+            'min' => 5,
+            'max' => 300,
+            'step' => 5,
+        ),
+        array(
+            'key' => 'field_studio_plan2_description',
+            'label' => '撮影プラン2 - 詳細',
+            'name' => 'plan2_description',
+            'type' => 'textarea',
+            'instructions' => 'プランの内容や特徴を詳しく記述してください',
+            'required' => 0,
+            'conditional_logic' => array(
+                array(
+                    array(
+                        'field' => 'field_studio_certified_store',
+                        'operator' => '==',
+                        'value' => '1',
+                    ),
+                ),
+            ),
+            'wrapper' => array(
+                'width' => '',
+            ),
+            'default_value' => '',
+            'placeholder' => 'プランに含まれる内容、撮影時間、カット数など',
+            'maxlength' => '',
+            'rows' => 4,
+            'new_lines' => 'br',
+        ),
+        
+        // 撮影プラン3
+        array(
+            'key' => 'field_studio_plan3_title',
+            'label' => '撮影プラン3 - タイトル',
+            'name' => 'plan3_name',
+            'type' => 'text',
+            'instructions' => '3つ目の撮影プランのタイトル（任意）',
+            'required' => 0,
+            'conditional_logic' => array(
+                array(
+                    array(
+                        'field' => 'field_studio_certified_store',
+                        'operator' => '==',
+                        'value' => '1',
+                    ),
+                ),
+            ),
+            'wrapper' => array(
+                'width' => '60',
+            ),
+            'default_value' => '',
+            'placeholder' => '例: プレミアムプラン',
+        ),
+        array(
+            'key' => 'field_studio_plan3_price',
+            'label' => '撮影プラン3 - 料金',
+            'name' => 'plan3_price',
+            'type' => 'number',
+            'instructions' => '料金を数字のみで入力（¥マークは自動で付加されます）',
+            'required' => 0,
+            'conditional_logic' => array(
+                array(
+                    array(
+                        'field' => 'field_studio_certified_store',
+                        'operator' => '==',
+                        'value' => '1',
+                    ),
+                ),
+            ),
+            'wrapper' => array(
+                'width' => '20',
+            ),
+            'default_value' => '',
+            'placeholder' => '30000',
+            'prepend' => '¥',
+            'append' => '円',
+            'min' => 0,
+            'max' => '',
+            'step' => 1000,
+        ),
+        array(
+            'key' => 'field_studio_plan3_duration',
+            'label' => '撮影プラン3 - 目安時間',
+            'name' => 'plan3_duration',
+            'type' => 'number',
+            'instructions' => '撮影の目安時間を分単位で入力してください',
+            'required' => 0,
+            'conditional_logic' => array(
+                array(
+                    array(
+                        'field' => 'field_studio_certified_store',
+                        'operator' => '==',
+                        'value' => '1',
+                    ),
+                ),
+            ),
+            'wrapper' => array(
+                'width' => '20',
+            ),
+            'default_value' => '',
+            'placeholder' => '90',
+            'append' => '分',
+            'min' => 5,
+            'max' => 300,
+            'step' => 5,
+        ),
+        array(
+            'key' => 'field_studio_plan3_description',
+            'label' => '撮影プラン3 - 詳細',
+            'name' => 'plan3_description',
+            'type' => 'textarea',
+            'instructions' => 'プランの内容や特徴を詳しく記述してください',
+            'required' => 0,
+            'conditional_logic' => array(
+                array(
+                    array(
+                        'field' => 'field_studio_certified_store',
+                        'operator' => '==',
+                        'value' => '1',
+                    ),
+                ),
+            ),
+            'wrapper' => array(
+                'width' => '',
+            ),
+            'default_value' => '',
+            'placeholder' => 'プランに含まれる内容、撮影時間、カット数など',
+            'maxlength' => '',
+            'rows' => 4,
+            'new_lines' => 'br',
+        ),
+        
         // 地図タブ
         array(
             'key' => 'field_studio_tab_map',
@@ -278,76 +657,126 @@ acf_add_local_field_group(array(
             'placement' => 'top',
             'endpoint' => 0,
         ),
+        // スタッフ1
         array(
-            'key' => 'field_studio_staff',
-            'label' => 'スタッフ情報',
-            'name' => 'staff_members',
-            'type' => 'repeater',
-            'instructions' => 'スタッフの情報を追加してください',
+            'key' => 'field_studio_staff1_name',
+            'label' => 'スタッフ1 - 名前',
+            'name' => 'staff1_name',
+            'type' => 'text',
+            'instructions' => '1人目のスタッフ名',
             'required' => 0,
             'conditional_logic' => 0,
             'wrapper' => array(
-                'width' => '',
+                'width' => '50',
             ),
-            'collapsed' => 'field_staff_name',
-            'min' => 0,
-            'max' => 0,
-            'layout' => 'block',
-            'button_label' => 'スタッフを追加',
-            'sub_fields' => array(
-                array(
-                    'key' => 'field_staff_name',
-                    'label' => 'スタッフ名',
-                    'name' => 'name',
-                    'type' => 'text',
-                    'instructions' => '',
-                    'required' => 1,
-                    'conditional_logic' => 0,
-                    'wrapper' => array(
-                        'width' => '50',
-                    ),
-                ),
-                array(
-                    'key' => 'field_staff_position',
-                    'label' => '役職',
-                    'name' => 'position',
-                    'type' => 'text',
-                    'instructions' => '',
-                    'required' => 0,
-                    'conditional_logic' => 0,
-                    'wrapper' => array(
-                        'width' => '50',
-                    ),
-                ),
-                array(
-                    'key' => 'field_staff_image',
-                    'label' => 'スタッフ写真',
-                    'name' => 'image',
-                    'type' => 'image',
-                    'instructions' => '',
-                    'required' => 0,
-                    'conditional_logic' => 0,
-                    'wrapper' => array(
-                        'width' => '30',
-                    ),
-                    'return_format' => 'array',
-                    'preview_size' => 'thumbnail',
-                    'library' => 'all',
-                ),
-                array(
-                    'key' => 'field_staff_message',
-                    'label' => 'メッセージ',
-                    'name' => 'message',
-                    'type' => 'textarea',
-                    'instructions' => '',
-                    'required' => 0,
-                    'conditional_logic' => 0,
-                    'wrapper' => array(
-                        'width' => '70',
-                    ),
-                    'rows' => 3,
-                ),
+            'default_value' => '',
+            'placeholder' => '例: 田中 太郎',
+        ),
+        array(
+            'key' => 'field_studio_staff1_position',
+            'label' => 'スタッフ1 - 役職',
+            'name' => 'staff1_position',
+            'type' => 'text',
+            'instructions' => '役職や肩書き',
+            'required' => 0,
+            'conditional_logic' => 0,
+            'wrapper' => array(
+                'width' => '50',
             ),
+            'default_value' => '',
+            'placeholder' => '例: 店長',
+        ),
+        array(
+            'key' => 'field_studio_staff1_image',
+            'label' => 'スタッフ1 - 写真',
+            'name' => 'staff1_image',
+            'type' => 'image',
+            'instructions' => 'スタッフの写真',
+            'required' => 0,
+            'conditional_logic' => 0,
+            'wrapper' => array(
+                'width' => '30',
+            ),
+            'return_format' => 'array',
+            'preview_size' => 'thumbnail',
+            'library' => 'all',
+        ),
+        array(
+            'key' => 'field_studio_staff1_message',
+            'label' => 'スタッフ1 - メッセージ',
+            'name' => 'staff1_message',
+            'type' => 'textarea',
+            'instructions' => 'スタッフからのメッセージ',
+            'required' => 0,
+            'conditional_logic' => 0,
+            'wrapper' => array(
+                'width' => '70',
+            ),
+            'default_value' => '',
+            'placeholder' => 'お客様へのメッセージや自己紹介など',
+            'rows' => 3,
+            'new_lines' => 'br',
+        ),
+        
+        // スタッフ2
+        array(
+            'key' => 'field_studio_staff2_name',
+            'label' => 'スタッフ2 - 名前',
+            'name' => 'staff2_name',
+            'type' => 'text',
+            'instructions' => '2人目のスタッフ名（任意）',
+            'required' => 0,
+            'conditional_logic' => 0,
+            'wrapper' => array(
+                'width' => '50',
+            ),
+            'default_value' => '',
+            'placeholder' => '例: 佐藤 花子',
+        ),
+        array(
+            'key' => 'field_studio_staff2_position',
+            'label' => 'スタッフ2 - 役職',
+            'name' => 'staff2_position',
+            'type' => 'text',
+            'instructions' => '役職や肩書き',
+            'required' => 0,
+            'conditional_logic' => 0,
+            'wrapper' => array(
+                'width' => '50',
+            ),
+            'default_value' => '',
+            'placeholder' => '例: アシスタント',
+        ),
+        array(
+            'key' => 'field_studio_staff2_image',
+            'label' => 'スタッフ2 - 写真',
+            'name' => 'staff2_image',
+            'type' => 'image',
+            'instructions' => 'スタッフの写真',
+            'required' => 0,
+            'conditional_logic' => 0,
+            'wrapper' => array(
+                'width' => '30',
+            ),
+            'return_format' => 'array',
+            'preview_size' => 'thumbnail',
+            'library' => 'all',
+        ),
+        array(
+            'key' => 'field_studio_staff2_message',
+            'label' => 'スタッフ2 - メッセージ',
+            'name' => 'staff2_message',
+            'type' => 'textarea',
+            'instructions' => 'スタッフからのメッセージ',
+            'required' => 0,
+            'conditional_logic' => 0,
+            'wrapper' => array(
+                'width' => '70',
+            ),
+            'default_value' => '',
+            'placeholder' => 'お客様へのメッセージや自己紹介など',
+            'rows' => 3,
+            'new_lines' => 'br',
         ),
         
         // SEOタブ

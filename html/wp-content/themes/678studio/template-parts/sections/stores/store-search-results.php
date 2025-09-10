@@ -50,16 +50,38 @@ function fetch_studio_shops($search_query = '', $prefecture = '', $page = 1, $pe
     // テキスト検索
     if (!empty($search_query)) {
         $filtered_shops = array_filter($filtered_shops, function($shop) use ($search_query) {
-            return stripos($shop['name'] ?? '', $search_query) !== false || 
-                   stripos($shop['nearest_station'] ?? '', $search_query) !== false ||
-                   stripos($shop['address'] ?? '', $search_query) !== false;
+            $name_match = stripos($shop['name'] ?? '', $search_query) !== false;
+            $station_match = stripos($shop['nearest_station'] ?? '', $search_query) !== false;
+            $address_match = stripos($shop['address'] ?? '', $search_query) !== false;
+            return $name_match || $station_match || $address_match;
         });
     }
     
     // 都道府県検索
     if (!empty($prefecture)) {
         $filtered_shops = array_filter($filtered_shops, function($shop) use ($prefecture) {
-            return stripos($shop['address'] ?? '', $prefecture) !== false;
+            $address = $shop['address'] ?? '';
+            
+            // 直接的なマッチ（住所に都道府県名が含まれている場合）
+            $address_match = stripos($address, $prefecture) !== false;
+            
+            // 東京都の特別区のマッピング
+            if (!$address_match && $prefecture === '東京都') {
+                $tokyo_wards = [
+                    '千代田区', '中央区', '港区', '新宿区', '文京区', '台東区', '墨田区', '江東区',
+                    '品川区', '目黒区', '大田区', '世田谷区', '渋谷区', '中野区', '杉並区', '豊島区',
+                    '北区', '荒川区', '板橋区', '練馬区', '足立区', '葛飾区', '江戸川区'
+                ];
+                
+                foreach ($tokyo_wards as $ward) {
+                    if (stripos($address, $ward) !== false) {
+                        $address_match = true;
+                        break;
+                    }
+                }
+            }
+            
+            return $address_match;
         });
     }
     
@@ -93,11 +115,13 @@ $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $search_query = isset($_GET['search']) ? sanitize_text_field($_GET['search']) : '';
 $prefecture = isset($_GET['prefecture']) ? sanitize_text_field($_GET['prefecture']) : '';
 
+
 $shop_data = fetch_studio_shops($search_query, $prefecture, $page);
 $certified_shops = $shop_data['certified_shops'];
 $regular_shops = $shop_data['regular_shops'];
 $total_pages = $shop_data['total_pages'];
 $current_page = $shop_data['current_page'];
+
 
 ?>
 
@@ -409,51 +433,122 @@ $current_page = $shop_data['current_page'];
         <div class="store-search-results__cards">
         <?php foreach ($regular_shops as $shop): ?>
         <div class="studio-card studio-card--regular">
-          <div class="studio-card__image">
-            <?php
-            $image_src = '';
-            if (!empty($shop['main_image'])) {
-                if (strpos($shop['main_image'], 'data:image') === 0) {
-                    $image_src = $shop['main_image'];
-                } else {
-                    $image_src = esc_url($shop['main_image']);
-                }
-            } elseif (!empty($shop['image_urls']) && !empty($shop['image_urls'][0])) {
-                if (strpos($shop['image_urls'][0], 'data:image') === 0) {
-                    $image_src = $shop['image_urls'][0];
-                } else {
-                    $image_src = esc_url($shop['image_urls'][0]);
-                }
-            } else {
-                $image_src = get_template_directory_uri() . '/assets/images/cardpic-sample.jpg';
-            }
-            ?>
-            <img src="<?php echo $image_src; ?>" alt="<?php echo esc_attr($shop['name'] ?? 'スタジオ写真'); ?>">
-            <div class="studio-card__location"><?php echo esc_html($shop['nearest_station'] ?? 'N/A'); ?></div>
-          </div>
           <div class="studio-card__content">
+            <!-- 最寄り駅ラベル -->
+            <div class="studio-card__station-label">
+              <?php echo esc_html($shop['nearest_station'] ?? '最寄り駅'); ?>
+            </div>
+
+            <!-- 店舗名 -->
             <h3 class="studio-card__name"><?php echo esc_html($shop['name'] ?? 'Unknown'); ?></h3>
-            <div class="studio-card__details">
-              <p class="studio-card__address"><?php echo esc_html($shop['address'] ?? 'N/A'); ?></p>
-              <div class="studio-card__hours">
-                <div class="studio-card__hour-item">営業時間：<?php echo esc_html($shop['business_hours'] ?? 'N/A'); ?></div>
-                <div class="studio-card__hour-item">定休日：<?php echo esc_html($shop['holidays'] ?? 'N/A'); ?></div>
+
+            <!-- 基本情報 -->
+            <div class="studio-card__info">
+              <!-- 最寄り駅 -->
+              <?php if (!empty($shop['nearest_station'])): ?>
+              <div class="studio-card__info-item">
+                <img src="<?php echo get_template_directory_uri(); ?>/assets/images/map_icon.svg" alt="最寄り駅"
+                  class="studio-card__info-icon">
+                <span class="studio-card__info-text"><?php echo esc_html($shop['nearest_station']); ?></span>
+              </div>
+              <?php endif; ?>
+
+              <!-- 住所 -->
+              <div class="studio-card__info-item">
+                <img src="<?php echo get_template_directory_uri(); ?>/assets/images/map_icon.svg" alt="住所"
+                  class="studio-card__info-icon">
+                <span class="studio-card__info-text">
+                  <?php
+                  // 住所の整形（認定店舗と同じロジック）
+                  $found_address = $shop['address'] ?? '';
+                  
+                  if (!empty($found_address)) {
+                    // 住所が都道府県から始まっているかチェック
+                    $prefectures = ['北海道', '青森県', '岩手県', '宮城県', '秋田県', '山形県', '福島県', '茨城県', '栃木県', '群馬県', '埼玉県', '千葉県', '東京都', '神奈川県', '新潟県', '富山県', '石川県', '福井県', '山梨県', '長野県', '岐阜県', '静岡県', '愛知県', '三重県', '滋賀県', '京都府', '大阪府', '兵庫県', '奈良県', '和歌山県', '鳥取県', '島根県', '岡山県', '広島県', '山口県', '徳島県', '香川県', '愛媛県', '高知県', '福岡県', '佐賀県', '長崎県', '熊本県', '大分県', '宮崎県', '鹿児島県', '沖縄県'];
+                    
+                    $has_prefecture = false;
+                    foreach ($prefectures as $pref) {
+                      if (strpos($found_address, $pref) === 0) {
+                        $has_prefecture = true;
+                        break;
+                      }
+                    }
+                    
+                    if (!$has_prefecture) {
+                      // 都道府県が含まれていない場合、東京都を前に追加
+                      echo '東京都' . esc_html($found_address);
+                    } else {
+                      // 住所に都道府県が含まれている場合
+                      if (preg_match('/^(.+?[都道府県])(.+?[市区町村])/', $found_address, $matches)) {
+                        echo esc_html($matches[1] . $matches[2]);
+                      } else {
+                        // フォールバック：住所をそのまま表示（最初の部分のみ）
+                        $address_parts = explode(' ', $found_address);
+                        echo esc_html($address_parts[0] ?? $found_address);
+                      }
+                    }
+                  } else {
+                    echo '住所情報が見つかりません';
+                  }
+                  ?>
+                </span>
+              </div>
+
+              <?php $min_price = get_minimum_plan_price($shop); ?>
+              <?php if ($min_price): ?>
+              <div class="studio-card__info-item">
+                <img src="<?php echo get_template_directory_uri(); ?>/assets/images/yen_icon.svg" alt="料金"
+                  class="studio-card__info-icon">
+                <span class="studio-card__info-text"><?php echo number_format($min_price); ?>円〜</span>
+              </div>
+              <?php endif; ?>
+
+              <?php $min_duration = get_minimum_plan_duration($shop); ?>
+              <?php if ($min_duration): ?>
+              <div class="studio-card__info-item">
+                <img src="<?php echo get_template_directory_uri(); ?>/assets/images/clock-icon.svg" alt="時間"
+                  class="studio-card__info-icon">
+                <span class="studio-card__info-text"><?php echo $min_duration; ?>分〜</span>
+              </div>
+              <?php endif; ?>
+            </div>
+
+            <!-- 店舗紹介文 -->
+            <?php if (!empty($shop['store_introduction'])): ?>
+            <div class="studio-card__introduction">
+              <?php 
+              $introduction = $shop['store_introduction'];
+              // 改行を含む場合は最初の3行程度まで表示
+              $lines = explode("\n", $introduction);
+              $display_text = implode("\n", array_slice($lines, 0, 3));
+              
+              // 文字数制限（90文字）
+              if (mb_strlen($display_text) > 90) {
+                $display_text = mb_substr($display_text, 0, 90) . '...';
+              } elseif (count($lines) > 3) {
+                $display_text .= '...';
+              }
+              
+              echo nl2br(esc_html($display_text));
+              ?>
+            </div>
+            <?php endif; ?>
+
+            <!-- ボタン -->
+            <div class="studio-card__buttons">
+              <div class="studio-card__button-item">
+                <a href="<?php echo home_url('/studio-reservation/?shop_id=' . $shop['id']); ?>"
+                  class="certified-card-button certified-card-button--booking">
+                  ご予約相談
+                </a>
+              </div>
+              <div class="studio-card__button-item">
+                <a href="<?php echo home_url('/studio-inquiry/?shop_id=' . $shop['id']); ?>"
+                  class="certified-card-button certified-card-button--contact">
+                  お問い合わせ
+                </a>
               </div>
             </div>
-            <?php get_template_part('template-parts/components/camera-button', null, [
-                    'text' => 'ご予約相談',
-                    'bg_color' => 'primary',
-                    'icon' => 'none',
-                    'class' => 'studio-card__contact-btn',
-                    'url' => home_url('/studio-detail/?shop_id=' . $shop['id'])
-                ]); ?>
-            <?php get_template_part('template-parts/components/camera-button', null, [
-                    'text' => 'お問い合わせ',
-                    'bg_color' => 'secondary',
-                    'icon' => 'none',
-                    'class' => 'studio-card__contact-btn',
-                    'url' => home_url('/studio-detail/?shop_id=' . $shop['id'])
-                ]); ?>
           </div>
         </div>
         <?php endforeach; ?>

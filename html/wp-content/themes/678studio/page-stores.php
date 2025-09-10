@@ -35,8 +35,8 @@ get_header();
     ]
   ]); ?>
 
-  <!-- Store Search Section -->
-  <?php get_template_part('template-parts/sections/home/studio-search'); ?>
+  <!-- Store Search Results Section -->
+  <?php get_template_part('template-parts/sections/stores/store-search-results'); ?>
 
   <!-- Contact & Booking Section -->
   <?php get_template_part('template-parts/components/contact-booking'); ?>

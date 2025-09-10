@@ -73,7 +73,7 @@
             
             <div class="input-field">
               <label for="name">お名前 (必須)</label>
-              <input type="text" id="name" name="name" placeholder="例: 山田 花子" required>
+              <input type="text" id="name" name="name" placeholder="例: 山田 花子">
               <div class="error-message" id="name-error" style="display: none;">
                 お名前を入力してください
               </div>
@@ -81,7 +81,7 @@
 
             <div class="input-field">
               <label for="kana">フリガナ (必須)</label>
-              <input type="text" id="kana" name="kana" placeholder="例: ヤマダ ハナコ" required>
+              <input type="text" id="kana" name="kana" placeholder="例: ヤマダ ハナコ">
               <div class="error-message" id="kana-error" style="display: none;">
                 フリガナを入力してください
               </div>
