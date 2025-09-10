@@ -6,13 +6,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Fetch shops data from new API
     async function fetchShops() {
         try {
-            const response = await fetch('/api/get_all_studio_shop.php');
+            const response = await fetch('/wp-content/themes/678studio/api/get_studio_shops.php?v=' + Date.now());
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
             const data = await response.json();
-            if (data.success && data.shops) {
-                window.shopsData = data.shops;
+            if (data.success && data.data && data.data.shops) {
+                window.shopsData = data.data.shops;
             } else {
                 console.error('API error:', data.message || 'Unknown error');
             }
@@ -42,17 +42,17 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'agreement', errorId: 'agreement-error', message: '個人情報の取り扱いについて同意してください' }
     ];
 
-    // 初期状態では確認ボタンを無効化
+    // 初期状態では確認ボタンを有効化（バリデーションは送信時のみ）
     if (confirmButton) {
-        confirmButton.disabled = true;
+        confirmButton.disabled = false;
     }
 
     // リアルタイムバリデーションの設定
     setupRealTimeValidation();
 
-    // フォーム送信時の処理
-    if (form) {
-        form.addEventListener('submit', (e) => {
+    // 確認ボタンクリック時の処理（フォーム送信イベントを使用しない）
+    if (confirmButton) {
+        confirmButton.addEventListener('click', (e) => {
             e.preventDefault();
 
             // バリデーション
@@ -160,38 +160,33 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 送信ボタンの処理
+    // 送信ボタンの処理（最終送信時）
     if (submitButton) {
         submitButton.addEventListener('click', () => {
-            
-            // ローディング状態にする
-            submitButton.textContent = '送信中...';
-            submitButton.disabled = true;
-
-            // form-handler.jsに送信を委譲（お問い合わせページと同じ方式）
-            const event = new Event('submit', { bubbles: true, cancelable: true });
-            form.dispatchEvent(event);
+            // 最終送信時はform-handler.jsに委譲
+            // この時点では確認画面が表示されているので、form-handler.jsの送信処理が実行される
         });
     }
 
     // リアルタイムバリデーションの設定
     function setupRealTimeValidation() {
-        requiredFields.forEach(field => {
-            const element = document.getElementById(field.id);
-            if (element) {
-                if (element.type === 'checkbox') {
-                    element.addEventListener('change', validateAndUpdateButton);
-                } else {
-                    element.addEventListener('input', validateAndUpdateButton);
-                    element.addEventListener('blur', () => validateField(field));
-                }
-            }
-        });
+        // リアルタイムバリデーションを削除し、確認ボタンクリック時のみバリデーションを実行
+        // requiredFields.forEach(field => {
+        //     const element = document.getElementById(field.id);
+        //     if (element) {
+        //         if (element.type === 'checkbox') {
+        //             element.addEventListener('change', validateAndUpdateButton);
+        //         } else {
+        //             element.addEventListener('input', validateAndUpdateButton);
+        //             element.addEventListener('blur', () => validateField(field));
+        //         }
+        //     }
+        // });
 
-        // 店舗選択の特別処理
+        // 店舗選択の特別処理（バリデーションなし）
         const storeSelect = document.getElementById('store-select');
         if (storeSelect) {
-            storeSelect.addEventListener('change', validateAndUpdateButton);
+            // storeSelect.addEventListener('change', validateAndUpdateButton);
             
             // Populate store select options when shops data is available
             const populateStoreOptions = () => {
@@ -212,6 +207,31 @@ document.addEventListener('DOMContentLoaded', () => {
             populateStoreOptions();
         }
     }
+
+    // URLパラメータから店舗IDを取得して自動選択
+    function handleUrlParameters() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const shopId = urlParams.get('shop_id');
+        
+        if (shopId) {
+            const storeSelect = document.getElementById('store-select');
+            if (storeSelect && window.shopsData && window.shopsData.length > 0) {
+                // 店舗選択
+                storeSelect.value = shopId;
+                
+                // 店舗選択が成功したか確認
+                if (storeSelect.value === shopId) {
+                    console.log('Store auto-selected:', shopId);
+                }
+            } else if (shopId) {
+                // データがまだ読み込まれていない場合、少し待ってから再試行
+                setTimeout(handleUrlParameters, 500);
+            }
+        }
+    }
+
+    // URLパラメータがある場合の処理を開始
+    setTimeout(handleUrlParameters, 200);
 
     // 個別フィールドのバリデーション
     function validateField(field) {

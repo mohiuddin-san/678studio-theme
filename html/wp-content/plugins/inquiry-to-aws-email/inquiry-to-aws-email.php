@@ -373,30 +373,59 @@ function siaes_send_emails($form_data, $page_slug) {
     $company_hours = '';
     $fixed_source_email = 'info@678photo.com';
 
-    // Get shop data from local API function
-    $api_helper_path = WP_PLUGIN_DIR . '/studio-shops-manager/includes/api-helper.php';
-    if (file_exists($api_helper_path)) {
-        include_once $api_helper_path;
-        if (function_exists('get_all_studio_shops')) {
-            $shops_data = get_all_studio_shops([]);
-            siaes_debug_log("Shop data retrieved from local function");
-            if (isset($shops_data['shops']) && is_array($shops_data['shops'])) {
-                foreach ($shops_data['shops'] as $shop) {
-                    if ($shop['id'] == $shop_id) {
-                        $company_email = $shop['company_email'];
-                        $company_name = $shop['name'];
-                        $company_phone = $shop['phone'];
-                        $company_address = $shop['address'];
-                        $company_hours = $shop['business_hours'];
+    // Get shop data from ACF-based system using theme function
+    if (function_exists('get_cached_studio_data')) {
+        $studio_data = get_cached_studio_data();
+        siaes_debug_log("Shop data retrieved from ACF-based function");
+        
+        if (isset($studio_data['shops']) && is_array($studio_data['shops'])) {
+            foreach ($studio_data['shops'] as $shop) {
+                if ($shop['id'] == $shop_id) {
+                    $company_email = $shop['company_email'] ?? $shop['email'] ?? '';
+                    $company_name = $shop['name'] ?? '';
+                    $company_phone = $shop['phone'] ?? '';
+                    $company_address = $shop['address'] ?? '';
+                    $company_hours = $shop['business_hours'] ?? '';
 
-                        // Add to $form_data for shortcode replacement
-                        $form_data['company_name'] = $company_name;
-                        $form_data['company_phone'] = $company_phone;
-                        $form_data['company_address'] = $company_address;
-                        $form_data['company_hours'] = $company_hours;
-                        $form_data['company_email'] = $company_email;
-                        siaes_debug_log("Found shop for ID $shop_id: Email=$company_email, Name=$company_name");
-                        break;
+                    // Add to $form_data for shortcode replacement
+                    $form_data['company_name'] = $company_name;
+                    $form_data['company_phone'] = $company_phone;
+                    $form_data['company_address'] = $company_address;
+                    $form_data['company_hours'] = $company_hours;
+                    $form_data['company_email'] = $company_email;
+                    siaes_debug_log("Found shop for ID $shop_id: Email=$company_email, Name=$company_name");
+                    break;
+                }
+            }
+        }
+    }
+    
+    // Fallback: try old API if ACF data not found and shop still not found
+    if (empty($company_name)) {
+        $api_helper_path = WP_PLUGIN_DIR . '/studio-shops-manager/includes/api-helper.php';
+        if (file_exists($api_helper_path)) {
+            include_once $api_helper_path;
+            if (function_exists('get_all_studio_shops')) {
+                $shops_data = get_all_studio_shops([]);
+                siaes_debug_log("Shop data retrieved from legacy function as fallback");
+                if (isset($shops_data['shops']) && is_array($shops_data['shops'])) {
+                    foreach ($shops_data['shops'] as $shop) {
+                        if ($shop['id'] == $shop_id) {
+                            $company_email = $shop['company_email'];
+                            $company_name = $shop['name'];
+                            $company_phone = $shop['phone'];
+                            $company_address = $shop['address'];
+                            $company_hours = $shop['business_hours'];
+
+                            // Add to $form_data for shortcode replacement
+                            $form_data['company_name'] = $company_name;
+                            $form_data['company_phone'] = $company_phone;
+                            $form_data['company_address'] = $company_address;
+                            $form_data['company_hours'] = $company_hours;
+                            $form_data['company_email'] = $company_email;
+                            siaes_debug_log("Found shop for ID $shop_id using fallback: Email=$company_email, Name=$company_name");
+                            break;
+                        }
                     }
                 }
             }
@@ -446,6 +475,19 @@ function siaes_send_emails($form_data, $page_slug) {
     $user_subject = str_replace('[company-name]', $company_name, $user_subject);
     $company_message = str_replace('[company-name]', $company_name, $company_message);
     $user_reply_final = str_replace('[company-name]', $company_name, $user_reply_final);
+    
+    // Additional replacement for store_name placeholder
+    $company_subject = str_replace('[store_name]', $company_name, $company_subject);
+    $user_subject = str_replace('[store_name]', $company_name, $user_subject);
+    $company_message = str_replace('[store_name]', $company_name, $company_message);
+    $user_reply_final = str_replace('[store_name]', $company_name, $user_reply_final);
+    
+    // Legacy support for company_address when it should show company name (store name)
+    // This handles cases where email templates incorrectly use [company_address] for store name
+    $company_subject = str_replace('[company_address]', $company_name, $company_subject);
+    $user_subject = str_replace('[company_address]', $company_name, $user_subject);
+    $company_message = str_replace('[company_address]', $company_name, $company_message);
+    $user_reply_final = str_replace('[company_address]', $company_name, $user_reply_final);
 
     // Log after replacement
     siaes_debug_log("After shortcode replacement - Company subject: $company_subject");

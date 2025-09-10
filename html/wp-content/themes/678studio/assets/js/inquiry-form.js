@@ -1,30 +1,12 @@
 jQuery(document).ready(function($) {
     // form-handler.jsとの競合を防ぐため、少し遅延させる
     setTimeout(function() {
-
-    // Initialize shopsData as empty array to prevent undefined errors
-    window.shopsData = [];
     
-    // Fetch shops data from new API
-    async function fetchShops() {
-        try {
-            const response = await fetch('/api/get_all_studio_shop.php');
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            const data = await response.json();
-            if (data.success && data.shops) {
-                window.shopsData = data.shops;
-            } else {
-                console.error('API error:', data.message || 'Unknown error');
-            }
-        } catch (error) {
-            console.error('Fetch error:', error);
-        }
-    }
+    console.log('=== inquiry-form.js loaded (validation only) ===');
+    console.log('Current URL:', window.location.href);
 
-    // Initialize API call
-    fetchShops();
+    // NOTE: Store data loading and dropdown population is handled by inquiry.js
+    // This script only handles form validation
 
     const form = document.getElementById('inquiryForm');
     const formStep = document.getElementById('formStep');
@@ -38,32 +20,28 @@ jQuery(document).ready(function($) {
         { id: 'name', errorId: 'name-error', message: 'お名前を入力してください' },
         { id: 'kana', errorId: 'kana-error', message: 'フリガナを入力してください' },
         { id: 'email', errorId: 'email-error', message: '正しいメールアドレスを入力してください' },
-        { id: 'store-select', errorId: 'store-error', message: '店舗を選択してください' },
+        // { id: 'store-select', errorId: 'store-error', message: '店舗を選択してください' }, // Handled by inquiry.js
         { id: 'agreement', errorId: 'agreement-error', message: '個人情報の取り扱いについて同意してください' }
     ];
 
-    // 初期状態では確認ボタンを無効化
+    // 初期状態では確認ボタンを有効化（バリデーションは送信時のみ）
     if (confirmButton) {
-        confirmButton.disabled = true;
+        confirmButton.disabled = false;
     }
 
     // リアルタイムバリデーションの設定
     setupRealTimeValidation();
 
-    // フォーム送信時の処理
-    if (form) {
-        form.addEventListener('submit', (e) => {
+    // 確認ボタンクリック時の処理（フォーム送信イベントを使用しない）
+    if (confirmButton) {
+        confirmButton.addEventListener('click', (e) => {
             e.preventDefault();
-            e.stopPropagation(); // イベントの伝播を停止
 
             // バリデーション
             if (validateForm()) {
                 window.showInquiryConfirmation();
             }
         });
-        
-        // 確認ボタンのクリック処理を削除
-        // form-handler.jsが処理するため、ここでは何もしない
     }
 
     // バリデーション関数（フォーム送信時用）
@@ -159,42 +137,25 @@ jQuery(document).ready(function($) {
 
     // リアルタイムバリデーションの設定
     function setupRealTimeValidation() {
-        requiredFields.forEach(field => {
-            const element = document.getElementById(field.id);
-            if (element) {
-                if (element.type === 'checkbox') {
-                    element.addEventListener('change', validateAndUpdateButton);
-                } else {
-                    element.addEventListener('input', validateAndUpdateButton);
-                    element.addEventListener('blur', () => validateField(field));
-                }
-            }
-        });
+        // リアルタイムバリデーションを削除し、確認ボタンクリック時のみバリデーションを実行
+        // requiredFields.forEach(field => {
+        //     const element = document.getElementById(field.id);
+        //     if (element) {
+        //         if (element.type === 'checkbox') {
+        //             element.addEventListener('change', validateAndUpdateButton);
+        //         } else {
+        //             element.addEventListener('input', validateAndUpdateButton);
+        //             element.addEventListener('blur', () => validateField(field));
+        //         }
+        //     }
+        // });
 
-        // 店舗選択の特別処理
-        const storeSelect = document.getElementById('store-select');
-        if (storeSelect) {
-            storeSelect.addEventListener('change', validateAndUpdateButton);
-            
-            // Populate store select options when shops data is available
-            const populateStoreOptions = () => {
-                if (window.shopsData && window.shopsData.length > 0) {
-                    storeSelect.innerHTML = '<option value="">店舗を選択してください</option>';
-                    window.shopsData.forEach(shop => {
-                        const option = document.createElement('option');
-                        option.value = shop.id;
-                        option.textContent = shop.name;
-                        storeSelect.appendChild(option);
-                    });
-                } else {
-                    // Retry after a short delay if data is not loaded yet
-                    setTimeout(populateStoreOptions, 500);
-                }
-            };
-            
-            populateStoreOptions();
-        }
+        // NOTE: 店舗選択関連の処理はすべてinquiry.jsが担当
+        // Store selection processing is completely handled by inquiry.js
     }
+
+    // NOTE: URL parameter handling is completely handled by inquiry.js
+    // function handleUrlParameters() { ... } - REMOVED
 
     // 個別フィールドのバリデーション
     function validateField(field) {
@@ -249,10 +210,10 @@ jQuery(document).ready(function($) {
             }
         });
 
-        // 確認ボタンの有効/無効制御
-        if (confirmButton) {
-            confirmButton.disabled = !allValid;
-        }
+        // 確認ボタンの有効/無効制御（リアルタイムバリデーション無効時は制御しない）
+        // if (confirmButton) {
+        //     confirmButton.disabled = !allValid;
+        // }
 
         return allValid;
     }
