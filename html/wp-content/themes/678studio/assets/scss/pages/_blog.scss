@@ -292,9 +292,18 @@ body.archive[class*="articles"] {
     }
   }
   
-  // グリッドレイアウト - リファレンスサイト風
-  .studio-grid,
-  .articles-grid {
+  // グリッドレイアウト - リファレンスサイト風 (blog archive pages only)
+  // Only apply to specific archive types, not stores page
+  &.post-type-archive-studio_features .studio-grid,
+  &.post-type-archive-studio_features .articles-grid,
+  &.post-type-archive-seo_articles .studio-grid,
+  &.post-type-archive-seo_articles .articles-grid,
+  &.post-type-archive-articles .studio-grid,
+  &.post-type-archive-articles .articles-grid,
+  &[class*="seo_articles"] .studio-grid,
+  &[class*="seo_articles"] .articles-grid,
+  &[class*="articles"] .studio-grid,
+  &[class*="articles"] .articles-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 40px 30px;
