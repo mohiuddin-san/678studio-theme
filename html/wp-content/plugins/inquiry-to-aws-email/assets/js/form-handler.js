@@ -1,4 +1,5 @@
 jQuery(document).ready(function($) {
+    console.log('=== form-handler.js loaded ===');
 
     // Function to fetch fresh nonce
     function getFreshNonce() {
@@ -73,7 +74,17 @@ jQuery(document).ready(function($) {
 
         if (!isValid) {
             console.error('Validation failed for form ' + formId + '. Missing fields:', missingFields);
-            alert('Please fill out all required fields: ' + missingFields.join(', '));
+            // エラーメッセージをより適切に表示
+            var errorMessages = [];
+            if (missingFields.includes('name')) errorMessages.push('お名前を入力してください');
+            if (missingFields.includes('kana')) errorMessages.push('フリガナを入力してください');
+            if (missingFields.includes('email')) errorMessages.push('メールアドレスを入力してください');
+            if (missingFields.includes('shop-id')) errorMessages.push('店舗を選択してください');
+            if (missingFields.includes('reservation_date')) errorMessages.push('撮影希望日を選択してください');
+            if (missingFields.includes('reservation_time')) errorMessages.push('開始時間を選択してください');
+            if (missingFields.includes('agreement')) errorMessages.push('個人情報の取り扱いについて同意してください');
+            
+            alert(errorMessages.join('\n'));
             return false;
         }
 
@@ -149,7 +160,9 @@ jQuery(document).ready(function($) {
                     $(document).trigger('siaes:submission:success', [response]);
                     
                     $form[0].reset();
+                    console.log('form-handler.js: Resetting store-select to empty');
                     $form.find('#store-select').val('');
+                    $('#store-select').val(''); // Also reset global store-select
                     $('#confirmationStep').hide();
                     $('#formStep').show();
                 } else {
@@ -169,9 +182,20 @@ jQuery(document).ready(function($) {
     }
 
     // Handle form submission for both forms
+    // 注意: 現在はreservation-form.jsとinquiry-form.jsで確認ボタンクリック時の処理を行っているため、
+    // このイベントハンドラーは実際の最終送信時のみ呼ばれます
     $('#inquiryForm, #reservationForm').on('submit', function(e) {
         e.preventDefault();
         var formId = $(this).attr('id');
+        
+        // 確認画面が表示されている場合は実際の送信処理のため、バリデーションをスキップ
+        var confirmationStep = $('#confirmationStep');
+        if (confirmationStep.is(':visible')) {
+            // 最終送信時はバリデーション不要
+            return;
+        }
+        
+        // フォールバック: 万が一確認画面表示前にここに来た場合のみバリデーション実行
         validateAndShowConfirmation(formId);
     });
 

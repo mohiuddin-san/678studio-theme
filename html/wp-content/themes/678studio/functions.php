@@ -1446,9 +1446,9 @@ if (is_page('studio-reservation')) {
 // 店舗選択用のスクリプト
 wp_enqueue_script(
 'reservation-script',
-get_template_directory_uri() . '/assets/js/inquiry.js',
+get_template_directory_uri() . '/assets/js/reservation.js',
 array(), // Add dependencies if needed
-WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/inquiry.js') : '1.0.0',
+WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/reservation.js') : '1.0.0',
 true // Load in footer
 );
 
@@ -1475,16 +1475,7 @@ WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/inquiry.js') : '1.0.
 true // Load in footer
 );
 
-// フォーム確認画面用のスクリプト
-wp_enqueue_script(
-'inquiry-form-script',
-get_template_directory_uri() . '/assets/js/inquiry-form.js',
-array(), // Add dependencies if needed
-WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/inquiry-form.js') : '1.0.0',
-true // Load in footer
-);
-
-// AWS Email Plugin form handler (temporary fix until plugin settings are configured)
+// AWS Email Plugin form handler only (inquiry-form.js disabled due to conflicts)
 wp_enqueue_script(
 'siaes-form-handler-fix',
 plugins_url('inquiry-to-aws-email/assets/js/form-handler.js'),
