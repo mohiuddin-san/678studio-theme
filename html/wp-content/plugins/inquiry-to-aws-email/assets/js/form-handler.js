@@ -1,5 +1,4 @@
 jQuery(document).ready(function($) {
-    console.log('=== form-handler.js loaded ===');
 
     // Function to fetch fresh nonce
     function getFreshNonce() {
@@ -160,7 +159,6 @@ jQuery(document).ready(function($) {
                     $(document).trigger('siaes:submission:success', [response]);
                     
                     $form[0].reset();
-                    console.log('form-handler.js: Resetting store-select to empty');
                     $form.find('#store-select').val('');
                     $('#store-select').val(''); // Also reset global store-select
                     $('#confirmationStep').hide();
