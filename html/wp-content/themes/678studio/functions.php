@@ -11,6 +11,30 @@ require_once get_template_directory() . '/inc/post-types/media-achievements.php'
 
 // Load ACF configurations
 require_once get_template_directory() . '/inc/acf/media-achievements.php';
+require_once get_template_directory() . '/inc/acf/studio-shops-fields.php';
+
+// Load Custom Post Types
+require_once get_template_directory() . '/inc/post-types/studio-shops.php';
+
+// Load Studio Shops Compatibility Layer
+require_once get_template_directory() . '/inc/studio-shops-compat.php';
+
+// Load Admin Enhancements
+require_once get_template_directory() . '/inc/admin-enhancements.php';
+
+// Load Gallery Metabox (WordPress Standard Media)
+require_once get_template_directory() . '/inc/gallery-metabox.php';
+
+// ACF JSON save/load functionality
+add_filter('acf/settings/save_json', function($path) {
+    return get_stylesheet_directory() . '/acf-json';
+});
+
+add_filter('acf/settings/load_json', function($paths) {
+    unset($paths[0]);
+    $paths[] = get_stylesheet_directory() . '/acf-json';
+    return $paths;
+});
 
 // Load WP-CLI commands for Studio Shop testing
 if (file_exists(get_template_directory() . '/inc/wp-cli-studio-shop-test.php')) {
