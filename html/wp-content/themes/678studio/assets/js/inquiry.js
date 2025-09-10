@@ -16,6 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (data.success) {
                 populateDropdown(data.data.shops);
+                // データ取得完了後、即座にURLパラメータを処理
+                handleUrlParameters();
             } else {
                 console.error('API error:', data.data?.message || 'Unknown error');
             }
@@ -108,6 +110,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
         const shopId = urlParams.get('shop_id');
         
+        // shopIdがない場合は何もしない
+        if (!shopId) {
+            return;
+        }
+        
         // shopsDataが不正な状態の場合、グローバルなshopsDataを再取得
         if (window.shopsData && window.shopsData.length === 1 && shopId) {
             if (window.lastApiData && window.lastApiData.data && window.lastApiData.data.shops) {
@@ -115,7 +122,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         
-        if (shopId && window.shopsData && window.shopsData.length > 0) {
+        // データが準備できている場合のみ処理
+        if (window.shopsData && window.shopsData.length > 0) {
             const select = document.querySelector('.contact-select');
             
             if (select) {
@@ -195,15 +203,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             }
-        } else if (shopId) {
-            // データがまだ読み込まれていない場合、少し待ってから再試行
-            setTimeout(handleUrlParameters, 500);
         }
+        // データがまだ読み込まれていない場合の再試行は、fetchShops内で処理されるため不要
     }
 
-    // データ取得完了後にURLパラメータ処理を実行
+    // データ取得を開始（完了後に自動的にhandleUrlParametersが呼ばれる）
     fetchShops();
-    
-    // URLパラメータがある場合の処理を開始（他のスクリプトの実行を待つため遅延）
-    setTimeout(handleUrlParameters, 300);
 });

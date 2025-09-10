@@ -1,28 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-
-    // Initialize shopsData as empty array to prevent undefined errors
-    window.shopsData = [];
-    
-    // Fetch shops data from new API
-    async function fetchShops() {
-        try {
-            const response = await fetch('/wp-content/themes/678studio/api/get_studio_shops.php?v=' + Date.now());
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            const data = await response.json();
-            if (data.success && data.data && data.data.shops) {
-                window.shopsData = data.data.shops;
-            } else {
-                console.error('API error:', data.message || 'Unknown error');
-            }
-        } catch (error) {
-            console.error('Fetch error:', error);
-        }
-    }
-
-    // Initialize API call
-    fetchShops();
+    // reservation.jsがshopsDataを管理するので、ここでは初期化しない
+    // window.shopsDataはreservation.jsによって設定される
 
     const form = document.getElementById('reservationForm');
     const formStep = document.getElementById('formStep');
@@ -184,54 +162,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // });
 
         // 店舗選択の特別処理（バリデーションなし）
-        const storeSelect = document.getElementById('store-select');
-        if (storeSelect) {
-            // storeSelect.addEventListener('change', validateAndUpdateButton);
-            
-            // Populate store select options when shops data is available
-            const populateStoreOptions = () => {
-                if (window.shopsData && window.shopsData.length > 0) {
-                    storeSelect.innerHTML = '<option value="">店舗を選択してください</option>';
-                    window.shopsData.forEach(shop => {
-                        const option = document.createElement('option');
-                        option.value = shop.id;
-                        option.textContent = shop.name;
-                        storeSelect.appendChild(option);
-                    });
-                } else {
-                    // Retry after a short delay if data is not loaded yet
-                    setTimeout(populateStoreOptions, 500);
-                }
-            };
-            
-            populateStoreOptions();
-        }
+        // 店舗選択のドロップダウンはreservation.jsが管理
+        // ここでは何もしない（reservation.jsがすべて処理）
     }
 
-    // URLパラメータから店舗IDを取得して自動選択
-    function handleUrlParameters() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const shopId = urlParams.get('shop_id');
-        
-        if (shopId) {
-            const storeSelect = document.getElementById('store-select');
-            if (storeSelect && window.shopsData && window.shopsData.length > 0) {
-                // 店舗選択
-                storeSelect.value = shopId;
-                
-                // 店舗選択が成功したか確認
-                if (storeSelect.value === shopId) {
-                    console.log('Store auto-selected:', shopId);
-                }
-            } else if (shopId) {
-                // データがまだ読み込まれていない場合、少し待ってから再試行
-                setTimeout(handleUrlParameters, 500);
-            }
-        }
-    }
-
-    // URLパラメータがある場合の処理を開始
-    setTimeout(handleUrlParameters, 200);
+    // URLパラメータからの店舗選択はreservation.jsが処理するため、ここでは不要
+    // reservation.jsがすべてのデータ取得と選択を管理します
 
     // 個別フィールドのバリデーション
     function validateField(field) {
