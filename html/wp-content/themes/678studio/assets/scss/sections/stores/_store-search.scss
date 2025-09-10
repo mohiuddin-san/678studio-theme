@@ -1,0 +1,577 @@
+// Store Search Section - 店舗検索ページ専用
+// =============================================================================
+
+@use '../../base/mixins' as m;
+@use '../../base/variables' as v;
+
+.store-search-results {
+	width: 100%;
+	padding: m.fs(72, 0.6) 0;
+
+	// モバイル対応
+	@include m.mq(md) {
+		padding: m.fsm(40) 0;
+	}
+
+	&__container {
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: m.fs(72, 0.6) m.fs(20);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		position: relative;
+		z-index: 0;
+
+		// モバイル対応
+		@include m.mq(md) {
+			padding: m.fsm(40) m.fsm(20);
+		}
+	}
+
+	// ヘッダーエリア
+	&__header {
+		text-align: center;
+		margin-bottom: m.fs(40, 0.5);
+
+		// モバイル対応
+		@include m.mq(md) {
+			margin-bottom: m.fsm(30);
+		}
+	}
+
+	&__label {
+		display: flex;
+		justify-content: center;
+		margin-bottom: m.fs(64, 0.5);
+
+		// モバイル対応
+		@include m.mq(md) {
+			margin-bottom: m.fsm(32);
+		}
+	}
+
+	&__title {
+		font-size: m.fs(28, 0.6);
+		font-weight: 600;
+		color: v.$main-color;
+		margin-bottom: m.fs(48, 0.5);
+		font-family: v.$ja;
+		letter-spacing: m.fs(1);
+
+		// モバイル対応
+		@include m.mq(md) {
+			font-size: m.fsm(24);
+			margin-bottom: m.fsm(24);
+			letter-spacing: m.fsm(1);
+		}
+	}
+
+	&__subtitle {
+		font-size: m.fs(14);
+		color: v.$main-color;
+		font-family: v.$ja-sans;
+
+		// モバイル対応
+		@include m.mq(md) {
+			font-size: m.fsm(14);
+		}
+	}
+
+	// 検索エリア
+	&__search {
+		width: 100%;
+		max-width: 600px;
+		margin: 0 auto m.fs(60, 0.5);
+		display: flex;
+		justify-content: center;
+
+		// モバイル対応
+		@include m.mq(md) {
+			margin-bottom: m.fsm(40);
+			padding: 0 m.fsm(15);
+		}
+	}
+
+	&__form {
+		width: 100%;
+		max-width: 600px;
+	}
+
+	&__input-group {
+		display: flex;
+		flex-direction: column;
+		gap: m.fs(24);
+		margin-bottom: m.fs(32);
+
+		// モバイル対応
+		@include m.mq(md) {
+			gap: m.fsm(20);
+			margin-bottom: m.fsm(24);
+		}
+	}
+
+	&__search-box {
+		display: flex;
+		align-items: center;
+		background: white;
+		border-radius: 50px;
+		padding: m.fs(12) m.fs(20);
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+		transition: box-shadow 0.3s ease;
+		width: 100%;
+		min-height: m.fs(48);
+
+		&:hover,
+		&:focus-within {
+			box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+		}
+
+		// モバイル対応
+		@include m.mq(md) {
+			padding: m.fsm(10) m.fsm(16);
+			border-radius: 40px;
+			min-height: m.fsm(44);
+		}
+	}
+
+	&__search-icon {
+		width: m.fs(20);
+		height: m.fs(20);
+		fill: #a7cbd6;
+		margin-right: m.fs(12);
+		flex-shrink: 0;
+
+		// モバイル対応
+		@include m.mq(md) {
+			width: m.fsm(18);
+			height: m.fsm(18);
+			margin-right: m.fsm(10);
+		}
+	}
+
+	&__search-input {
+		flex: 1;
+		border: none;
+		background: none;
+		font-size: m.fs(16);
+		padding: m.fs(12) 0;
+		color: #333;
+		outline: none;
+
+		&::placeholder {
+			color: #999;
+		}
+
+		// モバイル対応
+		@include m.mq(md) {
+			font-size: m.fsm(14);
+			padding: m.fsm(10) 0;
+		}
+	}
+
+	// 都道府県選択
+	&__prefecture-select {
+		width: 100%;
+	}
+
+	&__prefecture-dropdown {
+		width: 100%;
+		padding: m.fs(12) m.fs(20);
+		border: 2px solid #e5e7eb;
+		border-radius: 50px;
+		font-size: m.fs(16);
+		background: white url('/wp-content/themes/678studio/assets/images/down.svg')
+			no-repeat right m.fs(20) center;
+		background-size: m.fs(16) m.fs(16);
+		color: #333;
+		cursor: pointer;
+		transition: all 0.3s ease;
+		font-family: v.$ja-sans;
+		outline: none;
+		appearance: none;
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		padding-right: m.fs(50);
+		min-height: m.fs(48);
+		box-sizing: border-box;
+
+		&:hover,
+		&:focus {
+			border-color: #a7cbd6;
+			box-shadow: 0 0 0 3px rgba(167, 203, 214, 0.1);
+		}
+
+		// モバイル対応
+		@include m.mq(md) {
+			padding: m.fsm(10) m.fsm(16);
+			font-size: m.fsm(14);
+			border-radius: m.fsm(30);
+			background-position: right m.fsm(16) center;
+			background-size: m.fsm(14) m.fsm(14);
+			padding-right: m.fsm(40);
+			min-height: m.fsm(44);
+		}
+
+		option {
+			padding: m.fs(8);
+			font-family: v.$ja-sans;
+
+			// モバイル対応
+			@include m.mq(md) {
+				padding: m.fsm(8);
+			}
+		}
+	}
+
+	// 検索ボタン
+	&__submit {
+		display: flex;
+		justify-content: center;
+		width: 100%;
+	}
+
+	&__search-btn {
+		background: linear-gradient(135deg, #a7cbd6 0%, #8bb5c4 100%);
+		color: white;
+		border: none;
+		padding: m.fs(16) m.fs(48);
+		border-radius: 50px;
+		font-size: m.fs(18);
+		font-weight: 600;
+		cursor: pointer;
+		transition: all 0.3s ease;
+		min-width: 200px;
+
+		&:hover {
+			background: linear-gradient(135deg, #8bb5c4 0%, #7ba8b8 100%);
+			transform: translateY(-2px);
+			box-shadow: 0 6px 16px rgba(139, 181, 196, 0.4);
+		}
+
+		// モバイル対応
+		@include m.mq(md) {
+			padding: m.fsm(14) m.fsm(36);
+			font-size: m.fsm(16);
+			min-width: 160px;
+		}
+	}
+
+	// 結果カウント
+	&__result-count {
+		margin-bottom: m.fs(40, 0.5);
+
+		// モバイル対応
+		@include m.mq(md) {
+			margin-bottom: m.fsm(30);
+		}
+	}
+
+	// カードエリア
+	&__cards {
+		width: 100%;
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: m.fs(24, 0.4);
+		margin-bottom: m.fs(60, 0.5);
+
+		// モバイル対応 - 1列レイアウト
+		@include m.mq(md) {
+			grid-template-columns: 1fr;
+			gap: m.fsm(20);
+			margin-bottom: m.fsm(40);
+		}
+	}
+
+	// ページネーション
+	&__pagination {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: m.fs(12, 0.3);
+		padding: m.fs(32, 0.4) 0;
+
+		// モバイル対応
+		@include m.mq(md) {
+			gap: m.fsm(8);
+			padding: m.fsm(24) m.fsm(10);
+			flex-wrap: wrap;
+		}
+	}
+}
+
+// スタジオカード
+.studio-card {
+	display: grid;
+	grid-template-rows: auto 1fr;
+	background: #fff;
+	aspect-ratio: 3/4;
+	border-radius: m.fs(10, 0.5);
+	padding: m.fs(16, 0.5);
+	text-align: center;
+	overflow: visible;
+	position: relative;
+	z-index: 1;
+	box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+
+	// モバイル対応
+	@include m.mq(md) {
+		border-radius: m.fsm(10);
+		padding: m.fsm(16);
+	}
+
+	&__image {
+		position: relative;
+		width: 100%;
+		aspect-ratio: 16/9; // 画像の縦横比を設定
+		background: #e0e0e0;
+		overflow: hidden;
+		border-radius: m.fs(6, 0.5);
+
+		// モバイル対応
+		@include m.mq(md) {
+			border-radius: m.fsm(6);
+		}
+
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			// iOS Safari画像回転対策
+			image-orientation: none;
+			-webkit-transform: none;
+			transform: none;
+			-webkit-backface-visibility: hidden;
+			backface-visibility: hidden;
+		}
+	}
+
+	&__location {
+		position: absolute;
+		bottom: 0;
+		right: 0;
+		background: #fff;
+		color: #a99f3c;
+		padding: m.fs(4, 0.3) m.fs(12, 0.3);
+		border-radius: m.fs(4, 0.3) 0 0 0;
+		font-size: m.fs(16, 0.6);
+		font-family: v.$ja-sans;
+
+		// モバイル対応
+		@include m.mq(md) {
+			padding: m.fsm(4) m.fsm(10);
+			border-radius: m.fsm(4) 0 0 0;
+			font-size: m.fsm(14);
+		}
+	}
+
+	&__content {
+		display: grid;
+		grid-template-rows: auto 1fr auto;
+		gap: m.fs(12, 0.4);
+		padding: m.fs(16, 0.4);
+
+		// モバイル対応
+		@include m.mq(md) {
+			gap: m.fsm(30);
+			padding: m.fsm(16);
+		}
+	}
+
+	&__name {
+		font-size: m.fs(18, 0.5);
+		font-weight: 400;
+		color: #333;
+		font-family: v.$ja-sans;
+		letter-spacing: m.fs(1);
+
+		// モバイル対応
+		@include m.mq(md) {
+			font-size: m.fsm(18);
+			letter-spacing: m.fsm(1);
+		}
+	}
+
+	&__address {
+		font-size: m.fs(16, 0.6);
+		text-align: left;
+		color: #666;
+		line-height: 1.5;
+		font-family: v.$ja-sans;
+
+		// モバイル対応
+		@include m.mq(md) {
+			font-size: m.fsm(15);
+		}
+	}
+
+	&__details {
+		font-size: m.fs(16, 0.6);
+		display: flex;
+		flex-direction: column;
+		gap: m.fs(8, 0.3);
+
+		// モバイル対応
+		@include m.mq(md) {
+			font-size: m.fsm(15);
+			gap: m.fsm(8);
+		}
+	}
+
+	&__hours {
+		// studio-card__detailsに含まれる
+		font-size: m.fs(16, 0.6);
+
+		// モバイル対応
+		@include m.mq(md) {
+			font-size: m.fsm(15);
+		}
+	}
+
+	&__hour-item {
+		font-size: m.fs(16, 0.6);
+		color: #666;
+		line-height: 1.4;
+		font-family: v.$ja-sans;
+		text-align: left;
+
+		// モバイル対応
+		@include m.mq(md) {
+			font-size: m.fsm(15);
+		}
+	}
+
+	&__contact-btn {
+		// camera-buttonコンポーネントを使用するため、独自スタイルは削除
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		overflow: visible;
+		padding: m.fs(8, 0.3);
+
+		// モバイル対応
+		@include m.mq(md) {
+			padding: m.fsm(20) m.fsm(8) m.fsm(8); // 上部にスペース追加
+		}
+
+		.camera-button {
+			width: 100%;
+		}
+	}
+}
+
+// ページネーション
+.pagination-btn {
+	background: transparent;
+	border: 1px solid #e5e7eb;
+	padding: m.fs(10, 0.3) m.fs(14, 0.3);
+	border-radius: m.fs(8, 0.3);
+	cursor: pointer;
+	transition: all 0.15s ease;
+	font-family: v.$ja-sans;
+	font-size: m.fs(14, 0.4);
+	color: #6b7280;
+	font-weight: 500;
+	min-width: m.fs(40, 0.4);
+	min-height: m.fs(40, 0.4);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-decoration: none;
+
+	// モバイル対応
+	@include m.mq(md) {
+		padding: m.fsm(10) m.fsm(12);
+		border-radius: m.fsm(6);
+		font-size: m.fsm(14);
+		min-width: m.fsm(40);
+		min-height: m.fsm(40);
+	}
+
+	&:hover:not(.disabled) {
+		background: #f9fafb;
+		border-color: #d1d5db;
+		color: #374151;
+	}
+
+	&.disabled {
+		background: transparent;
+		border-color: #f3f4f6;
+		color: #d1d5db;
+		cursor: not-allowed;
+		
+		svg {
+			opacity: 0.5;
+		}
+	}
+
+	&--prev,
+	&--next {
+		padding: m.fs(10, 0.3);
+		
+		// モバイル対応
+		@include m.mq(md) {
+			padding: m.fsm(10);
+		}
+
+		svg {
+			width: m.fs(16, 0.3);
+			height: m.fs(16, 0.3);
+			fill: currentColor;
+			
+			// モバイル対応
+			@include m.mq(md) {
+				width: m.fsm(16);
+				height: m.fsm(16);
+			}
+		}
+	}
+}
+
+.pagination-numbers {
+	display: inline-flex;
+	align-items: center;
+	gap: m.fs(6, 0.2);
+	font-size: m.fs(14, 0.4);
+	font-family: v.$ja-sans;
+
+	// モバイル対応
+	@include m.mq(md) {
+		gap: m.fsm(4);
+		font-size: m.fsm(14);
+	}
+
+	a {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: m.fs(40, 0.4);
+		height: m.fs(40, 0.4);
+		border-radius: 50%;
+		cursor: pointer;
+		transition: all 0.15s ease;
+		text-decoration: none;
+		font-weight: 500;
+		color: #6b7280;
+		background: transparent;
+		border: 1px solid transparent;
+
+		// モバイル対応
+		@include m.mq(md) {
+			width: m.fsm(40);
+			height: m.fsm(40);
+			font-size: m.fsm(14);
+		}
+
+		&:hover {
+			background: #f9fafb;
+			color: #374151;
+		}
+
+		&.active {
+			background: v.$main-color;
+			color: #fff;
+			font-weight: 600;
+		}
+	}
+}
