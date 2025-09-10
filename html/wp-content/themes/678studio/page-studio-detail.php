@@ -6,9 +6,14 @@
 
 get_header();
 
-// Function to fetch shop data by ID using unified caching system
+// Function to fetch shop data by ID using ACF system
 function fetch_studio_shop_by_id($shop_id) {
-    // 個別ショップキャッシュをチェック
+    // ACF対応版を使用して店舗データを取得
+    if (function_exists('get_studio_shop_data_acf')) {
+        return get_studio_shop_data_acf($shop_id);
+    }
+    
+    // フォールバック：従来のシステム
     $cache_key = 'studio_shop_' . $shop_id;
     $cached_shop = get_transient($cache_key);
     
@@ -140,8 +145,24 @@ $map_embed_data = get_map_embed_content($shop);
   <section class="store-hero">
     <div class="store-hero__container">
       <div class="store-hero__info">
-        <div class="store-hero__category"><?php echo esc_html($shop['name'] ?? 'ロクナナハチ撮影店舗'); ?></div>
-        <h1 class="store-hero__title">ロクナナハチ撮影店舗</h1>
+        <h1 class="store-hero__category">
+          <?php echo esc_html($shop['name'] ?? 'ロクナナハチ撮影店舗'); ?>
+          <?php if (!empty($shop['is_certified_store'])): ?>
+            <span class="certified-badge">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M7.81893 1.90616C8.8333 0.739607 10.3302 0 12 0C13.6697 0 15.1666 0.739535 16.1809 1.90599C17.7232 1.79823 19.3049 2.33373 20.4857 3.51455C21.6665 4.69536 22.202 6.27703 22.0943 7.81931C23.2606 8.83367 24 10.3304 24 12C24 13.6699 23.2603 15.1669 22.0936 16.1813C22.2011 17.7233 21.6656 19.3046 20.485 20.4852C19.3044 21.6659 17.7231 22.2014 16.181 22.0939C15.1667 23.2604 13.6697 24 12 24C10.3303 24 8.33348 23.2605 7.81912 22.0941C6.27682 22.2018 4.69513 21.6663 3.51431 20.4855C2.33349 19.3047 1.79798 17.723 1.90574 16.1807C0.739428 15.1663 0 13.6696 0 12C0 10.3304 0.739503 8.83351 1.90591 7.81915C1.79828 6.27698 2.33379 4.69547 3.51451 3.51476C4.69523 2.33403 6.27676 1.79852 7.81893 1.90616ZM16.4434 9.7673C16.7398 9.35245 16.6437 8.77595 16.2288 8.47963C15.814 8.18331 15.2375 8.2794 14.9412 8.69424L10.9591 14.2691L8.96041 12.2704C8.59992 11.9099 8.01546 11.9099 7.65498 12.2704C7.29449 12.6308 7.29449 13.2153 7.65498 13.5758L10.4242 16.345C10.6161 16.5369 10.8826 16.6346 11.1531 16.6122C11.4235 16.5899 11.6703 16.4496 11.8281 16.2288L16.4434 9.7673Z" fill="currentColor"/>
+              </svg>
+              <span class="certified-text">認定店</span>
+            </span>
+          <?php endif; ?>
+        </h1>
+        <div class="store-hero__title">
+          <?php if (!empty($shop['is_certified_store'])): ?>
+            ロクナナハチ撮影認定店舗
+          <?php else: ?>
+            ロクナナハチ登録店舗
+          <?php endif; ?>
+        </div>
       </div>
       <div class="store-hero__image">
         <?php
@@ -176,8 +197,6 @@ $map_embed_data = get_map_embed_content($shop);
     <div class="store-basic-info__container">
       <h2 class="store-basic-info__heading">
         基本情報
-        <img class="store-basic-info__underline"
-          src="<?php echo get_template_directory_uri(); ?>/assets/images/underline-store.svg" alt="">
       </h2>
       <dl class="store-basic-info__list">
         <div class="store-basic-info__item">
@@ -207,83 +226,140 @@ $map_embed_data = get_map_embed_content($shop);
           <dt class="store-basic-info__label">定休日</dt>
           <dd class="store-basic-info__data"><?php echo esc_html($shop['holidays'] ?? 'N/A'); ?></dd>
         </div>
+        <?php if (!empty($shop['store_introduction'])): ?>
+        <div class="store-basic-info__item">
+          <dt class="store-basic-info__label">店舗紹介</dt>
+          <dd class="store-basic-info__data"><?php echo nl2br(esc_html($shop['store_introduction'])); ?></dd>
+        </div>
+        <?php endif; ?>
       </dl>
     </div>
   </section>
 
-  <!-- Gallery Section -->
-   <section class="store-gallery">
+  <?php if (!empty($shop['is_certified_store']) && !empty($shop['photo_plans'])): ?>
+  <!-- Photography Plans Section (Certified Stores Only) -->
+  <section class="store-plans">
     <div class="store-basic-info__container">
       <h2 class="store-basic-info__heading">
-        撮影ギャラリー
-        <img class="store-basic-info__underline"
-          src="<?php echo get_template_directory_uri(); ?>/assets/images/underline-store.svg" alt="">
+        撮影プラン
       </h2>
-    </div>
-    <div class="store-gallery__slider">
-      <div class="store-gallery__track">
-        <?php 
-        $gallery_images = [];
-        
-        // メインギャラリー画像を収集（簡素化されたギャラリーシステム）
-        if (!empty($shop['main_gallery_images']) && is_array($shop['main_gallery_images'])) {
-            foreach ($shop['main_gallery_images'] as $image) {
-                // 新しいデータ構造では $image['url'] に画像URLが含まれる
-                if (is_array($image) && isset($image['url'])) {
-                    $gallery_images[] = $image['url'];
-                } elseif (is_string($image)) {
-                    // 後方互換性のため
-                    $gallery_images[] = $image;
-                }
-            }
-        }
-        
-        // 重複を除去
-        $gallery_images = array_unique($gallery_images);
-        
-        // 画像の表示
-        if (empty($gallery_images)): ?>
-          <div class="store-gallery__no-images">
-            <p>まだギャラリーに画像が登録されていません。</p>
-          </div>
-        <?php else:
-          foreach ($gallery_images as $index => $image_url): 
-            // ギャラリー画像のBase64データかURLかを判定
-            $gallery_image_src = '';
-            $gallery_image_full = '';
-            if (strpos($image_url, 'data:image') === 0) {
-                // Base64データはそのまま使用
-                $gallery_image_src = $image_url;
-                $gallery_image_full = $image_url;
-            } else {
-                // URLの場合はエスケープ
-                $gallery_image_src = esc_url($image_url);
-                $gallery_image_full = esc_url($image_url);
-            }
-        ?>
-          <div class="store-gallery__item">
-            <img src="<?php echo $gallery_image_src; ?>" alt="ギャラリー画像 <?php echo $index + 1; ?>" data-full-image="<?php echo $gallery_image_full; ?>">
-            <div class="store-gallery__overlay">
-              <svg class="store-gallery__icon" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="16" cy="16" r="10" stroke="white" stroke-width="2"/>
-                <path d="M23 23L30 30" stroke="white" stroke-width="2" stroke-linecap="round"/>
-              </svg>
-            </div>
-          </div>
-        <?php 
-          endforeach; 
-        endif; ?>
+      <div class="plans-table-wrapper">
+        <table class="plans-table">
+          <thead>
+            <tr>
+              <th class="plans-table__header">プラン名</th>
+              <th class="plans-table__header">料金</th>
+              <th class="plans-table__header">目安時間</th>
+              <th class="plans-table__header">詳細</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php foreach ($shop['photo_plans'] as $plan): ?>
+              <tr class="plans-table__row">
+                <td class="plans-table__cell plans-table__name"><?php echo esc_html($plan['plan_name']); ?></td>
+                <td class="plans-table__cell plans-table__price">
+                  <?php if (!empty($plan['plan_price'])): ?>
+                    <?php echo esc_html($plan['formatted_price'] ?? '¥' . number_format($plan['plan_price']) . '円'); ?>
+                  <?php else: ?>
+                    <span class="plans-table__empty">-</span>
+                  <?php endif; ?>
+                </td>
+                <td class="plans-table__cell plans-table__duration">
+                  <?php if (!empty($plan['formatted_duration'])): ?>
+                    <?php echo esc_html($plan['formatted_duration']); ?>
+                  <?php else: ?>
+                    <span class="plans-table__empty">-</span>
+                  <?php endif; ?>
+                </td>
+                <td class="plans-table__cell plans-table__description">
+                  <?php if (!empty($plan['plan_description'])): ?>
+                    <?php echo nl2br(esc_html($plan['plan_description'])); ?>
+                  <?php else: ?>
+                    <span class="plans-table__empty">-</span>
+                  <?php endif; ?>
+                </td>
+              </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
       </div>
     </div>
   </section>
+  <?php endif; ?>
+
+  <?php if (!empty($shop['is_certified_store'])): ?>
+  <!-- Gallery Section (Certified Stores Only) -->
+  <section class="store-gallery">
+    <div class="store-basic-info__container">
+      <h2 class="store-basic-info__heading">
+        撮影ギャラリー
+      </h2>
+    </div>
+    
+    <div class="store-gallery__slider">
+      <div class="store-gallery__track">
+          <?php 
+          $gallery_images = [];
+          
+          // メインギャラリー画像を収集（簡素化されたギャラリーシステム）
+          if (!empty($shop['main_gallery_images']) && is_array($shop['main_gallery_images'])) {
+              foreach ($shop['main_gallery_images'] as $image) {
+                  // 新しいデータ構造では $image['url'] に画像URLが含まれる
+                  if (is_array($image) && isset($image['url'])) {
+                      $gallery_images[] = $image['url'];
+                  } elseif (is_string($image)) {
+                      // 後方互換性のため
+                      $gallery_images[] = $image;
+                  }
+              }
+          }
+          
+          // 重複を除去
+          $gallery_images = array_unique($gallery_images);
+          
+          // 画像の表示
+          if (empty($gallery_images)): ?>
+            <div class="store-gallery__no-images">
+              <p>認定店舗のギャラリー画像を準備中です。</p>
+            </div>
+          <?php else:
+            foreach ($gallery_images as $index => $image_url): 
+              // ギャラリー画像のBase64データかURLかを判定
+              $gallery_image_src = '';
+              $gallery_image_full = '';
+              if (strpos($image_url, 'data:image') === 0) {
+                  // Base64データはそのまま使用
+                  $gallery_image_src = $image_url;
+                  $gallery_image_full = $image_url;
+              } else {
+                  // URLの場合はエスケープ
+                  $gallery_image_src = esc_url($image_url);
+                  $gallery_image_full = esc_url($image_url);
+              }
+          ?>
+            <div class="store-gallery__item">
+              <img src="<?php echo $gallery_image_src; ?>" alt="ギャラリー画像 <?php echo $index + 1; ?>" data-full-image="<?php echo $gallery_image_full; ?>">
+              <div class="store-gallery__overlay">
+                <svg class="store-gallery__icon" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="16" cy="16" r="10" stroke="white" stroke-width="2"/>
+                  <path d="M23 23L30 30" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </div>
+            </div>
+          <?php 
+            endforeach; 
+          endif; ?>
+        </div>
+      </div>
+    </div>
+  </section>
+  <?php endif; ?>
 
   <!-- Access Section -->
   <section class="store-access">
     <div class="store-basic-info__container">
       <h2 class="store-basic-info__heading">
         アクセス
-        <img class="store-basic-info__underline"
-          src="<?php echo get_template_directory_uri(); ?>/assets/images/underline-store.svg" alt="">
       </h2>
 
       <!-- Google Map -->
@@ -381,6 +457,107 @@ $map_embed_data = get_map_embed_content($shop);
   display: block !important;
 }
 
+/* Certified badge styles */
+.certified-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #3A89FF, #5BA0FF);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-left: 8px;
+  box-shadow: 0 2px 6px rgba(58, 137, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.certified-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(58, 137, 255, 0.4);
+}
+
+.certified-badge svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.certified-text {
+  white-space: nowrap;
+}
+
+/* Store hero specific styles for badge in dark background */
+.store-hero__category {
+  color: #333 !important;
+}
+
+.store-hero__category .certified-badge {
+  background: linear-gradient(135deg, #3A89FF, #5BA0FF);
+  color: white;
+}
+
+
+/* Photography plans table styles */
+.plans-table-wrapper {
+  margin-top: 30px;
+  overflow-x: auto;
+}
+
+.plans-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  min-width: 600px;
+}
+
+.plans-table__header {
+  background: #f5f5f5;
+  color: #333;
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.plans-table__row:nth-child(even) {
+  background: #f9f9f9;
+}
+
+.plans-table__cell {
+  padding: 12px;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+.plans-table__name {
+  font-weight: 600;
+  color: #333;
+  background: #f5f5f5;
+}
+
+.plans-table__price {
+  color: #333;
+  font-weight: normal;
+}
+
+.plans-table__duration {
+  color: #333;
+}
+
+.plans-table__description {
+  line-height: 1.5;
+  color: #333;
+  white-space: normal;
+  max-width: 300px;
+}
+
+.plans-table__empty {
+  color: #999;
+  font-style: italic;
+}
+
 /* Style for no images message */
 .store-gallery__no-images {
   text-align: center;
@@ -394,6 +571,34 @@ $map_embed_data = get_map_embed_content($shop);
 
 .store-gallery__no-images p {
   margin: 0;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .certified-badge {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 12px;
+    gap: 4px;
+  }
+  
+  .certified-badge svg {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .plans-table {
+    font-size: 13px;
+  }
+  
+  .plans-table__header {
+    padding: 8px;
+    font-size: 13px;
+  }
+  
+  .plans-table__cell {
+    padding: 8px;
+  }
 }
 </style>
 

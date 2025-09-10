@@ -18,11 +18,6 @@
 	}
 }
 
-// WordPress管理バー以外の要素にデフォルトフォントファミリーを適用
-// 特定のクラスでオーバーライド可能にするため !important を削除
-body:not(.wp-admin) *:not(#wpadminbar):not(#wpadminbar *):not(.studio-finder__text):not(.studio-finder__text--desktop):not(.studio-finder__text--mobile) {
-	font-family: $ja-sans;
-}
 
 html {
 	font-size: 100%;

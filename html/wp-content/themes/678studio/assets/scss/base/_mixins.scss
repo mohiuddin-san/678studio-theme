@@ -48,7 +48,7 @@ $breakpoints: (
 /**
  * デザインから簡単にGridレイアウトを作成するmixin
  * 使用例:
- * @include figma-grid(
+ * @include design-grid(
  *   $cols: (500, 80, 1fr),      // カラム幅 (px値または1fr)
  *   $rows: (100, 200, auto),    // 行高さ (px値またはauto)
  *   $gap: 20                    // グリッドギャップ
@@ -212,9 +212,14 @@ $breakpoints: (
  * 例: @include breakout-bg('left', 100vw, 40%, #57aace);
  * → コンテナの40%の位置から左に画面全幅まで青色で突き抜け
  */
-@mixin breakout-bg($direction: 'left', $width: 50vw, $offset: 50%, $bg-color: #57aace) {
+@mixin breakout-bg(
+	$direction: 'left',
+	$width: 50vw,
+	$offset: 50%,
+	$bg-color: #57aace
+) {
 	position: relative;
-	
+
 	&::before {
 		content: '';
 		position: absolute;
@@ -222,7 +227,7 @@ $breakpoints: (
 		height: 100%;
 		background-color: $bg-color;
 		z-index: -1;
-		
+
 		@if $direction == 'left' {
 			left: calc(-50vw + #{$offset});
 			width: $width;

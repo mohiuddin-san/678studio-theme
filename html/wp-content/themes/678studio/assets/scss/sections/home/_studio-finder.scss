@@ -24,8 +24,15 @@
 		@include m.grid-area(0, 1, 0, 1);
 		z-index: 1;
 		display: flex;
-		align-items: center;
+		align-items: flex-start;
 		justify-content: center;
+		margin-bottom: m.fs(70);
+
+		@include m.mq(md) {
+			margin-bottom: 0;
+			margin-top: m.fs(200);
+			align-items: center;
+		}
 	}
 
 	&__map {
@@ -42,7 +49,8 @@
 		justify-content: flex-start;
 		text-align: center;
 		position: relative;
-		padding-top: m.fs(60);
+		padding-top: m.fs(100);
+		height: auto;
 	}
 
 	&__title-bar {
@@ -118,11 +126,6 @@
 		&__container {
 			aspect-ratio: auto;
 			min-height: auto;
-		}
-
-		&__map {
-			width: 90%;
-			height: 90%;
 		}
 
 		&__content {

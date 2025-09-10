@@ -14,10 +14,10 @@
 	}
 
 	&__container {
-		margin: 0 m.fs(224, 0.4);
-		padding-top: m.fs(72, 0.6);
-		padding-bottom: m.fs(72, 0.6);
-		background: #e9edf0;
+		margin: 0 auto;
+		padding: m.fs(72, 0.6) m.fs(20);
+		background: url('/wp-content/themes/678studio/assets/images/search_bg.jpg')
+			center center/cover;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -26,7 +26,6 @@
 
 		// モバイル対応
 		@include m.mq(md) {
-			margin: 0 m.fsm(20);
 			padding: m.fsm(40) m.fsm(20);
 		}
 	}
@@ -70,7 +69,7 @@
 	}
 
 	&__subtitle {
-		font-size: m.fs(14, 0.4);
+		font-size: m.fs(14);
 		color: v.$main-color;
 		font-family: v.$ja-sans;
 
@@ -82,104 +81,200 @@
 
 	// 検索エリア
 	&__search {
-		width: m.fs(576, 0.7);
-		margin-bottom: m.fs(60, 0.5);
+		width: 100%;
+		max-width: 600px;
+		margin: 0 auto;
 		display: flex;
 		justify-content: center;
 
 		// モバイル対応
 		@include m.mq(md) {
-			width: 100%;
 			margin-bottom: m.fsm(40);
-			padding: 0 m.fsm(10);
+			padding: 0 m.fsm(15);
+		}
+	}
+
+	&__form {
+		width: 100%;
+		max-width: 600px;
+	}
+
+	&__input-group {
+		display: flex;
+		flex-direction: column;
+		gap: m.fs(24);
+		margin-bottom: m.fs(32);
+
+		// モバイル対応
+		@include m.mq(md) {
+			gap: m.fsm(20);
+			margin-bottom: m.fsm(24);
 		}
 	}
 
 	&__search-box {
-		position: relative;
-		width: 100%;
-		padding: m.fs(16, 0.5) m.fs(32, 0.5);
 		display: flex;
 		align-items: center;
-		background: #fff;
-		border: 2px solid #e5e7eb;
-		border-radius: m.fs(8, 0.3);
-		transition: border-color 0.15s ease;
+		background: white;
+		border-radius: 50px;
+		padding: m.fs(12) m.fs(20);
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+		transition: box-shadow 0.3s ease;
+		width: 100%;
+		min-height: m.fs(48);
 
+		&:hover,
 		&:focus-within {
-			border-color: v.$main-color;
-			box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+			box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
 		}
 
 		// モバイル対応
 		@include m.mq(md) {
-			padding: m.fsm(14) m.fsm(20);
-			border-radius: m.fsm(8);
+			padding: m.fsm(10) m.fsm(16);
+			border-radius: 40px;
+			min-height: m.fsm(44);
 		}
 	}
 
 	&__search-icon {
-		width: m.fs(20, 0.4);
-		height: m.fs(20, 0.4);
-		fill: #666;
-		margin-left: m.fs(12, 0.4);
-		margin-right: m.fs(8, 0.3);
+		width: m.fs(20);
+		height: m.fs(20);
+		fill: #a7cbd6;
+		margin-right: m.fs(12);
 		flex-shrink: 0;
 
 		// モバイル対応
 		@include m.mq(md) {
 			width: m.fsm(18);
 			height: m.fsm(18);
-			margin-left: m.fsm(8);
-			margin-right: m.fsm(6);
+			margin-right: m.fsm(10);
 		}
 	}
 
 	&__search-input {
 		flex: 1;
-		border: none !important;
-		outline: none !important;
-		font-size: m.fs(14, 0.4);
-		font-family: v.$ja-sans;
-		background: transparent;
-		padding: m.fs(12, 0.4) m.fs(12, 0.4);
-		color: #374151;
-		-webkit-appearance: none;
-		-moz-appearance: none;
-		appearance: none;
+		border: none;
+		background: none;
+		font-size: m.fs(16);
+		padding: m.fs(12) 0;
+		color: #333;
+		outline: none;
 
 		&::placeholder {
-			color: #9ca3af;
-		}
-
-		&:focus,
-		&:active,
-		&:focus-visible {
-			outline: none !important;
-			border: none !important;
-			box-shadow: none !important;
+			color: #999;
 		}
 
 		// モバイル対応
 		@include m.mq(md) {
 			font-size: m.fsm(14);
-			padding: m.fsm(10) m.fsm(8);
+			padding: m.fsm(10) 0;
 		}
 	}
+
+	&__search-btn {
+		background: linear-gradient(135deg, #a7cbd6 0%, #8bb5c4 100%);
+		color: white;
+		border: none;
+		padding: m.fs(16) m.fs(48);
+		border-radius: 50px;
+		font-size: m.fs(18);
+		font-weight: 600;
+		cursor: pointer;
+		transition: all 0.3s ease;
+		min-width: 200px;
+
+		&:hover {
+			background: linear-gradient(135deg, #8bb5c4 0%, #7ba8b8 100%);
+			transform: translateY(-2px);
+			box-shadow: 0 6px 16px rgba(139, 181, 196, 0.4);
+		}
+
+		// モバイル対応
+		@include m.mq(md) {
+			padding: m.fsm(14) m.fsm(36);
+			font-size: m.fsm(16);
+			min-width: 160px;
+		}
+	}
+
+	// 都道府県選択
+	&__prefecture-select {
+		width: 100%;
+	}
+
+	&__prefecture-dropdown {
+		width: 100%;
+		padding: m.fs(12) m.fs(20);
+		border: 2px solid #e5e7eb;
+		border-radius: 50px;
+		font-size: m.fs(16);
+		background: white url('/wp-content/themes/678studio/assets/images/down.svg')
+			no-repeat right m.fs(20) center;
+		background-size: m.fs(16) m.fs(16);
+		color: #333;
+		cursor: pointer;
+		transition: all 0.3s ease;
+		font-family: v.$ja-sans;
+		outline: none;
+		appearance: none;
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		padding-right: m.fs(50);
+		min-height: m.fs(48);
+		box-sizing: border-box;
+
+		&:hover,
+		&:focus {
+			border-color: #a7cbd6;
+			box-shadow: 0 0 0 3px rgba(167, 203, 214, 0.1);
+		}
+
+		// モバイル対応
+		@include m.mq(md) {
+			padding: m.fsm(10) m.fsm(16);
+			font-size: m.fsm(14);
+			border-radius: m.fsm(30);
+			background-position: right m.fsm(16) center;
+			background-size: m.fsm(14) m.fsm(14);
+			padding-right: m.fsm(40);
+			min-height: m.fsm(44);
+		}
+
+		option {
+			padding: m.fs(8);
+			font-family: v.$ja-sans;
+
+			// モバイル対応
+			@include m.mq(md) {
+				padding: m.fsm(8);
+			}
+		}
+	}
+
+	// 検索ボタン
+	&__submit {
+		display: flex;
+		justify-content: center;
+		width: 100%;
+	}
+
 
 	// カードエリア
 	&__cards {
 		width: calc(100% + m.fs(128, 0.5));
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: m.fs(24, 0.4);
+		@include m.design-grid(
+			$cols: (1fr, 1fr, 1fr),
+			$gap: 24
+		);
 		margin-bottom: m.fs(60, 0.5);
 
 		// モバイル対応 - 1列レイアウト
 		@include m.mq(md) {
 			width: 100%;
-			grid-template-columns: 1fr;
-			gap: m.fsm(20);
+			@include m.design-grid(
+				$cols: (1fr),
+				$gap: 20
+			);
 			margin-bottom: m.fsm(40);
 		}
 	}
@@ -400,7 +495,7 @@
 		border-color: #f3f4f6;
 		color: #d1d5db;
 		cursor: not-allowed;
-		
+
 		svg {
 			opacity: 0.5;
 		}
@@ -409,7 +504,7 @@
 	&--prev,
 	&--next {
 		padding: m.fs(10, 0.3);
-		
+
 		// モバイル対応
 		@include m.mq(md) {
 			padding: m.fsm(10);
@@ -419,7 +514,7 @@
 			width: m.fs(16, 0.3);
 			height: m.fs(16, 0.3);
 			fill: currentColor;
-			
+
 			// モバイル対応
 			@include m.mq(md) {
 				width: m.fsm(16);

@@ -207,17 +207,31 @@ add_action('manage_studio_shops_posts_custom_column', 'studio_shops_custom_colum
 function studio_shops_custom_column_content($column, $post_id) {
     switch ($column) {
         case 'thumbnail':
+            // メイン画像を取得
             $image = get_field('main_image', $post_id);
             if ($image) {
-                echo '<img src="' . esc_url($image['sizes']['thumbnail']) . '" alt="' . esc_attr($image['alt']) . '" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">';
+                $image_url = is_array($image) ? $image['sizes']['thumbnail'] : wp_get_attachment_image_src($image, 'thumbnail')[0];
+                $alt = is_array($image) ? $image['alt'] : get_post_meta($image, '_wp_attachment_image_alt', true);
+                echo '<img src="' . esc_url($image_url) . '" alt="' . esc_attr($alt) . '" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">';
             } else {
-                echo '<span style="color: #999;">画像なし</span>';
+                // アイキャッチ画像をフォールバック
+                if (has_post_thumbnail($post_id)) {
+                    echo get_the_post_thumbnail($post_id, 'thumbnail', array('style' => 'width: 50px; height: 50px; object-fit: cover; border-radius: 4px;'));
+                } else {
+                    echo '<span style="color: #999;">画像なし</span>';
+                }
             }
             break;
             
         case 'address':
             $address = get_field('address', $post_id);
-            echo $address ? esc_html(mb_strimwidth($address, 0, 40, '...')) : '<span style="color: #999;">未設定</span>';
+            if ($address) {
+                // HTMLタグを除去してテキストのみ表示
+                $clean_address = wp_strip_all_tags($address);
+                echo esc_html(mb_strimwidth($clean_address, 0, 40, '...'));
+            } else {
+                echo '<span style="color: #999;">未設定</span>';
+            }
             break;
             
         case 'phone':
@@ -226,17 +240,63 @@ function studio_shops_custom_column_content($column, $post_id) {
             break;
             
         case 'gallery_count':
-            $gallery = get_field('gallery_images', $post_id);
-            $count = is_array($gallery) ? count($gallery) : 0;
-            echo '<span style="background: #0073aa; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 500;">' . $count . ' 枚</span>';
+            // WordPressメタフィールドからギャラリー画像数を取得
+            $gallery_ids = get_post_meta($post_id, '_gallery_image_ids', true);
+            $count = 0;
+            
+            if (!empty($gallery_ids)) {
+                $ids_array = explode(',', $gallery_ids);
+                $count = count(array_filter($ids_array)); // 空の要素を除外
+            }
+            
+            // 認定店かどうかで表示を変える
+            $is_certified = get_field('is_certified_store', $post_id) ?: false;
+            
+            if ($is_certified) {
+                if ($count > 0) {
+                    echo '<span style="background: #0073aa; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 500;">' . $count . ' 枚</span>';
+                } else {
+                    echo '<span style="background: #999; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 500;">0 枚</span>';
+                }
+            } else {
+                echo '<span style="background: #f44336; color: white; padding: 2px 6px; border-radius: 10px; font-size: 10px;">一般店</span>';
+            }
             break;
             
         case 'prefecture':
-            $terms = get_the_terms($post_id, 'studio_prefecture');
-            if ($terms && !is_wp_error($terms)) {
-                echo esc_html($terms[0]->name);
+            // まずACFフィールドから都道府県を取得
+            $prefecture_field = get_field('prefecture', $post_id);
+            
+            if (!empty($prefecture_field)) {
+                echo '<span style="color: #0073aa; font-weight: 500;">' . esc_html($prefecture_field) . '</span>';
             } else {
-                echo '<span style="color: #999;">未設定</span>';
+                // ACFフィールドが空の場合、タクソノミーを確認
+                $terms = get_the_terms($post_id, 'studio_prefecture');
+                if ($terms && !is_wp_error($terms)) {
+                    echo '<span style="color: #0073aa; font-weight: 500;">' . esc_html($terms[0]->name) . '</span>';
+                } else {
+                    // 住所から都道府県を推測して表示
+                    $address = get_field('address', $post_id);
+                    if ($address) {
+                        $prefectures = array(
+                            '北海道', '青森県', '岩手県', '宮城県', '秋田県', '山形県', '福島県',
+                            '茨城県', '栃木県', '群馬県', '埼玉県', '千葉県', '東京都', '神奈川県',
+                            '新潟県', '富山県', '石川県', '福井県', '山梨県', '長野県', '岐阜県',
+                            '静岡県', '愛知県', '三重県', '滋賀県', '京都府', '大阪府', '兵庫県',
+                            '奈良県', '和歌山県', '鳥取県', '島根県', '岡山県', '広島県', '山口県',
+                            '徳島県', '香川県', '愛媛県', '高知県', '福岡県', '佐賀県', '長崎県',
+                            '熊本県', '大分県', '宮崎県', '鹿児島県', '沖縄県'
+                        );
+                        
+                        foreach ($prefectures as $prefecture) {
+                            if (strpos($address, $prefecture) !== false) {
+                                echo '<span style="color: #666; font-style: italic;">' . esc_html($prefecture) . ' (推測)</span>';
+                                return;
+                            }
+                        }
+                    }
+                    echo '<span style="color: #999;">未設定</span>';
+                }
             }
             break;
     }
