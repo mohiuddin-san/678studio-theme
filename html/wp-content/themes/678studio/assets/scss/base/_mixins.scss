@@ -98,6 +98,120 @@ $breakpoints: (
 }
 
 /**
+ * Figmaデザインの値をそのまま使えるグリッドmixin
+ * 
+ * 特徴:
+ * - Figmaの数値をそのまま入力可能 (672 → fs(672)でレスポンシブ化)
+ * - fs/fsm関数を自動適用してレスポンシブ対応
+ * - fr、auto、%などの単位はそのまま使用
+ * 
+ * 基本的な使用例:
+ * @include grid(
+ *   $cols: (1fr, 672, 1fr),     // 左右1fr、中央672px(レスポンシブ)
+ *   $rows: (auto),               // 行高さ自動
+ *   $gap: 20                     // 20px gap(レスポンシブ)
+ * );
+ * 
+ * モバイル版の使用例:
+ * @include grid(
+ *   $cols: (1fr),                // 1カラム
+ *   $rows: (auto, 200, auto),    // 中央200px固定(fsm関数)
+ *   $gap: 16,                    // 16px gap(fsm関数)
+ *   $mobile: true                // fsm関数を使用
+ * );
+ * 
+ * 複雑なレイアウト例:
+ * @include grid(
+ *   $cols: (240, 1fr, 200),      // 240px, 可変, 200px
+ *   $rows: (80, 1fr, 60),        // ヘッダー80px, 可変, フッター60px
+ *   $gap: 24
+ * );
+ * 
+ * 値の種類:
+ * - 数値のみ(672): fs()またはfsm()でレスポンシブpx値に変換
+ * - px付き(672px): fs()またはfsm()でレスポンシブpx値に変換
+ * - fr系(1fr, 2fr): そのまま使用
+ * - その他(auto, %, min-content等): そのまま使用
+ */
+@mixin grid($cols: (), $rows: (), $gap: 0, $mobile: false) {
+	display: grid;
+
+	// カラムの設定
+	@if length($cols) > 0 {
+		$column-values: ();
+		@each $col in $cols {
+			@if type-of($col) == number and unitless($col) {
+				// 単位なしの数値はfs/fsm関数でレスポンシブpx値に変換
+				@if $mobile {
+					$column-values: append($column-values, fsm($col));
+				} @else {
+					$column-values: append($column-values, fs($col));
+				}
+			} @else if type-of($col) == number and unit($col) == 'px' {
+				// px単位付きの値はfs/fsm関数でレスポンシブに変換
+				$col-value: strip-unit($col);
+				@if $mobile {
+					$column-values: append($column-values, fsm($col-value));
+				} @else {
+					$column-values: append($column-values, fs($col-value));
+				}
+			} @else {
+				// fr、auto、%などはそのまま使用
+				$column-values: append($column-values, $col);
+			}
+		}
+		grid-template-columns: $column-values;
+	}
+
+	// 行の設定
+	@if length($rows) > 0 {
+		$row-values: ();
+		@each $row in $rows {
+			@if type-of($row) == number and unitless($row) {
+				// 単位なしの数値はfs/fsm関数でレスポンシブpx値に変換
+				@if $mobile {
+					$row-values: append($row-values, fsm($row));
+				} @else {
+					$row-values: append($row-values, fs($row));
+				}
+			} @else if type-of($row) == number and unit($row) == 'px' {
+				// px単位付きの値はfs/fsm関数でレスポンシブに変換
+				$row-value: strip-unit($row);
+				@if $mobile {
+					$row-values: append($row-values, fsm($row-value));
+				} @else {
+					$row-values: append($row-values, fs($row-value));
+				}
+			} @else {
+				// fr、auto、%などはそのまま使用
+				$row-values: append($row-values, $row);
+			}
+		}
+		grid-template-rows: $row-values;
+	}
+
+	// ギャップの設定
+	@if $gap > 0 {
+		@if type-of($gap) == number and unitless($gap) {
+			@if $mobile {
+				gap: fsm($gap);
+			} @else {
+				gap: fs($gap);
+			}
+		} @else if type-of($gap) == number and unit($gap) == 'px' {
+			$gap-value: strip-unit($gap);
+			@if $mobile {
+				gap: fsm($gap-value);
+			} @else {
+				gap: fs($gap-value);
+			}
+		} @else {
+			gap: $gap;
+		}
+	}
+}
+
+/**
  * グリッドアイテムの配置を簡単に設定するmixin
  * 使用例:
  * @include grid-item(

@@ -15,6 +15,42 @@
  * );
  */
 /**
+ * Figmaデザインの値をそのまま使えるグリッドmixin
+ * 
+ * 特徴:
+ * - Figmaの数値をそのまま入力可能 (672 → fs(672)でレスポンシブ化)
+ * - fs/fsm関数を自動適用してレスポンシブ対応
+ * - fr、auto、%などの単位はそのまま使用
+ * 
+ * 基本的な使用例:
+ * @include grid(
+ *   $cols: (1fr, 672, 1fr),     // 左右1fr、中央672px(レスポンシブ)
+ *   $rows: (auto),               // 行高さ自動
+ *   $gap: 20                     // 20px gap(レスポンシブ)
+ * );
+ * 
+ * モバイル版の使用例:
+ * @include grid(
+ *   $cols: (1fr),                // 1カラム
+ *   $rows: (auto, 200, auto),    // 中央200px固定(fsm関数)
+ *   $gap: 16,                    // 16px gap(fsm関数)
+ *   $mobile: true                // fsm関数を使用
+ * );
+ * 
+ * 複雑なレイアウト例:
+ * @include grid(
+ *   $cols: (240, 1fr, 200),      // 240px, 可変, 200px
+ *   $rows: (80, 1fr, 60),        // ヘッダー80px, 可変, フッター60px
+ *   $gap: 24
+ * );
+ * 
+ * 値の種類:
+ * - 数値のみ(672): fs()またはfsm()でレスポンシブpx値に変換
+ * - px付き(672px): fs()またはfsm()でレスポンシブpx値に変換
+ * - fr系(1fr, 2fr): そのまま使用
+ * - その他(auto, %, min-content等): そのまま使用
+ */
+/**
  * グリッドアイテムの配置を簡単に設定するmixin
  * 使用例:
  * @include grid-item(
@@ -2153,6 +2189,7 @@ body.page-transitioning .main-content {
   color: #3f3f3f;
   line-height: 2.2;
   max-width: calc(592px + (208) * (100vw - 768px) / (672));
+  font-family: "Noto Sans JP", sans-serif;
 }
 @media (max-width: 767px) {
   .studio-finder {
@@ -2571,6 +2608,158 @@ body.page-transitioning .main-content {
 .about-card--reverse .about-card__content {
   padding: calc(6.4px + (9.6) * (100vw - 768px) / (672)) calc(16px + (24) * (100vw - 768px) / (672)) calc(6.4px + (9.6) * (100vw - 768px) / (672)) calc(6.4px + (9.6) * (100vw - 768px) / (672));
 }
+.home-about-intro {
+  padding: 0 0 calc(59.2px + (20.8) * (100vw - 768px) / (672));
+  position: relative;
+  overflow: hidden;
+}
+.home-about-intro__container {
+  display: grid;
+  grid-template-columns: 1fr calc(497.28px + (174.72) * (100vw - 768px) / (672)) 1fr;
+  grid-template-rows: 1fr;
+  max-width: calc(1036px + (364) * (100vw - 768px) / (672));
+  margin: 0 auto;
+  min-height: calc(444px + (156) * (100vw - 768px) / (672));
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding-bottom: calc(59.2px + (20.8) * (100vw - 768px) / (672));
+}
+.home-about-intro__left {
+  grid-column: 1/2;
+  grid-row: 1/2;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  margin-left: calc(-117px + (-13) * (100vw - 768px) / (672));
+}
+.home-about-intro__left-image {
+  width: calc(176px + (224) * (100vw - 768px) / (672));
+  margin-top: calc(-44px + (-56) * (100vw - 768px) / (672));
+}
+.home-about-intro__left-image img {
+  width: 100%;
+  height: auto;
+  -o-object-fit: contain;
+  object-fit: contain;
+}
+.home-about-intro__center {
+  grid-column: 2/3;
+  grid-row: 1/2;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  text-align: center;
+  padding: calc(29.6px + (10.4) * (100vw - 768px) / (672)) calc(14.8px + (5.2) * (100vw - 768px) / (672));
+  position: relative;
+  z-index: 3;
+  min-width: calc(466.9px + (200.1) * (100vw - 768px) / (672));
+}
+.home-about-intro__content {
+  width: 100%;
+  max-width: calc(444px + (156) * (100vw - 768px) / (672));
+}
+.home-about-intro__title-section {
+  margin-bottom: calc(29.6px + (10.4) * (100vw - 768px) / (672));
+  position: relative;
+}
+.home-about-intro__title {
+  font-family: "Noto Serif JP", serif;
+  font-size: calc(26.64px + (9.36) * (100vw - 768px) / (672));
+  font-weight: 400;
+  color: #333;
+  line-height: 1.4;
+  position: relative;
+}
+.home-about-intro__title::before, .home-about-intro__title::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: calc(44.4px + (15.6) * (100vw - 768px) / (672));
+  height: 2px;
+  background-color: #333;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+.home-about-intro__title::before {
+  left: calc(-14.8px + (-5.2) * (100vw - 768px) / (672));
+}
+.home-about-intro__title::after {
+  right: calc(-14.8px + (-5.2) * (100vw - 768px) / (672));
+}
+.home-about-intro__camera-icon {
+  margin-bottom: calc(29.6px + (10.4) * (100vw - 768px) / (672));
+}
+.home-about-intro__camera-icon img {
+  width: calc(59.2px + (20.8) * (100vw - 768px) / (672));
+  height: calc(59.2px + (20.8) * (100vw - 768px) / (672));
+  -o-object-fit: contain;
+  object-fit: contain;
+}
+.home-about-intro__text {
+  color: #333;
+  line-height: 1.8;
+}
+.home-about-intro__intro {
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: calc(11.84px + (4.16) * (100vw - 768px) / (672));
+  font-weight: 400;
+  margin-bottom: calc(22.2px + (7.8) * (100vw - 768px) / (672));
+  text-align: left;
+}
+.home-about-intro__description {
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: calc(11.84px + (4.16) * (100vw - 768px) / (672));
+  font-weight: 400;
+  line-height: 1.9;
+  text-align: left;
+}
+.home-about-intro__right {
+  grid-column: 3/4;
+  grid-row: 1/2;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  margin-right: calc(-40px + (-60) * (100vw - 768px) / (672));
+  margin-top: calc(120px + (80) * (100vw - 768px) / (672));
+}
+.home-about-intro__right-image {
+  width: calc(176px + (224) * (100vw - 768px) / (672));
+}
+.home-about-intro__right-image img {
+  width: 100%;
+  height: auto;
+  -o-object-fit: contain;
+  object-fit: contain;
+  margin-bottom: calc(-72px + (-48) * (100vw - 768px) / (672));
+}
+
 .recommend-section {
   width: 100%;
   margin-right: calc(96px + (64) * (100vw - 768px) / (672));
