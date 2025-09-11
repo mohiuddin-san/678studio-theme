@@ -1,0 +1,152 @@
+@use '../../base/mixins' as m;
+@use '../../base/variables' as v;
+
+.home-about-intro {
+	padding: 0 0 m.fs(80);
+	position: relative;
+	overflow: hidden;
+
+	&__container {
+		@include m.grid(
+			$cols: (
+				1fr,
+				672,
+				1fr,
+			),
+			$rows: (
+				1fr,
+			)
+		);
+		max-width: m.fs(1400);
+		margin: 0 auto;
+		min-height: m.fs(600);
+		align-items: center;
+		padding-bottom: m.fs(80);
+	}
+
+	&__left {
+		@include m.grid-area(0, 1, 0, 1); // column: 1/2, row: 1/2
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		position: relative;
+		z-index: 2;
+		margin-left: m.fs(-130, 0.9);
+	}
+
+	&__left-image {
+		width: m.fs(400, 0.44);
+		margin-top: m.fs(-100, 0.44);
+
+		img {
+			width: 100%;
+			height: auto;
+			object-fit: contain;
+		}
+	}
+
+	&__center {
+		@include m.grid-area(1, 2, 0, 1); // column: 2/3, row: 1/2
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		text-align: center;
+		padding: m.fs(40) m.fs(20);
+		position: relative;
+		z-index: 3;
+		min-width: m.fs(667, 0.7);
+	}
+
+	&__content {
+		width: 100%;
+		max-width: m.fs(600);
+	}
+
+	&__title-section {
+		margin-bottom: m.fs(40);
+		position: relative;
+	}
+
+	&__title {
+		font-family: v.$ja;
+		font-size: m.fs(36);
+		font-weight: 400;
+		color: #333;
+		line-height: 1.4;
+		position: relative;
+
+		// タイトルの前後に線を追加
+		&::before,
+		&::after {
+			content: '';
+			position: absolute;
+			top: 50%;
+			width: m.fs(60);
+			height: 2px;
+			background-color: #333;
+			transform: translateY(-50%);
+		}
+
+		&::before {
+			left: m.fs(-20);
+		}
+
+		&::after {
+			right: m.fs(-20);
+		}
+	}
+
+	&__camera-icon {
+		margin-bottom: m.fs(40);
+
+		img {
+			width: m.fs(80);
+			height: m.fs(80);
+			object-fit: contain;
+		}
+	}
+
+	&__text {
+		color: #333;
+		line-height: 1.8;
+	}
+
+	&__intro {
+		font-family: v.$ja-sans;
+		font-size: m.fs(16);
+		font-weight: 400;
+		margin-bottom: m.fs(30);
+		text-align: left;
+	}
+
+	&__description {
+		font-family: v.$ja-sans;
+		font-size: m.fs(16);
+		font-weight: 400;
+		line-height: 1.9;
+		text-align: left;
+	}
+
+	&__right {
+		@include m.grid-area(2, 3, 0, 1); // column: 3/4, row: 1/2
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		position: relative;
+		z-index: 2;
+		margin-right: m.fs(-100, 0.4);
+		margin-top: m.fs(200, 0.6);
+	}
+
+	&__right-image {
+		width: m.fs(400, 0.44);
+
+		img {
+			width: 100%;
+			height: auto;
+			object-fit: contain;
+			margin-bottom: m.fs(-120, 0.6);
+		}
+	}
+}
