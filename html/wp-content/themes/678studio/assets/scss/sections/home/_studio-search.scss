@@ -10,7 +10,7 @@
 
 	// モバイル対応
 	@include m.mq(md) {
-		padding: m.fsm(40) 0;
+		padding: m.fsm(40) 0 0;
 	}
 
 	&__container {
@@ -258,12 +258,15 @@
 		width: 100%;
 	}
 
-
 	// カードエリア
 	&__cards {
 		width: calc(100% + m.fs(128, 0.5));
 		@include m.design-grid(
-			$cols: (1fr, 1fr, 1fr),
+			$cols: (
+				1fr,
+				1fr,
+				1fr,
+			),
 			$gap: 24
 		);
 		margin-bottom: m.fs(60, 0.5);
@@ -272,7 +275,9 @@
 		@include m.mq(md) {
 			width: 100%;
 			@include m.design-grid(
-				$cols: (1fr),
+				$cols: (
+					1fr,
+				),
 				$gap: 20
 			);
 			margin-bottom: m.fsm(40);
