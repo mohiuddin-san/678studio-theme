@@ -6,6 +6,11 @@
 	position: relative;
 	overflow: hidden;
 
+	// モバイルでは非表示
+	@media (max-width: 767px) {
+		display: none;
+	}
+
 	&__container {
 		@include m.grid(
 			$cols: (
