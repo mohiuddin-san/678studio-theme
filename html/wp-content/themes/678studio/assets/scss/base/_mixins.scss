@@ -9,6 +9,185 @@
  * 再利用可能なスタイルパターンを定義
  */
 
+/**
+ * f() 
+ * 
+ * 使用例:
+ * font-size: f(24, 18);         // PC:24px, SP:18px, 大画面:vw拡張
+ * width: f(800, 400);           // PC:800px, SP:400px, 大画面:vw拡張
+ * width: f(800);                // PC:800px, SP:600px（自動計算）
+ * padding: f(40, 20);           // PC:40px, SP:20px
+ * 
+ * SP側で特別な値が必要な場合:
+ * width: f(800);                // PC/SP自動スケーリング
+ * @include mq(md) {
+ *   width: 100%;                // SP側だけ特別指定
+ * }
+ * 
+ * 動作：
+ * - 320px: モバイル値（指定 or 自動計算）
+ * - 320~1440px: なめらかにスケーリング
+ * - 1440px: デスクトップ値（Figma準拠）
+ * - 1440px超: vwで比例拡大（デザイン破綻なし）
+ */
+@function f($desktop-value, $mobile-value: null, $max-scale: 1.5) {
+	// %が含まれているかチェック（文字列の場合）
+	$desktop-is-percent: type-of($desktop-value) == string and
+		string.index($desktop-value, '%') != null;
+
+	// %の場合はそのまま返す（レスポンシブ計算不要）
+	@if $desktop-is-percent {
+		@return $desktop-value;
+	}
+
+	// 数値の場合のみ計算
+	@if $mobile-value == null {
+		$mobile-value: $desktop-value * 0.75;
+	}
+
+	// Figmaの基準幅
+	$figma-width: 1440;
+	$mobile-width: 320;
+
+	// マイナス値かどうかを判定
+	$is-negative: $desktop-value < 0;
+
+	@if $is-negative {
+		// マイナス値の場合：絶対値で計算してから最後にマイナス化
+		$abs-desktop: math.abs($desktop-value);
+		$abs-mobile: math.abs($mobile-value);
+
+		// 絶対値で通常のf()計算を実行
+		$abs-max-value: $abs-desktop * $max-scale;
+		$abs-desktop-vw: math.div($abs-desktop, $figma-width) * 100;
+
+		$result: clamp(
+			#{$abs-mobile * 0.6}px,
+			max(
+				calc(
+					#{$abs-mobile}px +
+						#{($abs-desktop - $abs-mobile)} *
+						((100vw - #{$mobile-width}px) / #{($figma-width - $mobile-width)})
+				),
+				#{$abs-desktop-vw}vw
+			),
+			#{$abs-max-value}px
+		);
+
+		// 結果をマイナス化
+		@return calc(-1 * #{$result});
+	} @else {
+		// プラス値の従来通りの処理
+		$max-value: $desktop-value * $max-scale;
+		$desktop-vw: math.div($desktop-value, $figma-width) * 100;
+
+		@return clamp(
+			#{$mobile-value * 0.6}px,
+			max(
+				calc(
+					#{$mobile-value}px + #{($desktop-value - $mobile-value)} *
+						((100vw - #{$mobile-width}px) / #{($figma-width - $mobile-width)})
+				),
+				#{$desktop-vw}vw
+			),
+			#{$max-value}px
+		);
+	}
+}
+
+// =============================================================================
+// 🎯 Grid関連のミクシン
+// =============================================================================
+
+/**
+ * 🎯 g() - グリッド一括設定ミクシン
+ * 
+ * 使用例:
+ * @include g(
+ *   $cols: (f(300), 1fr, f(200)),    // カラム
+ *   $rows: (f(80), 1fr),             // 行  
+ *   $gap: f(20)                      // ギャップ
+ * );
+ * 
+ * @include g($cols: (1fr, 2fr), $gap: f(20));          // シンプル
+ * @include g($cols: (repeat(3, 1fr)), $gap: f(15));    // リピート
+ * @include g($areas: 'header header' 'nav main');       // エリア指定
+ */
+@mixin g(
+	$cols: null,
+	$rows: null,
+	$gap: null,
+	$areas: null,
+	$align: null,
+	$justify: null
+) {
+	display: grid;
+
+	@if $cols {
+		grid-template-columns: $cols;
+	}
+
+	@if $rows {
+		grid-template-rows: $rows;
+	}
+
+	@if $gap {
+		gap: $gap;
+	}
+
+	@if $areas {
+		grid-template-areas: $areas;
+	}
+
+	@if $align {
+		align-items: $align;
+	}
+
+	@if $justify {
+		justify-items: $justify;
+	}
+}
+
+/**
+ * 🎯 gitem() - グリッドアイテム配置ミクシン
+ * 
+ * 使用例:
+ * @include gitem(1, 3, 1, 2);      // col: 1/3, row: 1/2
+ * @include gitem(1, span 2);       // col: 1/span 2, row: auto
+ * @include gitem(1, 3);            // col: 1/3, row: auto
+ * @include gitem($area: 'header'); // grid-area: header
+ * 
+ * パラメータ:
+ * - $col-start: カラム開始位置
+ * - $col-end: カラム終了位置 (span X も可)
+ * - $row-start: 行開始位置
+ * - $row-end: 行終了位置 (span X も可)
+ * - $area: グリッドエリア名
+ */
+@mixin gitem(
+	$col-start: null,
+	$col-end: null,
+	$row-start: null,
+	$row-end: null,
+	$area: null
+) {
+	@if $area {
+		grid-area: $area;
+	} @else {
+		@if $col-start and $col-end {
+			grid-column: #{$col-start} / #{$col-end};
+		} @else if $col-start {
+			grid-column: $col-start;
+		}
+
+		@if $row-start and $row-end {
+			grid-row: #{$row-start} / #{$row-end};
+		} @else if $row-start {
+			grid-row: $row-start;
+		}
+	}
+}
+
 // Breakpoints
 $breakpoints: (
 	'xsm': 320px,
@@ -132,8 +311,22 @@ $breakpoints: (
  * - px付き(672px): fs()またはfsm()でレスポンシブpx値に変換
  * - fr系(1fr, 2fr): そのまま使用
  * - その他(auto, %, min-content等): そのまま使用
+ * 
+ * 🆕 新しい使い方（推奨）:
+ * @include grid((f(300), 1fr, f(200)), $gap: f(20));
+ * - f()関数でレスポンシブ値を簡単指定
+ * - 既存のfs/fsm形式も引き続き対応
  */
-@mixin grid($cols: (), $rows: (), $gap: 0, $mobile: false) {
+@mixin grid(
+	$cols: (),
+	$rows: (),
+	$gap: 0,
+	$areas: null,
+	$auto-flow: null,
+	$align: null,
+	$justify: null,
+	$mobile: false
+) {
 	display: grid;
 
 	// カラムの設定
@@ -208,6 +401,25 @@ $breakpoints: (
 		} @else {
 			gap: $gap;
 		}
+	}
+
+	// 🆕 グリッドエリアの設定
+	@if $areas {
+		grid-template-areas: $areas;
+	}
+
+	// 🆕 自動フローの設定
+	@if $auto-flow {
+		grid-auto-flow: $auto-flow;
+	}
+
+	// 🆕 アイテムの配置
+	@if $align {
+		align-items: $align;
+	}
+
+	@if $justify {
+		justify-items: $justify;
 	}
 }
 
@@ -391,6 +603,40 @@ $breakpoints: (
 }
 
 /**
+ * 統一レスポンシブ関数 - PC/SPを自動判定
+ * 
+ * @param {Number} $value - デザインカンプの値
+ * @param {Number} $sp-value - モバイル用の値（省略可）
+ * @return {String} - レスポンシブな値
+ * 
+ * 使用例:
+ * padding: r(40);          // PC/SP自動切り替え
+ * padding: r(40, 20);      // PC:40px, SP:20px
+ */
+@function r($value, $sp-value: null) {
+	@if $sp-value == null {
+		$sp-value: $value;
+	}
+	// PC/SPで異なる値を返すためにCSS変数を使用
+	@return var(--r-#{$value}-#{$sp-value}, #{fs($value)});
+}
+
+/**
+ * レスポンシブ値用のCSS変数生成mixin
+ * bodyまたはルート要素で使用
+ */
+@mixin r-vars() {
+	// デスクトップ用
+	@include mq(md, min) {
+		--r-mode: desktop;
+	}
+	// モバイル用
+	@include mq(md) {
+		--r-mode: mobile;
+	}
+}
+
+/**
  * 768px以下（モバイル）専用のレスポンシブサイズ関数
  * 比率を維持して画面幅に比例してスケール
  * 
@@ -402,6 +648,74 @@ $breakpoints: (
 	$vw-ratio: math.div($size-480, 480) * 100;
 	// 360px以下では段階的に縮小、それ以上では比率維持
 	@return clamp(#{$size-480 * 0.6}px, #{$vw-ratio}vw, #{$size-480 * 1.8}px);
+}
+
+/**
+ * スペーシング専用mixin - padding/marginを簡単に設定
+ * 
+ * @param {String} $prop - 'padding' or 'margin'
+ * @param {List} $values - 1〜4個の値
+ * 
+ * 使用例:
+ * @include spacing(padding, 40);          // 全方向40px
+ * @include spacing(padding, 40 20);       // 上下40px, 左右20px
+ * @include spacing(margin, 40 20 30 10);  // 上40px, 右20px, 下30px, 左10px
+ */
+@mixin spacing($prop, $values...) {
+	$length: length($values);
+
+	@if $length == 1 {
+		#{$prop}: fs(nth($values, 1));
+		@include mq(md) {
+			#{$prop}: fsm(nth($values, 1));
+		}
+	} @else if $length == 2 {
+		#{$prop}: fs(nth($values, 1)) fs(nth($values, 2));
+		@include mq(md) {
+			#{$prop}: fsm(nth($values, 1)) fsm(nth($values, 2));
+		}
+	} @else if $length == 3 {
+		#{$prop}: fs(nth($values, 1)) fs(nth($values, 2)) fs(nth($values, 3));
+		@include mq(md) {
+			#{$prop}: fsm(nth($values, 1)) fsm(nth($values, 2)) fsm(nth($values, 3));
+		}
+	} @else if $length == 4 {
+		#{$prop}: fs(nth($values, 1))
+			fs(nth($values, 2))
+			fs(nth($values, 3))
+			fs(nth($values, 4));
+		@include mq(md) {
+			#{$prop}: fsm(nth($values, 1)) fsm(nth($values, 2)) fsm(nth($values, 3))
+				fsm(nth($values, 4));
+		}
+	}
+}
+
+/**
+ * タイポグラフィ専用mixin
+ * 
+ * 使用例:
+ * @include typo(24);              // font-size: fs(24)
+ * @include typo(24, 18);           // PC:24px, SP:18px
+ * @include typo(24, 18, 1.6, 700); // サイズ、行高、太さ指定
+ */
+@mixin typo($pc-size, $sp-size: null, $line-height: 1.6, $weight: null) {
+	font-size: fs($pc-size);
+	line-height: $line-height;
+
+	@if $weight {
+		font-weight: $weight;
+	}
+
+	@if $sp-size {
+		@include mq(md) {
+			font-size: fsm($sp-size);
+		}
+	} @else {
+		@include mq(md) {
+			font-size: fsm($pc-size);
+		}
+	}
 }
 
 // Flexbox center mixin

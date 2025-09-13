@@ -1,0 +1,116 @@
+@use '../base/mixins' as m;
+@use '../base/variables' as v;
+
+// 🚀 シンプルテストページ
+.test-responsive-page {
+	padding: m.f(40, 20);
+
+	.test-title {
+		font-size: m.f(32, 24);
+		color: #333;
+		margin-bottom: m.f(20);
+		text-align: center;
+	}
+
+	.test-box {
+		width: m.f(100%, 200);
+		padding: m.f(30, 20);
+		margin: m.f(20) auto;
+		background: #f0f8ff;
+		border-radius: m.f(12);
+		text-align: center;
+
+		h3 {
+			font-size: m.f(24, 16);
+			color: #2c3e50;
+			margin-bottom: m.f(15);
+		}
+
+		p {
+			font-size: m.f(16, 14);
+			color: #666;
+			line-height: 1.6;
+		}
+	}
+
+	.test-special {
+		width: m.f(600);
+		padding: m.f(25);
+		margin: m.f(15) auto;
+		background: #fff0f5;
+		border-radius: m.f(8);
+
+		@include m.mq(md) {
+			width: 100%; // SP側だけ特別指定
+		}
+
+		h3 {
+			font-size: m.f(20, 16);
+			color: #e91e63;
+		}
+
+		p {
+			font-size: m.f(14, 12);
+			color: #888;
+		}
+	}
+
+	// 🎯 3列グリッドテスト - 重なりデモ
+	.test-grid-container {
+		margin: m.f(40) auto;
+
+		@include m.g(
+			$cols: (
+				f(200),
+				1fr,
+				f(200),
+			),
+			$rows: (
+				1fr,
+				1fr,
+			),
+			$gap: m.f(20, 15)
+		);
+
+		.grid-item {
+			padding: m.f(30, 20);
+			border-radius: m.f(12);
+			text-align: center;
+
+			h4 {
+				font-size: m.f(20, 16);
+				margin-bottom: m.f(10);
+			}
+
+			p {
+				font-size: m.f(14, 12);
+				line-height: 1.6;
+			}
+		}
+
+		.item1 {
+			@include m.gitem(1, 2, 1, 4); // col: 1/2, row: 1/2
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			color: white;
+			position: relative;
+			z-index: 1;
+		}
+
+		.item2 {
+			@include m.gitem(2, 3, 1, 2); // col: 2/3, row: 1/2 (item1の上に重ねる)
+			background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+			color: white;
+			position: relative;
+			z-index: 2;
+			transform: translateX(m.f(-200, -100));
+		}
+
+		.item3 {
+			@include m.gitem(3, 4, 1, 2); // col: 3/4, row: 1/2
+			background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+			color: white;
+			position: relative;
+			z-index: 1;
+		}
+	}
+}
