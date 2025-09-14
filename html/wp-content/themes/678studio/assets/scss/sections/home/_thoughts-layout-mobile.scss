@@ -58,12 +58,12 @@
 		margin-bottom: m.fsm(10);
 		display: flex;
 		justify-content: flex-start;
-		box-shadow: 20px 20px 0 0 #fcf6de;
+		box-shadow: 40px 40px 0 0 #fcf6de;
 
 		img {
-			width: 90%;
+			width: 100%;
 			height: auto;
-			object-fit: cover; // coverからcontainに変更
+			object-fit: cover;
 			// iOS Safari画像回転対策
 			max-width: 100%;
 			display: block;
@@ -107,7 +107,7 @@
 
 	.title-section__title {
 		font-family: v.$ja;
-		font-size: m.fsm(28);
+		font-size: m.fsm(25);
 		font-weight: 400;
 		color: #333;
 		line-height: 1.4;

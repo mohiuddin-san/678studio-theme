@@ -31,10 +31,11 @@
 	// 左側のボックス
 	&__left {
 		grid-column: 1;
-		grid-row: 1 / 4;
+		grid-row: 1 / 5;
 		background: #fff; // 確認用の背景色
 		margin-top: m.fs(-48, 0.5);
 		padding-left: m.fs(160, 0.3);
+		margin-bottom: m.fs(80, 0.5);
 	}
 
 	// 右側のボックス
@@ -62,7 +63,13 @@
 	// コンポーネント自体は100%幅、padding無し
 	width: 100%;
 	padding: 0;
-	gap: m.fs(12, 0.5);
+	gap: m.fs(40, 0.5);
+	margin-left: m.fs(-50, 0.5);
+
+	// モバイル対応
+	@include m.mq(md) {
+		gap: m.fsm(20);
+	}
 
 	// aboutセクション専用のスタイル
 	.title-section__label {
@@ -109,7 +116,7 @@
 	// コンテンツエリア
 	&__content {
 		flex: 1;
-		padding: m.fs(16, 0.4) m.fs(16, 0.4) m.fs(16, 0.4) m.fs(40, 0.4);
+		padding: m.fs(16, 0.4) m.fs(24, 0.4) m.fs(16, 0.4) m.fs(24, 0.4);
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
@@ -140,7 +147,7 @@
 	// 画像右側配置用のリバースレイアウト
 	&--reverse {
 		.about-card__content {
-			padding: m.fs(16, 0.4) m.fs(40, 0.4) m.fs(16, 0.4) m.fs(16, 0.4);
+			padding: m.fs(16, 0.4) m.fs(24, 0.4) m.fs(16, 0.4) m.fs(24, 0.4);
 		}
 	}
 
@@ -152,5 +159,55 @@
 	}
 
 	&--experience {
+	}
+}
+
+// About Section Button (Outside of grid)
+// =============================================================================
+.about-section-button-wrapper {
+	width: 100%;
+	padding: m.fs(60, 0.5) 0;
+	display: flex;
+	justify-content: center;
+
+	// モバイルでは非表示（about-mobile専用ボタンを使用）
+	@include m.mq(md) {
+		display: none;
+	}
+}
+
+.about-section-button {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.about-details-button {
+	display: inline-block;
+	font-size: m.fs(20);
+	font-family: v.$ja-sans;
+	font-weight: 400;
+	color: #a99f3c;
+	background: #fff;
+	border: 1px solid #a99f3c;
+	border-radius: 50px;
+	padding: m.fs(14, 0.4) m.fs(32, 0.5);
+	min-width: 298px;
+	text-align: center;
+	letter-spacing: 0.2em;
+	text-decoration: none;
+	transition: all 0.3s ease;
+	cursor: pointer;
+
+	// モバイル対応
+	@include m.mq(md) {
+		font-size: m.fsm(18);
+		padding: m.fsm(12) m.fsm(24);
+		min-width: m.fsm(240);
+	}
+
+	&:hover {
+		background: #a99f3c;
+		color: #fff;
 	}
 }

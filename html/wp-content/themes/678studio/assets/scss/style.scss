@@ -18,6 +18,7 @@
 
 // Sections
 @use 'sections/home/hero';
+@use 'sections/home/hero-cta-mobile';
 @use 'sections/home/studio-finder';
 @use 'sections/home/media-slider';
 @use 'sections/home/thoughts-layout';
@@ -29,6 +30,8 @@
 @use 'sections/stores/store-search';
 @use 'sections/home/thoughts-layout-mobile';
 @use 'sections/home/about-mobile';
+@use 'sections/home/helpful-info';
+@use 'sections/home/egao-studio';
 @use 'sections/home/gallery';
 @use 'sections/home/gallery-mobile';
 @use 'sections/home/plan';

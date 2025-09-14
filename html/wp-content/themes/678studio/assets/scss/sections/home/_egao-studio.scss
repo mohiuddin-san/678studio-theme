@@ -3,7 +3,7 @@
 
 // Egao Studio Section
 .egao-studio {
-	padding: m.f(80) m.f(160, $ratio: 0.2);
+	padding: m.f(80) m.f(160, $ratio: 0.1);
 	overflow: hidden;
 
 	@include m.mq(md) {
@@ -37,36 +37,81 @@
 	}
 
 	&__title-box {
-		margin-bottom: m.f(30);
+		position: relative;
+		width: m.f(360);
+		margin-bottom: m.f(60);
+		text-align: center;
+		padding: m.f(40) m.f(40);
 
 		@include m.mq(md) {
-			margin-bottom: m.fsm(24);
+			width: m.f(264, 260);
+			margin: 0 auto m.f(24) auto;
+			padding: m.f(30) m.f(20) m.f(30);
+			margin-top: m.f(40);
+		}
+
+		// 4つの線を追加
+		&::before,
+		&::after {
+			content: '';
+			position: absolute;
+		}
+
+		// 左上の角の線（上と左）
+		&::before {
+			top: 0;
+			left: 0;
+			width: m.f(272);
+			height: m.f(96);
+			border-top: m.f(1.5) solid #333;
+			border-left: m.f(1.5) solid #333;
+
+			@include m.mq(md) {
+				width: m.f(120);
+				height: m.f(72);
+			}
+		}
+
+		// 右下の角の線（下と右）
+		&::after {
+			bottom: 0;
+			right: 0;
+			width: m.f(272);
+			height: m.f(96);
+			border-bottom: m.f(1.5) solid #333;
+			border-right: m.f(1.5) solid #333;
+
+			@include m.mq(md) {
+				width: m.f(120);
+				height: m.f(72);
+			}
 		}
 	}
 
 	&__subtitle {
-		font-size: m.f(14);
-		color: #666;
+		font-size: m.f(20);
 		font-weight: 400;
 		font-family: v.$ja-sans;
 		margin-bottom: m.f(8);
+		letter-spacing: 0.15em;
 
 		@include m.mq(md) {
-			font-size: m.fsm(12);
-			margin-bottom: m.fsm(6);
+			font-size: m.f(16, 15);
+			margin-bottom: m.f(6);
 		}
 	}
 
 	&__title {
-		font-size: m.f(36);
+		font-size: m.f(39.06);
 		color: #333;
-		font-weight: 700;
-		font-family: v.$ja-sans;
+		font-weight: 400;
+		font-family: v.$ja;
 		line-height: 1.3;
+		letter-spacing: 0.1em;
 		margin: 0;
 
 		@include m.mq(md) {
-			font-size: m.fsm(28);
+			font-size: m.f(25, 24);
 		}
 	}
 
@@ -78,8 +123,10 @@
 		line-height: 1.8;
 
 		@include m.mq(md) {
-			font-size: m.fsm(14);
+			font-size: m.f(16, 14);
 			line-height: 1.7;
+			text-align: left;
+			padding-top: m.f(40);
 		}
 
 		p {
@@ -101,13 +148,17 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		width: m.f(508.5);
+		width: m.f(508.5, $ratio: 0.4);
 		margin-right: m.f(-300);
 		transform: translateY(m.f(200));
 
 		@include m.mq(md) {
 			grid-column: 1;
 			margin-top: m.fsm(20);
+			margin-right: 0;
+			transform: translateY(0);
+			margin: 0 auto;
+			width: m.f(328.7, 320);
 		}
 	}
 

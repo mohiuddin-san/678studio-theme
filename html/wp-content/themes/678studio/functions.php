@@ -432,10 +432,16 @@ function theme_678studio_styles() {
     // Enqueue header script for mobile menu (only on frontend)
     if (!is_admin()) {
         $header_version = WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/header.js') : '1.0.0';
-        wp_enqueue_script('678studio-header', 
-            get_template_directory_uri() . '/assets/js/header.js', 
+        wp_enqueue_script('678studio-header',
+            get_template_directory_uri() . '/assets/js/header.js',
             [], $header_version, true);
-            
+
+        // Viewport Controller (global)
+        $viewport_version = WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/viewport-controller.js') : '1.0.0';
+        wp_enqueue_script('678studio-viewport-controller',
+            get_template_directory_uri() . '/assets/js/viewport-controller.js',
+            [], $viewport_version, true);
+
         // Page Transitions Script (global)
         $transitions_version = WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/modules/page-transitions.js') : '1.0.0';
         wp_enqueue_script('page-transitions', 
@@ -1436,7 +1442,10 @@ update_option('studio_sitemap_flushed', true);
 
 // Load WP-CLI commands if WP-CLI is available
 if (defined('WP_CLI') && WP_CLI) {
-require_once get_template_directory() . '/inc/wp-cli-studio-commands.php';
+    $wp_cli_commands_file = get_template_directory() . '/inc/wp-cli-studio-commands.php';
+    if (file_exists($wp_cli_commands_file)) {
+        require_once $wp_cli_commands_file;
+    }
 }
 
 

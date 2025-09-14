@@ -20,13 +20,17 @@
 
           <div class="thoughts-section__title scroll-animate-item" data-delay="0.6">
             <?php get_template_part('template-parts/components/thoughts-title', null, [
-                        'title' => 'ロクナナハチ撮影<br>への想い'
+                        'title' => 'シニア世代の写真を<br>
+思いを込めて撮影する。<br>
+そんな写真館と出会えます'
                     ]); ?>
           </div>
 
           <div class="thoughts-section__content scroll-animate-item" data-delay="0.8">
             <?php get_template_part('template-parts/components/thoughts-text', null, [
-                        'text' => '10年以上に渡り培ってきたシニア撮影の技術とノウハウを全国の写真館の皆様と共有し、より多くのシニアの方々に人生の大切な瞬間を美しく残していただきたいという想いから、678（ロクナナハチ）撮影の監修を行っています。'
+                        'text' => 'シニア世代の方に写真館で撮影を楽しんでいただきたいといっても、多くの写真館で子どもの写真が主に飾られており、「自分は対象ではないのかも」と感じ、撮影に踏み出しにくいことがあります。
+当サイトは、シニア世代の撮影を行う写真館が登録している専用サイトです。
+近隣の店舗検索からそのまま予約もできるので、「撮りたい」と思ったそのときの気持ちを大切に、写真館を探していただけます。'
                     ]); ?>
           </div>
         </div>

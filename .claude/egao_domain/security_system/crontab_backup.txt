@@ -1,0 +1,29 @@
+
+#キャッシュ自動削除
+36 4 * * * find xb592942.xbiz.jp/public_html/test/wp-content/cache/* -type f -mtime +3 -not -name '*.php' -not -name '*.jpg' -not -name '*.css' -exec sleep 0.01 \; -print 2>/dev/null | xargs -r rm
+#キャッシュ自動削除
+50 6 * * * find xb592942.xbiz.jp/public_html/egao-salon.jp/wp-content/cache/* -type f -mtime +3 -not -name '*.php' -not -name '*.jpg' -not -name '*.css' -exec sleep 0.01 \; -print 2>/dev/null | xargs -r rm
+#キャッシュ自動削除
+22 4 * * * find egao-salon.jp/public_html/wp-content/cache/* -type f -mtime +3 -not -name '*.php' -not -name '*.jpg' -not -name '*.css' -exec sleep 0.01 \; -print 2>/dev/null | xargs -r rm
+#キャッシュ自動削除
+54 7 * * * find egao-salon.jp/public_html/new/wp-content/cache/* -type f -mtime +3 -not -name '*.php' -not -name '*.jpg' -not -name '*.css' -exec sleep 0.01 \; -print 2>/dev/null | xargs -r rm
+#キャッシュ自動削除
+56 5 * * * find egao-salon.jp/public_html/wp-content/cache/* -type f -mtime +3 -not -name '*.php' -not -name '*.jpg' -not -name '*.css' -exec sleep 0.01 \; -print 2>/dev/null | xargs -r rm
+#キャッシュ自動削除
+52 4 * * * find egao-salon.jp/public_html/wordpress/wp-content/cache/* -type f -mtime +3 -not -name '*.php' -not -name '*.jpg' -not -name '*.css' -exec sleep 0.01 \; -print 2>/dev/null | xargs -r rm
+#キャッシュ自動削除
+40 4 * * * find san-developer.com/public_html/egaotest/wp-content/cache/* -type f -mtime +3 -not -name '*.php' -not -name '*.jpg' -not -name '*.css' -exec sleep 0.01 \; -print 2>/dev/null | xargs -r rm
+#キャッシュ自動削除
+55 7 * * * find san-developer.com/public_html/koensha/recruit/wp-content/cache/* -type f -mtime +3 -not -name '*.php' -not -name '*.jpg' -not -name '*.css' -exec sleep 0.01 \; -print 2>/dev/null | xargs -r rm
+#キャッシュ自動削除
+49 7 * * * find egao-salon.jp/public_html/sugamo-studio/wp-content/cache/* -type f -mtime +3 -not -name '*.php' -not -name '*.jpg' -not -name '*.css' -exec sleep 0.01 \; -print 2>/dev/null | xargs -r rm
+#キャッシュ自動削除
+22 6 * * * find 678photo.com/public_html/wp-content/cache/* -type f -mtime +3 -not -name '*.php' -not -name '*.jpg' -not -name '*.css' -exec sleep 0.01 \; -print 2>/dev/null | xargs -r rm
+#キャッシュ自動削除
+20 6 * * * find san-developer.com/public_html/maninail/wp-content/cache/* -type f -mtime +3 -not -name '*.php' -not -name '*.jpg' -not -name '*.css' -exec sleep 0.01 \; -print 2>/dev/null | xargs -r rm
+# WordPress User Account Monitor - Every 5 minutes
+*/5 * * * * /usr/bin/php7.4 /home/xb592942/security_monitor/user_monitor.php >/dev/null 2>&1
+# Malware Re-infection Monitor - Every 30 minutes
+*/30 * * * * /usr/bin/php7.4 /home/xb592942/security_monitor/malware_monitor.php >/dev/null 2>&1
+# File Integrity Monitor - Every hour
+0 * * * * /usr/bin/php7.4 /home/xb592942/security_monitor/file_change_monitor.php >/dev/null 2>&1

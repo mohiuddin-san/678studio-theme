@@ -5,52 +5,52 @@
 @use '../base/variables' as v;
 
 .privacy-policy {
-    padding: m.fs(80, 0.5) 0;
+    padding: m.f(80) 0;
     background-color: #f8f9fa;
 
     @include m.mq(md) {
-        padding: m.fsm(40) 0;
+        padding: m.f(40) 0;
     }
 
     &__container {
-        max-width: 800px;
+        max-width: m.f(800);
         margin: 0 auto;
-        padding: 0 m.fs(40, 0.5);
+        padding: 0 m.f(40);
 
         @include m.mq(md) {
-            padding: 0 m.fsm(20);
+            padding: 0 m.f(20);
         }
     }
 
     &__header {
         text-align: center;
-        margin-bottom: m.fs(60, 0.5);
+        margin-bottom: m.f(60);
 
         @include m.mq(md) {
-            margin-bottom: m.fsm(40);
+            margin-bottom: m.f(40);
         }
     }
 
     &__title {
-        font-size: m.fs(32, 0.8);
+        font-size: m.f(32);
         font-family: v.$ja-sans;
         font-weight: 700;
         color: #333;
-        margin-bottom: m.fs(16, 0.5);
+        margin-bottom: m.f(16);
 
         @include m.mq(md) {
-            font-size: m.fsm(24);
-            margin-bottom: m.fsm(12);
+            font-size: m.f(24);
+            margin-bottom: m.f(12);
         }
     }
 
     &__date {
-        font-size: m.fs(14, 0.8);
+        font-size: m.f(14);
         color: #666;
         margin: 0;
 
         @include m.mq(md) {
-            font-size: m.fsm(12);
+            font-size: m.f(12);
         }
     }
 
@@ -59,10 +59,10 @@
     }
 
     &__section {
-        margin-bottom: m.fs(40, 0.5);
+        margin-bottom: m.f(40);
 
         @include m.mq(md) {
-            margin-bottom: m.fsm(30);
+            margin-bottom: m.f(30);
         }
 
         &:last-child {
@@ -71,30 +71,31 @@
     }
 
     &__section-title {
-        font-size: m.fs(20, 0.8);
+        font-size: m.f(20);
         font-family: v.$ja-sans;
         font-weight: 600;
         color: #333;
-        margin-bottom: m.fs(16, 0.5);
-        padding-bottom: m.fs(8, 0.5);
-        border-bottom: 2px solid #a5c3cf;
+        margin-bottom: m.f(16);
+        padding-bottom: m.f(8);
+        border-bottom: m.f(2) solid #a5c3cf;
 
         @include m.mq(md) {
-            font-size: m.fsm(18);
-            margin-bottom: m.fsm(12);
-            padding-bottom: m.fsm(6);
+            font-size: m.f(18);
+            margin-bottom: m.f(12);
+            padding-bottom: m.f(6);
         }
     }
 
     &__text {
-        font-size: m.fs(16, 0.8);
+        font-size: m.f(16);
         color: #333;
+        font-family: v.$ja-sans;
         line-height: 1.8;
-        margin-bottom: m.fs(16, 0.5);
+        margin-bottom: m.f(16);
 
         @include m.mq(md) {
-            font-size: m.fsm(14);
-            margin-bottom: m.fsm(12);
+            font-size: m.f(14);
+            margin-bottom: m.f(12);
         }
 
         &:last-child {
@@ -106,29 +107,30 @@
             text-decoration: underline;
 
             &:hover {
-                color: darken(#a5c3cf, 10%);
+                color: #8bb3c4;
             }
         }
     }
 
     &__list {
-        margin: m.fs(16, 0.5) 0;
-        padding-left: m.fs(24, 0.5);
+        margin: m.f(16) 0;
+        padding-left: m.f(24);
 
         @include m.mq(md) {
-            margin: m.fsm(12) 0;
-            padding-left: m.fsm(20);
+            margin: m.f(12) 0;
+            padding-left: m.f(20);
         }
 
         li {
-            font-size: m.fs(16, 0.8);
+            font-size: m.f(16);
             color: #333;
+            font-family: v.$ja-sans;
             line-height: 1.8;
-            margin-bottom: m.fs(8, 0.5);
+            margin-bottom: m.f(8);
 
             @include m.mq(md) {
-                font-size: m.fsm(14);
-                margin-bottom: m.fsm(6);
+                font-size: m.f(14);
+                margin-bottom: m.f(6);
             }
 
             &:last-child {
@@ -138,36 +140,35 @@
     }
 
     &__contact {
-        background-color: #f8f9fa;
-        padding: m.fs(20, 0.5);
-        border-radius: m.fs(8, 0.5);
+        background-color: #e9edf0;
+        padding: m.f(24);
+        border: m.f(1) solid #d1d9e0;
 
         @include m.mq(md) {
-            padding: m.fsm(16);
-            border-radius: m.fsm(6);
+            padding: m.f(20);
         }
     }
 
     &__contact-info {
-        margin-top: m.fs(16, 0.5);
-        padding: m.fs(16, 0.5);
+        margin-top: m.f(20);
+        padding: m.f(20);
         background-color: #fff;
-        border-radius: m.fs(6, 0.5);
+        border: m.f(1) solid #e0e6ea;
 
         @include m.mq(md) {
-            margin-top: m.fsm(12);
-            padding: m.fsm(12);
-            border-radius: m.fsm(4);
+            margin-top: m.f(16);
+            padding: m.f(16);
         }
 
         p {
-            font-size: m.fs(14, 0.8);
+            font-size: m.f(14);
             color: #333;
-            margin-bottom: m.fs(8, 0.5);
+            font-family: v.$ja-sans;
+            margin-bottom: m.f(8);
 
             @include m.mq(md) {
-                font-size: m.fsm(13);
-                margin-bottom: m.fsm(6);
+                font-size: m.f(13);
+                margin-bottom: m.f(6);
             }
 
             &:last-child {
@@ -181,26 +182,27 @@
     }
 
     &__footer {
-        margin-top: m.fs(60, 0.5);
-        padding-top: m.fs(30, 0.5);
-        border-top: 1px solid #eee;
+        margin-top: m.f(60);
+        padding-top: m.f(30);
+        border-top: m.f(1) solid #e0e6ea;
         text-align: center;
 
         @include m.mq(md) {
-            margin-top: m.fsm(40);
-            padding-top: m.fsm(20);
+            margin-top: m.f(40);
+            padding-top: m.f(20);
         }
     }
 
     &__company {
-        font-size: m.fs(16, 0.8);
+        font-size: m.f(16);
         font-weight: 600;
         color: #333;
-        margin-bottom: m.fs(8, 0.5);
+        font-family: v.$ja-sans;
+        margin-bottom: m.f(8);
 
         @include m.mq(md) {
-            font-size: m.fsm(14);
-            margin-bottom: m.fsm(6);
+            font-size: m.f(14);
+            margin-bottom: m.f(6);
         }
     }
 }

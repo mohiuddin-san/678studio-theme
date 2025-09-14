@@ -24,12 +24,11 @@ $figma-mobile: 480 !default; // モバイル基準サイズ
  * f() - シンプル＆パワフルなレスポンシブ関数
  *
  * 使用例:
- * font-size: f(24, 18);        // PC:24px, SP:18px
- * width: f(800, 400);          // PC:800px, SP:400px
- * padding: f(40);              // 自動計算：PC:40px, SP:30px (0.75倍)
+ * font-size: f(24, 18);        // PC:24px, SP:18px（明示指定）
+ * width: f(800, 400);          // PC:800px, SP:400px（明示指定）
+ * padding: f(40);              // 自動計算：PC:40px, SP:30px (デフォルト0.75倍)
  * margin: f(-20, -15);         // マイナス値対応
- * margin: f(40, $ratio: 0.6);  // カスタム縮小率0.6で自動計算：PC:40px, SP:24px
- * padding: f(60, $ratio: 0.8); // カスタム縮小率0.8で自動計算：PC:60px, SP:48px
+ * padding: f(160, $ratio: 0.2);  // カスタム縮小率：PC:160px, SP:32px (0.2倍)
  *
  * プロジェクト設定変更例:
  * $figma-desktop: 1920;        // 4Kディスプレイ用
@@ -40,9 +39,8 @@ $figma-mobile: 480 !default; // モバイル基準サイズ
  * - 小さい画面〜大きい画面まで滑らかにスケーリング
  * - Figmaサイズ超: vwで比例拡大（デザイン破綻なし）
  * - マイナス値完全対応
- * - カスタム縮小率対応
  */
-@function f($desktop-value, $mobile-value: null, $max-scale: 2, $ratio: 0.75) {
+@function f($desktop-value, $mobile-value: null, $ratio: null, $max-scale: 2) {
 	// %が含まれているかチェック（文字列の場合）
 	$desktop-is-percent: type-of($desktop-value) == string and
 		string.index($desktop-value, '%') != null;
@@ -54,7 +52,11 @@ $figma-mobile: 480 !default; // モバイル基準サイズ
 
 	// 数値の場合のみ計算
 	@if $mobile-value == null {
-		$mobile-value: $desktop-value * $ratio;
+		@if $ratio != null {
+			$mobile-value: $desktop-value * $ratio;
+		} @else {
+			$mobile-value: $desktop-value * 0.75;
+		}
 	}
 
 	// マイナス値かどうかを判定
@@ -80,24 +82,34 @@ $figma-mobile: 480 !default; // モバイル基準サイズ
 			),
 			#{$abs-desktop * $max-scale}px
 		);
-
 		// 結果をマイナス化
 		@return calc(-1 * #{$result});
 	} @else {
 		// プラス値の処理
-		$desktop-vw: math.div($desktop-value, $figma-desktop) * 100;
+		@if $ratio != null {
+			// $ratioが指定された場合はfs関数と同じシンプルなcalc()を使用
+			@return calc(
+				#{$mobile-value}px + (#{$desktop-value - $mobile-value}) *
+					((100vw - #{$figma-mobile}px) / (#{$figma-desktop - $figma-mobile}))
+			);
+		} @else {
+			// 従来通りの処理（vw上限を適切な値に調整）
+			$desktop-vw: math.div($desktop-value, $figma-desktop) * 100;
+			// vw上限を計算値の1.2倍程度に制限
+			$reasonable-vw: math.min($desktop-vw, ($mobile-value * 2) / 1440 * 100);
 
-		@return clamp(
-			#{$mobile-value * 0.6}px,
-			max(
-				calc(
-					#{$mobile-value}px + #{($desktop-value - $mobile-value)} *
-						((100vw - #{$figma-mobile}px) / #{($figma-desktop - $figma-mobile)})
+			@return clamp(
+				#{$mobile-value * 0.6}px,
+				max(
+					calc(
+						#{$mobile-value}px + #{($desktop-value - $mobile-value)} *
+							((100vw - #{$figma-mobile}px) / (#{$figma-desktop - $figma-mobile}))
+					),
+					#{$reasonable-vw}vw
 				),
-				#{$desktop-vw}vw
-			),
-			#{$desktop-value * $max-scale}px
-		);
+				#{$desktop-value * $max-scale}px
+			);
+		}
 	}
 }
 

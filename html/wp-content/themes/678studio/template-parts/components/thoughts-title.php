@@ -20,7 +20,6 @@ $title = $args['title'] ?? '';
             if (!empty(trim($line))) {
                 echo '<span class="thoughts-title__line">';
                 echo esc_html(trim($line));
-                echo '<img class="thoughts-title__underline" src="' . get_template_directory_uri() . '/assets/images/underline.svg" alt="" />';
                 echo '</span>';
             }
         }

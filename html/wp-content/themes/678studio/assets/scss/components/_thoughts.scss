@@ -49,7 +49,7 @@
 	&__text {
 		color: #3f3f3f;
 		font-family: v.$ja;
-		font-size: m.fs(39.06, 0.6);
+		font-size: m.fs(31.25, 0.6);
 		font-style: normal;
 		font-weight: 500;
 		line-height: 200%; /* 78.12px */
@@ -58,44 +58,28 @@
 		display: block; // blockに変更
 		-webkit-box-sizing: border-box;
 		box-sizing: border-box;
+		letter-spacing: 1px;
 
 		// モバイル対応
 		@include m.mq(md) {
 			font-size: m.fsm(28);
-			line-height: 1.8;
+			line-height: 1.4;
 			letter-spacing: m.fsm(2);
 		}
 	}
 
 	&__line {
-		position: relative;
 		display: block;
-		width: 100%; // 幅100%
-		padding-bottom: m.fs(10, 0.6); // 下線用のスペース
+		width: 100%;
+		border-bottom: 0.75px solid #000000;
+		padding-bottom: m.f(10); // 下線とテキストの間隔
 		-webkit-box-sizing: border-box;
 		box-sizing: border-box;
-		// iOS Safari対策
-		-webkit-transform: translateZ(0);
-		transform: translateZ(0);
 
 		// モバイル対応
 		@include m.mq(md) {
-			padding-bottom: m.fsm(10);
+			padding-bottom: m.f(8);
 		}
-	}
-
-	&__underline {
-		position: absolute;
-		left: 0;
-		bottom: 0;
-		width: 100%; // シンプルに100%の幅を使用
-		height: auto;
-		display: block;
-		// iOS Safari対策
-		-webkit-transform: translateZ(0);
-		transform: translateZ(0);
-		-webkit-backface-visibility: hidden;
-		backface-visibility: hidden;
 	}
 }
 
@@ -114,7 +98,7 @@
 	// モバイル対応
 	@include m.mq(md) {
 		font-size: m.fsm(16);
-		line-height: 1.6;
+		line-height: 2.2;
 		letter-spacing: m.fsm(1);
 		text-align: left;
 	}
@@ -184,7 +168,7 @@
 
 	.title-section__title {
 		margin-bottom: 0;
-		
+
 		// モバイルでのline-height統一
 		@include m.mq(md) {
 			.thoughts-title__text {

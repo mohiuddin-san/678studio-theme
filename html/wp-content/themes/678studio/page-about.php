@@ -17,25 +17,8 @@ get_header();
         <div class="about-fv__text">
           <div class="title-section title-section--default about-fv__title-section">
             <div class="title-section__title">
-              <div class="thoughts-title">
-                <h2 class="thoughts-title__text">
-                  <span class="thoughts-title__line">
-                    ロクナナハチ撮影
-                    <img class="thoughts-title__underline"
-                      src="<?php echo get_template_directory_uri(); ?>/assets/images/underline.svg" alt="">
-                  </span>
-                  <span class="thoughts-title__line about-fv__subtitle">
-                    とは？
-                    <img class="thoughts-title__underline"
-                      src="<?php echo get_template_directory_uri(); ?>/assets/images/underline.svg" alt="">
-                  </span>
-                </h2>
-              </div>
-            </div>
-            <div class="title-section__content">
-              <div class="thoughts-text">
-                60代・70代・80代の方々のための<br>特別な撮影サービス
-              </div>
+              <img src="<?php echo get_template_directory_uri(); ?>/assets/images/about-fv-text.svg"
+                alt="ロクナナハチ撮影とは？60代・70代・80代の方々のための特別な撮影サービス" class="about-fv__title-image">
             </div>
           </div>
         </div>
@@ -53,17 +36,16 @@ get_header();
   <!-- About FV Section (Mobile) -->
   <section class="about-mobile-fv sp" id="about-mobile-fv-section">
     <div class="about-mobile-fv__container">
-      <!-- Grid Layout Container -->
-      <div class="about-mobile-fv__grid">
-        <!-- Item 1 -->
-        <div class="about-mobile-fv__item1">
-          <img src="<?php echo get_template_directory_uri(); ?>/assets/images/about-fv-sp.jpg" alt="ロクナナハチ撮影とは？">
-        </div>
+      <!-- Text Section (Top) -->
+      <div class="about-mobile-fv__text-section">
+        <img src="<?php echo get_template_directory_uri(); ?>/assets/images/about-fv-text.svg"
+          alt="ロクナナハチ撮影とは？60代・70代・80代の方々のための特別な撮影サービス" class="about-mobile-fv__text-image">
+      </div>
 
-        <!-- Item 2 -->
-        <div class="about-mobile-fv__item2">
-          <img src="<?php echo get_template_directory_uri(); ?>/assets/images/sp-about-fv-text.svg" alt="ロクナナハチ撮影とは？">
-        </div>
+      <!-- Image Section (Bottom) -->
+      <div class="about-mobile-fv__image-section">
+        <img src="<?php echo get_template_directory_uri(); ?>/assets/images/about-hero-sp.jpg" alt="ロクナナハチ撮影の様子"
+          class="about-mobile-fv__image">
       </div>
     </div>
   </section>
@@ -77,13 +59,13 @@ get_header();
   ]); ?>
 
   <!-- About Link Section -->
-  <?php get_template_part('template-parts/components/about-link', null, [
+  <?php /* get_template_part('template-parts/components/about-link', null, [
     'buttons' => [
       ['text' => '利用シーン', 'url' => '#usage-scenes'],
       ['text' => '撮影プラン', 'url' => '#photography-plans'],
       ['text' => '撮影の流れ', 'url' => '#photography-flow']
     ]
-  ]); ?>
+  ]); */?>
 
   <!-- Memorial Photography Section (利用シーン) -->
   <div id="usage-scenes"></div>

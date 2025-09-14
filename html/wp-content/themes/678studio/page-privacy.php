@@ -92,7 +92,7 @@ get_header(); ?>
             <div class="privacy-policy__contact-info">
               <p><strong>株式会社サンクリエーション</strong></p>
               <p>〒170-0002 東京都豊島区巣鴨4-22-26 1F</p>
-              <p>お問合せ: <a href="/studio-inquiry">お問合せページ</a>よりご連絡ください</p>
+              <p>お問合せ: <a href="https://san-creation.com/contact/" target="_blank" rel="noopener noreferrer">お問合せページ</a>よりご連絡ください</p>
             </div>
           </div>
         </section>

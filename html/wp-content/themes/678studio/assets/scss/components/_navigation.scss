@@ -8,7 +8,7 @@
 		list-style: none;
 		margin: 0;
 		padding: 0;
-		gap: m.fs(40, 0.5);
+		gap: m.fs(40, 0.2);
 
 		// モバイル対応 - フルスクリーン用
 		@include m.mq(md) {
@@ -49,7 +49,7 @@
 		&:focus {
 			outline: none;
 		}
-		
+
 		&:focus-visible {
 			outline: 2px solid v.$brand-blue;
 			outline-offset: 2px;

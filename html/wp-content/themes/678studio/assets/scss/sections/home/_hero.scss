@@ -186,8 +186,11 @@
 	&__sp-container {
 		display: flex;
 		flex-direction: column;
-		gap: m.fsm(40);
+		padding-bottom: m.fsm(40);
 		align-items: center;
+		background-color: #ecf3f9;
+		position: relative;
+		z-index: 0;
 	}
 
 	// SP Background Image (top block)
