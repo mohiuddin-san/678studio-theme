@@ -9,28 +9,40 @@
  * 再利用可能なスタイルパターンを定義
  */
 
+// =============================================================================
+//  主な使用はf()関数,g()関数,gitem()関数,mq()関数
+// =============================================================================
+
 /**
- * f() 
- * 
- * 使用例:
- * font-size: f(24, 18);         // PC:24px, SP:18px, 大画面:vw拡張
- * width: f(800, 400);           // PC:800px, SP:400px, 大画面:vw拡張
- * width: f(800);                // PC:800px, SP:600px（自動計算）
- * padding: f(40, 20);           // PC:40px, SP:20px
- * 
- * SP側で特別な値が必要な場合:
- * width: f(800);                // PC/SP自動スケーリング
- * @include mq(md) {
- *   width: 100%;                // SP側だけ特別指定
- * }
- * 
- * 動作：
- * - 320px: モバイル値（指定 or 自動計算）
- * - 320~1440px: なめらかにスケーリング
- * - 1440px: デスクトップ値（Figma準拠）
- * - 1440px超: vwで比例拡大（デザイン破綻なし）
+ * プロジェクトのFigmaデザインサイズ
+ * プロジェクト開始時に一度だけ設定してください
  */
-@function f($desktop-value, $mobile-value: null, $max-scale: 1.5) {
+$figma-desktop: 1440 !default; // デスクトップ基準サイズ
+$figma-mobile: 480 !default; // モバイル基準サイズ
+
+/**
+ * f() - シンプル＆パワフルなレスポンシブ関数
+ *
+ * 使用例:
+ * font-size: f(24, 18);        // PC:24px, SP:18px
+ * width: f(800, 400);          // PC:800px, SP:400px
+ * padding: f(40);              // 自動計算：PC:40px, SP:30px (0.75倍)
+ * margin: f(-20, -15);         // マイナス値対応
+ * margin: f(40, $ratio: 0.6);  // カスタム縮小率0.6で自動計算：PC:40px, SP:24px
+ * padding: f(60, $ratio: 0.8); // カスタム縮小率0.8で自動計算：PC:60px, SP:48px
+ *
+ * プロジェクト設定変更例:
+ * $figma-desktop: 1920;        // 4Kディスプレイ用
+ * $figma-mobile: 375;          // iPhone X基準
+ *
+ * 動作：
+ * - 設定したFigmaサイズで完全一致
+ * - 小さい画面〜大きい画面まで滑らかにスケーリング
+ * - Figmaサイズ超: vwで比例拡大（デザイン破綻なし）
+ * - マイナス値完全対応
+ * - カスタム縮小率対応
+ */
+@function f($desktop-value, $mobile-value: null, $max-scale: 2, $ratio: 0.75) {
 	// %が含まれているかチェック（文字列の場合）
 	$desktop-is-percent: type-of($desktop-value) == string and
 		string.index($desktop-value, '%') != null;
@@ -42,12 +54,8 @@
 
 	// 数値の場合のみ計算
 	@if $mobile-value == null {
-		$mobile-value: $desktop-value * 0.75;
+		$mobile-value: $desktop-value * $ratio;
 	}
-
-	// Figmaの基準幅
-	$figma-width: 1440;
-	$mobile-width: 320;
 
 	// マイナス値かどうかを判定
 	$is-negative: $desktop-value < 0;
@@ -58,8 +66,7 @@
 		$abs-mobile: math.abs($mobile-value);
 
 		// 絶対値で通常のf()計算を実行
-		$abs-max-value: $abs-desktop * $max-scale;
-		$abs-desktop-vw: math.div($abs-desktop, $figma-width) * 100;
+		$abs-desktop-vw: math.div($abs-desktop, $figma-desktop) * 100;
 
 		$result: clamp(
 			#{$abs-mobile * 0.6}px,
@@ -67,30 +74,29 @@
 				calc(
 					#{$abs-mobile}px +
 						#{($abs-desktop - $abs-mobile)} *
-						((100vw - #{$mobile-width}px) / #{($figma-width - $mobile-width)})
+						((100vw - #{$figma-mobile}px) / #{($figma-desktop - $figma-mobile)})
 				),
 				#{$abs-desktop-vw}vw
 			),
-			#{$abs-max-value}px
+			#{$abs-desktop * $max-scale}px
 		);
 
 		// 結果をマイナス化
 		@return calc(-1 * #{$result});
 	} @else {
-		// プラス値の従来通りの処理
-		$max-value: $desktop-value * $max-scale;
-		$desktop-vw: math.div($desktop-value, $figma-width) * 100;
+		// プラス値の処理
+		$desktop-vw: math.div($desktop-value, $figma-desktop) * 100;
 
 		@return clamp(
 			#{$mobile-value * 0.6}px,
 			max(
 				calc(
 					#{$mobile-value}px + #{($desktop-value - $mobile-value)} *
-						((100vw - #{$mobile-width}px) / #{($figma-width - $mobile-width)})
+						((100vw - #{$figma-mobile}px) / #{($figma-desktop - $figma-mobile)})
 				),
 				#{$desktop-vw}vw
 			),
-			#{$max-value}px
+			#{$desktop-value * $max-scale}px
 		);
 	}
 }

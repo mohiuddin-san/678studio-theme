@@ -1,0 +1,286 @@
+// Helpful Information Section - Layered Grid Design
+// =============================================================================
+
+@use '../../base/mixins' as m;
+@use '../../base/variables' as v;
+
+.helpful-info-section {
+	width: 100%;
+}
+
+.helpful-info-container {
+	// Grid Container: 左右可変 + 中央固定幅 + 左右可変
+	@include m.g(
+		$cols: (
+			minmax(m.f(50), 1fr) m.f(752) minmax(m.f(50), 1fr),
+		),
+		$rows: (
+			1fr,
+		),
+		$gap: 0
+	);
+
+	width: 100%;
+	position: relative;
+	min-height: 660px; // 最小高さを設定
+
+	@include m.mq(md) {
+		@include m.g(
+			$cols: (
+				minmax(m.f(20), 1fr) 84% minmax(m.f(20), 1fr),
+			),
+			$rows: (
+				1fr,
+			),
+			$gap: 0
+		);
+	}
+
+	// 320px以下の対応
+	@media (max-width: 320px) {
+		@include m.g(
+			$cols: (
+				minmax(m.f(10), 1fr) 90% minmax(m.f(10), 1fr),
+			),
+			$rows: (
+				1fr,
+			),
+			$gap: 0
+		);
+	}
+}
+
+// Layer 1: 背景 (一番下部、スクリーンいっぱい) - item-1
+.helpful-info__background {
+	@include m.gitem($col-start: 1, $col-end: -1, $row-start: 1, $row-end: -1);
+
+	background: #fcf6de;
+	position: relative;
+	width: 100%;
+	z-index: 0;
+}
+
+// Layer 2: 左イラスト - item-2
+.helpful-info__illustration-left {
+	@include m.gitem($col-start: 1, $col-end: 2, $row-start: 1, $row-end: -1);
+
+	position: relative;
+	z-index: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-right: m.f(-160);
+
+	img {
+		max-width: 100%;
+		height: auto;
+	}
+}
+
+// Layer 3: 右イラスト - item-3
+.helpful-info__illustration-right {
+	@include m.gitem($col-start: 3, $col-end: 4, $row-start: 1, $row-end: -1);
+
+	position: relative;
+	z-index: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+	margin-left: m.f(-100);
+
+	img {
+		min-width: 130%;
+		height: auto;
+	}
+}
+
+// Layer 4: コンテンツ (中央) - item-4
+.helpful-info__content {
+	@include m.gitem($col-start: 2, $col-end: 3, $row-start: 1, $row-end: -1);
+
+	position: relative;
+	z-index: 2;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: m.f(60) m.f(40);
+	background: rgba(255, 255, 255, 0.9);
+	margin: m.f(80) 0;
+	box-shadow: m.f(8) m.f(8) 0 0 #9cbecd;
+
+	// 320px以下でpadding調整
+	@media (max-width: 320px) {
+		padding: m.f(40) m.f(20);
+		margin: m.f(60) 0;
+	}
+
+	// 左上のテープ
+	&::before {
+		content: '';
+		position: absolute;
+		top: m.f(-50);
+		left: m.f(-40);
+		width: m.f(160);
+		height: m.f(160);
+		background-image: url('assets/images/helpful-tape-left.png');
+		background-size: contain;
+		background-repeat: no-repeat;
+		background-position: center;
+		mix-blend-mode: multiply;
+		z-index: 3;
+	}
+
+	// 右上のテープ
+	&::after {
+		content: '';
+		position: absolute;
+		top: m.f(-50);
+		right: m.f(-40);
+		width: m.f(160);
+		height: m.f(160);
+		background-image: url('assets/images/helpful-tape-right.png');
+		background-size: contain;
+		background-repeat: no-repeat;
+		background-position: center;
+		mix-blend-mode: multiply;
+		z-index: 3;
+	}
+}
+
+// Content Header
+.helpful-info__header {
+	text-align: center;
+	margin-bottom: m.f(40);
+}
+
+.helpful-info__title {
+	font-family: v.$ja-sans;
+	font-size: m.f(20, 16);
+	font-weight: 500;
+	color: #333;
+	letter-spacing: 0.1em;
+	margin-bottom: m.f(16);
+	position: relative;
+
+	// 下部マーカー装飾（SVG）
+	&::after {
+		content: '';
+		position: absolute;
+		bottom: m.f(-20);
+		left: 50%;
+		transform: translateX(-50%);
+		width: m.f(240);
+		height: m.f(16);
+		background-image: url('assets/images/helpful-3.svg');
+		background-size: contain;
+		background-repeat: no-repeat;
+		background-position: center;
+	}
+}
+
+.helpful-info__description {
+	font-family: v.$ja-sans;
+	font-size: m.f(16, 12.8);
+	font-weight: 400;
+	line-height: 1.8;
+	padding-top: m.f(40);
+	text-align: center;
+}
+
+// Articles List
+.helpful-info__articles {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+	width: 100%;
+}
+
+a.helpful-info__article,
+.helpful-info__article {
+	display: flex;
+	align-items: center;
+	gap: m.f(16);
+	padding: m.f(16) m.f(16);
+	min-height: m.f(60);
+	border-top: 0.75px solid #a5c3cf;
+	border-bottom: 0.75px solid #a5c3cf;
+	transition: background-color 0.2s ease;
+	text-decoration: none;
+	color: inherit;
+
+	// モバイル対応: 2段組みレイアウト
+	@include m.mq(md) {
+		flex-wrap: wrap;
+		padding: m.f(16) 0;
+		min-height: auto;
+		gap: m.f(0);
+	}
+
+	// 320px以下での調整
+	@media (max-width: 320px) {
+		flex-wrap: wrap;
+		padding: m.f(12) 0;
+		min-height: auto;
+		gap: m.f(0);
+	}
+
+	&:hover {
+		background-color: rgba(169, 159, 60, 0.05);
+	}
+
+	// 隣接記事のボーダー重複を防ぐ
+	& + & {
+		border-top: none;
+	}
+}
+
+.helpful-info__article-tag {
+	font-family: v.$ja-sans;
+	font-size: m.f(12);
+	font-weight: 500;
+	color: #3f3f3f;
+	background: transparent;
+	border: 1px solid #3f3f3f;
+	border-radius: 16px;
+	padding: m.f(4) m.f(12);
+	min-width: m.f(116);
+	text-align: center;
+	white-space: nowrap;
+	flex-shrink: 0;
+
+	// モバイル対応
+	@include m.mq(md) {
+		padding: m.f(3) m.f(10);
+		min-width: m.f(90);
+		margin-right: m.f(10);
+	}
+}
+
+.helpful-info__article-date {
+	font-family: v.$ja-sans;
+	font-size: m.f(12);
+	white-space: nowrap;
+	flex-shrink: 0;
+
+	// モバイル対応
+	@include m.mq(md) {
+		font-size: m.f(11);
+	}
+}
+
+.helpful-info__article-title {
+	font-family: v.$ja-sans;
+	font-size: m.f(14);
+	color: #333;
+	line-height: 1.4;
+	flex-grow: 1;
+
+	// モバイル対応: 2段目に100%幅で配置
+	@include m.mq(md) {
+		font-size: m.fsm(13);
+		width: 100%;
+		margin-top: m.fsm(8);
+	}
+}

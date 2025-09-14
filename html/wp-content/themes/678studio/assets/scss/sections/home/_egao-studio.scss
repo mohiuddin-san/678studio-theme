@@ -1,0 +1,122 @@
+@use '../../base/variables' as v;
+@use '../../base/mixins' as m;
+
+// Egao Studio Section
+.egao-studio {
+	padding: m.f(80) m.f(160, $ratio: 0.2);
+	overflow: hidden;
+
+	@include m.mq(md) {
+		padding: m.fsm(60) 0;
+	}
+
+	&__container {
+		display: grid;
+		grid-template-columns: 2fr 1fr;
+		gap: m.f(60);
+		align-items: center;
+		margin: 0 auto m.f(200);
+
+		@include m.mq(md) {
+			display: grid;
+			grid-template-columns: 1fr;
+			gap: m.fsm(40);
+			align-items: center;
+			padding: 0 m.f(20);
+		}
+	}
+
+	// Content Area (Left)
+	&__content {
+		grid-column: 1;
+
+		@include m.mq(md) {
+			grid-column: 1;
+			text-align: center;
+		}
+	}
+
+	&__title-box {
+		margin-bottom: m.f(30);
+
+		@include m.mq(md) {
+			margin-bottom: m.fsm(24);
+		}
+	}
+
+	&__subtitle {
+		font-size: m.f(14);
+		color: #666;
+		font-weight: 400;
+		font-family: v.$ja-sans;
+		margin-bottom: m.f(8);
+
+		@include m.mq(md) {
+			font-size: m.fsm(12);
+			margin-bottom: m.fsm(6);
+		}
+	}
+
+	&__title {
+		font-size: m.f(36);
+		color: #333;
+		font-weight: 700;
+		font-family: v.$ja-sans;
+		line-height: 1.3;
+		margin: 0;
+
+		@include m.mq(md) {
+			font-size: m.fsm(28);
+		}
+	}
+
+	&__text {
+		font-size: m.f(16);
+		color: #333;
+		font-weight: 400;
+		font-family: v.$ja-sans;
+		line-height: 1.8;
+
+		@include m.mq(md) {
+			font-size: m.fsm(14);
+			line-height: 1.7;
+		}
+
+		p {
+			margin: 0 0 m.f(8) 0;
+
+			@include m.mq(md) {
+				margin-bottom: m.fsm(6);
+			}
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+	}
+
+	// Illustration Area (Right)
+	&__illustration {
+		grid-column: 2;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: m.f(508.5);
+		margin-right: m.f(-300);
+		transform: translateY(m.f(200));
+
+		@include m.mq(md) {
+			grid-column: 1;
+			margin-top: m.fsm(20);
+		}
+	}
+
+	&__frames {
+		width: 100%;
+		height: auto;
+
+		@include m.mq(md) {
+			max-width: 300px;
+		}
+	}
+}
