@@ -1,0 +1,46 @@
+@use "../../base/variables" as v;
+@use "../../base/mixins" as m;
+
+// Hero CTA Mobile Section
+.hero-cta-mobile {
+  display: none; // デフォルトは非表示（PC用）
+
+  // SPのみ表示
+  @include m.mq(md) {
+    display: block;
+  }
+
+  &__container {
+    text-align: center;
+    margin-top: m.fsm(20);
+  }
+
+  &__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: m.fsm(10);
+    padding: m.fsm(14) m.fsm(28);
+    background: #a99f3c;
+    color: white;
+    text-decoration: none;
+    border: 1.5px solid #a99f3c;
+    border-radius: m.fsm(25);
+    font-size: m.fsm(16);
+    font-weight: 600;
+    font-family: v.$ja-sans;
+    transition: all 0.3s ease;
+
+    // タッチフィードバック（短時間の視覚的変化）
+    &:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+  }
+
+  &__icon {
+    width: m.fsm(18);
+    height: m.fsm(18);
+    filter: brightness(0) invert(1); // アイコンを白に
+  }
+}
