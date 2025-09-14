@@ -105,7 +105,7 @@ if (!empty($custom_class)) {
       $lines = explode('<br>', $title_text);
       foreach ($lines as $index => $line) {
         if ($index > 0) echo "\n      ";
-        echo '<span class="title-section__title-line">' . trim($line) . '<img class="title-section__title-underline" src="' . get_template_directory_uri() . '/assets/images/underline.svg" alt=""></span>';
+        echo '<span class="title-section__title-line">' . trim($line) . '</span>';
       }
       ?>
     </h2>

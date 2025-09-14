@@ -111,6 +111,8 @@
 			color: white;
 			position: relative;
 			z-index: 1;
+			transform: translateX(m.f(-400, -200));
+			z-index: 3;
 		}
 	}
 }

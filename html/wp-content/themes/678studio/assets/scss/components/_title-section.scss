@@ -64,7 +64,7 @@
 	&__title-text {
 		color: #3f3f3f;
 		font-family: v.$ja;
-		font-size: m.fs(39.06, 0.6);
+		font-size: m.fs(31.25, 0.6);
 		font-style: normal;
 		font-weight: 500;
 		line-height: 200%; /* 78.12px */
@@ -75,49 +75,23 @@
 
 		// モバイル対応
 		@include m.mq(md) {
-			font-size: m.fsm(28);
+			font-size: m.fsm(25);
 			line-height: 1.8;
-			letter-spacing: m.fsm(2);
+			letter-spacing: m.fsm(1.2);
 		}
 	}
 
 	&__title-line {
-		position: relative;
-		padding-bottom: m.fs(10, 0.6);
+		display: block;
+		width: 100%;
+		border-bottom: 0.75px solid #000000;
+		padding-bottom: m.f(10); // 下線とテキストの間隔
 		-webkit-box-sizing: border-box;
 		box-sizing: border-box;
 
-		// PCではテキスト幅に合わせる
-		display: inline-block;
-
-		// モバイルでは100%幅
+		// モバイル対応
 		@include m.mq(md) {
-			display: block;
-			width: 100%;
-			padding-bottom: m.fsm(10);
-		}
-	}
-
-	&__title-underline {
-		position: absolute;
-		left: 0;
-		bottom: 0;
-		height: auto;
-		display: block;
-		// 実機での位置ずれ対策
-		-webkit-transform: translateZ(0);
-		transform: translateZ(0);
-		-webkit-backface-visibility: hidden;
-		backface-visibility: hidden;
-		pointer-events: none; // クリックイベントを無効化
-
-		// PCではテキスト幅に合わせる
-		width: 100%;
-
-		// モバイルでは100%幅
-		@include m.mq(md) {
-			width: 100%;
-			height: 5px;
+			padding-bottom: m.f(8);
 		}
 	}
 }

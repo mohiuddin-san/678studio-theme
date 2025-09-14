@@ -1,0 +1,49 @@
+
+#¥­¥ã¥Ã¥·¥å¼«Æ°ºï½ü
+36 4 * * * find xb592942.xbiz.jp/public_html/test/wp-content/cache/* -type f -mtime +3 -not -name '*.php' -not -name '*.jpg' -not -name '*.css' -exec sleep 0.01 \; -print 2>/dev/null | xargs -r rm
+#¥­¥ã¥Ã¥·¥å¼«Æ°ºï½ü
+50 6 * * * find xb592942.xbiz.jp/public_html/egao-salon.jp/wp-content/cache/* -type f -mtime +3 -not -name '*.php' -not -name '*.jpg' -not -name '*.css' -exec sleep 0.01 \; -print 2>/dev/null | xargs -r rm
+#¥­¥ã¥Ã¥·¥å¼«Æ°ºï½ü
+22 4 * * * find egao-salon.jp/public_html/wp-content/cache/* -type f -mtime +3 -not -name '*.php' -not -name '*.jpg' -not -name '*.css' -exec sleep 0.01 \; -print 2>/dev/null | xargs -r rm
+#¥­¥ã¥Ã¥·¥å¼«Æ°ºï½ü
+54 7 * * * find egao-salon.jp/public_html/new/wp-content/cache/* -type f -mtime +3 -not -name '*.php' -not -name '*.jpg' -not -name '*.css' -exec sleep 0.01 \; -print 2>/dev/null | xargs -r rm
+#¥­¥ã¥Ã¥·¥å¼«Æ°ºï½ü
+56 5 * * * find egao-salon.jp/public_html/wp-content/cache/* -type f -mtime +3 -not -name '*.php' -not -name '*.jpg' -not -name '*.css' -exec sleep 0.01 \; -print 2>/dev/null | xargs -r rm
+#¥­¥ã¥Ã¥·¥å¼«Æ°ºï½ü
+52 4 * * * find egao-salon.jp/public_html/wordpress/wp-content/cache/* -type f -mtime +3 -not -name '*.php' -not -name '*.jpg' -not -name '*.css' -exec sleep 0.01 \; -print 2>/dev/null | xargs -r rm
+#¥­¥ã¥Ã¥·¥å¼«Æ°ºï½ü
+40 4 * * * find san-developer.com/public_html/egaotest/wp-content/cache/* -type f -mtime +3 -not -name '*.php' -not -name '*.jpg' -not -name '*.css' -exec sleep 0.01 \; -print 2>/dev/null | xargs -r rm
+#¥­¥ã¥Ã¥·¥å¼«Æ°ºï½ü
+55 7 * * * find san-developer.com/public_html/koensha/recruit/wp-content/cache/* -type f -mtime +3 -not -name '*.php' -not -name '*.jpg' -not -name '*.css' -exec sleep 0.01 \; -print 2>/dev/null | xargs -r rm
+#¥­¥ã¥Ã¥·¥å¼«Æ°ºï½ü
+49 7 * * * find egao-salon.jp/public_html/sugamo-studio/wp-content/cache/* -type f -mtime +3 -not -name '*.php' -not -name '*.jpg' -not -name '*.css' -exec sleep 0.01 \; -print 2>/dev/null | xargs -r rm
+#¥­¥ã¥Ã¥·¥å¼«Æ°ºï½ü
+22 6 * * * find 678photo.com/public_html/wp-content/cache/* -type f -mtime +3 -not -name '*.php' -not -name '*.jpg' -not -name '*.css' -exec sleep 0.01 \; -print 2>/dev/null | xargs -r rm
+#¥­¥ã¥Ã¥·¥å¼«Æ°ºï½ü
+20 6 * * * find san-developer.com/public_html/maninail/wp-content/cache/* -type f -mtime +3 -not -name '*.php' -not -name '*.jpg' -not -name '*.css' -exec sleep 0.01 \; -print 2>/dev/null | xargs -r rm
+# WordPress User Account Monitor - Every 5 minutes
+*/5 * * * * /usr/bin/php7.4 /home/xb592942/security_monitor/user_monitor.php >/dev/null 2>&1
+# Malware Re-infection Monitor - Every 30 minutes
+*/10 * * * * /usr/bin/php7.4 /home/xb592942/security_monitor/malware_monitor.php >/dev/null 2>&1
+# File Integrity Monitor - Every hour
+0 * * * * /usr/bin/php7.4 /home/xb592942/security_monitor/file_change_monitor.php >/dev/null 2>&1
+
+# ProActive Security System Jobs
+# è‡ªå‹•ä¿®å¾©ï¼ˆæ¯Žæ™‚å®Ÿè¡Œï¼‰
+0 * * * * /home/xb592942/security-system/auto-repair.sh --scheduled >> /home/xb592942/logs/security/auto-repair.log 2>&1
+
+# ãƒ­ã‚°ãƒ­ãƒ¼ãƒ†ãƒ¼ã‚·ãƒ§ãƒ³ï¼ˆæ¯Žæ—¥å®Ÿè¡Œï¼‰
+0 2 * * * find /home/xb592942/logs/security -name "*.log" -size +10M -exec gzip {} \; 2>/dev/null
+
+# éš”é›¢ãƒ•ã‚¡ã‚¤ãƒ«å¤ã„ãƒ•ã‚¡ã‚¤ãƒ«å‰Šé™¤ï¼ˆæ¯Žé€±å®Ÿè¡Œï¼‰
+0 3 * * 0 find /home/xb592942/quarantine -type f -mtime +30 -delete 2>/dev/null
+
+# ã‚»ã‚­ãƒ¥ãƒªãƒ†ã‚£ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹é€šçŸ¥ï¼ˆæ¯Žæ—¥å®Ÿè¡Œï¼‰
+0 9 * * * echo "Security system status: 2025å¹´  9æœˆ 13æ—¥ åœŸæ›œæ—¥ 23:10:32 JST" | mail -s "Daily Security Status" 
+
+# ãƒãƒ¼ãƒªãƒ³ã‚°ç›£è¦–ã®è‡ªå‹•èµ·å‹•ï¼ˆå†èµ·å‹•æ™‚ï¼‰
+@reboot /home/xb592942/security-system/polling-monitor.sh --daemon
+# WordPress Sitemap Auto-Update - Every hour
+# WordPress Sitemap Auto-Update - Extended (3 sites) - Every hour
+# Sitemap Auto Generation Backup - Every 6 hours
+0 */6 * * * /usr/bin/php7.4 /home/xb592942/egao-salon.jp/public_html/wordpress/auto-sitemap-generator.php generate >/dev/null 2>&1

@@ -112,7 +112,7 @@
 
 	&__image {
 		width: 100%;
-		height: m.fsm(200);
+		height: m.fsm(260);
 		overflow: hidden;
 
 		img {
@@ -131,7 +131,7 @@
 
 	&__content {
 		flex: 1;
-		padding: m.fsm(16) m.fsm(16); // PC版参考の padding
+		padding: m.fsm(32) m.fsm(16); // PC版参考の padding
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
@@ -167,4 +167,26 @@
 
 	&--experience {
 	}
+}
+
+// About Mobile Section Button
+// =============================================================================
+.about-mobile-button-wrapper {
+	width: 100%;
+	padding: m.fsm(40) 0;
+	display: flex;
+	justify-content: center;
+
+	// デスクトップでは非表示
+	display: none;
+
+	@include m.mq(md) {
+		display: flex;
+	}
+}
+
+.about-mobile-button {
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
