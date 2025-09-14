@@ -50,6 +50,8 @@
 @use 'pages/test-responsive';
 
 // About Page Sections
+@use 'sections/about/introduction';
+@use 'sections/about/support';
 @use 'sections/about/memorial-photography';
 @use 'sections/about/portrait-photography';
 @use 'sections/about/family-photography';

@@ -58,6 +58,12 @@ get_header();
     ]
   ]); ?>
 
+  <!-- About Introduction Section -->
+  <?php get_template_part('template-parts/sections/about/introduction'); ?>
+
+  <!-- About Support Section -->
+  <?php get_template_part('template-parts/sections/about/support'); ?>
+
   <!-- About Link Section -->
   <?php /* get_template_part('template-parts/components/about-link', null, [
     'buttons' => [
