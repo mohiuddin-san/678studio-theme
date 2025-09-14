@@ -10,21 +10,21 @@
         const windowWidth = window.innerWidth;
         let viewportMeta = document.querySelector('meta[name="viewport"]');
 
-        console.log('Viewport Controller: window width =', windowWidth);
+        // console.log('Viewport Controller: window width =', windowWidth);
 
         // viewport metaタグが存在しない場合は作成
         if (!viewportMeta) {
             viewportMeta = document.createElement('meta');
             viewportMeta.name = 'viewport';
             document.head.appendChild(viewportMeta);
-            console.log('Created viewport meta tag');
+            // console.log('Created viewport meta tag');
         }
 
         // 320px以下の場合は固定幅に設定
         if (windowWidth <= 320) {
             const content = 'width=320, user-scalable=yes';
             viewportMeta.setAttribute('content', content);
-            console.log('Applied fixed 320px viewport:', content);
+            // console.log('Applied fixed 320px viewport:', content);
 
             // CSSでも強制的に320px最小幅を設定
             const htmlElement = document.documentElement;
@@ -34,7 +34,7 @@
             // 320px以上の場合は通常のレスポンシブ
             const content = 'width=device-width, initial-scale=1';
             viewportMeta.setAttribute('content', content);
-            console.log('Applied responsive viewport:', content);
+            // console.log('Applied responsive viewport:', content);
 
             // 最小幅制限を解除
             const htmlElement = document.documentElement;

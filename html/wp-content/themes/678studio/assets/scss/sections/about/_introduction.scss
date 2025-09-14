@@ -1,0 +1,73 @@
+// About Introduction Section
+// =============================================================================
+
+@use '../../base/mixins' as m;
+@use '../../base/variables' as v;
+
+.about-introduction {
+	width: 100%;
+	background-color: white;
+	padding: m.f(80) m.f(100, 0);
+
+	&__container {
+		margin: 0 auto;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: m.f(120, 20);
+
+		@include m.mq(md) {
+			padding: 0 m.f(20);
+			flex-direction: column-reverse;
+		}
+	}
+
+	// Illustration (Left)
+	&__illustration {
+		flex-shrink: 0;
+		width: m.f(358, 240);
+
+		@include m.mq(md) {
+			width: 100%;
+			display: flex;
+			justify-content: flex-end;
+		}
+
+		&-img {
+			width: 100%;
+			height: auto;
+			display: block;
+
+			@include m.mq(md) {
+				width: m.f(206, 140);
+			}
+		}
+	}
+
+	// Content (Right)
+	&__content {
+	}
+
+	&__text {
+		max-width: 100%;
+	}
+
+	&__paragraph {
+		font-family: v.$ja-sans;
+		font-size: m.f(16);
+		font-weight: 400;
+		color: #3f3f3f;
+		line-height: 1.8;
+		margin: 0 0 m.f(24) 0;
+		letter-spacing: 0.05em;
+
+		@include m.mq(md) {
+			font-size: m.f(16, 14);
+			padding: 0 m.f(60, 40);
+		}
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+}
