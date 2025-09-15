@@ -55,10 +55,7 @@ function register_studio_shops_post_type() {
         'exclude_from_search'   => false,
         'publicly_queryable'    => true,
         'capability_type'       => 'post',
-        'rewrite'               => array(
-            'slug'       => 'studio',
-            'with_front' => false,
-        ),
+        'rewrite'               => false,
         'show_in_rest'          => true,
     );
     

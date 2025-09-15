@@ -2026,3 +2026,79 @@ function add_translate_test_page() {
     }
 }
 add_action('init', 'add_translate_test_page');
+
+// Temporary: Flush rewrite rules once to apply new studio-detail permalink structure
+function flush_studio_permalinks_once() {
+    if (get_option('studio_permalinks_flushed') != '1') {
+        flush_rewrite_rules();
+        update_option('studio_permalinks_flushed', '1');
+    }
+}
+add_action('init', 'flush_studio_permalinks_once');
+
+
+// Custom permalink and preview for studio_shops
+function custom_studio_shop_permalink($permalink, $post) {
+    if ($post->post_type == 'studio_shops') {
+        $shop_id = get_post_meta($post->ID, 'shop_id', true);
+        if (empty($shop_id)) {
+            $shop_id = $post->ID; // Fallback to post ID
+        }
+        return home_url('/studio-detail/?shop_id=' . $shop_id);
+    }
+    return $permalink;
+}
+add_filter('post_link', 'custom_studio_shop_permalink', 10, 2);
+add_filter('preview_post_link', 'custom_studio_shop_permalink', 10, 2);
+
+
+// Custom admin permalink display for studio_shops
+function custom_studio_shop_get_permalink($permalink, $post, $leavename) {
+    if ($post->post_type == 'studio_shops') {
+        $shop_id = get_post_meta($post->ID, 'shop_id', true);
+        if (empty($shop_id)) {
+            $shop_id = $post->ID; // Fallback to post ID
+        }
+        return home_url('/studio-detail/?shop_id=' . $shop_id);
+    }
+    return $permalink;
+}
+add_filter('get_permalink', 'custom_studio_shop_get_permalink', 10, 3);
+
+
+// Override sample permalink in admin for studio_shops
+function custom_studio_shop_sample_permalink($permalink, $post_id, $title, $name, $post) {
+    if ($post && $post->post_type == 'studio_shops') {
+        $shop_id = get_post_meta($post_id, 'shop_id', true);
+        if (empty($shop_id)) {
+            $shop_id = $post_id; // Fallback to post ID
+        }
+        $custom_permalink = home_url('/studio-detail/?shop_id=' . $shop_id);
+        return array($custom_permalink, '');
+    }
+    return $permalink;
+}
+add_filter('get_sample_permalink', 'custom_studio_shop_sample_permalink', 10, 5);
+
+
+// Admin script to modify permalink display for studio_shops
+function studio_shop_admin_script() {
+    global $post;
+    if ($post && $post->post_type == 'studio_shops') {
+        $shop_id = get_post_meta($post->ID, 'shop_id', true);
+        if (empty($shop_id)) {
+            $shop_id = $post->ID;
+        }
+        $correct_url = home_url('/studio-detail/?shop_id=' . $shop_id);
+        ?>
+        <script type="text/javascript">
+        jQuery(document).ready(function($) {
+            var correctUrl = '<?php echo $correct_url; ?>';
+            $('#sample-permalink').attr('href', correctUrl).text(correctUrl);
+        });
+        </script>
+        <?php
+    }
+}
+add_action('admin_footer-post.php', 'studio_shop_admin_script');
+add_action('admin_footer-post-new.php', 'studio_shop_admin_script');
