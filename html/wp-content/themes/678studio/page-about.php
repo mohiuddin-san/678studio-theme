@@ -64,6 +64,12 @@ get_header();
   <!-- About Support Section -->
   <?php get_template_part('template-parts/sections/about/support'); ?>
 
+  <!-- About Memorial Section -->
+  <?php get_template_part('template-parts/sections/about/memorial'); ?>
+
+  <!-- About Present Section -->
+  <?php get_template_part('template-parts/sections/about/present'); ?>
+
   <!-- About Link Section -->
   <?php /* get_template_part('template-parts/components/about-link', null, [
     'buttons' => [

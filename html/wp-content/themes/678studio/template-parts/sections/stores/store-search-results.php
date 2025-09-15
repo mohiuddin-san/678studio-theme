@@ -264,7 +264,7 @@ $current_page = $shop_data['current_page'];
       <div class="store-search-results__cards-wrapper">
         <div class="store-search-results__cards">
         <?php foreach ($certified_shops as $shop): ?>
-        <div class="studio-card studio-card--certified">
+        <div class="studio-card studio-card--certified" onclick="location.href='<?php echo home_url('/studio-shops/' . $shop['id']); ?>'" style="cursor: pointer;">
           <div class="studio-card__image">
             <?php
             $image_src = '';
@@ -402,13 +402,13 @@ $current_page = $shop_data['current_page'];
             <div class="studio-card__buttons">
               <div class="studio-card__button-item">
                 <a href="<?php echo home_url('/studio-reservation/?shop_id=' . $shop['id']); ?>"
-                  class="certified-card-button certified-card-button--booking">
+                  class="certified-card-button certified-card-button--booking" onclick="event.stopPropagation();">
                   ご予約相談
                 </a>
               </div>
               <div class="studio-card__button-item">
                 <a href="<?php echo home_url('/studio-inquiry/?shop_id=' . $shop['id']); ?>"
-                  class="certified-card-button certified-card-button--contact">
+                  class="certified-card-button certified-card-button--contact" onclick="event.stopPropagation();">
                   お問い合わせ
                 </a>
               </div>
@@ -432,7 +432,7 @@ $current_page = $shop_data['current_page'];
       <div class="store-search-results__cards-wrapper">
         <div class="store-search-results__cards">
         <?php foreach ($regular_shops as $shop): ?>
-        <div class="studio-card studio-card--regular">
+        <div class="studio-card studio-card--regular" onclick="location.href='<?php echo home_url('/studio-shops/' . $shop['id']); ?>'" style="cursor: pointer;">
           <div class="studio-card__content">
             <!-- 最寄り駅ラベル -->
             <div class="studio-card__station-label">
@@ -538,13 +538,13 @@ $current_page = $shop_data['current_page'];
             <div class="studio-card__buttons">
               <div class="studio-card__button-item">
                 <a href="<?php echo home_url('/studio-reservation/?shop_id=' . $shop['id']); ?>"
-                  class="certified-card-button certified-card-button--booking">
+                  class="certified-card-button certified-card-button--booking" onclick="event.stopPropagation();">
                   ご予約相談
                 </a>
               </div>
               <div class="studio-card__button-item">
                 <a href="<?php echo home_url('/studio-inquiry/?shop_id=' . $shop['id']); ?>"
-                  class="certified-card-button certified-card-button--contact">
+                  class="certified-card-button certified-card-button--contact" onclick="event.stopPropagation();">
                   お問い合わせ
                 </a>
               </div>
