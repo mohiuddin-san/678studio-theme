@@ -20,7 +20,20 @@
         <h2 class="contact-header__title">Reservation</h2>
       </div>
     </div>
-    <h1 class="contact__main-title">ご予約</h1>
+    <h1 class="contact__main-title">撮影希望日時のご相談</h1>
+
+    <div class="contact__description">
+      <p class="contact__description-text">
+        撮影をご希望の店舗へ、撮影希望日についてご相談いただけます。<br class="pc-only">
+        こちらのメールフォームよりお問い合わせいただく場合は、<br class="pc-only">
+        ご指定の店舗より改めてご返信させていただきます。<br class="pc-only">
+        お電話で直接ご相談いただくことも可能です。
+      </p>
+    </div>
+
+    <div class="contact-section-header">
+      <h2 class="contact-section-header__title">選択店舗確認</h2>
+    </div>
 
     <div class="contact-search">
       <label for="store-select" class="contact-search__label">選択店舗 (必須)</label>
@@ -30,6 +43,10 @@
       <div class="error-message" id="store-error" style="display: none;">
         店舗を選択してください
       </div>
+    </div>
+
+    <div class="contact-phone-header" style="display: none;">
+      <h2 class="contact-section-header__title">お電話でのご相談</h2>
     </div>
 
     <div class="contact-details" style="display: none;">
@@ -65,12 +82,14 @@
     <div class="schedule-container">
       <!-- フォーム入力画面 -->
       <div class="form-step" id="formStep">
+        <div class="contact-section-header">
+          <h2 class="contact-section-header__title">メールフォームからご相談</h2>
+        </div>
         <div class="form-container">
-          <h1>オンライン予約フォーム</h1>
-           <form id="reservationForm" method="post" action="">
+          <form id="reservationForm" method="post" action="">
             <!-- 隠しフィールドで店舗IDを送信 -->
             <input type="hidden" name="shop-id" id="hidden-shop-id" value="">
-            
+
             <div class="input-field">
               <label for="name">お名前 (必須)</label>
               <input type="text" id="name" name="name" placeholder="例: 山田 花子">
@@ -90,6 +109,7 @@
             <div class="input-field">
               <label for="contact">お電話番号</label>
               <input type="text" id="contact" name="contact" placeholder="例: 03-1234-5678">
+              <div class="input-note">※確認のお電話をさせていただく場合がございます</div>
             </div>
 
             <div class="input-field">
@@ -100,46 +120,139 @@
               </div>
             </div>
 
-            <div class="input-field">
-              <label for="reservation_date">撮影希望日（必須）</label>
-              <input type="date" id="reservation_date" name="reservation_date" required>
-              <div class="error-message" id="reservation_date-error" style="display: none;">
-                撮影希望日を選択してください
-              </div>
-            </div>
+            <!-- 撮影希望日時（第1〜第3希望） -->
+            <div class="reservation-preferences">
 
-            <div class="input-field">
-              <label for="reservation_time">開始時間（必須）</label>
-              <select id="reservation_time" name="reservation_time" required>
-                <option value="">時間を選択してください</option>
-                <option value="08:00">8:00</option>
-                <option value="08:30">8:30</option>
-                <option value="09:00">9:00</option>
-                <option value="09:30">9:30</option>
-                <option value="10:00">10:00</option>
-                <option value="10:30">10:30</option>
-                <option value="11:00">11:00</option>
-                <option value="11:30">11:30</option>
-                <option value="12:00">12:00</option>
-                <option value="12:30">12:30</option>
-                <option value="13:00">13:00</option>
-                <option value="13:30">13:30</option>
-                <option value="14:00">14:00</option>
-                <option value="14:30">14:30</option>
-                <option value="15:00">15:00</option>
-                <option value="15:30">15:30</option>
-                <option value="16:00">16:00</option>
-                <option value="16:30">16:30</option>
-                <option value="17:00">17:00</option>
-                <option value="17:30">17:30</option>
-                <option value="18:00">18:00</option>
-                <option value="18:30">18:30</option>
-                <option value="19:00">19:00</option>
-                <option value="19:30">19:30</option>
-                <option value="20:00">20:00</option>
-              </select>
-              <div class="error-message" id="reservation_time-error" style="display: none;">
-                開始時間を選択してください
+              <!-- 第1希望 -->
+              <div class="preference-group preference-group--required">
+                <h3 class="preference-group__title">第1撮影希望日時（必須）</h3>
+                <div class="preference-group__fields">
+                  <div class="input-field">
+                    <label for="reservation_date_1">第1撮影希望日</label>
+                    <input type="date" id="reservation_date_1" name="reservation_date_1" required>
+                    <div class="error-message" id="reservation_date_1-error" style="display: none;">
+                      第1撮影希望日を選択してください
+                    </div>
+                  </div>
+                  <div class="input-field">
+                    <label for="reservation_time_1">第1撮影希望時間</label>
+                    <select id="reservation_time_1" name="reservation_time_1" required>
+                      <option value="">時間を選択してください</option>
+                      <option value="08:00">8:00</option>
+                      <option value="08:30">8:30</option>
+                      <option value="09:00">9:00</option>
+                      <option value="09:30">9:30</option>
+                      <option value="10:00">10:00</option>
+                      <option value="10:30">10:30</option>
+                      <option value="11:00">11:00</option>
+                      <option value="11:30">11:30</option>
+                      <option value="12:00">12:00</option>
+                      <option value="12:30">12:30</option>
+                      <option value="13:00">13:00</option>
+                      <option value="13:30">13:30</option>
+                      <option value="14:00">14:00</option>
+                      <option value="14:30">14:30</option>
+                      <option value="15:00">15:00</option>
+                      <option value="15:30">15:30</option>
+                      <option value="16:00">16:00</option>
+                      <option value="16:30">16:30</option>
+                      <option value="17:00">17:00</option>
+                      <option value="17:30">17:30</option>
+                      <option value="18:00">18:00</option>
+                      <option value="18:30">18:30</option>
+                      <option value="19:00">19:00</option>
+                      <option value="19:30">19:30</option>
+                      <option value="20:00">20:00</option>
+                    </select>
+                    <div class="error-message" id="reservation_time_1-error" style="display: none;">
+                      第1撮影希望時間を選択してください
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 第2希望 -->
+              <div class="preference-group preference-group--optional">
+                <h3 class="preference-group__title">第2撮影希望日時（任意）</h3>
+                <div class="preference-group__fields">
+                  <div class="input-field">
+                    <label for="reservation_date_2">第2撮影希望日</label>
+                    <input type="date" id="reservation_date_2" name="reservation_date_2">
+                  </div>
+                  <div class="input-field">
+                    <label for="reservation_time_2">第2撮影希望時間</label>
+                    <select id="reservation_time_2" name="reservation_time_2">
+                      <option value="">時間を選択してください</option>
+                      <option value="08:00">8:00</option>
+                      <option value="08:30">8:30</option>
+                      <option value="09:00">9:00</option>
+                      <option value="09:30">9:30</option>
+                      <option value="10:00">10:00</option>
+                      <option value="10:30">10:30</option>
+                      <option value="11:00">11:00</option>
+                      <option value="11:30">11:30</option>
+                      <option value="12:00">12:00</option>
+                      <option value="12:30">12:30</option>
+                      <option value="13:00">13:00</option>
+                      <option value="13:30">13:30</option>
+                      <option value="14:00">14:00</option>
+                      <option value="14:30">14:30</option>
+                      <option value="15:00">15:00</option>
+                      <option value="15:30">15:30</option>
+                      <option value="16:00">16:00</option>
+                      <option value="16:30">16:30</option>
+                      <option value="17:00">17:00</option>
+                      <option value="17:30">17:30</option>
+                      <option value="18:00">18:00</option>
+                      <option value="18:30">18:30</option>
+                      <option value="19:00">19:00</option>
+                      <option value="19:30">19:30</option>
+                      <option value="20:00">20:00</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 第3希望 -->
+              <div class="preference-group preference-group--optional">
+                <h3 class="preference-group__title">第3撮影希望日時（任意）</h3>
+                <div class="preference-group__fields">
+                  <div class="input-field">
+                    <label for="reservation_date_3">第3撮影希望日</label>
+                    <input type="date" id="reservation_date_3" name="reservation_date_3">
+                  </div>
+                  <div class="input-field">
+                    <label for="reservation_time_3">第3撮影希望時間</label>
+                    <select id="reservation_time_3" name="reservation_time_3">
+                      <option value="">時間を選択してください</option>
+                      <option value="08:00">8:00</option>
+                      <option value="08:30">8:30</option>
+                      <option value="09:00">9:00</option>
+                      <option value="09:30">9:30</option>
+                      <option value="10:00">10:00</option>
+                      <option value="10:30">10:30</option>
+                      <option value="11:00">11:00</option>
+                      <option value="11:30">11:30</option>
+                      <option value="12:00">12:00</option>
+                      <option value="12:30">12:30</option>
+                      <option value="13:00">13:00</option>
+                      <option value="13:30">13:30</option>
+                      <option value="14:00">14:00</option>
+                      <option value="14:30">14:30</option>
+                      <option value="15:00">15:00</option>
+                      <option value="15:30">15:30</option>
+                      <option value="16:00">16:00</option>
+                      <option value="16:30">16:30</option>
+                      <option value="17:00">17:00</option>
+                      <option value="17:30">17:30</option>
+                      <option value="18:00">18:00</option>
+                      <option value="18:30">18:30</option>
+                      <option value="19:00">19:00</option>
+                      <option value="19:30">19:30</option>
+                      <option value="20:00">20:00</option>
+                    </select>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -154,14 +267,17 @@
               <div class="privacy-policy-text">
                 <h3>＜個人情報取り扱い＞</h3>
                 <p>当社は、応募者の個人情報を、以下の目的で利用いたします。<br>
-                お問い合わせに関する内容確認、調査及びご返信時の参照情報としてお問合せにあたり、「個人情報の取り扱い」を必ずご確認ください。</p>
+                  お問い合わせに関する内容確認、調査及びご返信時の参照情報としてお問合せにあたり、「個人情報の取り扱い」を必ずご確認ください。</p>
                 <p>※上記の個人情報の取り扱いに関する要項をご確認のうえ、同意いただける場合は「同意する」にチェックを入れてください。</p>
               </div>
-              
+
               <div class="confirmation-field-check">
-                <label>
-                  <input type="checkbox" name="agreement" id="agreement" required> 個人情報の取り扱いについて同意する
-                </label>
+                <div class="privacy-agreement">
+                  <input type="checkbox" name="agreement" id="agreement" required>
+                  <label for="agreement">
+                    <a href="#" onclick="event.preventDefault(); window.open('<?php echo home_url('/privacy/'); ?>', '_blank', 'noopener,noreferrer'); return false;">個人情報の取り扱い</a>について同意する
+                  </label>
+                </div>
                 <div class="error-message" id="agreement-error" style="display: none;">
                   個人情報の取り扱いについて同意してください
                 </div>
@@ -179,28 +295,28 @@
       <div class="confirmation-step" id="confirmationStep" style="display: none;">
         <div class="form-container">
           <h2 class="confirmation-step__title">入力内容の確認</h2>
-          
+
           <div class="confirmation-step__content">
             <div class="confirmation-step__item">
               <span class="confirmation-step__label">お名前</span>
               <span class="confirmation-step__value" id="confirmName"></span>
             </div>
-            
+
             <div class="confirmation-step__item">
               <span class="confirmation-step__label">フリガナ</span>
               <span class="confirmation-step__value" id="confirmKana"></span>
             </div>
-            
+
             <div class="confirmation-step__item">
               <span class="confirmation-step__label">お電話番号</span>
               <span class="confirmation-step__value" id="confirmContact"></span>
             </div>
-            
+
             <div class="confirmation-step__item">
               <span class="confirmation-step__label">メールアドレス</span>
               <span class="confirmation-step__value" id="confirmEmail"></span>
             </div>
-            
+
             <div class="confirmation-step__item">
               <span class="confirmation-step__label">選択店舗</span>
               <span class="confirmation-step__value" id="confirmStore"></span>
@@ -215,7 +331,7 @@
               <span class="confirmation-step__label">開始時間</span>
               <span class="confirmation-step__value" id="confirmTime"></span>
             </div>
-            
+
             <div class="confirmation-step__item confirmation-step__item--textarea">
               <span class="confirmation-step__label">ご相談内容</span>
               <span class="confirmation-step__value" id="confirmNotes"></span>

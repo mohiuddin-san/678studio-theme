@@ -49,12 +49,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateContactDetails(shopId) {
         const contactDetails = document.querySelector('.contact-details');
-        
+        const phoneHeader = document.querySelector('.contact-phone-header');
+
         if (!window.shopsData) {
             console.error('Error: shopsData is undefined');
             return;
         }
-        
+
         const shop = window.shopsData.find(s => s.id == shopId);
         const imageElement = document.querySelector('.contact-image img');
         const tableCells = document.querySelectorAll('.contact-info table tr td:nth-child(2)');
@@ -68,12 +69,18 @@ document.addEventListener('DOMContentLoaded', () => {
             if (contactDetails) {
                 contactDetails.style.display = 'none';
             }
+            if (phoneHeader) {
+                phoneHeader.style.display = 'none';
+            }
             return;
         }
-        
-        // 店舗詳細を表示
+
+        // 店舗詳細と電話相談ヘッダーを表示
         if (contactDetails) {
             contactDetails.style.display = 'flex';
+        }
+        if (phoneHeader) {
+            phoneHeader.style.display = 'block';
         }
         
         const imageUrl = shop.main_image 
@@ -84,7 +91,14 @@ document.addEventListener('DOMContentLoaded', () => {
         imageElement.src = imageUrl;
         tableCells[0].textContent = shop.name || 'N/A';
         tableCells[1].textContent = shop.address || 'N/A';
-        tableCells[2].textContent = shop.phone || 'N/A';
+
+        // Make phone number clickable
+        if (shop.phone && shop.phone !== 'N/A') {
+            tableCells[2].innerHTML = `<a href="tel:${shop.phone}" style="color: inherit; text-decoration: none;">${shop.phone}</a>`;
+        } else {
+            tableCells[2].textContent = 'N/A';
+        }
+
         tableCells[3].textContent = shop.business_hours || 'N/A';
         tableCells[4].textContent = shop.holidays || 'N/A';
     }
