@@ -1,62 +1,70 @@
 <?php
 /**
- * About Memorial Section - supportの180度対称レイアウト
- * PC: 複雑なグリッドレイアウト（supportと180度対称）
- * SP: シンプルなflexbox縦並び
+ * Memorial Section - Portrait Photography のX軸180度反転版
+ * 記念写真セクション
  */
 ?>
 
-<section class="about-memorial">
-    <!-- PC Version -->
-    <div class="about-memorial__grid pc">
-        <div class="about-memorial__background-gray gitem" data-grid="1, 19, 1, 8">
-            <img src="<?php echo get_template_directory_uri(); ?>/assets/images/memorial_flower.svg" alt="Decorative flower" class="about-memorial__flower">
+<section class="about-memorial" id="memorial-section">
+  <!-- PC Version -->
+  <div class="about-memorial__grid pc">
+
+    <!-- Grid Item 1: Content (Left side - supportのContentを左に反転) -->
+    <div class="about-memorial__content gitem">
+      <div class="about-memorial__content-inner">
+        <!-- Title -->
+        <div class="about-memorial__title">
+          <h2 class="about-memorial__title-text">お祝いや記念日に─プレゼント</h2>
         </div>
-        <div class="about-memorial__photos gitem" data-grid="9, 19, 2, 12">
-            <img src="<?php echo get_template_directory_uri(); ?>/assets/images/memorial_photo.jpg" alt="Memorial photography">
+
+        <!-- Description -->
+        <div class="about-memorial__description">
+          <p class="about-memorial__description-text">
+            自然な表情で、ご家族に安心してお任せいただける生前遺影撮影。終活の一環として撮影される方も増えています。
+          </p>
         </div>
-        <div class="about-memorial__content gitem" data-grid="1, 9, 4, 14">
-            <div class="about-memorial__text-wrapper">
-                <h2 class="about-memorial__title">
-                    思い出を残すための
-                    <br>特別な撮影
-                </h2>
-                <div class="about-memorial__description">
-                    <p>
-                        人生の大切な瞬間を美しく残すメモリアル撮影。
-                        還暦、喜寿、米寿などの節目のお祝いから、
-                        遺影撮影まで、プロの技術で心に残る一枚をお撮りいたします。
-                    </p>
-                    <p>
-                        ご家族の絆を深める撮影体験として、
-                        皆様に愛され続けています。
-                    </p>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
 
-    <!-- SP Version -->
-    <div class="about-memorial__container sp">
-        <div class="about-memorial__text-section">
-            <h2 class="about-memorial__title">
-                思い出を残すための
-                <br>特別な撮影
-            </h2>
-            <div class="about-memorial__description">
-                <p>
-                    人生の大切な瞬間を美しく残すメモリアル撮影。
-                    還暦、喜寿、米寿などの節目のお祝いから、
-                    遺影撮影まで、プロの技術で心に残る一枚をお撮りいたします。
-                </p>
-                <p>
-                    ご家族の絆を深める撮影体験として、
-                    皆様に愛され続けています。
-                </p>
-            </div>
-        </div>
-        <div class="about-memorial__image-section">
-            <img src="<?php echo get_template_directory_uri(); ?>/assets/images/memorial_photo.jpg" alt="Memorial photography">
-        </div>
+    <!-- Grid Item 2: Background (Peach color) -->
+    <div class="about-memorial__background gitem">
+      <!-- Background decoration with icon -->
+      <div class="about-memorial__background-icon">
+        <img src="<?php echo get_template_directory_uri(); ?>/assets/images/about-memorial-icon.svg" alt="記念撮影アイコン"
+          class="about-memorial__background-icon-img">
+      </div>
     </div>
+
+    <!-- Grid Item 3: Photos (Right side - supportのPhotosを右に反転) -->
+    <div class="about-memorial__photos gitem">
+      <div class="about-memorial__photo about-memorial__photo--main">
+        <img src="<?php echo get_template_directory_uri(); ?>/assets/images/about-memorial.jpg" alt="記念写真"
+          class="about-memorial__photo-img">
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SP Version -->
+  <div class="about-memorial__container sp">
+
+    <!-- Title Section -->
+    <div class="about-memorial__title">
+      <h3 class="about-memorial__title-text">お祝いや記念日に─プレゼント</h3>
+    </div>
+
+    <!-- Description Section -->
+    <div class="about-memorial__description">
+      <p class="about-memorial__description-text">
+        自然な表情で、ご家族に安心してお任せいただける生前遺影撮影。終活の一環として撮影される方も増えています。
+      </p>
+    </div>
+
+    <!-- Photo Section -->
+    <div class="about-memorial__photo">
+      <img src="<?php echo get_template_directory_uri(); ?>/assets/images/about-memorial.jpg" alt="記念写真"
+           class="about-memorial__photo-img">
+    </div>
+
+  </div>
 </section>

@@ -13,7 +13,6 @@
  * f() - シンプル＆パワフルなレスポンシブ関数
  *
  * 使用例:
- * font-size: f(24, 18);        // PC:24px, SP:18px（明示指定）
  * width: f(800, 400);          // PC:800px, SP:400px（明示指定）
  * padding: f(40);              // 自動計算：PC:40px, SP:30px (デフォルト0.75倍)
  * margin: f(-20, -15);         // マイナス値対応
@@ -11782,6 +11781,229 @@ body.single[class*=studio_features] .seo-article-title {
   display: block;
 }
 
+.about-memorial {
+  width: 100%;
+  position: relative;
+  margin: clamp(0px, max(0px + 80 * (100vw - 480px) / (960), 0vw), 160px) 0;
+}
+@media (max-width: 767px) {
+  .about-memorial {
+    margin-top: clamp(48px, max(80px + 40 * (100vw - 480px) / (960), 8.3333333333vw), 240px);
+  }
+}
+.about-memorial__grid {
+  display: grid;
+  grid-template-columns: repeat(20, 1fr);
+  grid-template-rows: repeat(14, 1fr);
+  position: relative;
+}
+@media (max-width: 767px) {
+  .about-memorial__grid {
+    display: none;
+  }
+}
+.about-memorial__photos {
+  grid-column: 9/21;
+  grid-row: 1/13;
+  z-index: 3;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
+  -webkit-box-align: start;
+  -ms-flex-align: start;
+  align-items: flex-start;
+}
+.about-memorial__background {
+  grid-column: 2/13;
+  grid-row: 2/14;
+  background-color: #f5e9e0;
+  z-index: 1;
+  position: relative;
+}
+.about-memorial__background.gitem {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: end;
+  -ms-flex-align: end;
+  align-items: flex-end;
+  -webkit-box-pack: start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
+  padding: clamp(18px, max(30px + 10 * (100vw - 480px) / (960), 2.7777777778vw), 80px);
+}
+.about-memorial__background-icon {
+  opacity: 0.3;
+}
+.about-memorial__background-icon-img {
+  width: clamp(36px, max(60px + 20 * (100vw - 480px) / (960), 5.5555555556vw), 160px);
+  height: auto;
+  display: block;
+}
+.about-memorial__content {
+  grid-column: 2/10;
+  grid-row: 4/11;
+  background-color: white;
+  z-index: 4;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding: clamp(18px, max(30px + 30 * (100vw - 480px) / (960), 4.1666666667vw), 120px) clamp(12px, max(20px + 30 * (100vw - 480px) / (960), 2.7777777778vw), 100px);
+}
+.about-memorial__content-inner {
+  width: 100%;
+}
+.about-memorial__photo {
+  width: 100%;
+  height: 100%;
+}
+.about-memorial__photo-img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: contain;
+  object-fit: contain;
+  -o-object-position: top right;
+  object-position: top right;
+  display: block;
+}
+.about-memorial__image {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+  object-fit: cover;
+  -o-object-position: center;
+  object-position: center;
+  display: block;
+}
+.about-memorial__content {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: start;
+  -ms-flex-align: start;
+  align-items: flex-start;
+  padding: calc(12px + (12) * (100vw - 768px) / (672));
+}
+@media (max-width: 767px) {
+  .about-memorial__content {
+    padding: 0;
+  }
+}
+.about-memorial__title {
+  margin-bottom: clamp(14.4px, max(24px + 8 * (100vw - 480px) / (960), 2.2222222222vw), 64px);
+}
+.about-memorial__title-text {
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: clamp(7.2px, max(12px + 4 * (100vw - 480px) / (960), 1.1111111111vw), 32px);
+  font-weight: 400;
+  line-height: 1.4;
+  background-color: #3f3f3f;
+  color: white;
+  padding: clamp(3.6px, max(6px + 2 * (100vw - 480px) / (960), 0.5555555556vw), 16px) clamp(7.2px, max(12px + 4 * (100vw - 480px) / (960), 1.1111111111vw), 32px);
+  display: inline-block;
+}
+@media (max-width: 767px) {
+  .about-memorial__title {
+    margin-bottom: clamp(14.4px, 5vw, 43.2px);
+  }
+}
+.about-memorial__description-text {
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: clamp(6.3px, max(10.5px + 3.5 * (100vw - 480px) / (960), 0.9722222222vw), 28px);
+  font-weight: 400;
+  line-height: 2.4;
+  color: #333;
+  margin: 0;
+}
+@media (max-width: 767px) {
+  .about-memorial__description {
+    font-size: clamp(8.4px, 2.9166666667vw, 25.2px);
+    line-height: 2;
+  }
+}
+.about-memorial__container.sp {
+  display: none;
+  width: 100%;
+  padding: clamp(12px, max(20px + 20 * (100vw - 480px) / (960), 2.7777777778vw), 80px) clamp(9.6px, max(16px + 4 * (100vw - 480px) / (960), 1.3888888889vw), 40px);
+}
+@media (max-width: 767px) {
+  .about-memorial__container.sp {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    gap: clamp(12px, max(20px + 4 * (100vw - 480px) / (960), 1.6666666667vw), 48px);
+  }
+}
+.about-memorial__container.sp .about-memorial__title {
+  text-align: left;
+  margin-bottom: clamp(12px, max(20px + 4 * (100vw - 480px) / (960), 1.6666666667vw), 48px);
+}
+.about-memorial__container.sp .about-memorial__title-text {
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: clamp(8.4px, max(14px + 2 * (100vw - 480px) / (960), 1.1111111111vw), 32px);
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0.11em;
+  background-color: #3f3f3f;
+  color: white;
+  padding: clamp(12px, max(20px + 4 * (100vw - 480px) / (960), 1.6666666667vw), 48px) clamp(12px, max(20px + 4 * (100vw - 480px) / (960), 1.6666666667vw), 48px);
+  display: inline-block;
+  margin: 0;
+}
+.about-memorial__container.sp .about-memorial__description {
+  margin-bottom: clamp(14.4px, max(24px + 8 * (100vw - 480px) / (960), 2.2222222222vw), 64px);
+}
+.about-memorial__container.sp .about-memorial__description-text {
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: clamp(8.4px, max(14px + 2 * (100vw - 480px) / (960), 1.1111111111vw), 32px);
+  font-weight: 400;
+  color: #3f3f3f;
+  line-height: 2.5;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+.about-memorial__container.sp .about-memorial__photo {
+  width: 100%;
+  margin-left: calc(-1 * clamp(9px, max(15px + 5 * (100vw - 480px) / 960, 1.3888888889vw), 40px));
+  position: relative;
+}
+.about-memorial__container.sp .about-memorial__photo::after {
+  content: "";
+  position: absolute;
+  bottom: calc(-1 * clamp(13.5px, max(22.5px + 7.5 * (100vw - 480px) / 960, 2.0833333333vw), 60px));
+  right: calc(-1 * clamp(13.5px, max(22.5px + 7.5 * (100vw - 480px) / 960, 2.0833333333vw), 60px));
+  width: 95%;
+  height: 100%;
+  background-color: #f5e9e0;
+  z-index: -1;
+}
+.about-memorial__container.sp .about-memorial__photo-img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: contain;
+  object-fit: contain;
+  -o-object-position: top left;
+  object-position: top left;
+  display: block;
+}
+
 .memorial-photography {
   width: 100%;
   padding: calc(40px + (40) * (100vw - 768px) / (672)) 0;
@@ -12150,14 +12372,14 @@ body.single[class*=studio_features] .seo-article-title {
 }
 .family-photography__grid {
   display: grid;
-  grid-template-columns: calc(239.5px + (239.5) * (100vw - 768px) / (672)) calc(121.5px + (121.5) * (100vw - 768px) / (672)) calc(39px + (39) * (100vw - 768px) / (672)) calc(279.5px + (279.5) * (100vw - 768px) / (672)) 1fr;
-  grid-template-rows: calc(24px + (24) * (100vw - 768px) / (672)) calc(71px + (71) * (100vw - 768px) / (672)) calc(121.5px + (121.5) * (100vw - 768px) / (672)) calc(95.5px + (95.5) * (100vw - 768px) / (672)) calc(40px + (40) * (100vw - 768px) / (672));
+  grid-template-columns: 1fr calc(35px + (35) * (100vw - 768px) / (672)) calc(279.5px + (279.5) * (100vw - 768px) / (672)) calc(42.5px + (42.5) * (100vw - 768px) / (672));
+  grid-template-rows: calc(24px + (24) * (100vw - 768px) / (672)) calc(71.5px + (71.5) * (100vw - 768px) / (672)) calc(190px + (190) * (100vw - 768px) / (672)) calc(58.5px + (58.5) * (100vw - 768px) / (672)) calc(28.5px + (28.5) * (100vw - 768px) / (672));
   width: 100%;
 }
 @media (max-width: 767px) {
   .family-photography__grid {
-    grid-template-columns: clamp(12px, 4.1666666667vw, 36px) clamp(230.4px, 80vw, 691.2px) clamp(33.6px, 11.6666666667vw, 100.8px) clamp(12px, 4.1666666667vw, 36px);
-    grid-template-rows: clamp(90px, 31.25vw, 270px) clamp(28.8px, 10vw, 86.4px) clamp(230.4px, 80vw, 691.2px) clamp(28.8px, 10vw, 86.4px);
+    grid-template-columns: clamp(12px, 4.1666666667vw, 36px) clamp(33.6px, 11.6666666667vw, 100.8px) clamp(230.4px, 80vw, 691.2px) clamp(12px, 4.1666666667vw, 36px);
+    grid-template-rows: clamp(123.6px, 42.9166666667vw, 370.8px) clamp(28.8px, 10vw, 86.4px) clamp(230.4px, 80vw, 691.2px) clamp(28.8px, 10vw, 86.4px);
   }
 }
 .family-photography__item {
