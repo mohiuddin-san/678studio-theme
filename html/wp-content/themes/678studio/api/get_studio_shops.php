@@ -31,6 +31,22 @@ try {
     foreach ($studios as $studio) {
         $fields = get_fields($studio->ID);
         
+        // main_image フィールドの処理
+        $main_image_url = '';
+        if (isset($fields['main_image'])) {
+            $main_image = $fields['main_image'];
+            if (is_array($main_image) && isset($main_image['url'])) {
+                // ACF画像フィールドが配列で返される場合
+                $main_image_url = $main_image['url'];
+            } elseif (is_string($main_image) && filter_var($main_image, FILTER_VALIDATE_URL)) {
+                // 文字列でURLが返される場合
+                $main_image_url = $main_image;
+            } elseif (is_numeric($main_image)) {
+                // 画像IDが返される場合
+                $main_image_url = wp_get_attachment_image_url($main_image, 'full');
+            }
+        }
+
         // 店舗データを構築
         $shop = array(
             'id' => $studio->ID,
@@ -40,7 +56,7 @@ try {
             'nearest_station' => $fields['nearest_station'] ?? '',
             'business_hours' => $fields['business_hours'] ?? '',
             'holidays' => $fields['holidays'] ?? '',
-            'main_image' => $fields['main_image'] ?? '',
+            'main_image' => $main_image_url,
             'prefecture' => $fields['prefecture'] ?? '',
             'is_certified_store' => isset($fields['is_certified_store']) ? $fields['is_certified_store'] : false
         );

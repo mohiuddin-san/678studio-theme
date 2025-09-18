@@ -9,7 +9,7 @@ $highlight-color: #007bff;
 .contact-section {
 	background-color: #e9edf0;
 	width: 100%;
-	padding: 0 m.fs(120, 0.5);
+	padding: 0 m.fs(120, 0.1);
 
 	@include m.mq(md) {
 		padding: 0 m.fsm(20);
@@ -50,12 +50,80 @@ $highlight-color: #007bff;
 		width: 100%;
 		text-align: center;
 		margin-top: m.fs(20);
-		margin-bottom: m.fs(100);
+		margin-bottom: m.fs(40);
 		font-family: v.$ja;
 		font-size: m.fs(39);
 		color: #3f3f3f;
 		font-weight: 400;
 		letter-spacing: 0.12em;
+	}
+
+	// 説明テキスト
+	.contact__description {
+		width: 100%;
+		text-align: center;
+		margin-bottom: m.fs(100);
+
+		&-text {
+			color: #3f3f3f;
+			text-align: center;
+			font-family: v.$ja-sans;
+			font-size: m.fs(16);
+			font-style: normal;
+			font-weight: 500;
+			line-height: 2.5; /* 250% */
+			letter-spacing: m.fs(3.2);
+			margin: 0;
+
+			// モバイル対応
+			@include m.mq(md) {
+				text-align: left;
+				font-size: m.fsm(16);
+				font-weight: 400;
+				line-height: 2; /* 200% */
+				letter-spacing: m.fsm(0.8);
+			}
+		}
+	}
+
+	// セクションヘッダー
+	.contact-section-header {
+		margin-bottom: m.fs(32);
+
+		&__title {
+			color: #547e8f;
+			font-family: v.$ja-sans;
+			font-size: m.fs(25);
+			font-style: normal;
+			font-weight: 500;
+			line-height: 1.6; /* 160% */
+			letter-spacing: m.fs(2.5);
+			margin: 0;
+
+			// モバイル対応
+			@include m.mq(md) {
+				font-size: m.fsm(20);
+				letter-spacing: m.fsm(2);
+			}
+		}
+
+		// モバイル対応
+		@include m.mq(md) {
+			margin-bottom: m.fsm(24);
+		}
+	}
+
+	// 電話相談ヘッダー専用のスタイル
+	.contact-phone-header {
+		.contact-section-header__title {
+			margin-bottom: m.fs(40);
+			margin-top: m.fs(40);
+
+			// モバイル対応
+			@include m.mq(md) {
+				margin-bottom: m.fsm(24);
+			}
+		}
 	}
 
 	.contact-main-text {
@@ -70,7 +138,7 @@ $highlight-color: #007bff;
 	}
 
 	.contact-content {
-		padding: m.fs(44) m.fs(100);
+		padding: m.fs(44) m.fs(100, 0.1);
 		background-color: #fff;
 		border: 1px solid $border-color;
 		align-items: center;
@@ -161,7 +229,7 @@ $highlight-color: #007bff;
 		}
 
 		.contact-details {
-			margin-top: m.fs(80);
+			margin-top: m.fs(40);
 			display: flex;
 			flex-direction: row;
 			align-items: flex-start;
@@ -228,9 +296,13 @@ $highlight-color: #007bff;
 					td {
 						padding: m.fs(8);
 						border: 0.5px solid $border-color;
-						font-family: v.$ja;
-						font-size: m.fs(14);
-						color: $border-color;
+						color: #547e8f;
+						font-family: v.$ja-sans;
+						font-size: m.fs(16);
+						font-style: normal;
+						font-weight: 400;
+						line-height: m.fs(45); /* 281.25% */
+						letter-spacing: m.fs(1.6);
 						text-align: center;
 
 						@include m.mq(md) {
@@ -394,7 +466,13 @@ $highlight-color: #007bff;
 
 		label {
 			display: block;
-			color: $text-color;
+			color: #547e8f;
+			font-family: v.$ja-sans;
+			font-size: m.fs(20);
+			font-style: normal;
+			font-weight: 500;
+			line-height: m.fs(45); /* 225% */
+			letter-spacing: m.fs(2);
 			margin-bottom: m.fs(15);
 		}
 
@@ -407,20 +485,75 @@ $highlight-color: #007bff;
 			border: 1px solid $border-color;
 			border-radius: m.fs(5);
 			box-sizing: border-box;
+			outline: none !important;
+			box-shadow: none !important;
+			color: #9CBECD;
+			font-family: v.$ja-sans;
+			font-size: m.fs(16);
+			font-style: normal;
+			font-weight: 500;
+			line-height: m.fs(45); /* 281.25% */
+			letter-spacing: m.fs(1.6);
+
+			&:focus {
+				outline: none !important;
+				box-shadow: none !important;
+				border-color: $border-color !important;
+			}
+
+			&:active {
+				outline: none !important;
+				box-shadow: none !important;
+			}
 
 			&::placeholder {
-				color: #9cbecd; // プレースホルダーの色
-				font-size: 14px; // プレースホルダーの文字サイズ
-				font-family: 'Noto Sans JP', medium;
+				color: #9CBECD;
+				font-family: v.$ja-sans;
+				font-size: m.fs(16);
+				font-style: normal;
+				font-weight: 500;
+				line-height: m.fs(45); /* 281.25% */
+				letter-spacing: m.fs(1.6);
+			}
+
+			// 入力された値がある場合は #547E8F 色に変更
+			&:valid:not(:placeholder-shown) {
+				color: #547E8F;
+			}
+
+			// 日付入力フィールドの特別なスタイリング
+			&[type="date"] {
+				color: #9CBECD;
+
+				&::-webkit-datetime-edit-text,
+				&::-webkit-datetime-edit-month-field,
+				&::-webkit-datetime-edit-day-field,
+				&::-webkit-datetime-edit-year-field {
+					color: #9CBECD;
+					font-family: v.$ja-sans;
+					font-size: m.fs(16);
+					font-weight: 500;
+					letter-spacing: m.fs(1.6);
+				}
+
+				&:focus,
+				&:valid:not(:placeholder-shown) {
+					&::-webkit-datetime-edit-text,
+					&::-webkit-datetime-edit-month-field,
+					&::-webkit-datetime-edit-day-field,
+					&::-webkit-datetime-edit-year-field {
+						color: #547E8F;
+					}
+				}
 			}
 		}
 		textarea {
-			height: m.fs(150);
+			height: m.fs(200);
 			resize: vertical;
 
 			@include m.mq(md) {
-				height: m.fsm(180);
-				min-height: m.fsm(100);
+				height: m.fsm(220);
+				min-height: m.fsm(120);
 			}
 		}
 
@@ -434,6 +567,106 @@ $highlight-color: #007bff;
 			&::-ms-expand {
 				display: none;
 				/* Hide default arrow in IE */
+			}
+
+			// selectで値が選ばれた場合は #547E8F 色に変更
+			&:valid:not([value=""]) {
+				color: #547E8F;
+			}
+
+			// オプションのスタイリング
+			option {
+				color: #547E8F;
+				font-family: v.$ja-sans;
+				font-size: m.fs(16);
+				font-weight: 500;
+				letter-spacing: m.fs(1.6);
+				background-color: white;
+
+				&:first-child {
+					color: #9CBECD;
+				}
+
+				&[value=""] {
+					color: #9CBECD;
+				}
+			}
+		}
+
+		.input-note {
+			color: #547E8F;
+			text-align: right;
+			font-family: v.$ja-sans;
+			font-size: m.fs(16);
+			font-style: normal;
+			font-weight: 500;
+			line-height: m.fs(45); /* 281.25% */
+			letter-spacing: m.fs(1.6);
+			margin-top: m.fs(8);
+
+			@include m.mq(md) {
+				font-size: m.fsm(12);
+				margin-top: m.fsm(6);
+				text-align: left;
+			}
+		}
+	}
+
+	// 撮影希望日時の複数選択
+	.reservation-preferences {
+		margin-bottom: m.fs(40);
+
+		.preference-group {
+			margin-bottom: m.fs(32);
+			border: 1px solid #e9ecef;
+			border-radius: m.fs(8);
+			padding: m.fs(20);
+			background-color: #fafbfc;
+
+			@include m.mq(md) {
+				margin-bottom: m.fsm(24);
+				padding: m.fsm(16);
+			}
+
+			&--required {
+				border-color: $border-color;
+				background-color: rgba(84, 126, 143, 0.02);
+			}
+
+			&--optional {
+				border-color: #dee2e6;
+				background-color: #f8f9fa;
+			}
+
+			&__title {
+				color: #547E8F;
+				font-family: v.$ja-sans;
+				font-size: m.fs(18);
+				font-weight: 600;
+				margin-bottom: m.fs(16);
+				padding-bottom: m.fs(8);
+				border-bottom: 1px solid #e9ecef;
+
+				@include m.mq(md) {
+					font-size: m.fsm(16);
+					margin-bottom: m.fsm(12);
+					padding-bottom: m.fsm(6);
+				}
+			}
+
+			&__fields {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: m.fs(20);
+
+				@include m.mq(md) {
+					grid-template-columns: 1fr;
+					gap: m.fsm(16);
+				}
+
+				.input-field {
+					margin-bottom: 0;
+				}
 			}
 		}
 	}
@@ -498,17 +731,10 @@ $highlight-color: #007bff;
 		text-align: center;
 		margin-bottom: m.fs(60);
 
-		label {
-			color: $text-color;
-			font-size: m.fs(14);
+		.privacy-agreement {
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			cursor: pointer;
-
-			@include m.mq(md) {
-				font-size: m.fsm(14);
-			}
 
 			input[type='checkbox'] {
 				appearance: none;
@@ -540,6 +766,42 @@ $highlight-color: #007bff;
 
 				&:hover {
 					border-color: darken($border-color, 10%);
+				}
+			}
+
+			label {
+				color: #547E8F;
+				font-family: v.$ja-sans;
+				font-size: m.fs(20);
+				font-style: normal;
+				font-weight: 500;
+				line-height: m.fs(45); /* 225% */
+				letter-spacing: m.fs(2);
+				cursor: pointer;
+
+				@include m.mq(md) {
+					font-size: m.fsm(16);
+				}
+
+				a {
+					color: #547E8F;
+					text-decoration: underline;
+					font-family: inherit;
+					font-size: inherit;
+					font-style: inherit;
+					font-weight: inherit;
+					line-height: inherit;
+					letter-spacing: inherit;
+					transition: color 0.3s ease;
+					cursor: pointer;
+
+					&:hover {
+						color: darken(#547E8F, 15%);
+					}
+
+					&:visited {
+						color: #547E8F;
+					}
 				}
 			}
 		}
