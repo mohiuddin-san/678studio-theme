@@ -1,133 +1,222 @@
+// Memorial Section - About Support の X軸180度反転版
+// =============================================================================
+
 @use '../../base/mixins' as m;
 @use '../../base/variables' as v;
 
 .about-memorial {
-    position: relative;
-    margin-bottom: m.f(120, 80);
+	width: 100%;
+	position: relative;
+	margin: m.f(80, 0) 0;
 
-    &__grid.pc {
-        display: grid;
-        @include m.g(20, 14);
-        padding: 0 m.f(60);
-        position: relative;
+	@include m.mq(md) {
+		margin-top: m.f(120, 80);  // SP版で上部の余白を増やす
+	}
 
-        @include m.mq(md) {
-            display: none;
-        }
-    }
+	&__grid {
+		@include m.g(
+			$cols: (
+				repeat(20, 1fr),
+			),
+			$rows: (
+				repeat(14, 1fr),
+			)
+		);
+		position: relative;
 
-    &__background-gray {
-        background-color: #f5f5f5;
-        border-radius: m.f(16);
-        position: relative;
-        z-index: 1;
-    }
+		@include m.mq(md) {
+			display: none;
+		}
+	}
 
-    &__flower {
-        position: absolute;
-        bottom: m.f(-20);
-        left: 50%;
-        transform: translateX(-50%);
-        width: m.f(60);
-        height: auto;
-        z-index: 2;
-    }
+	// Grid Item 1: Photos (Right side - supportの1-12を9-20に反転)
+	&__photos {
+		@include m.gitem(9, 21, 1, 13);
+		z-index: 3;
+		display: flex;
+		justify-content: flex-end;
+		align-items: flex-start;
+	}
 
-    &__photos {
-        position: relative;
-        z-index: 3;
-        border-radius: m.f(16);
-        overflow: hidden;
+	// Grid Item 2: Background (Peach color - supportの8-20を1-13に反転)
+	&__background {
+		@include m.gitem(2, 13, 2, 14);
+		background-color: #f5e9e0;
+		z-index: 1;
+		position: relative;
 
-        img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-    }
+		&.gitem {
+			display: flex;
+			align-items: flex-end;
+			justify-content: flex-start;
+			padding: m.f(40);
+		}
 
-    &__content {
-        display: flex;
-        align-items: center;
-        z-index: 2;
-        padding: m.f(40) 0;
-    }
+		&-icon {
+			opacity: 0.3;
 
-    &__text-wrapper {
-        width: 100%;
-    }
+			&-img {
+				width: m.f(80);
+				height: auto;
+				display: block;
+			}
+		}
+	}
 
-    &__title {
-        font-size: m.f(36);
-        font-weight: bold;
-        color: #333;
-        line-height: 1.4;
-        margin-bottom: m.f(24);
-    }
+	// Grid Item 3: Content (Left side - supportの11-20を1-10に反転)
+	&__content {
+		@include m.gitem(2, 10, 4, 11);
+		background-color: white;
+		z-index: 4;
+		display: flex;
+		align-items: center;
+		padding: m.f(60, 30) m.f(50, 20);
 
-    &__description {
-        font-size: m.f(16);
-        line-height: 1.8;
-        color: #666;
+		&-inner {
+			width: 100%;
+		}
+	}
 
-        p {
-            margin-bottom: m.f(16);
+	&__photo {
+		width: 100%;
+		height: 100%;
 
-            &:last-child {
-                margin-bottom: 0;
-            }
-        }
-    }
+		&-img {
+			width: 100%;
+			height: 100%;
+			object-fit: contain;
+			object-position: top right;
+			display: block;
+		}
+	}
 
-    // SP Version
-    &__container.sp {
-        display: none;
+	// Images
+	&__image {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: center;
+		display: block;
+	}
 
-        @include m.mq(md) {
-            display: flex;
-            flex-direction: column;
-            gap: m.f(24, 20);
-            padding: 0 m.f(20, 16);
-        }
-    }
+	// Content Area
+	&__content {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: flex-start;
+		padding: m.fs(24, 0.5);
 
-    &__text-section {
-        @include m.mq(md) {
-            order: 1;
-        }
-    }
+		@include m.mq(md) {
+			padding: 0;
+		}
+	}
 
-    &__image-section {
-        @include m.mq(md) {
-            order: 2;
-            border-radius: m.f(12, 8);
-            overflow: hidden;
+	&__title {
+		margin-bottom: m.f(32);
 
-            img {
-                width: 100%;
-                height: auto;
-                display: block;
-            }
-        }
-    }
+		&-text {
+			font-family: v.$ja-sans;
+			font-size: m.f(16);
+			font-weight: 400;
+			line-height: 1.4;
+			background-color: #3f3f3f;
+			color: white;
+			padding: m.f(8) m.f(16);
+			display: inline-block;
+		}
 
-    // SP版のタイトル・説明文
-    .sp &__title {
-        @include m.mq(md) {
-            font-size: m.f(28, 24);
-            margin-bottom: m.f(16, 12);
-        }
-    }
+		@include m.mq(md) {
+			margin-bottom: m.fsm(24);
+		}
+	}
 
-    .sp &__description {
-        @include m.mq(md) {
-            font-size: m.f(14, 13);
-            line-height: 1.7;
+	&__description {
+		&-text {
+			font-family: v.$ja-sans;
+			font-size: m.f(14);
+			font-weight: 400;
+			line-height: 2.4;
+			color: #333;
+			margin: 0;
+		}
 
-            p {
-                margin-bottom: m.f(12, 10);
-            }
-        }
-    }
+		@include m.mq(md) {
+			font-size: m.fsm(14);
+			line-height: 2;
+		}
+	}
+
+	// SP Version Container (flex-box vertical layout)
+	&__container.sp {
+		display: none;
+		width: 100%;
+		padding: m.f(40, 20) m.f(20, 16);
+
+		@include m.mq(md) {
+			display: flex;
+			flex-direction: column;
+			gap: m.f(24, 20);
+		}
+
+		// Title
+		.about-memorial__title {
+			text-align: left;
+			margin-bottom: m.f(24, 20);
+
+			&-text {
+				font-family: v.$ja-sans;
+				font-size: m.f(16, 14);
+				font-weight: 400;
+				line-height: 1.4;
+				letter-spacing: 0.11em;
+				background-color: #3f3f3f;
+				color: white;
+				padding: m.f(24, 20) m.f(24, 20);
+				display: inline-block;
+				margin: 0;
+			}
+		}
+
+		// Description
+		.about-memorial__description {
+			margin-bottom: m.f(32, 24);
+
+			&-text {
+				font-family: v.$ja-sans;
+				font-size: m.f(16, 14);
+				font-weight: 400;
+				color: #3f3f3f;
+				line-height: 2.5;
+				letter-spacing: 0.05em;
+				margin: 0;
+			}
+		}
+
+		// Photo
+		.about-memorial__photo {
+			width: 100%;
+			margin-left: m.f(-20);
+			position: relative;
+
+			&::after {
+				content: '';
+				position: absolute;
+				bottom: m.f(-30);
+				right: m.f(-30);
+				width: 95%;
+				height: 100%;
+				background-color: #f5e9e0;  // ピーチ色（PC版と同じ）
+				z-index: -1;
+			}
+
+			&-img {
+				width: 100%;
+				height: 100%;
+				object-fit: contain;
+				object-position: top left;
+				display: block;
+			}
+		}
+	}
 }

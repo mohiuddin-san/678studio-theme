@@ -24,7 +24,6 @@ $figma-mobile: 480 !default; // モバイル基準サイズ
  * f() - シンプル＆パワフルなレスポンシブ関数
  *
  * 使用例:
- * font-size: f(24, 18);        // PC:24px, SP:18px（明示指定）
  * width: f(800, 400);          // PC:800px, SP:400px（明示指定）
  * padding: f(40);              // 自動計算：PC:40px, SP:30px (デフォルト0.75倍)
  * margin: f(-20, -15);         // マイナス値対応
@@ -103,7 +102,10 @@ $figma-mobile: 480 !default; // モバイル基準サイズ
 				max(
 					calc(
 						#{$mobile-value}px + #{($desktop-value - $mobile-value)} *
-							((100vw - #{$figma-mobile}px) / (#{$figma-desktop - $figma-mobile}))
+							(
+								(100vw - #{$figma-mobile}px) /
+									(#{$figma-desktop - $figma-mobile})
+							)
 					),
 					#{$reasonable-vw}vw
 				),
