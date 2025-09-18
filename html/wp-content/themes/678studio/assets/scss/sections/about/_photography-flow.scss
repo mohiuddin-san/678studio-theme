@@ -29,6 +29,47 @@
 			margin: m.fsm(20) m.fsm(20);
 			padding: m.fsm(40) m.fsm(20);
 		}
+		// Pin Images using pseudo-elements
+		&::before,
+		&::after {
+			content: '';
+			position: absolute;
+			top: m.fs(20);
+			width: m.fs(40);
+			height: m.fs(40);
+			background-size: contain;
+			background-repeat: no-repeat;
+			background-position: center;
+			z-index: 10;
+			display: block;
+
+			// モバイル対応
+			@include m.mq(md) {
+				top: m.fsm(15);
+				width: m.fsm(30);
+				height: m.fsm(30);
+			}
+		}
+
+		&::before {
+			left: m.fs(20);
+			background-image: url('/wp-content/themes/678studio/assets/images/pin-left.png');
+
+			// モバイル対応
+			@include m.mq(md) {
+				left: m.fsm(15);
+			}
+		}
+
+		&::after {
+			right: m.fs(20);
+			background-image: url('/wp-content/themes/678studio/assets/images/pin-right.png');
+
+			// モバイル対応
+			@include m.mq(md) {
+				right: m.fsm(15);
+			}
+		}
 	}
 
 	// ヘッダーエリア
@@ -243,5 +284,11 @@
 			font-size: m.fsm(14);
 			line-height: 1.6;
 		}
+	}
+
+	&__note {
+		font-size: 0.85em;
+		color: #666;
+		line-height: 1.6;
 	}
 }
