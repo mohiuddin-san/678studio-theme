@@ -28,15 +28,18 @@
         <div class="flow-card__content">
           <div class="flow-card__header">
             <div class="flow-card__number">
-              <img class="flow-card__number-icon" src="<?php echo get_template_directory_uri(); ?>/assets/images/number.svg" alt="#">
+              <img class="flow-card__number-icon"
+                src="<?php echo get_template_directory_uri(); ?>/assets/images/number.svg" alt="#">
               <span class="flow-card__number-text">1</span>
             </div>
-            <div class="flow-card__badge">お問い合わせ・ご予約</div>
+            <div class="flow-card__badge">ご予約日時のご相談</div>
           </div>
           <img class="flow-card__underline"
             src="<?php echo get_template_directory_uri(); ?>/assets/images/underline-long.svg" alt="">
           <p class="flow-card__description">
-            <a href="/stores" style="color: #a5c3cf; text-decoration: underline;">店舗検索</a>よりお近くの店舗をお選びいただき、<a href="/studio-reservation" style="color: #a5c3cf; text-decoration: underline;">ご予約</a>または<a href="/studio-inquiry" style="color: #a5c3cf; text-decoration: underline;">お問合せ</a>のページよりご連絡ください。
+            <a href="/stores" style="color: #a5c3cf; text-decoration: underline;">店舗検索</a>よりお近くの店舗をお選びいただき、ご予約日時のご相談を<a
+              href="/studio-reservation"
+              style="color: #a5c3cf; text-decoration: underline;">メールフォーム</a>またはお電話にて、ご連絡ください。
           </p>
         </div>
       </div>
@@ -50,15 +53,17 @@
         <div class="flow-card__content">
           <div class="flow-card__header">
             <div class="flow-card__number">
-              <img class="flow-card__number-icon" src="<?php echo get_template_directory_uri(); ?>/assets/images/number.svg" alt="#">
+              <img class="flow-card__number-icon"
+                src="<?php echo get_template_directory_uri(); ?>/assets/images/number.svg" alt="#">
               <span class="flow-card__number-text">2</span>
             </div>
-            <div class="flow-card__badge">事前カウンセリング</div>
+            <div class="flow-card__badge">ご指定の店舗と日時のご相談</div>
           </div>
           <img class="flow-card__underline"
             src="<?php echo get_template_directory_uri(); ?>/assets/images/underline-long.svg" alt="">
           <p class="flow-card__description">
-            撮影当日または事前に、撮影の目的やご希望のイメージをお聞きします。お客様のご要望に合わせて、撮影スタイルや仕上がりをご相談いたします。
+            メールフォームの場合は、お問い合わせ後に、ご指定の店舗より改めて返信させていただきます。
+            撮影日時や撮影内容など、詳細をご相談ください。またオプションは各店舗によって異なりますので、合わせてご相談・ご確認いただけるとスムーズです。
           </p>
         </div>
       </div>
@@ -72,15 +77,18 @@
         <div class="flow-card__content">
           <div class="flow-card__header">
             <div class="flow-card__number">
-              <img class="flow-card__number-icon" src="<?php echo get_template_directory_uri(); ?>/assets/images/number.svg" alt="#">
+              <img class="flow-card__number-icon"
+                src="<?php echo get_template_directory_uri(); ?>/assets/images/number.svg" alt="#">
               <span class="flow-card__number-text">3</span>
             </div>
-            <div class="flow-card__badge">撮影</div>
+            <div class="flow-card__badge">撮影当日</div>
           </div>
           <img class="flow-card__underline"
             src="<?php echo get_template_directory_uri(); ?>/assets/images/underline-long.svg" alt="">
           <p class="flow-card__description">
-            経験豊富なカメラマンが、リラックスした雰囲気の中で撮影を行います。お客様の自然な表情を表現を引き出し、美しい瞬間を切り取ります。
+            ご予約いただいた日時に、直接ご予約店舗までお越しください。
+            あなたの自然な雰囲気を重視したヘアメイクと、日常の延長にある美しさを引き出した撮影で、ベストショットを写真に収めます。<br><br>
+            <span class="flow-card__note">※オプションメニューについては店舗によって異なりますので、各店舗にお問い合わせください。</span>
           </p>
         </div>
       </div>
@@ -94,16 +102,17 @@
         <div class="flow-card__content">
           <div class="flow-card__header">
             <div class="flow-card__number">
-              <img class="flow-card__number-icon" src="<?php echo get_template_directory_uri(); ?>/assets/images/number.svg" alt="#">
+              <img class="flow-card__number-icon"
+                src="<?php echo get_template_directory_uri(); ?>/assets/images/number.svg" alt="#">
               <span class="flow-card__number-text">4</span>
             </div>
-            <div class="flow-card__badge">写真確定・データ納品</div>
+            <div class="flow-card__badge">撮影当日または後日</div>
           </div>
           <img class="flow-card__underline"
             src="<?php echo get_template_directory_uri(); ?>/assets/images/underline-long.svg" alt="">
           <p class="flow-card__description">
-            撮影後、お客様と一緒に写真を選定いたします。選定した写真のデータをCDやUSBにてお渡しいたします。<br><br>
-            ※お渡し方法は店舗によって異なることがございますので、詳しくは各店舗にお問合せください。
+            撮影後、お客様と一緒に写真を選定し、写真のデータをお渡しいたします。<br><br>
+            <span class="flow-card__note">※データの納品方法は店舗によって異なることがございますので、詳しくは各店舗にお問合せください。</span>
           </p>
         </div>
       </div>

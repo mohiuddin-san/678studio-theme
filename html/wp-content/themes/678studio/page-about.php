@@ -70,41 +70,6 @@ get_header();
   <!-- About Present Section -->
   <?php get_template_part('template-parts/sections/about/present'); ?>
 
-  <!-- About Link Section -->
-  <?php /* get_template_part('template-parts/components/about-link', null, [
-    'buttons' => [
-      ['text' => '利用シーン', 'url' => '#usage-scenes'],
-      ['text' => '撮影プラン', 'url' => '#photography-plans'],
-      ['text' => '撮影の流れ', 'url' => '#photography-flow']
-    ]
-  ]); */?>
-
-  <!-- Memorial Photography Section (利用シーン) -->
-  <div id="usage-scenes"></div>
-  <?php get_template_part('template-parts/sections/about/memorial-photography', null, [
-    'title' => '記念撮影',
-    'description' => '特別な瞬間を美しく残します',
-    'images' => [
-      ['src' => 'memorial-1.jpg', 'alt' => '記念撮影1'],
-      ['src' => 'memorial-2.jpg', 'alt' => '記念撮影2'],
-      ['src' => 'memorial-3.jpg', 'alt' => '記念撮影3'],
-      ['src' => 'memorial-4.jpg', 'alt' => '記念撮影4'],
-    ]
-  ]); ?>
-
-  <!-- Portrait Photography Section -->
-  <?php get_template_part('template-parts/sections/about/portrait-photography'); ?>
-
-  <!-- Family Photography Section -->
-  <?php get_template_part('template-parts/sections/about/family-photography'); ?>
-
-  <!-- Photography Plans Section -->
-  <div id="photography-plans"></div>
-  <?php get_template_part('template-parts/sections/about/photography-plans'); ?>
-
-  <!-- Options Section -->
-  <?php // get_template_part('template-parts/sections/about/options'); ?>
-
   <!-- Photography Flow Section -->
   <div id="photography-flow"></div>
   <?php get_template_part('template-parts/sections/about/photography-flow'); ?>

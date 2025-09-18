@@ -1,123 +1,188 @@
+// About Present Section
+// =============================================================================
+
 @use '../../base/mixins' as m;
 @use '../../base/variables' as v;
 
 .about-present {
-    position: relative;
-    margin-bottom: m.f(120, 80);
+	width: 100%;
+	position: relative;
+	margin: m.f(80, 0) 0;
 
-    &__grid.pc {
-        display: grid;
-        @include m.g(20, 14);
-        padding: 0 m.f(60);
-        position: relative;
+	&__grid {
+		@include m.g(
+			$cols: (
+				repeat(20, 1fr),
+			),
+			$rows: (
+				repeat(14, 1fr),
+			)
+		);
+		position: relative;
 
-        @include m.mq(md) {
-            display: none;
-        }
-    }
+		@include m.mq(md) {
+			display: none;
+		}
+	}
 
-    &__background-gray {
-        background-color: #f5f5f5;
-        border-radius: m.f(16);
-        position: relative;
-        z-index: 1;
-    }
+	// Grid Item 1: Photos (Left side)
+	&__photos {
+		@include m.gitem(1, 12, 1, 13);
+		z-index: 3;
+		display: flex;
+		justify-content: flex-start;
+		align-items: flex-start;
+	}
 
-    &__photos {
-        position: relative;
-        z-index: 3;
-        border-radius: m.f(16);
-        overflow: hidden;
+	&__photo {
+		width: 100%;
+		height: 100%;
 
-        img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-    }
+		&-img {
+			width: 100%;
+			height: 100%;
+			object-fit: contain;
+			object-position: top left;
+			display: block;
+		}
+	}
 
-    &__content {
-        display: flex;
-        align-items: center;
-        z-index: 2;
-        padding: m.f(40) 0;
-    }
+	// Grid Item 2: Background (Yellow)
+	&__background {
+		@include m.gitem(8, 20, 2, 14);
+		background-color: #fcf6de;
+		z-index: 1;
+		position: relative;
 
-    &__text-wrapper {
-        width: 100%;
-    }
+		&.gitem {
+			display: flex;
+			align-items: flex-end;
+			justify-content: flex-end;
+			padding: m.f(40);
+		}
 
-    &__title {
-        font-size: m.f(36);
-        font-weight: bold;
-        color: #333;
-        line-height: 1.4;
-        margin-bottom: m.f(24);
-    }
+		&-icon {
+			opacity: 0.3;
 
-    &__description {
-        font-size: m.f(16);
-        line-height: 1.8;
-        color: #666;
+			&-img {
+				width: m.f(80);
+				height: auto;
+				display: block;
+			}
+		}
+	}
 
-        p {
-            margin-bottom: m.f(16);
+	// Grid Item 3: Content (White background main area)
+	&__content {
+		@include m.gitem(11, 20, 4, 11);
+		background-color: white;
+		z-index: 4;
+		display: flex;
+		align-items: center;
+		padding: m.f(60, 30) m.f(50, 20);
 
-            &:last-child {
-                margin-bottom: 0;
-            }
-        }
-    }
+		&-inner {
+			width: 100%;
+		}
+	}
 
-    // SP Version
-    &__container.sp {
-        display: none;
+	&__title {
+		margin-bottom: m.f(32);
 
-        @include m.mq(md) {
-            display: flex;
-            flex-direction: column;
-            gap: m.f(24, 20);
-            padding: 0 m.f(20, 16);
-        }
-    }
+		&-text {
+			font-family: v.$ja-sans;
+			font-size: m.f(16);
+			font-weight: 400;
+			line-height: 1.4;
+			background-color: #3f3f3f;
+			color: white;
+			padding: m.f(8) m.f(16);
+			display: inline-block;
+			margin: 0;
+		}
+	}
 
-    &__text-section {
-        @include m.mq(md) {
-            order: 1;
-        }
-    }
+	&__description {
+		&-text {
+			font-family: v.$ja-sans;
+			font-size: m.f(16);
+			font-weight: 400;
+			color: #555;
+			line-height: 1.7;
+			margin: 0 0 m.f(20) 0;
+		}
+	}
 
-    &__image-section {
-        @include m.mq(md) {
-            order: 2;
-            border-radius: m.f(12, 8);
-            overflow: hidden;
+	// SP Version Container (flex-box vertical layout)
+	&__container.sp {
+		display: none;
+		width: 100%;
+		padding: m.f(40, 20) m.f(20, 16);
 
-            img {
-                width: 100%;
-                height: auto;
-                display: block;
-            }
-        }
-    }
+		@include m.mq(md) {
+			display: flex;
+			flex-direction: column;
+			gap: m.f(24, 20);
+		}
 
-    // SP版のタイトル・説明文
-    .sp &__title {
-        @include m.mq(md) {
-            font-size: m.f(28, 24);
-            margin-bottom: m.f(16, 12);
-        }
-    }
+		// Title
+		.about-present__title {
+			text-align: left;
+			margin-bottom: m.f(24, 20);
 
-    .sp &__description {
-        @include m.mq(md) {
-            font-size: m.f(14, 13);
-            line-height: 1.7;
+			&-text {
+				font-family: v.$ja-sans;
+				font-size: m.f(16, 14);
+				font-weight: 400;
+				line-height: 1.4;
+				letter-spacing: 0.11em;
+				background-color: #3f3f3f;
+				color: white;
+				padding: m.f(24, 20) m.f(24, 20);
+				display: inline-block;
+				margin: 0;
+			}
+		}
 
-            p {
-                margin-bottom: m.f(12, 10);
-            }
-        }
-    }
+		// Description
+		.about-present__description {
+			margin-bottom: m.f(32, 24);
+
+			&-text {
+				font-family: v.$ja-sans;
+				font-size: m.f(16, 14);
+				font-weight: 400;
+				color: #3f3f3f;
+				line-height: 2.5;
+				letter-spacing: 0.05em;
+				margin: 0;
+			}
+		}
+
+		// Photo
+		.about-present__photo {
+			width: 100%;
+			margin-left: m.f(-20);
+			position: relative;
+
+			&::after {
+				content: '';
+				position: absolute;
+				bottom: m.f(-30);
+				right: m.f(-30);
+				width: 95%;
+				height: 100%;
+				background-color: #fcf6de;
+				z-index: -1;
+			}
+
+			&-img {
+				width: 100%;
+				height: 100%;
+				object-fit: contain;
+				object-position: top left;
+				display: block;
+			}
+		}
+	}
 }
