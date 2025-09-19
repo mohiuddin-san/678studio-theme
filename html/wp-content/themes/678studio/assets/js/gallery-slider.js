@@ -25,14 +25,19 @@ function initGallerySlider() {
   
   const items = gsap.utils.toArray('.store-gallery__item');
   const originalCount = items.length;
-  
-  
+
+  // アイテムが存在しない場合は処理を中止
+  if (originalCount === 0) {
+    return;
+  }
+
+
   // アイテムを複製（無限ループのため1セット追加）
   items.forEach((item) => {
     const clone = item.cloneNode(true);
     gallerySlider.appendChild(clone);
   });
-  
+
   // 各アイテムの幅とギャップを考慮
   const itemWidth = items[0].offsetWidth;
   const gap = 20;

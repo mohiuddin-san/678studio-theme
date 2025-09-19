@@ -78,6 +78,14 @@ get_header(); ?>
 <script src="<?php echo get_template_directory_uri(); ?>/assets/js/gallery-lightbox.js"></script>
 
 <script>
+// Ensure galleryAjax is defined if not already by wp_localize_script
+if (typeof galleryAjax === 'undefined') {
+  window.galleryAjax = {
+    ajaxurl: '<?php echo admin_url('admin-ajax.php'); ?>',
+    nonce: '<?php echo wp_create_nonce('gallery_nonce'); ?>'
+  };
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   // Register ScrollTrigger plugin if GSAP is available
   if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {

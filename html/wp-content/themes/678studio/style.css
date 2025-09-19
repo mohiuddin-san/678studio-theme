@@ -4476,6 +4476,15 @@ body.page-transitioning .main-content {
   letter-spacing: calc(0.74px + (0.26) * (100vw - 768px) / (672));
   line-height: 1.3;
   word-break: break-word;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  text-decoration: none !important;
+}
+.studio-card__name a, .studio-card__name a {
+  text-decoration: none !important;
+  color: inherit !important;
+  border: none !important;
+  border-bottom: none !important;
 }
 @media (max-width: 767px) {
   .studio-card__name {
@@ -9325,16 +9334,18 @@ a.helpful-info__article + .helpful-info__article,
   padding: calc(7px + (7) * (100vw - 768px) / (672)) calc(25px + (25) * (100vw - 768px) / (672)) calc(7px + (7) * (100vw - 768px) / (672)) calc(12px + (12) * (100vw - 768px) / (672));
   font-size: calc(11.84px + (4.16) * (100vw - 768px) / (672));
   font-weight: 500;
-  min-width: calc(100px + (100) * (100vw - 768px) / (672));
+  width: calc(130px + (130) * (100vw - 768px) / (672));
+  max-width: 100%;
   cursor: pointer;
   -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 @media (max-width: 767px) {
   .gallery-select {
-    width: clamp(156px, 54.1666666667vw, 468px);
-    min-width: unset;
-    max-width: unset;
+    width: clamp(180px, 62.5vw, 540px);
     padding: clamp(8.4px, 2.9166666667vw, 25.2px) clamp(30px, 10.4166666667vw, 90px) clamp(8.4px, 2.9166666667vw, 25.2px) clamp(12px, 4.1666666667vw, 36px);
     font-size: clamp(8.4px, 2.9166666667vw, 25.2px);
     border-radius: clamp(15px, 5.2083333333vw, 45px);
@@ -9354,6 +9365,8 @@ a.helpful-info__article + .helpful-info__article,
   font-size: calc(11.2px + (2.8) * (100vw - 768px) / (672));
   font-weight: 400;
   border: none;
+  max-width: calc(222px + (78) * (100vw - 768px) / (672));
+  text-overflow: ellipsis;
 }
 @media (max-width: 767px) {
   .gallery-select option {

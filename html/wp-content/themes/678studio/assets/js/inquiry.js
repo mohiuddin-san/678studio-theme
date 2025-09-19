@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchShops() {
         try {
-            const url = '/wp-content/themes/678studio/api/get_studio_shops.php?v=' + Date.now();
+            const url = '/api/get_studio_shops.php?v=' + Date.now();
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);

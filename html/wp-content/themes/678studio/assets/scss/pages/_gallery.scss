@@ -101,14 +101,16 @@
 	padding: m.fs(14, 0.5) m.fs(50, 0.5) m.fs(14, 0.5) m.fs(24, 0.5);
 	font-size: m.fs(16);
 	font-weight: 500;
-	min-width: m.fs(200, 0.5);
+	width: m.fs(260, 0.5); // 固定幅に変更
+	max-width: 100%; // 親要素を超えないように
 	cursor: pointer;
 	transition: all 0.3s ease;
+	text-overflow: ellipsis; // 長いテキストを省略
+	white-space: nowrap; // 改行を防ぐ
+	overflow: hidden; // はみ出す部分を隠す
 
 	@include m.mq(md) {
-		width: m.fsm(260); // 固定幅で安定した表示
-		min-width: unset; // 固定幅にするためmin-widthは不要
-		max-width: unset; // 固定幅にするためmax-widthは不要
+		width: m.fsm(300); // デスクトップでは少し広く
 		padding: m.fsm(14) m.fsm(50) m.fsm(14) m.fsm(20); // 左右のパディングを調整
 		font-size: m.fsm(14);
 		border-radius: m.fsm(25);
@@ -131,6 +133,8 @@
 		font-size: m.fs(14, 0.8);
 		font-weight: 400;
 		border: none;
+		max-width: m.fs(300); // オプションの最大幅も制限
+		text-overflow: ellipsis;
 		
 		@include m.mq(md) {
 			padding: m.fsm(10) m.fsm(16);
