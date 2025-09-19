@@ -225,6 +225,153 @@ function siaes_enqueue_assets() {
 }
 add_action('wp_enqueue_scripts', 'siaes_enqueue_assets');
 
+// Enhanced form validation function
+function siaes_validate_form_data($form_data, $page_slug) {
+    $errors = [];
+
+    // Common validations for all forms
+    if ($page_slug === 'studio-recruitment' || $page_slug === 'corporate-inquiry') {
+        // Recruitment and corporate forms validation
+        if (empty($form_data['contact_name']) || strlen(trim($form_data['contact_name'])) < 2) {
+            $errors[] = 'お名前は2文字以上で入力してください';
+        }
+        if (!empty($form_data['contact_name']) && strlen($form_data['contact_name']) > 50) {
+            $errors[] = 'お名前は50文字以内で入力してください';
+        }
+        if (empty($form_data['contact_kana'])) {
+            $errors[] = 'フリガナを入力してください';
+        }
+        if (!empty($form_data['contact_kana']) && !preg_match('/^[ァ-ヴー\s]+$/u', $form_data['contact_kana'])) {
+            $errors[] = 'フリガナはカタカナで入力してください';
+        }
+        if (empty($form_data['phone_number'])) {
+            $errors[] = '電話番号を入力してください';
+        }
+        if (!empty($form_data['phone_number']) && !preg_match('/^[0-9\-\(\)\+\s]+$/', $form_data['phone_number'])) {
+            $errors[] = '電話番号の形式が正しくありません';
+        }
+        if (empty($form_data['website_url'])) {
+            $errors[] = 'WEBサイトURLを入力してください';
+        }
+        if (!empty($form_data['website_url']) && !filter_var($form_data['website_url'], FILTER_VALIDATE_URL)) {
+            $errors[] = 'WEBサイトURLの形式が正しくありません';
+        }
+        if (!empty($form_data['email_address']) && !filter_var($form_data['email_address'], FILTER_VALIDATE_EMAIL)) {
+            $errors[] = 'メールアドレスの形式が正しくありません';
+        }
+        if (!empty($form_data['inquiry_details']) && strlen($form_data['inquiry_details']) > 2000) {
+            $errors[] = 'お問い合わせ内容は2000文字以内で入力してください';
+        }
+    } else {
+        // Inquiry and reservation forms validation
+        if (empty($form_data['name']) || strlen(trim($form_data['name'])) < 2) {
+            $errors[] = 'お名前は2文字以上で入力してください';
+        }
+        if (!empty($form_data['name']) && strlen($form_data['name']) > 50) {
+            $errors[] = 'お名前は50文字以内で入力してください';
+        }
+        if (empty($form_data['kana'])) {
+            $errors[] = 'フリガナを入力してください';
+        }
+        if (!empty($form_data['kana']) && !preg_match('/^[ァ-ヴー\s]+$/u', $form_data['kana'])) {
+            $errors[] = 'フリガナはカタカナで入力してください';
+        }
+        if (empty($form_data['email'])) {
+            $errors[] = 'メールアドレスを入力してください';
+        }
+        if (!empty($form_data['email']) && !filter_var($form_data['email'], FILTER_VALIDATE_EMAIL)) {
+            $errors[] = 'メールアドレスの形式が正しくありません';
+        }
+        if (!empty($form_data['contact']) && !preg_match('/^[0-9\-\(\)\+\s]+$/', $form_data['contact'])) {
+            $errors[] = '電話番号の形式が正しくありません';
+        }
+        if (!empty($form_data['notes']) && strlen($form_data['notes']) > 2000) {
+            $errors[] = 'ご相談内容は2000文字以内で入力してください';
+        }
+
+        // Reservation specific validation
+        if ($page_slug === 'studio-reservation') {
+            if (empty($form_data['reservation_date_1'])) {
+                $errors[] = '第1撮影希望日を選択してください';
+            }
+            if (empty($form_data['reservation_time_1'])) {
+                $errors[] = '第1撮影希望時間を選択してください';
+            }
+            // Validate date format
+            if (!empty($form_data['reservation_date_1']) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $form_data['reservation_date_1'])) {
+                $errors[] = '撮影希望日の形式が正しくありません';
+            }
+            // Check if date is in the future
+            if (!empty($form_data['reservation_date_1'])) {
+                $reservation_date = strtotime($form_data['reservation_date_1']);
+                if ($reservation_date && $reservation_date < strtotime('today')) {
+                    $errors[] = '撮影希望日は今日以降の日付を選択してください';
+                }
+            }
+        }
+    }
+
+    // Rate limiting check
+    $client_ip = siaes_get_client_ip();
+    if (siaes_is_rate_limited($client_ip)) {
+        $errors[] = '送信回数が制限を超えています。しばらく時間をおいてからお試しください';
+    }
+
+    return $errors;
+}
+
+// Get client IP address
+function siaes_get_client_ip() {
+    $ip_keys = ['HTTP_CF_CONNECTING_IP', 'HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR'];
+    foreach ($ip_keys as $key) {
+        if (array_key_exists($key, $_SERVER) === true) {
+            foreach (explode(',', $_SERVER[$key]) as $ip) {
+                $ip = trim($ip);
+                if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false) {
+                    return $ip;
+                }
+            }
+        }
+    }
+    return $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+}
+
+// Rate limiting function
+function siaes_is_rate_limited($ip) {
+    $rate_limit_key = 'siaes_rate_limit_' . md5($ip);
+    $attempts = get_transient($rate_limit_key);
+
+    // Allow 5 submissions per 15 minutes
+    $max_attempts = 5;
+    $time_window = 15 * 60; // 15 minutes in seconds
+
+    if ($attempts === false) {
+        // First submission from this IP
+        set_transient($rate_limit_key, 1, $time_window);
+        return false;
+    }
+
+    if ($attempts >= $max_attempts) {
+        siaes_debug_log("Rate limit exceeded for IP: $ip (attempts: $attempts)");
+        return true;
+    }
+
+    // Increment attempt count
+    set_transient($rate_limit_key, $attempts + 1, $time_window);
+    return false;
+}
+
+// Security headers function
+function siaes_add_security_headers() {
+    if (!headers_sent()) {
+        header('X-Content-Type-Options: nosniff');
+        header('X-Frame-Options: SAMEORIGIN');
+        header('X-XSS-Protection: 1; mode=block');
+        header('Referrer-Policy: strict-origin-when-cross-origin');
+    }
+}
+add_action('send_headers', 'siaes_add_security_headers');
+
 // Handle form submission
 function siaes_handle_form_submission() {
     siaes_debug_log('=== AJAX handler triggered ===');
@@ -296,6 +443,14 @@ function siaes_handle_form_submission() {
         if (empty($form_data)) {
             siaes_debug_log('ERROR: No form data received');
             wp_send_json_error('No form data received');
+            return;
+        }
+
+        // Enhanced server-side validation
+        $validation_errors = siaes_validate_form_data($form_data, $page_slug);
+        if (!empty($validation_errors)) {
+            siaes_debug_log('ERROR: Validation failed: ' . implode(', ', $validation_errors));
+            wp_send_json_error('入力内容にエラーがあります: ' . implode(', ', $validation_errors));
             return;
         }
 

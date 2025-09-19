@@ -1455,30 +1455,96 @@ if (defined('WP_CLI') && WP_CLI) {
 
 
 function enqueue_reservation_script() {
-// Check if the current page slug is 'studio-reservation'
-if (is_page('studio-reservation')) {
-// 店舗選択用のスクリプト
-wp_enqueue_script(
-'reservation-script',
-get_template_directory_uri() . '/assets/js/reservation.js',
-array(), // Add dependencies if needed
-WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/reservation.js') : '1.0.0',
-true // Load in footer
-);
+    // デバッグ用：ページ情報をログ出力
+    $page_id = get_the_ID();
+    $page_slug = get_post_field('post_name', $page_id);
+    $template = get_page_template_slug();
+    $current_url = $_SERVER['REQUEST_URI'] ?? '';
 
-// フォーム確認画面用のスクリプト
-wp_enqueue_script(
-'reservation-form-script',
-get_template_directory_uri() . '/assets/js/reservation-form.js',
-array(), // Add dependencies if needed
-WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/reservation-form.js') : '1.0.0',
-true // Load in footer
-);
+    wp_log_debug('enqueue_reservation_script called', [
+        'page_id' => $page_id,
+        'page_slug' => $page_slug,
+        'template' => $template,
+        'current_url' => $current_url,
+        'is_page_studio_reservation' => is_page('studio-reservation'),
+        'is_page_207' => is_page(207),
+        'slug_match' => ($page_slug === 'studio-reservation'),
+        'url_contains' => (strpos($current_url, 'studio-reservation') !== false)
+    ]);
 
-// AJAX settings are now handled by override_plugin_form_handler_on_reservation function
+    // より確実な条件判定：複数の条件をチェック
+    $is_reservation_page = is_page('studio-reservation') ||
+                          is_page(207) ||
+                          $page_slug === 'studio-reservation' ||
+                          is_page_template('page-studio-reservation.php') ||
+                          (strpos($current_url, 'studio-reservation') !== false);
+
+    if ($is_reservation_page) {
+        wp_log_info('Reservation page detected - loading scripts', [
+            'page_id' => $page_id,
+            'page_slug' => $page_slug,
+            'template' => $template
+        ]);
+
+        // 店舗選択用のスクリプト
+        wp_enqueue_script(
+            'reservation-script',
+            get_template_directory_uri() . '/assets/js/reservation.js',
+            array(), // Add dependencies if needed
+            WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/reservation.js') : '1.0.0',
+            true // Load in footer
+        );
+
+        // フォーム確認画面用のスクリプト (依存関係なしで先に読み込み)
+        wp_enqueue_script(
+            'reservation-form-script',
+            get_template_directory_uri() . '/assets/js/reservation-form.js',
+            array(), // 依存関係を削除
+            WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/reservation-form.js') : '1.0.0',
+            true // Load in footer
+        );
+
+        wp_log_debug('Scripts enqueued successfully', [
+            'reservation_script' => 'loaded',
+            'reservation_form_script' => 'loaded'
+        ]);
+
+        // AJAX settings are now handled by override_plugin_form_handler_on_reservation function
+    } else {
+        wp_log_debug('Not a reservation page - scripts not loaded', [
+            'page_id' => $page_id,
+            'page_slug' => $page_slug,
+            'url' => $current_url
+        ]);
+    }
 }
+add_action('wp_enqueue_scripts', 'enqueue_reservation_script', 10);
+
+// Enqueue security helpers for all form pages
+function enqueue_security_helpers() {
+    if (is_page('studio-reservation') || is_page('studio-inquiry') || is_page('studio-recruitment') || is_page('corporate-inquiry')) {
+        wp_enqueue_script(
+            'security-helpers',
+            get_template_directory_uri() . '/assets/js/security-helpers.js',
+            array('jquery'),
+            WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/security-helpers.js') : '1.0.0',
+            true
+        );
+    }
 }
-add_action('wp_enqueue_scripts', 'enqueue_reservation_script');
+add_action('wp_enqueue_scripts', 'enqueue_security_helpers');
+
+// Additional security headers for theme
+function theme_security_headers() {
+    if (!headers_sent()) {
+        header('X-Content-Type-Options: nosniff');
+        header('X-Frame-Options: SAMEORIGIN');
+        header('X-XSS-Protection: 1; mode=block');
+        header('Referrer-Policy: strict-origin-when-cross-origin');
+    }
+}
+add_action('send_headers', 'theme_security_headers');
+add_action('wp_head', 'theme_security_headers', 1);
 
 // Override plugin's form-handler.js to prevent conflicts on specific pages
 function override_plugin_form_handler_conflicts() {
