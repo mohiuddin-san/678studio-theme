@@ -1,5 +1,24 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Form validation and confirmation
+// 法人お問い合わせフォーム初期化の確実な実行
+(function() {
+    'use strict';
+
+    // デバッグ設定
+    const DEBUG_MODE = false; // 本番環境では false に設定
+    const debug = DEBUG_MODE ? console.log.bind(console) : () => {};
+    const debugError = DEBUG_MODE ? console.error.bind(console) : () => {};
+
+    // DOM読み込み完了の確実な待機
+    function ensureDOM(callback) {
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', callback);
+        } else {
+            callback();
+        }
+    }
+
+    ensureDOM(function() {
+
+    // DOM要素の取得
     const form = document.getElementById('inquiryForm');
     const formStep = document.getElementById('formStep');
     const confirmationStep = document.getElementById('confirmationStep');
@@ -13,208 +32,246 @@ document.addEventListener('DOMContentLoaded', function() {
         { id: 'contact_kana', errorId: 'contact_kana-error', message: 'フリガナを入力してください' },
         { id: 'phone_number', errorId: 'phone_number-error', message: 'お電話番号を入力してください' },
         { id: 'website_url', errorId: 'website_url-error', message: 'WEBサイトURLを入力してください' },
+        { id: 'email_address', errorId: 'email_address-error', message: '正しいメールアドレスを入力してください' },
         { id: 'agreement', errorId: 'agreement-error', message: '個人情報の取り扱いについて同意してください' }
     ];
 
-    // 初期状態では確認ボタンを有効化（バリデーションは送信時のみ）
-    if (confirmButton) {
-        confirmButton.disabled = false;
+    // ユーティリティ関数群
+    function hideAllErrors() {
+        requiredFields.forEach(field => {
+            const errorElement = document.getElementById(field.errorId);
+            if (errorElement) {
+                errorElement.style.display = 'none';
+            }
+        });
     }
 
-    // リアルタイムバリデーションの設定
-    setupRealTimeValidation();
+    function showError(fieldId, message) {
+        const errorElement = document.getElementById(fieldId);
+        if (errorElement) {
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+    }
 
-    // 確認ボタンクリック時の処理（フォーム送信イベントを使用しない）
+    function validateSingleField(field) {
+        const element = document.getElementById(field.id);
+        if (!element) {
+            console.warn(`⚠️ 要素が見つかりません: ${field.id}`);
+            return false;
+        }
+
+        let isValid = true;
+        let value;
+
+        // フィールド別バリデーション
+        if (element.type === 'checkbox') {
+            value = element.checked ? 'checked' : 'unchecked';
+            isValid = element.checked;
+        } else if (element.type === 'email') {
+            value = element.value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            isValid = value !== '' && emailRegex.test(value);
+        } else if (element.type === 'url') {
+            value = element.value.trim();
+            if (value !== '') {
+                const urlRegex = /^https?:\/\/.+/;
+                isValid = urlRegex.test(value);
+            }
+        } else {
+            value = element.value.trim();
+            isValid = value !== '';
+        }
+
+        debug(`🔍 ${field.id}: ${isValid ? '✅' : '❌'} "${value}"`);
+
+        // エラー表示は呼び出し元で制御するため、ここでは表示しない
+        return isValid;
+    }
+
+    function validateAllFields() {
+        debug('🔄 全フィールド検証開始');
+        hideAllErrors();
+
+        let allValid = true;
+        requiredFields.forEach(field => {
+            const isValid = validateSingleField(field);
+            if (!isValid) {
+                allValid = false;
+                showError(field.errorId, field.message);
+            }
+        });
+
+        debug(`📋 検証結果: ${allValid ? '✅ 全て有効' : '❌ エラーあり'}`);
+        return allValid;
+    }
+
+    // フォームデータ収集
+    function collectFormData() {
+        const data = {
+            company_name: document.getElementById('company_name').value.trim(),
+            contact_name: document.getElementById('contact_name').value.trim(),
+            contact_kana: document.getElementById('contact_kana').value.trim(),
+            phone_number: document.getElementById('phone_number').value.trim(),
+            website_url: document.getElementById('website_url').value.trim(),
+            email_address: document.getElementById('email_address').value.trim(),
+            inquiry_details: document.getElementById('inquiry_details').value.trim()
+        };
+
+        debug('📦 収集されたデータ:', data);
+        return data;
+    }
+
+    function populateConfirmationData(data) {
+        debug('📝 確認画面にデータを表示');
+
+        const mappings = [
+            { confirmId: 'confirmCompanyName', value: data.company_name || '入力なし' },
+            { confirmId: 'confirmContactName', value: data.contact_name },
+            { confirmId: 'confirmContactKana', value: data.contact_kana },
+            { confirmId: 'confirmPhoneNumber', value: data.phone_number },
+            { confirmId: 'confirmWebsiteUrl', value: data.website_url },
+            { confirmId: 'confirmEmailAddress', value: data.email_address || '入力なし' },
+            { confirmId: 'confirmInquiryDetails', value: data.inquiry_details || '入力なし' }
+        ];
+
+        mappings.forEach(mapping => {
+            const element = document.getElementById(mapping.confirmId);
+            if (element) {
+                element.textContent = mapping.value;
+            }
+        });
+    }
+
+    function disableFormFields() {
+        // 全てのフォーム入力要素を無効化
+        const formInputs = form.querySelectorAll('input, select, textarea');
+        formInputs.forEach(input => {
+            input.disabled = true;
+            input.setAttribute('readonly', true);
+        });
+    }
+
+    function enableFormFields() {
+        // 全てのフォーム入力要素を有効化
+        const formInputs = form.querySelectorAll('input, select, textarea');
+        formInputs.forEach(input => {
+            input.disabled = false;
+            input.removeAttribute('readonly');
+        });
+    }
+
+    function showConfirmationStep() {
+        debug('📋 確認画面を表示');
+        const formData = collectFormData();
+        populateConfirmationData(formData);
+
+        // フォームフィールドを無効化して編集を防ぐ
+        disableFormFields();
+
+        formStep.style.display = 'none';
+        confirmationStep.style.display = 'block';
+        window.scrollTo(0, 0);
+    }
+
+    // リアルタイムバリデーション用のイベントリスナー設定
+    function setupRealtimeValidation() {
+        requiredFields.forEach(field => {
+            const element = document.getElementById(field.id);
+            if (element) {
+                // input, change, blur イベントでリアルタイム検証
+                ['input', 'change', 'blur'].forEach(eventType => {
+                    element.addEventListener(eventType, () => {
+                        // 単一フィールドのバリデーション
+                        const isValid = validateSingleField(field);
+
+                        // 有効な場合はエラーを非表示
+                        if (isValid) {
+                            const errorElement = document.getElementById(field.errorId);
+                            if (errorElement) {
+                                errorElement.style.display = 'none';
+                                debug(`✅ ${field.id} エラーメッセージを非表示`);
+                            }
+                        }
+                    });
+                });
+            }
+        });
+    }
+
+    // 初期化処理
+    function initialize() {
+        // 全エラーメッセージを非表示
+        hideAllErrors();
+
+        // 確認ボタンを強制的に有効化
+        if (confirmButton) {
+            confirmButton.disabled = false;
+            confirmButton.removeAttribute('disabled');
+            confirmButton.style.pointerEvents = 'auto';
+            debug('確認ボタン有効化');
+        } else {
+            debugError('❌ 確認ボタンが見つかりません');
+        }
+
+        // リアルタイムバリデーションの設定
+        setupRealtimeValidation();
+    }
+
+    // イベントリスナー設定
     if (confirmButton) {
         confirmButton.addEventListener('click', (e) => {
             e.preventDefault();
 
-            // バリデーション
-            if (validateForm()) {
-                showConfirmation();
+            if (validateAllFields()) {
+                showConfirmationStep();
             }
         });
     }
 
-    // バリデーション関数（フォーム送信時用）
-    function validateForm() {
-        return validateAndUpdateButton();
-    }
-
-    // Show confirmation page
-    function showConfirmation() {
-        // Hide form step and show confirmation step
-        formStep.style.display = 'none';
-        confirmationStep.style.display = 'block';
-
-        // Populate confirmation values
-        document.getElementById('confirmCompanyName').textContent = document.getElementById('company_name').value || '入力なし';
-        document.getElementById('confirmContactName').textContent = document.getElementById('contact_name').value;
-        document.getElementById('confirmContactKana').textContent = document.getElementById('contact_kana').value;
-        document.getElementById('confirmPhoneNumber').textContent = document.getElementById('phone_number').value;
-        document.getElementById('confirmWebsiteUrl').textContent = document.getElementById('website_url').value;
-        document.getElementById('confirmEmailAddress').textContent = document.getElementById('email_address').value || '入力なし';
-        document.getElementById('confirmInquiryDetails').textContent = document.getElementById('inquiry_details').value || '入力なし';
-
-        // Scroll to top
-        window.scrollTo(0, 0);
-    }
-
-    // リアルタイムバリデーション設定
-    function setupRealTimeValidation() {
-        requiredFields.forEach(field => {
-            const element = document.getElementById(field.id);
-            if (element) {
-                if (element.type === 'checkbox') {
-                    element.addEventListener('change', validateAndUpdateButton);
-                } else {
-                    element.addEventListener('blur', () => validateField(field));
-                    element.addEventListener('input', validateAndUpdateButton);
-                }
-            }
-        });
-
-        // メールアドレスの特別なバリデーション
-        const emailField = document.getElementById('email_address');
-        if (emailField) {
-            emailField.addEventListener('blur', () => validateEmailField());
-            emailField.addEventListener('input', validateAndUpdateButton);
-        }
-    }
-
-    // バリデーションとボタン状態更新
-    function validateAndUpdateButton() {
-        let allValid = true;
-
-        requiredFields.forEach(field => {
-            if (!validateField(field)) {
-                allValid = false;
-            }
-        });
-
-        // メールアドレスの任意フィールドバリデーション
-        if (!validateEmailField()) {
-            allValid = false;
-        }
-
-        return allValid;
-    }
-
-    // 個別フィールドのバリデーション
-    function validateField(field) {
-        const element = document.getElementById(field.id);
-        const errorElement = document.getElementById(field.errorId);
-        const fieldContainer = element.closest('.input-field, .confirmation-field-check');
-
-        if (!element || !errorElement) return true;
-
-        let isValid = true;
-        let errorMessage = field.message;
-
-        if (element.type === 'checkbox') {
-            isValid = element.checked;
-        } else {
-            isValid = element.value.trim() !== '';
-        }
-
-        // エラー表示の制御
-        if (isValid) {
-            errorElement.style.display = 'none';
-            if (fieldContainer) {
-                fieldContainer.classList.remove('error');
-            }
-        } else {
-            errorElement.textContent = errorMessage;
-            errorElement.style.display = 'block';
-            if (fieldContainer) {
-                fieldContainer.classList.add('error');
-            }
-        }
-
-        return isValid;
-    }
-
-    // メールアドレスフィールドのバリデーション
-    function validateEmailField() {
-        const emailField = document.getElementById('email_address');
-        const emailError = document.getElementById('email_address-error');
-        const fieldContainer = emailField.closest('.input-field');
-
-        if (!emailField || !emailError) return true;
-
-        let isValid = true;
-        let errorMessage = '';
-
-        if (emailField.value.trim() && !isValidEmail(emailField.value)) {
-            isValid = false;
-            errorMessage = 'メールアドレスの形式が正しくありません';
-        }
-
-        // エラー表示の制御
-        if (isValid) {
-            emailError.style.display = 'none';
-            if (fieldContainer) {
-                fieldContainer.classList.remove('error');
-            }
-        } else {
-            emailError.textContent = errorMessage;
-            emailError.style.display = 'block';
-            if (fieldContainer) {
-                fieldContainer.classList.add('error');
-            }
-        }
-
-        return isValid;
-    }
-
-    // Back button functionality
     if (backButton) {
-        backButton.addEventListener('click', function() {
+        backButton.addEventListener('click', () => {
+            // フォームフィールドを再度有効化
+            enableFormFields();
+
             confirmationStep.style.display = 'none';
             formStep.style.display = 'block';
             window.scrollTo(0, 0);
         });
     }
 
-    // Submit button functionality with AJAX
     if (submitButton) {
-        submitButton.addEventListener('click', async function() {
+        submitButton.addEventListener('click', async () => {
             const submitBtn = submitButton;
             const originalText = submitBtn.textContent;
 
             try {
-                // ボタンを無効化
                 submitBtn.disabled = true;
                 submitBtn.textContent = '送信中...';
 
-                // フォームデータを収集
                 const formData = new FormData();
                 formData.append('action', 'siaes_submit_form');
                 formData.append('nonce', window.siaes_ajax?.nonce || '');
                 formData.append('page_id', window.siaes_ajax?.page_id || '');
 
                 // 確認画面のデータを使用
-                const emailValue = document.getElementById('email_address').value;
                 const confirmData = {
                     company_name: document.getElementById('company_name').value,
                     contact_name: document.getElementById('contact_name').value,
                     contact_kana: document.getElementById('contact_kana').value,
                     phone_number: document.getElementById('phone_number').value,
                     website_url: document.getElementById('website_url').value,
-                    email_address: emailValue,
-                    email: emailValue, // プラグインの自動返信メール用
+                    email_address: document.getElementById('email_address').value,
                     inquiry_details: document.getElementById('inquiry_details').value,
                     agreement: document.getElementById('agreement').checked ? '1' : '0'
                 };
 
-                // FormDataに追加
                 Object.keys(confirmData).forEach(key => {
                     if (confirmData[key] !== null && confirmData[key] !== undefined) {
                         formData.append(key, confirmData[key]);
                     }
                 });
 
-                // AJAX送信
                 const response = await fetch(window.siaes_ajax?.ajax_url || '/wp-admin/admin-ajax.php', {
                     method: 'POST',
                     body: formData
@@ -224,8 +281,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if (result.success) {
                     alert('お問い合わせを承りました。2営業日以内にご連絡させていただきます。');
-                    // フォームリセット
+
+                    // フォームフィールドを有効化してからリセット
+                    enableFormFields();
                     form.reset();
+
                     confirmationStep.style.display = 'none';
                     formStep.style.display = 'block';
                     window.scrollTo(0, 0);
@@ -233,18 +293,52 @@ document.addEventListener('DOMContentLoaded', function() {
                     alert('送信に失敗しました。しばらく時間をおいて再度お試しください。');
                 }
             } catch (error) {
-                console.error('送信エラー:', error);
+                debugError('送信エラー:', error);
                 alert('送信に失敗しました。しばらく時間をおいて再度お試しください。');
             } finally {
-                // ボタンを元に戻す
                 submitBtn.disabled = false;
                 submitBtn.textContent = originalText;
             }
         });
     }
 
-    function isValidEmail(email) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
+    // 初期化実行
+    initialize();
+
+    // デバッグ用：初期化確認
+    if (DEBUG_MODE) {
+        setTimeout(() => {
+            debug('診断: フォーム要素', requiredFields.map(f => f.id + ':' + !!document.getElementById(f.id)).join(', '));
+            debug('診断: 確認ボタン', !!confirmButton && !confirmButton.disabled);
+        }, 2000);
     }
-});
+
+    // デバッグ用：グローバル関数を追加（確実にwindowに設定）
+    if (typeof window !== 'undefined') {
+        window.debugCorporateInquiryForm = {
+            testValidation: () => {
+                debug('🧪 手動バリデーションテスト開始');
+                const result = validateAllFields();
+                debug('🧪 バリデーション結果:', result);
+                return result;
+            },
+            hideErrors: () => {
+                debug('🧪 手動エラー非表示');
+                hideAllErrors();
+            },
+            checkElements: () => {
+                debug('🧪 要素チェック');
+                requiredFields.forEach(field => {
+                    const element = document.getElementById(field.id);
+                    const errorElement = document.getElementById(field.errorId);
+                    debug(`${field.id}: 要素=${!!element}, エラー=${!!errorElement}`);
+                });
+            },
+            isLoaded: true,
+            version: '1.0.0'
+        };
+    }
+
+    debug('法人お問い合わせフォーム初期化完了');
+    }); // ensureDOM callback end
+})(); // IIFE end

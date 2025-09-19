@@ -68,6 +68,7 @@
       <div class="form-step" id="formStep">
         <div class="form-container">
           <form id="inquiryForm" method="post" action="">
+            <?php wp_nonce_field('inquiry_form_nonce', 'inquiry_nonce_field'); ?>
             <div class="input-field">
               <label for="name">お名前 (必須)</label>
               <input type="text" id="name" name="name" placeholder="例: 山田 花子" required>
@@ -140,32 +141,32 @@
           <div class="confirmation-step__content">
             <div class="confirmation-step__item">
               <span class="confirmation-step__label">お名前</span>
-              <span class="confirmation-step__value" id="confirmName"></span>
+              <span class="confirmation-step__value" id="confirmName" data-escape="true"></span>
             </div>
 
             <div class="confirmation-step__item">
               <span class="confirmation-step__label">フリガナ</span>
-              <span class="confirmation-step__value" id="confirmKana"></span>
+              <span class="confirmation-step__value" id="confirmKana" data-escape="true"></span>
             </div>
 
             <div class="confirmation-step__item">
               <span class="confirmation-step__label">お電話番号</span>
-              <span class="confirmation-step__value" id="confirmContact"></span>
+              <span class="confirmation-step__value" id="confirmContact" data-escape="true"></span>
             </div>
 
             <div class="confirmation-step__item">
               <span class="confirmation-step__label">メールアドレス</span>
-              <span class="confirmation-step__value" id="confirmEmail"></span>
+              <span class="confirmation-step__value" id="confirmEmail" data-escape="true"></span>
             </div>
 
             <div class="confirmation-step__item">
               <span class="confirmation-step__label">選択店舗</span>
-              <span class="confirmation-step__value" id="confirmStore"></span>
+              <span class="confirmation-step__value" id="confirmStore" data-escape="true"></span>
             </div>
 
             <div class="confirmation-step__item confirmation-step__item--textarea">
               <span class="confirmation-step__label">ご相談内容</span>
-              <span class="confirmation-step__value" id="confirmNotes"></span>
+              <span class="confirmation-step__value" id="confirmNotes" data-escape="true"></span>
             </div>
           </div>
 

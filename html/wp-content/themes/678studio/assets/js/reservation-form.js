@@ -2,7 +2,11 @@
 (function() {
     'use strict';
 
-    console.log('🎯 予約フォームスクリプト読み込み開始');
+    // デバッグ設定
+    const DEBUG_MODE = false; // 本番環境では false に設定
+    const debug = DEBUG_MODE ? console.log.bind(console) : () => {};
+    const debugError = DEBUG_MODE ? console.error.bind(console) : () => {};
+
 
     // DOM読み込み完了の確実な待機
     function ensureDOM(callback) {
@@ -14,8 +18,7 @@
     }
 
     ensureDOM(function() {
-        console.log('🎯 予約フォーム初期化開始');
-
+    
     // DOM要素の取得
     const form = document.getElementById('reservationForm');
     const formStep = document.getElementById('formStep');
@@ -37,7 +40,6 @@
 
     // ユーティリティ関数群
     function hideAllErrors() {
-        console.log('🔧 全エラーメッセージを非表示');
         requiredFields.forEach(field => {
             const errorElement = document.getElementById(field.errorId);
             if (errorElement) {
@@ -80,15 +82,14 @@
             isValid = value !== '';
         }
 
-        console.log(`🔍 検証中: ${field.id} = "${value}" (type: ${element.type || element.tagName})`);
-        console.log(`📊 ${field.id}: ${isValid ? '✅ 有効' : '❌ 無効'}`);
+        debug(`🔍 ${field.id}: ${isValid ? '✅' : '❌'} "${value}"`);
 
         // エラー表示は呼び出し元で制御するため、ここでは表示しない
         return isValid;
     }
 
     function validateAllFields() {
-        console.log('🔄 全フィールド検証開始');
+        debug('🔄 全フィールド検証開始');
         hideAllErrors();
 
         let allValid = true;
@@ -100,7 +101,7 @@
             }
         });
 
-        console.log(`📋 検証結果: ${allValid ? '✅ 全て有効' : '❌ エラーあり'}`);
+        debug(`📋 検証結果: ${allValid ? '✅ 全て有効' : '❌ エラーあり'}`);
         return allValid;
     }
 
@@ -121,7 +122,7 @@
             store: getSelectedStoreName()
         };
 
-        console.log('📦 収集されたデータ:', data);
+        debug('📦 収集されたデータ:', data);
         return data;
     }
 
@@ -146,7 +147,7 @@
     }
 
     function populateConfirmationData(data) {
-        console.log('📝 確認画面にデータを表示');
+        debug('📝 確認画面にデータを表示');
 
         const mappings = [
             { confirmId: 'confirmName', value: data.name },
@@ -169,8 +170,6 @@
     }
 
     function disableFormFields() {
-        console.log('🔒 フォームフィールドを無効化');
-
         // 全てのフォーム入力要素を無効化
         const formInputs = form.querySelectorAll('input, select, textarea');
         formInputs.forEach(input => {
@@ -180,8 +179,6 @@
     }
 
     function enableFormFields() {
-        console.log('🔓 フォームフィールドを有効化');
-
         // 全てのフォーム入力要素を有効化
         const formInputs = form.querySelectorAll('input, select, textarea');
         formInputs.forEach(input => {
@@ -191,7 +188,7 @@
     }
 
     function showConfirmationStep() {
-        console.log('📋 確認画面を表示');
+        debug('📋 確認画面を表示');
         const formData = collectFormData();
         populateConfirmationData(formData);
 
@@ -205,7 +202,6 @@
 
     // リアルタイムバリデーション用のイベントリスナー設定
     function setupRealtimeValidation() {
-        console.log('🔄 リアルタイムバリデーション設定開始');
 
         requiredFields.forEach(field => {
             const element = document.getElementById(field.id);
@@ -213,9 +209,7 @@
                 // input, change, blur イベントでリアルタイム検証
                 ['input', 'change', 'blur'].forEach(eventType => {
                     element.addEventListener(eventType, () => {
-                        console.log(`📝 ${field.id} フィールドが変更されました (${eventType})`);
-
-                        // 単一フィールドのバリデーション
+                                        // 単一フィールドのバリデーション
                         const isValid = validateSingleField(field);
 
                         // 有効な場合はエラーを非表示
@@ -223,19 +217,17 @@
                             const errorElement = document.getElementById(field.errorId);
                             if (errorElement) {
                                 errorElement.style.display = 'none';
-                                console.log(`✅ ${field.id} エラーメッセージを非表示`);
+                                debug(`✅ ${field.id} エラーメッセージを非表示`);
                             }
                         }
                     });
                 });
-                console.log(`🎧 ${field.id} のリアルタイムバリデーション設定完了`);
             }
         });
     }
 
     // 初期化処理
     function initialize() {
-        console.log('🚀 フォーム初期化');
 
         // 全エラーメッセージを非表示
         hideAllErrors();
@@ -245,9 +237,9 @@
             confirmButton.disabled = false;
             confirmButton.removeAttribute('disabled');
             confirmButton.style.pointerEvents = 'auto';
-            console.log('✅ 確認ボタン強制有効化');
+            debug('確認ボタン有効化');
         } else {
-            console.error('❌ 確認ボタンが見つかりません');
+            debugError('❌ 確認ボタンが見つかりません');
         }
 
         // リアルタイムバリデーションの設定
@@ -258,18 +250,15 @@
     if (confirmButton) {
         confirmButton.addEventListener('click', (e) => {
             e.preventDefault();
-            console.log('🔘 確認ボタンがクリックされました');
-
+    
             if (validateAllFields()) {
                 showConfirmationStep();
             }
         });
-        console.log('🎧 確認ボタンのイベントリスナー設定完了');
     }
 
     if (backButton) {
         backButton.addEventListener('click', () => {
-            console.log('⬅️ 戻るボタンがクリックされました');
 
             // フォームフィールドを再度有効化
             enableFormFields();
@@ -278,12 +267,10 @@
             formStep.style.display = 'block';
             window.scrollTo(0, 0);
         });
-        console.log('🎧 戻るボタンのイベントリスナー設定完了');
     }
 
     if (submitButton) {
         submitButton.addEventListener('click', async () => {
-            console.log('📤 送信ボタンがクリックされました');
             const submitBtn = submitButton;
             const originalText = submitBtn.textContent;
 
@@ -340,79 +327,52 @@
                     alert('送信に失敗しました。しばらく時間をおいて再度お試しください。');
                 }
             } catch (error) {
-                console.error('送信エラー:', error);
+                debugError('送信エラー:', error);
                 alert('送信に失敗しました。しばらく時間をおいて再度お試しください。');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = originalText;
             }
         });
-        console.log('🎧 送信ボタンのイベントリスナー設定完了');
     }
 
     // 初期化実行
     initialize();
 
-    // デバッグ用：5秒後に状態を診断（フォーム操作後の状態確認用）
-    setTimeout(() => {
-        console.log('🔬 === 診断開始 ===');
-
-        // DOM要素の存在確認
-        requiredFields.forEach(field => {
-            const element = document.getElementById(field.id);
-            const errorElement = document.getElementById(field.errorId);
-            console.log(`📋 ${field.id}:`, {
-                '要素存在': !!element,
-                'エラー要素存在': !!errorElement,
-                '現在の値': element ? (element.type === 'checkbox' ? element.checked : element.value) : 'N/A',
-                'エラー表示': errorElement ? errorElement.style.display : 'N/A'
-            });
-        });
-
-        // 確認ボタンの状態
-        console.log(`🔘 確認ボタン:`, {
-            '存在': !!confirmButton,
-            '無効化': confirmButton ? confirmButton.disabled : 'N/A',
-            'クラス': confirmButton ? confirmButton.className : 'N/A'
-        });
-
-        // 他のスクリプトとの競合チェック
-        console.log('🔍 グローバル変数:', {
-            'window.shopsData': !!window.shopsData,
-            'window.siaes_ajax': !!window.siaes_ajax,
-            'jQuery': !!window.jQuery
-        });
-
-        console.log('🔬 === 診断終了 ===');
-    }, 5000);
+    // デバッグ用：初期化確認
+    if (DEBUG_MODE) {
+        setTimeout(() => {
+            debug('診断: フォーム要素', requiredFields.map(f => f.id + ':' + !!document.getElementById(f.id)).join(', '));
+            debug('診断: 確認ボタン', !!confirmButton && !confirmButton.disabled);
+        }, 2000);
+    }
 
     // デバッグ用：グローバル関数を追加（確実にwindowに設定）
     if (typeof window !== 'undefined') {
         window.debugReservationForm = {
             testValidation: () => {
-                console.log('🧪 手動バリデーションテスト開始');
+                debug('🧪 手動バリデーションテスト開始');
                 const result = validateAllFields();
-                console.log('🧪 バリデーション結果:', result);
+                debug('🧪 バリデーション結果:', result);
                 return result;
             },
             hideErrors: () => {
-                console.log('🧪 手動エラー非表示');
+                debug('🧪 手動エラー非表示');
                 hideAllErrors();
             },
             checkElements: () => {
-                console.log('🧪 要素チェック');
+                debug('🧪 要素チェック');
                 requiredFields.forEach(field => {
                     const element = document.getElementById(field.id);
                     const errorElement = document.getElementById(field.errorId);
-                    console.log(`${field.id}: 要素=${!!element}, エラー=${!!errorElement}`);
+                    debug(`${field.id}: 要素=${!!element}, エラー=${!!errorElement}`);
                 });
             },
             isLoaded: true,
             version: '1.0.0'
         };
-        console.log('✅ debugReservationForm グローバル関数設定完了');
     }
 
-    console.log('🎉 予約フォーム初期化完了');
+    debug('予約フォーム初期化完了');
     }); // ensureDOM callback end
 })(); // IIFE end
