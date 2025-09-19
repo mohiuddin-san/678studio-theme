@@ -22,8 +22,8 @@ function siaes_debug_log($message) {
 // Register settings page
 function siaes_register_settings() {
     add_options_page(
-        'Standalone Inquiry Email',
-        'Standalone Inquiry Email',
+        'お問い合わせメール設定',
+        'お問い合わせメール設定',
         'manage_options',
         'siaes-settings',
         'siaes_settings_page'
@@ -46,15 +46,36 @@ function siaes_settings_page() {
 
     // Field mapping (slug => fields)
     $default_fields = [
-        'name', 'kana', 'contact', 'email', 'notes', 'agreement', 'shop-id', 'reservation_date', 'reservation_time_from'
+        'name', 'kana', 'contact', 'email', 'notes', 'agreement', 'shop-id',
+        'reservation_date_1', 'reservation_time_1',
+        'reservation_date_2', 'reservation_time_2',
+        'reservation_date_3', 'reservation_time_3'
+    ];
+
+    // Studio recruitment specific fields
+    $recruitment_fields = [
+        'company_name', 'contact_name', 'contact_kana', 'phone_number',
+        'website_url', 'email_address', 'inquiry_details', 'agreement'
+    ];
+
+    // Corporate inquiry specific fields (same as recruitment)
+    $corporate_fields = [
+        'company_name', 'contact_name', 'contact_kana', 'phone_number',
+        'website_url', 'email_address', 'inquiry_details', 'agreement'
     ];
     $page_fields_map = [];
     foreach ($target_pages as $slug) {
-        $page_fields_map[$slug] = $default_fields;
+        if ($slug === 'studio-recruitment') {
+            $page_fields_map[$slug] = $recruitment_fields;
+        } elseif ($slug === 'corporate-inquiry') {
+            $page_fields_map[$slug] = $corporate_fields;
+        } else {
+            $page_fields_map[$slug] = $default_fields;
+        }
     }
     ?>
     <div class="wrap">
-        <h1>Standalone Inquiry Email Settings</h1>
+        <h1>お問い合わせメール設定</h1>
         <form method="post" action="options.php">
             <?php
             settings_fields('siaes_settings_group');
@@ -62,24 +83,24 @@ function siaes_settings_page() {
             ?>
             <table class="form-table">
                 <tr>
-                    <th><label for="siaes_aws_access_key_id">AWS Access Key ID</label></th>
+                    <th><label for="siaes_aws_access_key_id">AWSアクセスキーID</label></th>
                     <td><input type="text" name="siaes_aws_access_key_id" value="<?php echo esc_attr(get_option('siaes_aws_access_key_id')); ?>" class="regular-text"></td>
                 </tr>
                 <tr>
-                    <th><label for="siaes_aws_secret_access_key">AWS Secret Access Key</label></th>
+                    <th><label for="siaes_aws_secret_access_key">AWSシークレットアクセスキー</label></th>
                     <td><input type="password" name="siaes_aws_secret_access_key" value="<?php echo esc_attr(get_option('siaes_aws_secret_access_key')); ?>" class="regular-text"></td>
                 </tr>
                 <tr>
-                    <th><label for="siaes_aws_region">AWS Region</label></th>
+                    <th><label for="siaes_aws_region">AWSリージョン</label></th>
                     <td><input type="text" name="siaes_aws_region" value="<?php echo esc_attr(get_option('siaes_aws_region', 'ap-northeast-1')); ?>" class="regular-text"></td>
                 </tr>
                 <tr>
-                    <th><label for="siaes_pages">Target Pages (comma-separated slugs)</label></th>
+                    <th><label for="siaes_pages">対象ページ (スラッグをカンマ区切り)</label></th>
                     <td><input type="text" name="siaes_pages" value="<?php echo esc_attr(get_option('siaes_pages')); ?>" class="regular-text"></td>
                 </tr>
             </table>
 
-            <h2>Page-wise Email Settings</h2>
+            <h2>ページ別メール設定</h2>
             <div id="siaes-page-tabs">
                 <ul>
                     <?php foreach ($target_pages as $slug): ?>
@@ -91,7 +112,7 @@ function siaes_settings_page() {
                     $settings = isset($page_settings[$slug]) ? $page_settings[$slug] : [];
                 ?>
                 <div id="tab-<?php echo esc_attr($slug); ?>">
-                    <h3>Fields for <code><?php echo esc_html($slug); ?></code></h3>
+                    <h3><code><?php echo esc_html($slug); ?></code>のフィールド</h3>
                     <div style="margin-bottom:10px;">
                         <?php foreach ($fields as $field): ?>
                             <span style="display:inline-block;background:#f3f3f3;border:1px solid #ccc;padding:2px 8px;margin:2px;border-radius:4px;">
@@ -101,32 +122,32 @@ function siaes_settings_page() {
                     </div>
                     <table class="form-table">
                         <tr>
-                            <th><label>Company Email Subject</label></th>
+                            <th><label>会社宛メール件名</label></th>
                             <td>
                                 <input type="text" name="siaes_page_settings[<?php echo esc_attr($slug); ?>][company_subject]" value="<?php echo esc_attr($settings['company_subject'] ?? ''); ?>" class="regular-text">
-                                <p class="description">Use fields like <code>[name]</code>, <code>[email]</code>, <code>[company-name]</code>, etc.</p>
+                                <p class="description"><code>[name]</code>、<code>[email]</code>、<code>[company-name]</code>などのフィールドを使用できます</p>
                             </td>
                         </tr>
                        
                         <tr>
-                            <th><label>Email Format (Company)</label></th>
+                            <th><label>メールフォーマット (会社宛)</label></th>
                             <td>
                                 <textarea name="siaes_page_settings[<?php echo esc_attr($slug); ?>][email_format]" rows="4" class="large-text"><?php echo esc_textarea($settings['email_format'] ?? ''); ?></textarea>
-                                <p class="description">Use fields above like <code>[name]</code>, <code>[email]</code>, etc.</p>
+                                <p class="description">上記の<code>[name]</code>、<code>[email]</code>などのフィールドを使用できます</p>
                             </td>
                         </tr>
                         <tr>
-                            <th><label>User Email Subject</label></th>
+                            <th><label>ユーザー宛メール件名</label></th>
                             <td>
                                 <input type="text" name="siaes_page_settings[<?php echo esc_attr($slug); ?>][user_subject]" value="<?php echo esc_attr($settings['user_subject'] ?? ''); ?>" class="regular-text">
-                                <p class="description">Use fields like <code>[name]</code>, <code>[email]</code>, <code>[company-name]</code>, <code>[reservation_date]</code>, etc.</p>
+                                <p class="description"><code>[name]</code>、<code>[email]</code>、<code>[company-name]</code>、<code>[reservation_date]</code>などのフィールドを使用できます</p>
                             </td>
                         </tr>
                         <tr>
-                            <th><label>User Reply Message</label></th>
+                            <th><label>ユーザー返信メッセージ</label></th>
                             <td>
                                 <textarea name="siaes_page_settings[<?php echo esc_attr($slug); ?>][user_reply]" rows="3" class="large-text"><?php echo esc_textarea($settings['user_reply'] ?? ''); ?></textarea>
-                                <p class="description">Exactly what you write here will be sent to the user.</p>
+                                <p class="description">ここに入力した内容がそのままユーザーに送信されます</p>
                             </td>
                         </tr>
                     </table>
@@ -278,16 +299,29 @@ function siaes_handle_form_submission() {
             return;
         }
 
-        if (!isset($form_data['shop-id']) && !isset($form_data['store'])) {
-            siaes_debug_log('ERROR: No shop-id or store provided in form data');
-            wp_send_json_error('Shop selection required');
-            return;
-        }
-
-        if (!isset($form_data['email']) || !filter_var($form_data['email'], FILTER_VALIDATE_EMAIL)) {
-            siaes_debug_log('ERROR: Invalid or no email provided in form data');
-            wp_send_json_error('Valid email address required');
-            return;
+        // Check required fields based on page type
+        if ($page_slug === 'studio-recruitment' || $page_slug === 'corporate-inquiry') {
+            // For recruitment and corporate pages, check email_address instead of email
+            if (!isset($form_data['email_address']) || empty($form_data['email_address'])) {
+                // Email is optional for these forms, so don't require it
+                siaes_debug_log("Note: No email provided for $page_slug form (optional)");
+            } elseif (!filter_var($form_data['email_address'], FILTER_VALIDATE_EMAIL)) {
+                siaes_debug_log("ERROR: Invalid email provided in $page_slug form data");
+                wp_send_json_error('Valid email address required if provided');
+                return;
+            }
+        } else {
+            // For other pages, require shop selection and email
+            if (!isset($form_data['shop-id']) && !isset($form_data['store'])) {
+                siaes_debug_log('ERROR: No shop-id or store provided in form data');
+                wp_send_json_error('Shop selection required');
+                return;
+            }
+            if (!isset($form_data['email']) || !filter_var($form_data['email'], FILTER_VALIDATE_EMAIL)) {
+                siaes_debug_log('ERROR: Invalid or no email provided in form data');
+                wp_send_json_error('Valid email address required');
+                return;
+            }
         }
 
         ob_start();
@@ -363,9 +397,8 @@ add_action('wp_ajax_nopriv_siaes_test', 'siaes_test_ajax');
 // Send emails via AWS SES
 function siaes_send_emails($form_data, $page_slug) {
     siaes_debug_log("Sending emails for page slug: $page_slug");
-    $shop_id = isset($form_data['shop-id']) ? intval($form_data['shop-id']) : (isset($form_data['store']) ? intval($form_data['store']) : 0);
-    siaes_debug_log("Shop ID received (shop-id or store): $shop_id");
 
+    $shop_id = 0;
     $company_email = '';
     $company_name = '';
     $company_phone = '';
@@ -373,11 +406,26 @@ function siaes_send_emails($form_data, $page_slug) {
     $company_hours = '';
     $fixed_source_email = 'info@678photo.com';
 
-    // Get shop data from ACF-based system using theme function
-    if (function_exists('get_cached_studio_data')) {
+    // Handle different page types
+    if ($page_slug === 'studio-recruitment' || $page_slug === 'corporate-inquiry') {
+        // For recruitment and corporate pages, use special san-creation email for company notifications
+        $company_email = 'info@san-creation.com'; // Special email for recruitment/corporate inquiries
+        $company_name = get_option('siaes_company_name', 'ロクナナハチ撮影');
+        $company_phone = '03-1234-5678'; // Default phone
+        $company_address = '東京都渋谷区'; // Default address
+        $company_hours = '10:00-18:00'; // Default hours
+        siaes_debug_log("Using $page_slug page settings - Company Email: $company_email, Name: $company_name");
+    } else {
+        // For other pages, get shop data
+        $shop_id = isset($form_data['shop-id']) ? intval($form_data['shop-id']) : (isset($form_data['store']) ? intval($form_data['store']) : 0);
+        siaes_debug_log("Shop ID received (shop-id or store): $shop_id");
+    }
+
+    // Get shop data from ACF-based system using theme function (only for non-recruitment/corporate pages)
+    if ($page_slug !== 'studio-recruitment' && $page_slug !== 'corporate-inquiry' && function_exists('get_cached_studio_data')) {
         $studio_data = get_cached_studio_data();
         siaes_debug_log("Shop data retrieved from ACF-based function");
-        
+
         if (isset($studio_data['shops']) && is_array($studio_data['shops'])) {
             foreach ($studio_data['shops'] as $shop) {
                 if ($shop['id'] == $shop_id) {
