@@ -1,0 +1,73 @@
+@use '../base/mixins' as m;
+@use '../base/variables' as v;
+
+// Studio Recruitment Page Styles
+
+/* Separate content sections */
+.download-content {
+	padding-bottom: 0;
+	margin-bottom: m.f(60);
+}
+
+.application-content {
+	padding-top: 0;
+}
+
+/* Download Section Specific Styles */
+.recruitment-download-section {
+	margin: m.f(60, 40) 0;
+}
+
+.download-card {
+	background: transparent;
+	padding: 0 0 m.f(40, 30);
+	text-align: center;
+	margin-bottom: m.f(40, 30);
+}
+
+.download-card__title {
+	font-size: m.f(28, 24);
+	font-weight: 500;
+	color: #3f3f3f;
+	margin: m.f(24, 20) 0 m.f(20, 15);
+	font-family: v.$ja;
+	line-height: 1.4;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: m.f(8, 6);
+}
+
+.download-title-icon {
+	width: m.f(32, 28);
+	height: m.f(32, 28);
+}
+
+.download-card__description {
+	color: #3f3f3f;
+	font-size: m.f(16, 14);
+	line-height: 1.8;
+	margin-bottom: m.f(40, 30);
+	font-family: 'Noto Sans JP', sans-serif;
+	font-weight: 500;
+}
+
+.download-card__button {
+	display: inline-flex;
+	align-items: center;
+	background: transparent;
+	color: #547e8f;
+	border: 2px solid #547e8f;
+	padding: m.f(16, 14) m.f(32, 28);
+	border-radius: 9999px;
+	text-decoration: none;
+	font-weight: 500;
+	font-size: m.f(16, 14);
+	transition: all 0.3s ease;
+	font-family: 'Noto Sans JP', sans-serif;
+
+	&:hover {
+		background: #547e8f;
+		color: white;
+	}
+}

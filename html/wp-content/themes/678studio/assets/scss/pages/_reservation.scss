@@ -183,7 +183,7 @@ $highlight-color: #007bff;
 			&__label {
 				display: block;
 				color: $text-color;
-				font-family: v.$ja;
+				font-family: v.$ja-sans;
 				font-size: m.fs(14);
 				margin-bottom: m.fs(8);
 				font-weight: 500;
@@ -196,18 +196,34 @@ $highlight-color: #007bff;
 
 			.contact-select {
 				width: 100%;
-				height: m.fs(50);
+				height: m.fs(60);
 				padding: m.fs(12) m.fs(16);
-				font-family: v.$ja;
-				font-size: m.fs(16);
-				color: white;
-				background-color: #7996a1;
-				border: none;
-				border-radius: m.fs(4);
+				color: #547E8F;
+				font-family: v.$ja-sans;
+				font-size: m.fs(20);
+				font-style: normal;
+				font-weight: 500;
+				line-height: 1.2; /* 垂直中央揃えのために調整 */
+				letter-spacing: m.fs(2);
+				background-color: white;
+				border: 1px solid #547E8F;
+				border-radius: m.fs(10);
 				appearance: none;
-				background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+				background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23547E8F' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
 				background-repeat: no-repeat;
-				background-position: right m.fs(10) center;
+				background-position: right m.fs(15) center;
+				outline: none !important;
+				box-shadow: none !important;
+
+				&:focus {
+					outline: none !important;
+					box-shadow: none !important;
+				}
+
+				&:active {
+					outline: none !important;
+					box-shadow: none !important;
+				}
 
 				@include m.mq(md) {
 					font-size: m.fsm(14);
@@ -216,13 +232,15 @@ $highlight-color: #007bff;
 				}
 
 				option {
+					color: #547E8F;
 					font-family: v.$ja-sans;
-					font-size: m.fs(16);
-					color: white;
-					background-color: $border-color;
+					font-size: m.fs(20);
+					font-weight: 500;
+					letter-spacing: m.fs(2);
+					background-color: white;
 
 					@include m.mq(md) {
-						font-size: m.fsm(14);
+						font-size: m.fsm(16);
 					}
 				}
 			}
@@ -517,7 +535,7 @@ $highlight-color: #007bff;
 			}
 
 			// 入力された値がある場合は #547E8F 色に変更
-			&:valid:not(:placeholder-shown) {
+			&:not(:placeholder-shown) {
 				color: #547E8F;
 			}
 
@@ -536,8 +554,40 @@ $highlight-color: #007bff;
 					letter-spacing: m.fs(1.6);
 				}
 
-				&:focus,
-				&:valid:not(:placeholder-shown) {
+				// カレンダーアイコンの色変更
+				&::-webkit-calendar-picker-indicator {
+					filter: invert(42%) sepia(18%) saturate(1217%) hue-rotate(161deg) brightness(90%) contrast(86%);
+					cursor: pointer;
+				}
+
+				// 値が入っている場合は色を変更（複数の条件を追加）
+				&:not([value=""]):not([value]):not(:placeholder-shown),
+				&[value]:not([value=""]),
+				&:valid:not([value=""]) {
+					color: #547E8F;
+
+					&::-webkit-datetime-edit-text,
+					&::-webkit-datetime-edit-month-field,
+					&::-webkit-datetime-edit-day-field,
+					&::-webkit-datetime-edit-year-field {
+						color: #547E8F;
+					}
+				}
+
+				// フォーカス時も色を変更
+				&:focus {
+					&::-webkit-datetime-edit-text,
+					&::-webkit-datetime-edit-month-field,
+					&::-webkit-datetime-edit-day-field,
+					&::-webkit-datetime-edit-year-field {
+						color: #547E8F;
+					}
+				}
+
+				// JavaScriptで追加されるhas-valueクラス
+				&.has-value {
+					color: #547E8F;
+
 					&::-webkit-datetime-edit-text,
 					&::-webkit-datetime-edit-month-field,
 					&::-webkit-datetime-edit-day-field,
@@ -563,6 +613,7 @@ $highlight-color: #007bff;
 			background-repeat: no-repeat;
 			background-position: right m.fs(10) center;
 			cursor: pointer;
+			line-height: 1.2; /* selectフィールド用に行間を調整 */
 
 			&::-ms-expand {
 				display: none;
@@ -570,7 +621,7 @@ $highlight-color: #007bff;
 			}
 
 			// selectで値が選ばれた場合は #547E8F 色に変更
-			&:valid:not([value=""]) {
+			&:not([value=""]) {
 				color: #547E8F;
 			}
 
@@ -582,6 +633,7 @@ $highlight-color: #007bff;
 				font-weight: 500;
 				letter-spacing: m.fs(1.6);
 				background-color: white;
+				line-height: 1.4; /* オプション用の行間 */
 
 				&:first-child {
 					color: #9CBECD;
@@ -814,9 +866,9 @@ $highlight-color: #007bff;
 		padding: m.fs(15) m.fs(40);
 		border-radius: m.fs(5);
 		cursor: pointer;
-		font-family: v.$ja;
+		font-family: v.$ja-sans;
 		font-size: m.fs(16);
-		font-weight: 400;
+		font-weight: 500;
 		max-width: m.fs(300);
 		width: 100%;
 		text-align: center;
@@ -859,7 +911,7 @@ $highlight-color: #007bff;
 	.confirmation-step {
 		&__title {
 			text-align: center;
-			font-family: v.$ja;
+			font-family: v.$ja-sans;
 			font-size: m.fs(25);
 			color: $text-color;
 			margin-bottom: m.fs(40);
@@ -908,7 +960,7 @@ $highlight-color: #007bff;
 		}
 
 		&__label {
-			font-family: v.$ja;
+			font-family: v.$ja-sans;
 			font-size: m.fs(14);
 			color: $text-color;
 			font-weight: 500;
@@ -926,7 +978,7 @@ $highlight-color: #007bff;
 		}
 
 		&__value {
-			font-family: v.$ja;
+			font-family: v.$ja-sans;
 			font-size: m.fs(14);
 			color: $text-color;
 			flex: 1;
@@ -958,7 +1010,7 @@ $highlight-color: #007bff;
 		padding: m.fs(15) m.fs(40);
 		border-radius: m.fs(5);
 		cursor: pointer;
-		font-family: v.$ja;
+		font-family: v.$ja-sans;
 		font-size: m.fs(16);
 		font-weight: 400;
 		max-width: m.fs(200);

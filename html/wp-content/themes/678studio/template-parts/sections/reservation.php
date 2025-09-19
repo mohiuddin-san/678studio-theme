@@ -157,12 +157,6 @@
                       <option value="16:00">16:00</option>
                       <option value="16:30">16:30</option>
                       <option value="17:00">17:00</option>
-                      <option value="17:30">17:30</option>
-                      <option value="18:00">18:00</option>
-                      <option value="18:30">18:30</option>
-                      <option value="19:00">19:00</option>
-                      <option value="19:30">19:30</option>
-                      <option value="20:00">20:00</option>
                     </select>
                     <div class="error-message" id="reservation_time_1-error" style="display: none;">
                       第1撮影希望時間を選択してください
@@ -202,12 +196,6 @@
                       <option value="16:00">16:00</option>
                       <option value="16:30">16:30</option>
                       <option value="17:00">17:00</option>
-                      <option value="17:30">17:30</option>
-                      <option value="18:00">18:00</option>
-                      <option value="18:30">18:30</option>
-                      <option value="19:00">19:00</option>
-                      <option value="19:30">19:30</option>
-                      <option value="20:00">20:00</option>
                     </select>
                   </div>
                 </div>
@@ -244,12 +232,6 @@
                       <option value="16:00">16:00</option>
                       <option value="16:30">16:30</option>
                       <option value="17:00">17:00</option>
-                      <option value="17:30">17:30</option>
-                      <option value="18:00">18:00</option>
-                      <option value="18:30">18:30</option>
-                      <option value="19:00">19:00</option>
-                      <option value="19:30">19:30</option>
-                      <option value="20:00">20:00</option>
                     </select>
                   </div>
                 </div>
@@ -323,13 +305,18 @@
             </div>
 
             <div class="confirmation-step__item">
-              <span class="confirmation-step__label">撮影希望日</span>
-              <span class="confirmation-step__value" id="confirmDate"></span>
+              <span class="confirmation-step__label">第1撮影希望日時</span>
+              <span class="confirmation-step__value" id="confirmDateTime1"></span>
             </div>
 
             <div class="confirmation-step__item">
-              <span class="confirmation-step__label">開始時間</span>
-              <span class="confirmation-step__value" id="confirmTime"></span>
+              <span class="confirmation-step__label">第2撮影希望日時</span>
+              <span class="confirmation-step__value" id="confirmDateTime2"></span>
+            </div>
+
+            <div class="confirmation-step__item">
+              <span class="confirmation-step__label">第3撮影希望日時</span>
+              <span class="confirmation-step__value" id="confirmDateTime3"></span>
             </div>
 
             <div class="confirmation-step__item confirmation-step__item--textarea">
