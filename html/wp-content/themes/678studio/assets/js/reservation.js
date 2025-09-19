@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchShops() {
         try {
             // Use new ACF-based API endpoint with cache buster
-            const response = await fetch('/wp-content/themes/678studio/api/get_studio_shops.php?v=' + Date.now());
+            const response = await fetch('/api/get_studio_shops.php?v=' + Date.now());
             
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);

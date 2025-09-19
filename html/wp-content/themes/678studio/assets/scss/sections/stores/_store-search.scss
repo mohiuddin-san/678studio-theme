@@ -598,6 +598,19 @@
 		line-height: 1.3;
 		word-break: break-word;
 
+		// iOS自動リンク化を無効化
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		text-decoration: none !important;
+
+		// 自動リンク要素に対しても強制的にスタイルを適用
+		a, & a {
+			text-decoration: none !important;
+			color: inherit !important;
+			border: none !important;
+			border-bottom: none !important;
+		}
+
 		// モバイル対応
 		@include m.mq(md) {
 			font-size: m.fsm(18);
