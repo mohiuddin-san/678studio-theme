@@ -27,6 +27,7 @@
       <div class="form-step" id="formStep">
         <div class="form-container">
           <form id="inquiryForm" method="post" action="">
+            <?php wp_nonce_field('corporate_inquiry_form_nonce', 'corporate_inquiry_nonce_field'); ?>
 
             <div class="input-field">
               <label for="company_name">法人名</label>
@@ -66,8 +67,8 @@
             </div>
 
             <div class="input-field">
-              <label for="email_address">メールアドレス (任意)</label>
-              <input type="email" id="email_address" name="email_address" placeholder="例：hanako@example.com">
+              <label for="email_address">メールアドレス (必須)</label>
+              <input type="email" id="email_address" name="email_address" placeholder="例：hanako@example.com" required>
               <div class="error-message" id="email_address-error" style="display: none;">
                 正しいメールアドレスを入力してください
               </div>
@@ -113,31 +114,31 @@
           <div class="confirmation-step__content">
             <div class="confirmation-step__item">
               <span class="confirmation-step__label">法人名</span>
-              <span class="confirmation-step__value" id="confirmCompanyName"></span>
+              <span class="confirmation-step__value" id="confirmCompanyName" data-escape="true"></span>
             </div>
             <div class="confirmation-step__item">
               <span class="confirmation-step__label">お名前</span>
-              <span class="confirmation-step__value" id="confirmContactName"></span>
+              <span class="confirmation-step__value" id="confirmContactName" data-escape="true"></span>
             </div>
             <div class="confirmation-step__item">
               <span class="confirmation-step__label">フリガナ</span>
-              <span class="confirmation-step__value" id="confirmContactKana"></span>
+              <span class="confirmation-step__value" id="confirmContactKana" data-escape="true"></span>
             </div>
             <div class="confirmation-step__item">
               <span class="confirmation-step__label">お電話番号</span>
-              <span class="confirmation-step__value" id="confirmPhoneNumber"></span>
+              <span class="confirmation-step__value" id="confirmPhoneNumber" data-escape="true"></span>
             </div>
             <div class="confirmation-step__item">
               <span class="confirmation-step__label">店舗WEBサイト</span>
-              <span class="confirmation-step__value" id="confirmWebsiteUrl"></span>
+              <span class="confirmation-step__value" id="confirmWebsiteUrl" data-escape="true"></span>
             </div>
             <div class="confirmation-step__item">
               <span class="confirmation-step__label">メールアドレス</span>
-              <span class="confirmation-step__value" id="confirmEmailAddress"></span>
+              <span class="confirmation-step__value" id="confirmEmailAddress" data-escape="true"></span>
             </div>
             <div class="confirmation-step__item confirmation-step__item--textarea">
               <span class="confirmation-step__label">お問い合わせ内容</span>
-              <span class="confirmation-step__value" id="confirmInquiryDetails"></span>
+              <span class="confirmation-step__value" id="confirmInquiryDetails" data-escape="true"></span>
             </div>
           </div>
           <div class="confirmation-step__buttons">
