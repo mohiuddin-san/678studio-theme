@@ -87,6 +87,7 @@
         </div>
         <div class="form-container">
           <form id="reservationForm" method="post" action="">
+            <?php wp_nonce_field('reservation_form_nonce', 'reservation_nonce_field'); ?>
             <!-- 隠しフィールドで店舗IDを送信 -->
             <input type="hidden" name="shop-id" id="hidden-shop-id" value="">
 
@@ -281,47 +282,47 @@
           <div class="confirmation-step__content">
             <div class="confirmation-step__item">
               <span class="confirmation-step__label">お名前</span>
-              <span class="confirmation-step__value" id="confirmName"></span>
+              <span class="confirmation-step__value" id="confirmName" data-escape="true"></span>
             </div>
 
             <div class="confirmation-step__item">
               <span class="confirmation-step__label">フリガナ</span>
-              <span class="confirmation-step__value" id="confirmKana"></span>
+              <span class="confirmation-step__value" id="confirmKana" data-escape="true"></span>
             </div>
 
             <div class="confirmation-step__item">
               <span class="confirmation-step__label">お電話番号</span>
-              <span class="confirmation-step__value" id="confirmContact"></span>
+              <span class="confirmation-step__value" id="confirmContact" data-escape="true"></span>
             </div>
 
             <div class="confirmation-step__item">
               <span class="confirmation-step__label">メールアドレス</span>
-              <span class="confirmation-step__value" id="confirmEmail"></span>
+              <span class="confirmation-step__value" id="confirmEmail" data-escape="true"></span>
             </div>
 
             <div class="confirmation-step__item">
               <span class="confirmation-step__label">選択店舗</span>
-              <span class="confirmation-step__value" id="confirmStore"></span>
+              <span class="confirmation-step__value" id="confirmStore" data-escape="true"></span>
             </div>
 
             <div class="confirmation-step__item">
               <span class="confirmation-step__label">第1撮影希望日時</span>
-              <span class="confirmation-step__value" id="confirmDateTime1"></span>
+              <span class="confirmation-step__value" id="confirmDateTime1" data-escape="true"></span>
             </div>
 
             <div class="confirmation-step__item">
               <span class="confirmation-step__label">第2撮影希望日時</span>
-              <span class="confirmation-step__value" id="confirmDateTime2"></span>
+              <span class="confirmation-step__value" id="confirmDateTime2" data-escape="true"></span>
             </div>
 
             <div class="confirmation-step__item">
               <span class="confirmation-step__label">第3撮影希望日時</span>
-              <span class="confirmation-step__value" id="confirmDateTime3"></span>
+              <span class="confirmation-step__value" id="confirmDateTime3" data-escape="true"></span>
             </div>
 
             <div class="confirmation-step__item confirmation-step__item--textarea">
               <span class="confirmation-step__label">ご相談内容</span>
-              <span class="confirmation-step__value" id="confirmNotes"></span>
+              <span class="confirmation-step__value" id="confirmNotes" data-escape="true"></span>
             </div>
           </div>
 
