@@ -424,10 +424,15 @@ add_action('wp_ajax_nopriv_studio_search', 'ajax_studio_search');
 
 // Enqueue styles and scripts
 function theme_678studio_styles() {
+    // Enqueue Google Fonts - Noto Sans JP with multiple weights including 500
+    wp_enqueue_style('google-fonts',
+        'https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700&family=Noto+Serif+JP:wght@300;400;500;600;700&display=swap',
+        [], null);
+
     // Use filemtime for cache busting in development
     $version = WP_DEBUG ? filemtime(get_stylesheet_directory() . '/style.css') : '1.0.0';
-    
-    wp_enqueue_style('678studio-style', get_stylesheet_uri(), [], $version);
+
+    wp_enqueue_style('678studio-style', get_stylesheet_uri(), ['google-fonts'], $version);
     
     // Enqueue header script for mobile menu (only on frontend)
     if (!is_admin()) {

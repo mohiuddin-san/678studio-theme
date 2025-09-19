@@ -15,8 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'kana', errorId: 'kana-error', message: 'フリガナを入力してください' },
         { id: 'email', errorId: 'email-error', message: '正しいメールアドレスを入力してください' },
         { id: 'store-select', errorId: 'store-error', message: '店舗を選択してください' },
-        { id: 'reservation_date', errorId: 'reservation_date-error', message: '撮影希望日を選択してください' },
-        { id: 'reservation_time', errorId: 'reservation_time-error', message: '開始時間を選択してください' },
+        { id: 'reservation_date_1', errorId: 'reservation_date_1-error', message: '第1撮影希望日を選択してください' },
+        { id: 'reservation_time_1', errorId: 'reservation_time_1-error', message: '第1撮影希望時間を選択してください' },
         { id: 'agreement', errorId: 'agreement-error', message: '個人情報の取り扱いについて同意してください' }
     ];
 
@@ -69,8 +69,12 @@ document.addEventListener('DOMContentLoaded', () => {
             kana: document.getElementById('kana').value.trim(),
             contact: document.getElementById('contact').value.trim(),
             email: document.getElementById('email').value.trim(),
-            reservation_date: document.getElementById('reservation_date').value,
-            reservation_time: document.getElementById('reservation_time').value,
+            reservation_date_1: document.getElementById('reservation_date_1').value,
+            reservation_time_1: document.getElementById('reservation_time_1').value,
+            reservation_date_2: document.getElementById('reservation_date_2').value,
+            reservation_time_2: document.getElementById('reservation_time_2').value,
+            reservation_date_3: document.getElementById('reservation_date_3').value,
+            reservation_time_3: document.getElementById('reservation_time_3').value,
             notes: document.getElementById('notes').value.trim(),
             store: getSelectedStoreName()
         };
@@ -117,6 +121,16 @@ document.addEventListener('DOMContentLoaded', () => {
         return timeString;
     }
 
+    // 日時をフォーマット（日付と時間を組み合わせ）
+    function formatDateTime(date, time) {
+        if (!date || !time) return '';
+        const dateObj = new Date(date);
+        const year = dateObj.getFullYear();
+        const month = dateObj.getMonth() + 1;
+        const day = dateObj.getDate();
+        return `${year}年${month}月${day}日 ${time}`;
+    }
+
     // 確認画面にデータを表示
     function populateConfirmationData(data) {
         document.getElementById('confirmName').textContent = data.name;
@@ -124,8 +138,12 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('confirmContact').textContent = data.contact || '入力なし';
         document.getElementById('confirmEmail').textContent = data.email;
         document.getElementById('confirmStore').textContent = data.store || '選択なし';
-        document.getElementById('confirmDate').textContent = formatDate(data.reservation_date);
-        document.getElementById('confirmTime').textContent = formatTime(data.reservation_time);
+
+        // 複数の撮影希望日時を表示
+        document.getElementById('confirmDateTime1').textContent = formatDateTime(data.reservation_date_1, data.reservation_time_1);
+        document.getElementById('confirmDateTime2').textContent = formatDateTime(data.reservation_date_2, data.reservation_time_2) || '未設定';
+        document.getElementById('confirmDateTime3').textContent = formatDateTime(data.reservation_date_3, data.reservation_time_3) || '未設定';
+
         document.getElementById('confirmNotes').textContent = data.notes || '入力なし';
     }
 

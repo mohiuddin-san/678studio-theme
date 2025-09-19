@@ -139,14 +139,14 @@ $current_page = $shop_data['current_page'];
         <?php if (!empty($search_query)): ?>
         「<?php echo esc_html($search_query); ?>」の検索結果
         <?php else: ?>
-        全国のフォトスタジオ一覧
+        全国の写真館一覧
         <?php endif; ?>
       </h1>
       <p class="store-search-results__subtitle">
         <?php if (!empty($search_query)): ?>
         <?php echo $shop_data['total']; ?>件の写真館が見つかりました
         <?php else: ?>
-        全国の写真館で678撮影が受けられます
+        全国の写真館でロクナナハチ撮影が受けられます
         <?php endif; ?>
       </p>
     </div>
@@ -226,29 +226,6 @@ $current_page = $shop_data['current_page'];
       </form>
     </div>
 
-    <!-- 検索結果件数表示 -->
-    <div class="store-search-results__result-count scroll-animate-item" data-delay="0.4">
-      <div class="result-count-container">
-        <?php if (!empty($search_query)): ?>
-        <div class="result-count-text">
-          <span class="search-term">「<?php echo esc_html($search_query); ?>」</span>
-          <span class="result-label">の検索結果</span>
-        </div>
-        <div class="result-count-number">
-          <span class="count"><?php echo $shop_data['total']; ?></span>
-          <span class="count-unit">件</span>
-        </div>
-        <?php else: ?>
-        <div class="result-count-text">
-          <span class="result-label">全国のフォトスタジオ</span>
-        </div>
-        <div class="result-count-number">
-          <span class="count"><?php echo $shop_data['total']; ?></span>
-          <span class="count-unit">件</span>
-        </div>
-        <?php endif; ?>
-      </div>
-    </div>
 
     <!-- 認定店セクション -->
     <?php if (!empty($certified_shops)): ?>

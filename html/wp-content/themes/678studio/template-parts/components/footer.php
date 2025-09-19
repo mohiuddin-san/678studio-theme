@@ -24,7 +24,7 @@
           <a href="/about" class="footer__nav-link">678撮影について</a>
           <a href="/photo-gallery" class="footer__nav-link">ギャラリー</a>
           <a href="/stores" class="footer__nav-link">写真館検索</a>
-          <a href="/studio-reservation" class="footer__nav-link">ご予約</a>
+          <a href="/studio-reservation" class="footer__nav-link">ご予約相談</a>
           <a href="/studio-inquiry" class="footer__nav-link">お問合せ</a>
           <a href="/privacy" class="footer__nav-link">プライバシーポリシー</a>
           <a href="https://san-creation.com/" class="footer__nav-link" target="_blank" rel="noopener noreferrer">運営会社</a>
@@ -37,8 +37,8 @@
       <!-- Bottom Navigation -->
       <nav class="footer__bottom-nav">
         <span class="footer__bottom-text footer__bottom-text--bold">掲載希望の写真館へ</span>
-        <a href="/download" class="footer__bottom-link">資料ダウンロード</a>
-        <a href="/contact" class="footer__bottom-link">お申し込み・お問い合わせ</a>
+        <a href="/studio-recruitment" class="footer__bottom-link">資料ダウンロード</a>
+        <a href="/corporate-inquiry" class="footer__bottom-link">お問い合わせ</a>
       </nav>
     </div>
   </div>
