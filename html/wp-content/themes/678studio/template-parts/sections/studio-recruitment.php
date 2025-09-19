@@ -58,7 +58,7 @@
 
             <div class="input-field">
               <label for="company_name">法人名</label>
-              <input type="text" id="company_name" name="company_name" placeholder="例：株式会社サンクリエーション">
+              <input type="text" id="company_name" name="company_name" placeholder="例：サンプル株式会社">
               <div class="error-message" id="company_name-error" style="display: none;">
                 法人名を入力してください
               </div>
@@ -183,103 +183,4 @@
 </section>
 
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  // Download button functionality - no longer needed as we use direct download link
-
-  // Form validation and confirmation
-  const form = document.getElementById('recruitmentForm');
-  const formStep = document.getElementById('formStep');
-  const confirmationStep = document.getElementById('confirmationStep');
-  const backButton = document.getElementById('backButton');
-  const submitButton = document.getElementById('submitButton');
-
-  if (form) {
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-
-      let isValid = true;
-      const requiredFields = ['company_name', 'contact_name', 'contact_kana', 'phone_number', 'website_url'];
-
-      // Validate required fields
-      requiredFields.forEach(fieldName => {
-        const field = document.getElementById(fieldName);
-        const errorElement = document.getElementById(fieldName + '-error');
-
-        if (!field.value.trim()) {
-          errorElement.style.display = 'block';
-          isValid = false;
-        } else {
-          errorElement.style.display = 'none';
-        }
-      });
-
-      // Validate email if provided
-      const emailField = document.getElementById('email_address');
-      const emailError = document.getElementById('email_address-error');
-      if (emailField.value.trim() && !isValidEmail(emailField.value)) {
-        emailError.style.display = 'block';
-        isValid = false;
-      } else {
-        emailError.style.display = 'none';
-      }
-
-      // Validate agreement checkbox
-      const agreementCheckbox = document.getElementById('agreement');
-      const agreementError = document.getElementById('agreement-error');
-      if (!agreementCheckbox.checked) {
-        agreementError.style.display = 'block';
-        isValid = false;
-      } else {
-        agreementError.style.display = 'none';
-      }
-
-      if (isValid) {
-        // Show confirmation page
-        showConfirmation();
-      }
-    });
-  }
-
-  // Show confirmation page
-  function showConfirmation() {
-    // Hide form step and show confirmation step
-    formStep.style.display = 'none';
-    confirmationStep.style.display = 'block';
-
-    // Populate confirmation values
-    document.getElementById('confirmCompanyName').textContent = document.getElementById('company_name').value || '-';
-    document.getElementById('confirmContactName').textContent = document.getElementById('contact_name').value;
-    document.getElementById('confirmContactKana').textContent = document.getElementById('contact_kana').value;
-    document.getElementById('confirmPhoneNumber').textContent = document.getElementById('phone_number').value;
-    document.getElementById('confirmWebsiteUrl').textContent = document.getElementById('website_url').value;
-    document.getElementById('confirmEmailAddress').textContent = document.getElementById('email_address').value || '-';
-    document.getElementById('confirmInquiryDetails').textContent = document.getElementById('inquiry_details').value || '-';
-
-    // Scroll to top
-    window.scrollTo(0, 0);
-  }
-
-  // Back button functionality
-  if (backButton) {
-    backButton.addEventListener('click', function() {
-      confirmationStep.style.display = 'none';
-      formStep.style.display = 'block';
-      window.scrollTo(0, 0);
-    });
-  }
-
-  // Submit button functionality
-  if (submitButton) {
-    submitButton.addEventListener('click', function() {
-      // Here you would typically submit the form data
-      alert('フォームの送信処理を実装してください');
-    });
-  }
-
-  function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  }
-});
-</script>
+<!-- JavaScript functionality is now handled by recruitment-form.js -->

@@ -529,6 +529,30 @@
 		}
 	}
 
+	&__badge-overlay {
+		position: absolute;
+		top: m.fs(6);
+		left: m.fs(6);
+		z-index: 2;
+
+		img {
+			width: m.fs(24);
+			height: m.fs(24);
+			display: block;
+		}
+
+		// モバイル対応
+		@include m.mq(md) {
+			top: m.fsm(6);
+			left: m.fsm(6);
+
+			img {
+				width: m.fsm(20);
+				height: m.fsm(20);
+			}
+		}
+	}
+
 	&__content {
 		display: flex;
 		flex-direction: column;
@@ -571,40 +595,25 @@
 		color: #333;
 		font-family: v.$ja-sans;
 		letter-spacing: m.fs(1);
-		@include m.design-grid(
-			$cols: (
-				auto,
-				auto,
-			),
-			$gap: 8
-		);
-		align-items: center;
-		justify-content: center;
-		justify-items: center;
+		line-height: 1.3;
+		word-break: break-word;
 
 		// モバイル対応
 		@include m.mq(md) {
 			font-size: m.fsm(18);
 			letter-spacing: m.fsm(1);
-			// gapはdesign-gridミックスインで管理
 		}
 	}
 
 	// 認定店カードの店舗名を調整
 	&--certified &__name {
 		font-size: m.fs(16, 0.6);
-		@include m.design-grid(
-			$cols: (
-				auto,
-				auto,
-			),
-			$gap: 6
-		);
+		line-height: 1.3;
+		word-break: break-word;
 
 		// モバイル対応
 		@include m.mq(md) {
 			font-size: m.fsm(15);
-			// gapはdesign-gridミックスインで管理
 		}
 	}
 

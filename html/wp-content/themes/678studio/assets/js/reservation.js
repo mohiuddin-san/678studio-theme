@@ -247,14 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 送信ボタン処理
-    const submitButton = document.getElementById('submitButton');
-    if (submitButton) {
-        submitButton.addEventListener('click', function() {
-            // 実際のフォーム送信処理をここに追加
-            alert('フォームが送信されました（実装予定）');
-        });
-    }
+    // 送信ボタン処理は reservation-form.js に委譲（重複防止）
 
     function validateForm() {
         let isValid = true;
