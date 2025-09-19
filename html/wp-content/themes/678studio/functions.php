@@ -1474,9 +1474,31 @@ array(), // Add dependencies if needed
 WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/reservation-form.js') : '1.0.0',
 true // Load in footer
 );
+
+// AJAX settings are now handled by override_plugin_form_handler_on_reservation function
 }
 }
 add_action('wp_enqueue_scripts', 'enqueue_reservation_script');
+
+// Override plugin's form-handler.js to prevent conflicts on specific pages
+function override_plugin_form_handler_conflicts() {
+    if (is_page('studio-reservation') || is_page('studio-inquiry') || is_page('studio-recruitment') || is_page('corporate-inquiry')) {
+        // For these pages: completely override with empty script (use theme's custom form handlers)
+        wp_deregister_script('siaes-form-handler');
+        wp_register_script('siaes-form-handler', get_template_directory_uri() . '/assets/js/empty-form-handler.js', array('jquery'), '1.0.0', true);
+        wp_enqueue_script('siaes-form-handler');
+
+        // Re-add the AJAX configuration that the plugin would normally add
+        wp_localize_script('siaes-form-handler', 'siaes_ajax', array(
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('siaes_form_nonce'),
+            'page_id' => get_the_ID(),
+            'api_url' => 'https://678photo.com/api/get_all_studio_shop.php',
+            'is_user_logged_in' => is_user_logged_in() ? 1 : 0
+        ));
+    }
+}
+add_action('wp_enqueue_scripts', 'override_plugin_form_handler_conflicts', 999);
 function enqueue_inquiry_script() {
 // Check if the current page slug is 'studio-inquiry'
 if (is_page('studio-inquiry')) {
@@ -1489,24 +1511,48 @@ WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/inquiry.js') : '1.0.
 true // Load in footer
 );
 
-// AWS Email Plugin form handler only (inquiry-form.js disabled due to conflicts)
+// フォーム処理用のスクリプト（日本語メッセージ対応）
 wp_enqueue_script(
-'siaes-form-handler-fix',
-plugins_url('inquiry-to-aws-email/assets/js/form-handler.js'),
-array('jquery'),
-time(),
-true
+'inquiry-form-script',
+get_template_directory_uri() . '/assets/js/inquiry-form.js',
+array(), // Add dependencies if needed
+WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/inquiry-form.js') : '1.0.0',
+true // Load in footer
 );
-
-// AJAX settings for form handler
-wp_localize_script('siaes-form-handler-fix', 'siaes_ajax', array(
-'ajax_url' => admin_url('admin-ajax.php'),
-'page_id' => get_the_ID(),
-'nonce' => wp_create_nonce('siaes_form_nonce_' . get_the_ID())
-));
 }
 }
 add_action('wp_enqueue_scripts', 'enqueue_inquiry_script');
+
+function enqueue_recruitment_script() {
+// Check if the current page slug is 'studio-recruitment'
+if (is_page('studio-recruitment')) {
+// フォーム処理用のスクリプト（日本語メッセージ対応）
+wp_enqueue_script(
+'recruitment-form-script',
+get_template_directory_uri() . '/assets/js/recruitment-form.js',
+array(), // Add dependencies if needed
+WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/recruitment-form.js') : '1.0.0',
+true // Load in footer
+);
+}
+}
+add_action('wp_enqueue_scripts', 'enqueue_recruitment_script');
+
+// Corporate Inquiry form script
+function enqueue_corporate_inquiry_script() {
+// Check if the current page slug is 'corporate-inquiry'
+if (is_page('corporate-inquiry')) {
+// フォーム処理用のスクリプト（日本語メッセージ対応）
+wp_enqueue_script(
+'corporate-inquiry-form-script',
+get_template_directory_uri() . '/assets/js/corporate-inquiry-form.js',
+array(), // Add dependencies if needed
+WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/corporate-inquiry-form.js') : '1.0.0',
+true // Load in footer
+);
+}
+}
+add_action('wp_enqueue_scripts', 'enqueue_corporate_inquiry_script');
 
 // SEO Articles Custom Post Type
 require_once get_template_directory() . '/inc/post-types/seo-articles.php';

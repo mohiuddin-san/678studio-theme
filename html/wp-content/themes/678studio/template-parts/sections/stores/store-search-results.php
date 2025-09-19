@@ -262,14 +262,43 @@ $current_page = $shop_data['current_page'];
             }
             ?>
             <img src="<?php echo $image_src; ?>" alt="<?php echo esc_attr($shop['name'] ?? 'スタジオ写真'); ?>">
-            <div class="studio-card__location"><?php echo esc_html($shop['nearest_station'] ?? 'N/A'); ?></div>
+
+            <!-- 認定店バッジ（画像の左上にオーバーレイ） -->
+            <?php if (!empty($shop['is_certified_store'])): ?>
+            <div class="studio-card__badge-overlay">
+              <img src="<?php echo get_template_directory_uri(); ?>/assets/images/badge.svg" alt="認定店">
+            </div>
+            <?php endif; ?>
+
+            <div class="studio-card__location">
+              <?php
+              // 都道府県を表示（住所から抽出または直接取得）
+              $prefecture_display = '';
+              $address = $shop['address'] ?? '';
+              $prefecture_field = $shop['prefecture'] ?? '';
+
+              // 住所から都道府県を抽出
+              if (!empty($address) && preg_match('/^(.+?[都道府県])/u', $address, $matches)) {
+                $prefecture_display = $matches[1];
+              }
+              // 住所に都道府県が含まれていない場合は、prefectureフィールドを使用
+              else if (!empty($prefecture_field)) {
+                $prefecture_display = $prefecture_field;
+              }
+              // フォールバック
+              else if (!empty($address)) {
+                // 住所の最初の部分を使用
+                $parts = explode(' ', $address);
+                $prefecture_display = $parts[0] ?? '';
+              }
+
+              echo esc_html($prefecture_display ?: 'N/A');
+              ?>
+            </div>
           </div>
           <div class="studio-card__content">
             <h3 class="studio-card__name">
-              <?php echo esc_html($shop['name'] ?? 'Unknown'); ?>
-              <span class="studio-card__certified-badge">
-                <img src="<?php echo get_template_directory_uri(); ?>/assets/images/badge.svg" alt="認定店">
-              </span>
+              <?php echo nl2br(esc_html($shop['name'] ?? 'Unknown')); ?>
             </h3>
 
             <!-- 新しいアイコン付きの情報行 -->
@@ -278,58 +307,51 @@ $current_page = $shop_data['current_page'];
                 <img src="<?php echo get_template_directory_uri(); ?>/assets/images/map_icon.svg" alt="場所"
                   class="studio-card__info-icon">
                 <span class="studio-card__info-text">
-                  <?php 
-                  // 考えられる住所フィールドをすべてチェック
-                  $address_fields = [
-                    'address', 'prefecture', 'location', 'city', 'region', '住所', '所在地',
-                    'shop_address', 'shop_location', 'full_address', 'addr', 'place'
-                  ];
-                  
-                  $found_address = '';
-                  foreach ($address_fields as $field) {
-                    if (!empty($shop[$field])) {
-                      $found_address = $shop[$field];
-                      break;
+                  <?php
+                  // エラー表示を有効にして問題を特定
+                  try {
+                    // 考えられる住所フィールドをすべてチェック
+                    $address_fields = ['address', 'prefecture', 'location', 'city', 'region'];
+
+                    $found_address = '';
+                    foreach ($address_fields as $field) {
+                      if (!empty($shop[$field])) {
+                        $found_address = $shop[$field];
+                        break;
+                      }
                     }
-                  }
-                  
-                  if (!empty($found_address)) {
-                    // まず市区町村のみを抽出（都道府県は別フィールドにある）
-                    if (preg_match('/^([^0-9\-\s]+[市区町村])/', $found_address, $matches)) {
-                      // 都道府県データがある場合は結合
-                      $prefecture = $shop['prefecture'] ?? '';
-                      if (!empty($prefecture)) {
-                        echo esc_html($prefecture . $matches[1]);
-                      } else {
-                        // 東京都の場合が多いので、区だけの場合は東京都を推定
-                        if (strpos($matches[1], '区') !== false) {
-                          echo esc_html('東京都' . $matches[1]);
-                        } else {
-                          echo esc_html($matches[1]);
+
+                    if (!empty($found_address)) {
+                      // シンプルな住所表示ロジック
+                      $display_address = '';
+
+                      // 都道府県+市区町村パターン（マルチバイト対応）
+                      if (preg_match('/(.+?[都道府県])(.+?[市区町村])/u', $found_address, $matches)) {
+                        $display_address = $matches[1] . $matches[2];
+                      }
+                      // 市区町村のみ
+                      else if (preg_match('/(.+?[市区町村])/u', $found_address, $matches)) {
+                        $display_address = $matches[1];
+                      }
+                      // 区のみ（東京都推定）
+                      else if (preg_match('/(.+?区)/u', $found_address, $matches)) {
+                        $display_address = '東京都' . $matches[1];
+                      }
+                      // フォールバック：最初の部分
+                      else {
+                        $parts = preg_split('/[0-9\-]/u', $found_address);
+                        $display_address = $parts[0] ?? $found_address;
+                        if (mb_strlen($display_address) > 15) {
+                          $display_address = mb_substr($display_address, 0, 15) . '...';
                         }
                       }
+
+                      echo esc_html(trim($display_address));
                     } else {
-                      // 住所に都道府県が含まれている場合
-                      if (preg_match('/^(.+?[都道府県])(.+?[市区町村])/', $found_address, $matches)) {
-                        echo esc_html($matches[1] . $matches[2]);
-                      } else {
-                        // フォールバック：住所をそのまま表示（最初の部分のみ）
-                        $address_parts = explode(' ', $found_address);
-                        echo esc_html($address_parts[0] ?? $found_address);
-                      }
+                      echo '住所不明';
                     }
-                  } else {
-                    // ACFフィールドの可能性もチェック
-                    $acf_address = get_field('address', $shop['id'] ?? 0);
-                    $acf_location = get_field('location', $shop['id'] ?? 0);
-                    
-                    if (!empty($acf_address)) {
-                      echo esc_html($acf_address);
-                    } elseif (!empty($acf_location)) {
-                      echo esc_html($acf_location);
-                    } else {
-                      echo '住所情報が見つかりません';
-                    }
+                  } catch (Exception $e) {
+                    echo 'エラー: ' . $e->getMessage();
                   }
                   ?>
                 </span>
@@ -370,7 +392,7 @@ $current_page = $shop_data['current_page'];
                 $display_text .= '...';
               }
               
-              echo nl2br(esc_html($display_text));
+              echo wp_kses($display_text, ['br' => []]);
               ?>
             </div>
             <?php endif; ?>
@@ -417,7 +439,7 @@ $current_page = $shop_data['current_page'];
             </div>
 
             <!-- 店舗名 -->
-            <h3 class="studio-card__name"><?php echo esc_html($shop['name'] ?? 'Unknown'); ?></h3>
+            <h3 class="studio-card__name"><?php echo nl2br(esc_html($shop['name'] ?? 'Unknown')); ?></h3>
 
             <!-- 基本情報 -->
             <div class="studio-card__info">
@@ -506,7 +528,7 @@ $current_page = $shop_data['current_page'];
                 $display_text .= '...';
               }
               
-              echo nl2br(esc_html($display_text));
+              echo wp_kses($display_text, ['br' => []]);
               ?>
             </div>
             <?php endif; ?>

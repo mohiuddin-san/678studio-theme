@@ -113,9 +113,12 @@
               </div>
 
               <div class="confirmation-field-check">
-                <label>
-                  <input type="checkbox" name="agreement" id="agreement" required> 個人情報の取り扱いについて同意する
-                </label>
+                <div class="privacy-agreement">
+                  <input type="checkbox" name="agreement" id="agreement" required>
+                  <label for="agreement">
+                    <a href="#" onclick="event.preventDefault(); window.open('<?php echo home_url('/privacy/'); ?>', '_blank', 'noopener,noreferrer'); return false;">個人情報の取り扱い</a>について同意する
+                  </label>
+                </div>
                 <div class="error-message" id="agreement-error" style="display: none;">
                   個人情報の取り扱いについて同意してください
                 </div>

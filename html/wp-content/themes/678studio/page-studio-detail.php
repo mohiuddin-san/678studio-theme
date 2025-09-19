@@ -148,19 +148,21 @@ $map_embed_data = get_map_embed_content($shop);
         <h1 class="store-hero__category">
           <?php echo esc_html($shop['name'] ?? 'ロクナナハチ撮影店舗'); ?>
           <?php if (!empty($shop['is_certified_store'])): ?>
-            <span class="certified-badge">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M7.81893 1.90616C8.8333 0.739607 10.3302 0 12 0C13.6697 0 15.1666 0.739535 16.1809 1.90599C17.7232 1.79823 19.3049 2.33373 20.4857 3.51455C21.6665 4.69536 22.202 6.27703 22.0943 7.81931C23.2606 8.83367 24 10.3304 24 12C24 13.6699 23.2603 15.1669 22.0936 16.1813C22.2011 17.7233 21.6656 19.3046 20.485 20.4852C19.3044 21.6659 17.7231 22.2014 16.181 22.0939C15.1667 23.2604 13.6697 24 12 24C10.3303 24 8.33348 23.2605 7.81912 22.0941C6.27682 22.2018 4.69513 21.6663 3.51431 20.4855C2.33349 19.3047 1.79798 17.723 1.90574 16.1807C0.739428 15.1663 0 13.6696 0 12C0 10.3304 0.739503 8.83351 1.90591 7.81915C1.79828 6.27698 2.33379 4.69547 3.51451 3.51476C4.69523 2.33403 6.27676 1.79852 7.81893 1.90616ZM16.4434 9.7673C16.7398 9.35245 16.6437 8.77595 16.2288 8.47963C15.814 8.18331 15.2375 8.2794 14.9412 8.69424L10.9591 14.2691L8.96041 12.2704C8.59992 11.9099 8.01546 11.9099 7.65498 12.2704C7.29449 12.6308 7.29449 13.2153 7.65498 13.5758L10.4242 16.345C10.6161 16.5369 10.8826 16.6346 11.1531 16.6122C11.4235 16.5899 11.6703 16.4496 11.8281 16.2288L16.4434 9.7673Z" fill="currentColor"/>
-              </svg>
-              <span class="certified-text">認定店</span>
-            </span>
+          <span class="certified-badge">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M7.81893 1.90616C8.8333 0.739607 10.3302 0 12 0C13.6697 0 15.1666 0.739535 16.1809 1.90599C17.7232 1.79823 19.3049 2.33373 20.4857 3.51455C21.6665 4.69536 22.202 6.27703 22.0943 7.81931C23.2606 8.83367 24 10.3304 24 12C24 13.6699 23.2603 15.1669 22.0936 16.1813C22.2011 17.7233 21.6656 19.3046 20.485 20.4852C19.3044 21.6659 17.7231 22.2014 16.181 22.0939C15.1667 23.2604 13.6697 24 12 24C10.3303 24 8.33348 23.2605 7.81912 22.0941C6.27682 22.2018 4.69513 21.6663 3.51431 20.4855C2.33349 19.3047 1.79798 17.723 1.90574 16.1807C0.739428 15.1663 0 13.6696 0 12C0 10.3304 0.739503 8.83351 1.90591 7.81915C1.79828 6.27698 2.33379 4.69547 3.51451 3.51476C4.69523 2.33403 6.27676 1.79852 7.81893 1.90616ZM16.4434 9.7673C16.7398 9.35245 16.6437 8.77595 16.2288 8.47963C15.814 8.18331 15.2375 8.2794 14.9412 8.69424L10.9591 14.2691L8.96041 12.2704C8.59992 11.9099 8.01546 11.9099 7.65498 12.2704C7.29449 12.6308 7.29449 13.2153 7.65498 13.5758L10.4242 16.345C10.6161 16.5369 10.8826 16.6346 11.1531 16.6122C11.4235 16.5899 11.6703 16.4496 11.8281 16.2288L16.4434 9.7673Z"
+                fill="currentColor" />
+            </svg>
+            <span class="certified-text">認定店</span>
+          </span>
           <?php endif; ?>
         </h1>
         <div class="store-hero__title">
           <?php if (!empty($shop['is_certified_store'])): ?>
-            ロクナナハチ撮影認定店舗
+          ロクナナハチ撮影認定店舗
           <?php else: ?>
-            ロクナナハチ登録店舗
+          ロクナナハチ登録店舗
           <?php endif; ?>
         </div>
       </div>
@@ -199,37 +201,61 @@ $map_embed_data = get_map_embed_content($shop);
         基本情報
       </h2>
       <dl class="store-basic-info__list">
+        <!-- 店舗名（必須項目） -->
         <div class="store-basic-info__item">
           <dt class="store-basic-info__label">店舗名</dt>
           <dd class="store-basic-info__data"><?php echo esc_html($shop['name'] ?? 'N/A'); ?></dd>
         </div>
+
+        <!-- 住所（入力がある場合のみ表示） -->
+        <?php if (!empty($shop['address'])): ?>
         <div class="store-basic-info__item">
           <dt class="store-basic-info__label">住所</dt>
-          <dd class="store-basic-info__data"><?php echo esc_html($shop['address'] ?? 'N/A'); ?></dd>
+          <dd class="store-basic-info__data"><?php echo esc_html($shop['address']); ?></dd>
         </div>
+        <?php endif; ?>
+
+        <!-- 電話番号（入力がある場合のみ表示） -->
+        <?php if (!empty($shop['phone'])): ?>
         <div class="store-basic-info__item">
           <dt class="store-basic-info__label">電話番号</dt>
           <dd class="store-basic-info__data">
-            <a href="tel:<?php echo esc_attr($shop['phone'] ?? ''); ?>"
-              class="store-basic-info__phone"><?php echo esc_html($shop['phone'] ?? 'N/A'); ?></a>
+            <a href="tel:<?php echo esc_attr($shop['phone']); ?>"
+              class="store-basic-info__phone"><?php echo esc_html($shop['phone']); ?></a>
           </dd>
         </div>
+        <?php endif; ?>
+
+        <!-- 最寄り駅（入力がある場合のみ表示） -->
+        <?php if (!empty($shop['nearest_station'])): ?>
         <div class="store-basic-info__item">
           <dt class="store-basic-info__label">最寄り駅</dt>
-          <dd class="store-basic-info__data"><?php echo esc_html($shop['nearest_station'] ?? 'N/A'); ?></dd>
+          <dd class="store-basic-info__data"><?php echo esc_html($shop['nearest_station']); ?></dd>
         </div>
+        <?php endif; ?>
+
+
+        <!-- 営業時間（入力がある場合のみ表示） -->
+        <?php if (!empty($shop['business_hours'])): ?>
         <div class="store-basic-info__item">
           <dt class="store-basic-info__label">営業時間</dt>
-          <dd class="store-basic-info__data"><?php echo esc_html($shop['business_hours'] ?? 'N/A'); ?></dd>
+          <dd class="store-basic-info__data"><?php echo esc_html($shop['business_hours']); ?></dd>
         </div>
+        <?php endif; ?>
+
+        <!-- 定休日（入力がある場合のみ表示） -->
+        <?php if (!empty($shop['holidays'])): ?>
         <div class="store-basic-info__item">
           <dt class="store-basic-info__label">定休日</dt>
-          <dd class="store-basic-info__data"><?php echo esc_html($shop['holidays'] ?? 'N/A'); ?></dd>
+          <dd class="store-basic-info__data"><?php echo esc_html($shop['holidays']); ?></dd>
         </div>
+        <?php endif; ?>
+
+        <!-- 店舗紹介（入力がある場合のみ表示） -->
         <?php if (!empty($shop['store_introduction'])): ?>
         <div class="store-basic-info__item">
           <dt class="store-basic-info__label">店舗紹介</dt>
-          <dd class="store-basic-info__data"><?php echo nl2br(esc_html($shop['store_introduction'])); ?></dd>
+          <dd class="store-basic-info__data"><?php echo wp_kses($shop['store_introduction'], ['br' => []]); ?></dd>
         </div>
         <?php endif; ?>
       </dl>
@@ -255,30 +281,30 @@ $map_embed_data = get_map_embed_content($shop);
           </thead>
           <tbody>
             <?php foreach ($shop['photo_plans'] as $plan): ?>
-              <tr class="plans-table__row">
-                <td class="plans-table__cell plans-table__name"><?php echo esc_html($plan['plan_name']); ?></td>
-                <td class="plans-table__cell plans-table__price">
-                  <?php if (!empty($plan['plan_price'])): ?>
-                    <?php echo esc_html($plan['formatted_price'] ?? '¥' . number_format($plan['plan_price']) . '円'); ?>
-                  <?php else: ?>
-                    <span class="plans-table__empty">-</span>
-                  <?php endif; ?>
-                </td>
-                <td class="plans-table__cell plans-table__duration">
-                  <?php if (!empty($plan['formatted_duration'])): ?>
-                    <?php echo esc_html($plan['formatted_duration']); ?>
-                  <?php else: ?>
-                    <span class="plans-table__empty">-</span>
-                  <?php endif; ?>
-                </td>
-                <td class="plans-table__cell plans-table__description">
-                  <?php if (!empty($plan['plan_description'])): ?>
-                    <?php echo nl2br(esc_html($plan['plan_description'])); ?>
-                  <?php else: ?>
-                    <span class="plans-table__empty">-</span>
-                  <?php endif; ?>
-                </td>
-              </tr>
+            <tr class="plans-table__row">
+              <td class="plans-table__cell plans-table__name"><?php echo esc_html($plan['plan_name']); ?></td>
+              <td class="plans-table__cell plans-table__price">
+                <?php if (!empty($plan['plan_price'])): ?>
+                <?php echo esc_html($plan['formatted_price'] ?? '¥' . number_format($plan['plan_price']) . '円'); ?>
+                <?php else: ?>
+                <span class="plans-table__empty">-</span>
+                <?php endif; ?>
+              </td>
+              <td class="plans-table__cell plans-table__duration">
+                <?php if (!empty($plan['formatted_duration'])): ?>
+                <?php echo esc_html($plan['formatted_duration']); ?>
+                <?php else: ?>
+                <span class="plans-table__empty">-</span>
+                <?php endif; ?>
+              </td>
+              <td class="plans-table__cell plans-table__description">
+                <?php if (!empty($plan['plan_description'])): ?>
+                <?php echo nl2br(esc_html($plan['plan_description'])); ?>
+                <?php else: ?>
+                <span class="plans-table__empty">-</span>
+                <?php endif; ?>
+              </td>
+            </tr>
             <?php endforeach; ?>
           </tbody>
         </table>
@@ -295,10 +321,10 @@ $map_embed_data = get_map_embed_content($shop);
         撮影ギャラリー
       </h2>
     </div>
-    
+
     <div class="store-gallery__slider">
       <div class="store-gallery__track">
-          <?php 
+        <?php 
           $gallery_images = [];
           
           // メインギャラリー画像を収集（簡素化されたギャラリーシステム）
@@ -319,10 +345,10 @@ $map_embed_data = get_map_embed_content($shop);
           
           // 画像の表示
           if (empty($gallery_images)): ?>
-            <div class="store-gallery__no-images">
-              <p>認定店舗のギャラリー画像を準備中です。</p>
-            </div>
-          <?php else:
+        <div class="store-gallery__no-images">
+          <p>認定店舗のギャラリー画像を準備中です。</p>
+        </div>
+        <?php else:
             foreach ($gallery_images as $index => $image_url): 
               // ギャラリー画像のBase64データかURLかを判定
               $gallery_image_src = '';
@@ -337,20 +363,22 @@ $map_embed_data = get_map_embed_content($shop);
                   $gallery_image_full = esc_url($image_url);
               }
           ?>
-            <div class="store-gallery__item">
-              <img src="<?php echo $gallery_image_src; ?>" alt="ギャラリー画像 <?php echo $index + 1; ?>" data-full-image="<?php echo $gallery_image_full; ?>">
-              <div class="store-gallery__overlay">
-                <svg class="store-gallery__icon" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="16" cy="16" r="10" stroke="white" stroke-width="2"/>
-                  <path d="M23 23L30 30" stroke="white" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-              </div>
-            </div>
-          <?php 
+        <div class="store-gallery__item">
+          <img src="<?php echo $gallery_image_src; ?>" alt="ギャラリー画像 <?php echo $index + 1; ?>"
+            data-full-image="<?php echo $gallery_image_full; ?>">
+          <div class="store-gallery__overlay">
+            <svg class="store-gallery__icon" width="40" height="40" viewBox="0 0 40 40" fill="none"
+              xmlns="http://www.w3.org/2000/svg">
+              <circle cx="16" cy="16" r="10" stroke="white" stroke-width="2" />
+              <path d="M23 23L30 30" stroke="white" stroke-width="2" stroke-linecap="round" />
+            </svg>
+          </div>
+        </div>
+        <?php 
             endforeach; 
           endif; ?>
-        </div>
       </div>
+    </div>
     </div>
   </section>
   <?php endif; ?>
@@ -362,13 +390,20 @@ $map_embed_data = get_map_embed_content($shop);
         アクセス
       </h2>
 
+      <!-- アクセス詳細（入力がある場合のみ表示） -->
+      <?php if (!empty($shop['access_details'])): ?>
+      <div class="store-access__details">
+        <p class="store-access__details-text"><?php echo nl2br(wp_kses($shop['access_details'], ['br' => []])); ?></p>
+      </div>
+      <?php endif; ?>
+
       <!-- Google Map -->
       <div class="store-access__map">
         <?php if ($map_embed_data): ?>
-          <?php if ($map_embed_data['type'] === 'iframe'): ?>
-            <!-- Complete iframe tag from database -->
-            <div class="map-iframe-container">
-              <?php 
+        <?php if ($map_embed_data['type'] === 'iframe'): ?>
+        <!-- Complete iframe tag from database -->
+        <div class="map-iframe-container">
+          <?php 
               // Output iframe with proper sanitization
               echo wp_kses($map_embed_data['content'], [
                 'iframe' => [
@@ -390,16 +425,14 @@ $map_embed_data = get_map_embed_content($shop);
                 ]
               ]);
               ?>
-            </div>
-          <?php else: ?>
-            <!-- Direct URL -->
-            <iframe src="<?php echo esc_url($map_embed_data['content']); ?>" 
-                    width="100%" height="400" 
-                    style="border:0; display: block;"
-                    allowfullscreen="" loading="lazy" 
-                    referrerpolicy="no-referrer-when-downgrade">
-            </iframe>
-          <?php endif; ?>
+        </div>
+        <?php else: ?>
+        <!-- Direct URL -->
+        <iframe src="<?php echo esc_url($map_embed_data['content']); ?>" width="100%" height="400"
+          style="border:0; display: block;" allowfullscreen="" loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+        <?php endif; ?>
         <?php else: ?>
         <p>地図を表示できません。以下のリンクからアクセスしてください：<br>
           <a href="<?php echo esc_url($shop['map_url'] ?? 'https://maps.app.goo.gl/659nXgwsXYb3dbYH7'); ?>"
@@ -434,6 +467,16 @@ $map_embed_data = get_map_embed_content($shop);
 </div>
 
 <style>
+/* Access details styles */
+.store-access__details {
+  margin-bottom: 20px;
+}
+
+.store-access__details-text {
+  margin: 0;
+  line-height: 1.6;
+}
+
 /* Ensure the map iframe is visible and sized correctly */
 .store-access__map iframe {
   display: block !important;
@@ -469,14 +512,9 @@ $map_embed_data = get_map_embed_content($shop);
   font-size: 12px;
   font-weight: 600;
   margin-left: 8px;
-  box-shadow: 0 2px 6px rgba(58, 137, 255, 0.3);
-  transition: all 0.3s ease;
 }
 
-.certified-badge:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(58, 137, 255, 0.4);
-}
+
 
 .certified-badge svg {
   width: 14px;
@@ -581,21 +619,21 @@ $map_embed_data = get_map_embed_content($shop);
     border-radius: 12px;
     gap: 4px;
   }
-  
+
   .certified-badge svg {
     width: 12px;
     height: 12px;
   }
-  
+
   .plans-table {
     font-size: 13px;
   }
-  
+
   .plans-table__header {
     padding: 8px;
     font-size: 13px;
   }
-  
+
   .plans-table__cell {
     padding: 8px;
   }

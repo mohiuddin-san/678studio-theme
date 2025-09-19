@@ -158,9 +158,71 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 送信ボタンの処理（最終送信時）
     if (submitButton) {
-        submitButton.addEventListener('click', () => {
-            // 最終送信時はform-handler.jsに委譲
-            // この時点では確認画面が表示されているので、form-handler.jsの送信処理が実行される
+        submitButton.addEventListener('click', async () => {
+            const submitBtn = submitButton;
+            const originalText = submitBtn.textContent;
+
+            try {
+                // ボタンを無効化
+                submitBtn.disabled = true;
+                submitBtn.textContent = '送信中...';
+
+                // フォームデータを収集
+                const formData = new FormData();
+                formData.append('action', 'siaes_submit_form');
+                formData.append('nonce', window.siaes_ajax?.nonce || '');
+                formData.append('page_id', window.siaes_ajax?.page_id || '');
+
+                // 確認画面のデータを使用
+                const confirmData = {
+                    name: document.getElementById('confirmName').textContent,
+                    kana: document.getElementById('confirmKana').textContent,
+                    contact: document.getElementById('confirmContact').textContent,
+                    email: document.getElementById('confirmEmail').textContent,
+                    'shop-id': document.getElementById('store-select').value,
+                    reservation_date_1: document.getElementById('reservation_date_1').value,
+                    reservation_time_1: document.getElementById('reservation_time_1').value,
+                    reservation_date_2: document.getElementById('reservation_date_2').value,
+                    reservation_time_2: document.getElementById('reservation_time_2').value,
+                    reservation_date_3: document.getElementById('reservation_date_3').value,
+                    reservation_time_3: document.getElementById('reservation_time_3').value,
+                    notes: document.getElementById('notes').value,
+                    agreement: document.getElementById('agreement').checked ? '1' : '0'
+                };
+
+                // FormDataに追加
+                Object.keys(confirmData).forEach(key => {
+                    if (confirmData[key] !== null && confirmData[key] !== undefined) {
+                        formData.append(key, confirmData[key]);
+                    }
+                });
+
+                // AJAX送信
+                const response = await fetch(window.siaes_ajax?.ajax_url || '/wp-admin/admin-ajax.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('ご予約相談を承りました。2営業日以内にご連絡させていただきます。');
+                    // フォームリセット
+                    form.reset();
+                    confirmationStep.style.display = 'none';
+                    formStep.style.display = 'block';
+                    window.scrollTo(0, 0);
+                } else {
+                    alert('送信に失敗しました。しばらく時間をおいて再度お試しください。');
+                }
+            } catch (error) {
+                console.error('送信エラー:', error);
+                alert('送信に失敗しました。しばらく時間をおいて再度お試しください。');
+            } finally {
+                // ボタンを元に戻す
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
         });
     }
 
