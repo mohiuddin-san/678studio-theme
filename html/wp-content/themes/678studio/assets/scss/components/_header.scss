@@ -25,7 +25,7 @@
 		position: relative;
 		overflow: visible; // モバイルナビゲーションが表示できるように
 
-		// SP用 - 統合vw()でレスポンシブ対応
+		// SP用 - 自動判定vw()でレスポンシブ対応
 		@include m.mq(md) {
 			padding: m.vw(20) m.vw(20) m.vw(10);
 			justify-content: center;
@@ -62,15 +62,15 @@
 		@include m.mq(md) {
 			display: block;
 			position: absolute;
-			right: m.vw(20); // 統合vw()に変更
+			right: m.vw(20); // 自動判定vw()
 			top: 50%;
 			transform: translateY(-50%);
-			width: m.vw(40); // 統合vw()に変更
-			height: m.vw(40); // 統合vw()に変更
+			width: m.vw(40); // 自動判定vw()
+			height: m.vw(40); // 自動判定vw()
 			background: none;
 			border: none;
 			cursor: pointer;
-			padding: m.vw(8); // 統合vw()に変更
+			padding: m.vw(8); // 自動判定vw()
 			z-index: 10000; // 最前面に配置
 		}
 	}
@@ -79,10 +79,10 @@
 	&__hamburger-line {
 		@include m.mq(md) {
 			display: block;
-			width: m.vw(24); // 統合vw()に変更
-			height: m.vw(2); // 統合vw()に変更
+			width: m.vw(24); // 自動判定vw()
+			height: m.vw(2); // 自動判定vw()
 			background: #000;
-			margin: m.vw(4) 0; // 統合vw()に変更
+			margin: m.vw(4) 0; // 自動判定vw()
 			transition: 0.3s;
 			position: relative;
 		}
@@ -134,7 +134,7 @@
 		max-height: m.vw(50);  // 統合vw()に変更
 
 		@include m.mq(md) {
-			max-height: m.vw(40);  // 統合vw()に変更
+			max-height: m.vw(40);  // 自動判定vw()
 		}
 	}
 }

@@ -110,75 +110,87 @@
 		}
 	}
 
-	// SP用テキストリンク
-	&__link {
-		font-family: v.$ja-sans;
-		font-size: m.vw(18);
-		font-weight: 400;
-		color: v.$text-color;
-		text-decoration: none;
-		padding: m.vw(12) 0;
-		text-align: left;
-		background: none;
-		border: none;
-		cursor: pointer;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		width: 100%;
+	// SP用テキストリンク（展開可能リンク用）
+	&__toggle {
+		@include m.mq(md) {
+			font-family: v.$ja-sans;
+			font-size: m.vw(18);
+			font-weight: 400;
+			color: v.$text-color;
+			text-decoration: none;
+			padding: m.vw(12) 0;
+			text-align: left;
+			background: none;
+			border: none;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			width: 100%;
 
-		&:hover {
-			color: v.$brand-blue;
+			&:hover {
+				color: v.$brand-blue;
+			}
 		}
 	}
 
 	// SP用プラスボタン
 	&__plus {
-		font-size: m.vw(20);
-		font-weight: bold;
-		color: v.$brand-blue;
-		transition: transform 0.3s ease;
+		@include m.mq(md) {
+			font-size: m.vw(20);
+			font-weight: bold;
+			color: v.$brand-blue;
+			transition: transform 0.3s ease;
+		}
 	}
 
 	// SP用展開可能エリア
 	&__expandable {
-		width: 100%;
+		@include m.mq(md) {
+			width: 100%;
+		}
 	}
 
 	// SP用サブメニュー
 	&__submenu {
-		display: none;
-		flex-direction: column;
-		padding-left: m.vw(20);
-		margin-top: m.vw(8);
-		gap: m.vw(8);
+		@include m.mq(md) {
+			display: none;
+			flex-direction: column;
+			padding-left: m.vw(20);
+			margin-top: m.vw(8);
+			gap: m.vw(8);
 
-		&.is-open {
-			display: flex !important;
-			visibility: visible !important;
-			opacity: 1 !important;
+			&.is-open {
+				display: flex !important;
+				visibility: visible !important;
+				opacity: 1 !important;
+			}
 		}
 	}
 
 	// SP用サブリンク
 	&__sublink {
-		font-family: v.$ja-sans;
-		font-size: m.vw(16);
-		font-weight: 400;
-		color: v.$text-color;
-		text-decoration: none;
-		padding: m.vw(8) 0;
-		text-align: left;
-		opacity: 0.8;
+		@include m.mq(md) {
+			font-family: v.$ja-sans;
+			font-size: m.vw(16);
+			font-weight: 400;
+			color: v.$text-color;
+			text-decoration: none;
+			padding: m.vw(8) 0;
+			text-align: left;
+			opacity: 0.8;
 
-		&:hover {
-			color: v.$brand-blue;
-			opacity: 1;
+			&:hover {
+				color: v.$brand-blue;
+				opacity: 1;
+			}
 		}
 	}
 
 	// プラスボタンの回転アニメーション
 	&__toggle.is-open &__plus {
-		transform: rotate(45deg);
+		@include m.mq(md) {
+			transform: rotate(45deg);
+		}
 	}
 }

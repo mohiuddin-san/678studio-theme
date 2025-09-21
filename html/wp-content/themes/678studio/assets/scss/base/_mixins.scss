@@ -218,21 +218,28 @@ $breakpoints: (
 	'xxl': 1440px,
 );
 
+// グローバル変数でメディアクエリコンテキストを追跡
+$current-mq-context: 'pc' !global;
+
 // メディアクエリ（デフォルトをmax-widthに変更）
 @mixin mq($breakpoint, $type: max) {
 	@if map.has-key($breakpoints, $breakpoint) {
 		$value: map.get($breakpoints, $breakpoint);
 
 		@if $type == max {
-			// 指定値より小さい（未満）
+			// 指定値より小さい（未満）= SP
 			$value: $value - 1;
 			@media (max-width: #{$value}) {
+				$current-mq-context: 'sp' !global;
 				@content;
+				$current-mq-context: 'pc' !global;
 			}
 		} @else {
-			// 指定値以上
+			// 指定値以上 = PC
 			@media (min-width: #{$value}) {
+				$current-mq-context: 'pc' !global;
 				@content;
+				$current-mq-context: 'pc' !global;
 			}
 		}
 	} @else {
@@ -818,12 +825,96 @@ $figma-pc-base: 1440px !default; // PC基準サイズ
 // 🎯 自動vw変換システム - CSS変数を使った自動判定版
 // =============================================================================
 
-// CSS変数ベースの自動判定vw関数
+// メディアクエリコンテキスト自動判定vw関数
 @function vw($size, $min: null) {
+	// メディアクエリコンテキストに応じて基準を自動切り替え
+	$base: if($current-mq-context == 'sp', 380, 1440);
+	$calculated-value: #{$size / $base * 100}vw;
+
 	@if $min {
-		@return min(#{$min}, calc(#{$size}px * (100vw / var(--figma-base))));
+		@return min(#{$min}, $calculated-value);
 	} @else {
-		@return calc(#{$size}px * (100vw / var(--figma-base)));
+		@return $calculated-value;
+	}
+}
+
+// プログレッシブエンハンスメント版（メディアクエリコンテキスト自動判定）
+@mixin vw-progressive($property, $size, $min: null) {
+	// メディアクエリコンテキストに応じて基準を自動切り替え
+	$base: if($current-mq-context == 'sp', 380, 1440);
+	$css-var: if($current-mq-context == 'sp', '--figma-base-sp', '--figma-base');
+
+	// 1. 古いブラウザ用: 静的vw値（Safari 16.4対応）
+	@if $min {
+		#{$property}: min(#{$min}, #{$size / $base * 100}vw);
+	} @else {
+		#{$property}: #{$size / $base * 100}vw;
+	}
+
+	// 2. モダンブラウザ用: CSS変数で動的計算
+	@supports (--css: variables) {
+		@if $min {
+			#{$property}: min(#{$min}, calc(#{$size}px * (100vw / var(#{$css-var}, #{$base}px))));
+		} @else {
+			#{$property}: calc(#{$size}px * (100vw / var(#{$css-var}, #{$base}px)));
+		}
+	}
+}
+
+// ショートハンド版（複数値対応・自動判定）
+@mixin vw-progressive-shorthand($property, $values...) {
+	// 例: @include vw-progressive-shorthand(padding, 30, 40, 10);
+	$base: if($current-mq-context == 'sp', 380, 1440);
+	$css-var: if($current-mq-context == 'sp', '--figma-base-sp', '--figma-base');
+
+	$static-values: ();
+	$css-var-values: ();
+
+	@each $value in $values {
+		$static-values: append($static-values, #{$value / $base * 100}vw);
+		$css-var-values: append($css-var-values, calc(#{$value}px * (100vw / var(#{$css-var}, #{$base}px))));
+	}
+
+	// 1. 古いブラウザ用（Safari 16.4対応）
+	#{$property}: $static-values;
+
+	// 2. モダンブラウザ用（CSS変数の良さを活用）
+	@supports (--css: variables) {
+		#{$property}: $css-var-values;
+	}
+}
+
+// SP用のvw関数（メディアクエリ内で使用）
+@function vw-sp($size, $min: null) {
+	// SP基準（380px）での計算
+	$sp-value: #{$size / 380 * 100}vw;
+
+	@if $min {
+		@return min(#{$min}, $sp-value);
+	} @else {
+		@return $sp-value;
+	}
+}
+
+// 自動切り替えミクシン（プログレッシブエンハンスメント）
+@mixin vw-auto($property, $size, $sp-size: null) {
+	// 1. 古いブラウザ用フォールバック（静的値）
+	#{$property}: #{$size / 1440 * 100}vw;
+
+	// 2. CSS変数対応ブラウザ用（動的値）
+	@supports (--css: variables) {
+		#{$property}: calc(#{$size}px * (100vw / var(--figma-base, 1440px)));
+	}
+
+	// 3. SP用の値（指定があれば）
+	@if $sp-size {
+		@include mq(md) {
+			#{$property}: #{$sp-size / 380 * 100}vw;
+
+			@supports (--css: variables) {
+				#{$property}: calc(#{$sp-size}px * (100vw / var(--figma-base, 380px)));
+			}
+		}
 	}
 }
 
