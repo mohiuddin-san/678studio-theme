@@ -448,6 +448,12 @@ function theme_678studio_styles() {
             get_template_directory_uri() . '/assets/js/viewport-controller.js',
             [], $viewport_version, true);
 
+        // Publication Modal (global)
+        $modal_version = WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/publication-modal.js') : '1.0.0';
+        wp_enqueue_script('678studio-publication-modal',
+            get_template_directory_uri() . '/assets/js/publication-modal.js',
+            [], $modal_version, true);
+
         // Page Transitions Script (global)
         $transitions_version = WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/modules/page-transitions.js') : '1.0.0';
         wp_enqueue_script('page-transitions', 
