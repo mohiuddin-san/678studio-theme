@@ -24,6 +24,7 @@
 .navigation {
 	// 自動スケールシステムを有効化
 	@include m.auto-scale;
+	overflow: visible; // PCでスクロールバーを防ぐ
 
 	// モバイル用 - 全体を縦配置にしてCTAを下部に
 	@include m.mq(md) {
@@ -33,6 +34,7 @@
 		justify-content: center;
 		height: 100%;
 		width: 100%;
+		overflow: hidden; // モバイルではhidden
 	}
 
 	&__menu {
@@ -42,14 +44,14 @@
 		padding: 0;
 		gap: m.vw(20); // 統合vw()に変更
 
-		// モバイル対応 - フルスクリーン用
+		// モバイル対応 - 左揃えテキストメニュー
 		@include m.mq(md) {
 			flex-direction: column;
-			gap: m.vw(8); // 統合vw()に変更
-			padding: m.vw(20) m.vw(20); // 上部パディングを調整
+			gap: m.vw(16); // CTAリンクと同じ間隔
+			padding: m.vw(20) m.vw(20); // 左右パディング
 			width: 100%;
-			justify-content: center;
-			align-items: center; // 水平方向も中央揃え
+			justify-content: flex-start; // 上揃えに変更
+			align-items: flex-start; // 左揃えに変更
 			order: 1; // ナビメニューを上部に配置
 		}
 	}
@@ -69,7 +71,7 @@
 		position: relative;
 		overflow: hidden;
 
-		// 下線アニメーション用の擬似要素
+		// 下線アニメーション用の擬似要素（PC用）
 		&::after {
 			content: '';
 			position: absolute;
@@ -79,26 +81,35 @@
 			height: 1px;
 			background: #3f3f3f;
 			transform: translateX(-100%);
+
+			// スマホでは下線アニメーションを無効化
+			@include m.mq(md) {
+				display: none;
+			}
 		}
 
-		// モバイル対応 - フルスクリーン用
+		// モバイル対応 - シンプルなテキストリンクスタイル
 		@include m.mq(md) {
 			font-size: m.vw(18); // 統合vw()に変更
-			padding: m.vw(12) m.vw(20); // 統合vw()に変更
-			text-align: center;
-			font-weight: 500;
+			padding: m.vw(12) 0; // 上下のみパディング、左右は削除
+			text-align: left; // 左揃えに変更
+			font-weight: 400; // 通常の太さに変更
 		}
 
 		&:hover {
-			// テキスト色は変更しない（下線アニメーションのみ）
+			// PC: 下線アニメーションのみ
+			// SP: 色変更
+			@include m.mq(md) {
+				color: v.$brand-blue;
+			}
 		}
 
-		// ホバー時：左から右にスライドイン
+		// ホバー時：左から右にスライドイン（PC用）
 		&:hover::after {
 			animation: slideInLeft 0.4s ease forwards;
 		}
 
-		// ホバーオフ時：右側に消える
+		// ホバーオフ時：右側に消える（PC用）
 		&:not(:hover)::after {
 			animation: slideOutRight 0.4s ease forwards;
 		}
@@ -121,19 +132,121 @@
 		}
 	}
 
-	// CTAボタン
+	// CTAエリア
 	&__cta {
 		display: flex;
 		gap: m.vw(16); // 統合vw()に変更
+		overflow: visible; // スクロールバーを防ぐ
 
 		@include m.mq(md) {
 			flex-direction: column;
 			width: 100%;
-			gap: m.vw(12); // 統合vw()に変更
-			margin-top: m.vw(40); // ナビメニューとの間隔を調整
+			gap: 0;
+			margin-top: m.vw(16); // メインナビと同じ間隔に調整
 			padding: 0 m.vw(20); // 左右のパディングのみ
 			order: 2; // CTAボタンを下部に配置
 		}
+	}
+
+	// PC用ボタンコンテナ
+	&__cta-buttons {
+		display: flex;
+		gap: m.vw(16);
+
+		@include m.mq(md) {
+			display: none; // スマホでは非表示
+		}
+	}
+
+	// SP用テキストリンクコンテナ
+	&__mobile-links {
+		display: none;
+
+		@include m.mq(md) {
+			display: flex;
+			flex-direction: column;
+			width: 100%;
+			gap: m.vw(16);
+		}
+	}
+
+	// SP用テキストリンク
+	&__mobile-link {
+		font-family: v.$ja-sans;
+		font-size: m.vw(18);
+		font-weight: 400;
+		color: v.$text-color;
+		text-decoration: none;
+		padding: m.vw(12) 0;
+		text-align: left;
+		background: none;
+		border: none;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+
+		&:hover {
+			color: v.$brand-blue;
+		}
+	}
+
+	// SP用プラスボタン
+	&__mobile-plus {
+		font-size: m.vw(20);
+		font-weight: bold;
+		color: v.$brand-blue;
+		transition: transform 0.3s ease;
+	}
+
+	// SP用展開可能エリア
+	&__mobile-expandable {
+		width: 100%;
+	}
+
+	// SP用サブメニュー
+	&__mobile-submenu {
+		display: none;
+		flex-direction: column;
+		padding-left: m.vw(20);
+		margin-top: m.vw(8);
+		gap: m.vw(8);
+
+		&.is-open {
+			display: flex !important;
+			visibility: visible !important;
+			opacity: 1 !important;
+		}
+	}
+
+	// Extra specific rule to ensure mobile submenu displays
+	&__mobile-submenu#mobile-publication-submenu.is-open {
+		display: flex !important;
+		visibility: visible !important;
+		opacity: 1 !important;
+	}
+
+	// SP用サブリンク
+	&__mobile-sublink {
+		font-family: v.$ja-sans;
+		font-size: m.vw(16);
+		font-weight: 400;
+		color: v.$text-color;
+		text-decoration: none;
+		padding: m.vw(8) 0;
+		text-align: left;
+		opacity: 0.8;
+
+		&:hover {
+			color: v.$brand-blue;
+			opacity: 1;
+		}
+	}
+
+	// プラスボタンの回転アニメーション
+	&__mobile-toggle.is-open &__mobile-plus {
+		transform: rotate(45deg);
 	}
 
 	&__cta-button {
@@ -233,87 +346,99 @@
 			outline-offset: 2px;
 		}
 	}
-}
 
-// 掲載希望モーダル（PC版のみ）
-.publication-modal {
-	position: fixed;
-	top: 0;
-	right: 0;
-	width: m.vw(400); // 統合vw()システム
-	height: 100vh; // ヘッダーの高さいっぱい
-	background: v.$brand-blue;
-	z-index: 10000;
-	transform: translateX(100%);
-	transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-
-	&.is-open {
-		transform: translateX(0);
-	}
-
-	&__content {
-		padding: m.vw(40);
-		height: 100%;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
+	// 掲載希望ドロップダウン
+	&__dropdown {
 		position: relative;
+		display: inline-block;
+		overflow: visible; // ドロップダウンがはみ出ることを許可
 	}
 
-	&__close {
+	&__dropdown-menu {
 		position: absolute;
-		top: m.vw(20);
-		right: m.vw(20);
-		background: none;
-		border: none;
-		color: white;
-		font-size: m.vw(30);
-		cursor: pointer;
-		line-height: 1;
+		top: 100%;
+		right: 0;
+		background: v.$brand-blue;
+		border-radius: m.vw(10);
+		padding: m.vw(10);
+		margin-top: m.vw(8);
+		width: m.vw(200); // 固定幅に変更
+		opacity: 0;
+		visibility: hidden;
+		transform: translateY(-10px);
+		transition: all 0.3s ease;
+		z-index: 10001; // より高いz-index
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+		white-space: nowrap; // テキストの折り返しを防ぐ
 
-		&:hover {
-			opacity: 0.7;
+		@include m.mq(md) {
+			position: fixed;
+			top: auto;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			width: 100vw;
+			max-width: none;
+			min-width: auto;
+			border-radius: m.vw(20) m.vw(20) 0 0;
+			padding: m.vw(20);
+			margin-top: 0;
+			transform: translateY(100%); // 非表示時は画面外に
+			z-index: 20000; // ハンバーガーメニューより上に表示
+		}
+
+		&.is-open {
+			opacity: 1;
+			visibility: visible;
+			transform: translateY(0);
+
 		}
 	}
 
-	&__title {
-		color: white;
-		font-family: v.$ja-sans;
-		font-size: m.vw(24);
-		font-weight: 600;
-		margin-bottom: m.vw(40);
-		text-align: center;
-	}
-
-	&__links {
+	&__dropdown-content {
 		display: flex;
 		flex-direction: column;
-		gap: m.vw(20);
-		width: 100%;
-		max-width: m.vw(300);
+		gap: m.vw(8);
+
+		@include m.mq(md) {
+			gap: m.vw(12);
+			padding-top: m.vw(10);
+		}
 	}
 
-	&__link {
+	&__dropdown-link {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		padding: m.vw(16) m.vw(24);
+		padding: m.vw(12) m.vw(20);
 		background: white;
 		color: v.$brand-blue;
 		text-decoration: none;
-		border-radius: m.vw(50);
+		border-radius: m.vw(25);
 		font-family: v.$ja-sans;
 		font-weight: 500;
+		font-size: m.vw(14);
 		transition: all 0.3s ease;
+
+		@include m.mq(md) {
+			padding: m.vw(16) m.vw(24);
+			font-size: m.vw(16);
+		}
 
 		&:hover {
 			background: rgba(255, 255, 255, 0.9);
-			transform: translateY(-2px);
+			transform: translateY(-1px);
 		}
 
 		span {
-			font-size: m.vw(16);
+			white-space: nowrap;
 		}
+	}
+}
+
+// デスクトップナビゲーション内ではモバイル要素を非表示
+.header__navigation-desktop {
+	.navigation__mobile-links {
+		display: none !important;
 	}
 }

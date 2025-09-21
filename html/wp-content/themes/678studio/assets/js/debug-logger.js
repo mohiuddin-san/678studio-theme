@@ -221,6 +221,9 @@ class WordPressJSLogger {
         
         try {
             if (this.config.enableAjax && typeof wpDebugAjax !== 'undefined') {
+                console.log('[DEBUG-LOGGER] wpDebugAjax:', wpDebugAjax);
+                console.log('[DEBUG-LOGGER] Flushing', this.logs.length, 'logs');
+
                 const formData = new FormData();
                 formData.append('action', 'wp_debug_log_js');
                 formData.append('nonce', wpDebugAjax.nonce);
@@ -238,6 +241,7 @@ class WordPressJSLogger {
                     });
                     this.logs = []; // Clear buffer after successful flush
                 } else {
+                    console.error('[DEBUG-LOGGER] Failed to flush logs to server:', response.status, response.statusText);
                     this.error('Failed to flush logs to server', {
                         status: response.status,
                         statusText: response.statusText
@@ -245,6 +249,7 @@ class WordPressJSLogger {
                 }
             }
         } catch (error) {
+            console.error('[DEBUG-LOGGER] Error flushing logs:', error);
             this.error('Error flushing logs', {
                 error: error.message,
                 stack: error.stack
@@ -421,4 +426,13 @@ window.wpLog = {
     warn: (message, context) => wpDebugLogger.warn(message, context),
     trackUser: (action, element, context) => wpDebugLogger.trackUserAction(action, element, context),
     trackWP: (event, data) => wpDebugLogger.trackWordPressEvent(event, data)
+};
+
+// Uppercase alias for compatibility with publication-modal.js
+window.WPDebugLogger = {
+    log: (message, context) => wpDebugLogger.debug(message, context),
+    debug: (message, context) => wpDebugLogger.debug(message, context),
+    error: (message, context) => wpDebugLogger.error(message, context),
+    warn: (message, context) => wpDebugLogger.warn(message, context),
+    info: (message, context) => wpDebugLogger.info(message, context)
 };

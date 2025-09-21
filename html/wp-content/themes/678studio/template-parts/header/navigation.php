@@ -12,33 +12,69 @@
         class="navigation__link">お役立ち情報</a></li>
   </ul>
 
-  <!-- CTAボタン（Pigment風） -->
+  <!-- CTAエリア：PC用はボタン、SP用はテキストリンク -->
   <div class="navigation__cta">
-    <a href="<?php echo esc_url(home_url('/studio-reservation')); ?>"
-       class="navigation__cta-button navigation__cta-button--reservation">
-      <span>ご予約相談</span>
-    </a>
-    <a href="<?php echo esc_url(home_url('/studio-inquiry')); ?>"
-       class="navigation__cta-button navigation__cta-button--inquiry">
-      <span>お問い合わせ</span>
-    </a>
-    <button class="navigation__cta-button navigation__cta-button--publication" id="publication-modal-trigger">
-      <span>掲載希望の方へ</span>
-    </button>
-  </div>
+    <!-- PC用ボタン（SP時は非表示） -->
+    <div class="navigation__cta-buttons">
+      <a href="<?php echo esc_url(home_url('/studio-reservation')); ?>"
+         class="navigation__cta-button navigation__cta-button--reservation">
+        <span>ご予約相談</span>
+      </a>
+      <a href="<?php echo esc_url(home_url('/studio-inquiry')); ?>"
+         class="navigation__cta-button navigation__cta-button--inquiry">
+        <span>お問い合わせ</span>
+      </a>
+      <div class="navigation__dropdown">
+        <button class="navigation__cta-button navigation__cta-button--publication"
+                id="publication-toggle"
+                aria-expanded="false"
+                aria-haspopup="true"
+                aria-controls="publication-dropdown">
+          <span>掲載希望の方へ</span>
+        </button>
 
-  <!-- 掲載希望モーダル -->
-  <div class="publication-modal" id="publication-modal">
-    <div class="publication-modal__content">
-      <button class="publication-modal__close" id="publication-modal-close">&times;</button>
-      <h3 class="publication-modal__title">掲載希望の方へ</h3>
-      <div class="publication-modal__links">
-        <a href="<?php echo esc_url(home_url('/studio-recruitment')); ?>" class="publication-modal__link">
-          <span>資料ダウンロード</span>
-        </a>
-        <a href="<?php echo esc_url(home_url('/corporate-inquiry')); ?>" class="publication-modal__link">
-          <span>お問い合わせ</span>
-        </a>
+        <!-- PCドロップダウンメニュー -->
+        <div class="navigation__dropdown-menu"
+             id="publication-dropdown"
+             role="menu"
+             aria-labelledby="publication-toggle">
+          <div class="navigation__dropdown-content">
+            <a href="<?php echo esc_url(home_url('/studio-recruitment')); ?>"
+               class="navigation__dropdown-link"
+               role="menuitem">
+              <span>資料ダウンロード</span>
+            </a>
+            <a href="<?php echo esc_url(home_url('/corporate-inquiry')); ?>"
+               class="navigation__dropdown-link"
+               role="menuitem">
+              <span>お問い合わせ</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SP用テキストリンク（PC時は非表示） -->
+    <div class="navigation__mobile-links">
+      <a href="<?php echo esc_url(home_url('/studio-reservation')); ?>" class="navigation__mobile-link">
+        ご予約相談
+      </a>
+      <a href="<?php echo esc_url(home_url('/studio-inquiry')); ?>" class="navigation__mobile-link">
+        お問い合わせ
+      </a>
+      <div class="navigation__mobile-expandable">
+        <button class="navigation__mobile-link navigation__mobile-toggle" id="mobile-publication-toggle">
+          掲載希望の方へ
+          <span class="navigation__mobile-plus">+</span>
+        </button>
+        <div class="navigation__mobile-submenu" id="mobile-publication-submenu">
+          <a href="<?php echo esc_url(home_url('/studio-recruitment')); ?>" class="navigation__mobile-sublink">
+            資料ダウンロード
+          </a>
+          <a href="<?php echo esc_url(home_url('/corporate-inquiry')); ?>" class="navigation__mobile-sublink">
+            お問い合わせ
+          </a>
+        </div>
       </div>
     </div>
   </div>

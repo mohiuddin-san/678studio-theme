@@ -19,21 +19,21 @@
             class="branding__image">
         </a>
       </div>
-      
+
       <!-- デスクトップナビゲーション -->
       <div class="header__navigation-desktop">
-        <?php get_template_part('template-parts/header/navigation'); ?>
+        <?php get_template_part('template-parts/header/navigation-desktop'); ?>
       </div>
-      
+
       <!-- モバイルハンバーガーボタン -->
       <button class="header__hamburger" aria-label="メニューを開く" aria-expanded="false">
         <span class="header__hamburger-line"></span>
         <span class="header__hamburger-line"></span>
       </button>
-      
+
       <!-- モバイルナビゲーション -->
       <div class="header__navigation-mobile">
-        <?php get_template_part('template-parts/header/navigation'); ?>
+        <?php get_template_part('template-parts/header/navigation-mobile'); ?>
       </div>
     </div>
   </header>
