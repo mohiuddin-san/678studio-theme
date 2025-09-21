@@ -1,27 +1,46 @@
 @use '../base/variables' as v;
 @use '../base/mixins' as m;
 
-// Header Component - PCはそのまま
+// Header Component - 統合vw()システム適用
 .header {
+	// 自動スケールシステムを有効化
+	@include m.auto-scale;
+
 	&__container {
 		margin: 0 auto;
-		padding: m.fs(30, 0.5) m.fs(80, 0.5) m.fs(10, 0.5);
+		// 統合vw()システムでpadding設定
+		padding: m.vw(30) m.vw(40) m.vw(10);
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 		position: relative;
 
-		// スマホのみ
+		// SP用 - 統合vw()でレスポンシブ対応
 		@include m.mq(md) {
-			padding: m.fsm(20) m.fsm(20) m.fsm(10);
+			padding: m.vw(20) m.vw(20) m.vw(10);
 			justify-content: center;
 		}
 	}
 
 	// デスクトップナビ - スマホで隠す
 	&__navigation-desktop {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		gap: m.vw(40); // 統合vw()に変更
+		flex: 1;
+
 		@include m.mq(md) {
 			display: none;
+		}
+
+		// navigationとCTAボタンを横並びに
+		.navigation {
+			display: flex;
+			align-items: center;
+			justify-content: flex-end;
+			gap: m.vw(40); // 統合vw()に変更
+			width: 100%;
 		}
 	}
 
@@ -32,15 +51,15 @@
 		@include m.mq(md) {
 			display: block;
 			position: absolute;
-			right: m.fsm(20);
+			right: m.vw(20); // 統合vw()に変更
 			top: 50%;
 			transform: translateY(-50%);
-			width: m.fsm(40);
-			height: m.fsm(40);
+			width: m.vw(40); // 統合vw()に変更
+			height: m.vw(40); // 統合vw()に変更
 			background: none;
 			border: none;
 			cursor: pointer;
-			padding: m.fsm(8);
+			padding: m.vw(8); // 統合vw()に変更
 			z-index: 10000; // 最前面に配置
 		}
 	}
@@ -49,10 +68,10 @@
 	&__hamburger-line {
 		@include m.mq(md) {
 			display: block;
-			width: m.fsm(24);
-			height: m.fsm(2);
+			width: m.vw(24); // 統合vw()に変更
+			height: m.vw(2); // 統合vw()に変更
 			background: #000;
-			margin: m.fsm(4) 0;
+			margin: m.vw(4) 0; // 統合vw()に変更
 			transition: 0.3s;
 			position: relative;
 		}
@@ -76,7 +95,7 @@
 				background: white;
 				z-index: 9999;
 				padding: 0;
-				
+
 				// ナビゲーション全体を中央に配置
 				.navigation {
 					display: flex;
@@ -102,10 +121,10 @@
 
 	&__image {
 		height: auto;
-		max-height: m.fs(50);
+		max-height: m.vw(50);  // 統合vw()に変更
 
 		@include m.mq(md) {
-			max-height: m.fsm(40);
+			max-height: m.vw(40);  // 統合vw()に変更
 		}
 	}
 }
