@@ -4,7 +4,8 @@
 @use 'base/reset';
 @use 'components/common';
 @use 'components/header';
-@use 'components/navigation';
+@use 'components/navigation-desktop';
+@use 'components/navigation-mobile';
 @use 'components/camera-button';
 @use 'components/detail-button';
 @use 'components/thoughts';

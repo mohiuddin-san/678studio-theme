@@ -28,7 +28,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: flex-end;
-	gap: m.vw(40); // メニューとCTAの間の間隔
+	gap: m.vw(20);
 
 	// SPでは非表示
 	@include m.mq(md) {
@@ -109,6 +109,7 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
+		gap: m.vw(8); // テキストとアイコンの間隔
 		padding: m.vw(10) m.vw(24);
 		font-family: v.$ja-sans;
 		font-size: m.vw(14);
@@ -117,84 +118,89 @@
 		border-radius: m.vw(50);
 		position: relative;
 		overflow: hidden;
-		width: m.vw(160);
-		min-width: m.vw(160);
+		width: m.vw(180); // アイコン分だけ幅を少し増加
+		min-width: m.vw(180);
 
 		span {
 			position: relative;
 			z-index: 1;
 			letter-spacing: 0.1em;
 		}
+	}
 
-		// ホバーエフェクト用の擬似要素
-		&::before {
-			content: '';
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			background: linear-gradient(
-				135deg,
-				transparent,
-				rgba(255, 255, 255, 0.2)
-			);
-			transform: translateX(-100%);
-			transition: transform 0.3s ease;
+	// アイコンスタイル
+	&__icon {
+		width: m.vw(18);
+		height: m.vw(18);
+		position: relative;
+		z-index: 1;
+		transition: all 0.3s ease;
+	}
+
+	// ホバーエフェクト用の擬似要素（ボタン全体用）
+	&__cta-button::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.2));
+		transform: translateX(-100%);
+		transition: transform 0.3s ease;
+	}
+
+	// ご予約相談ボタン
+	&__cta-button--reservation {
+		background: #ff6b6b;
+		color: white;
+		border: 1.5px solid transparent;
+		transition: all 0.5s ease;
+
+		&:hover {
+			color: #ff6b6b;
+			background: #fff;
+			border: 1.5px solid #ff6b6b;
 		}
+	}
 
-		// ご予約相談ボタン
-		&--reservation {
-			background: #ff6b6b;
-			color: white;
-			border: 1.5px solid transparent;
-			transition: all 0.5s ease;
+	// お問い合わせボタン
+	&__cta-button--inquiry {
+		background: #3f3f3f;
+		color: #fff;
+		border: 1.2px solid transparent;
+		transition: all 0.5s ease;
 
-			&:hover {
-				color: #ff6b6b;
-				background: #fff;
-				border: 1.5px solid #ff6b6b;
-			}
+		&:hover {
+			color: #3f3f3f;
+			background: #fff;
+			border: 1.2px solid #3f3f3f;
 		}
+	}
 
-		// お問い合わせボタン
-		&--inquiry {
-			background: #3f3f3f;
-			color: #fff;
-			border: 1.2px solid transparent;
-			transition: all 0.5s ease;
+	// 掲載希望ボタン
+	&__cta-button--publication {
+		background: v.$brand-blue;
+		color: white;
+		border: 1.2px solid transparent;
+		transition: all 0.5s ease;
+		cursor: pointer;
 
-			&:hover {
-				color: #3f3f3f;
-				background: #fff;
-				border: 1.2px solid #3f3f3f;
-			}
+		&:hover {
+			color: v.$brand-blue;
+			background: #fff;
+			border: 1.2px solid v.$brand-blue;
 		}
+	}
 
-		// 掲載希望ボタン
-		&--publication {
-			background: v.$brand-blue;
-			color: white;
-			border: 1.2px solid transparent;
-			transition: all 0.5s ease;
-			cursor: pointer;
+	// フォーカススタイル（CTAボタン共通）
+	&__cta-button:focus {
+		outline: none;
+	}
 
-			&:hover {
-				color: v.$brand-blue;
-				background: #fff;
-				border: 1.2px solid v.$brand-blue;
-			}
-		}
-
-		// フォーカススタイル
-		&:focus {
-			outline: none;
-		}
-
-		&:focus-visible {
-			outline: 2px solid v.$brand-blue;
-			outline-offset: 2px;
-		}
+	&__cta-button:focus-visible {
+		outline: 2px solid v.$brand-blue;
+		outline-offset: 2px;
 	}
 
 	// 掲載希望ドロップダウン
