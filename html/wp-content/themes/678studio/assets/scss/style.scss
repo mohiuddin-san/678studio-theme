@@ -49,6 +49,7 @@
 @use 'pages/privacy';
 @use 'pages/blog' as blog-pages;
 @use 'pages/test-responsive';
+@use 'pages/auto-scale-test';
 
 // About Page Sections
 @use 'sections/about/introduction';
