@@ -1,0 +1,165 @@
+// Mobile Navigation Component (SP専用)
+@use '../base/variables' as v;
+@use '../base/mixins' as m;
+
+.navigation-mobile {
+	// SP専用設定
+	@include m.auto-scale;
+	overflow: visible;
+
+	// PCでは非表示
+	@include m.mq(md, min) {
+		display: none !important;
+	}
+
+	// モバイル用 - 全体を縦配置にしてCTAを下部に
+	@include m.mq(md) {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		height: 100%;
+		width: 100%;
+		overflow: hidden;
+	}
+
+	&__menu {
+		display: flex;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+
+		// モバイル対応 - 左揃えテキストメニュー
+		@include m.mq(md) {
+			flex-direction: column;
+			gap: m.vw(16);
+			padding: m.vw(20) m.vw(20);
+			width: 100%;
+			justify-content: flex-start;
+			align-items: flex-start;
+			order: 1; // ナビメニューを上部に配置
+		}
+	}
+
+	&__item {
+		// Mobile navigation item styles
+	}
+
+	&__link {
+		font-family: v.$ja-sans;
+		display: block;
+		color: v.$text-color;
+		text-decoration: none;
+		font-weight: 400;
+		transition: color 0.3s ease;
+
+		// モバイル対応 - シンプルなテキストリンクスタイル
+		@include m.mq(md) {
+			font-size: m.vw(18);
+			padding: m.vw(12) 0;
+			text-align: left;
+			font-weight: 400;
+
+			&:hover {
+				color: v.$brand-blue;
+			}
+		}
+
+		&:focus {
+			outline: none;
+		}
+
+		&:focus-visible {
+			outline: 2px solid v.$brand-blue;
+			outline-offset: 2px;
+		}
+	}
+
+	&__item--current &__link {
+		color: v.$brand-red;
+	}
+
+	// CTAエリア
+	&__cta {
+		@include m.mq(md) {
+			flex-direction: column;
+			width: 100%;
+			gap: 0;
+			margin-top: m.vw(16);
+			padding: 0 m.vw(20);
+			order: 2; // CTAを下部に配置
+		}
+	}
+
+	// SP用テキストリンク
+	&__link {
+		font-family: v.$ja-sans;
+		font-size: m.vw(18);
+		font-weight: 400;
+		color: v.$text-color;
+		text-decoration: none;
+		padding: m.vw(12) 0;
+		text-align: left;
+		background: none;
+		border: none;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+
+		&:hover {
+			color: v.$brand-blue;
+		}
+	}
+
+	// SP用プラスボタン
+	&__plus {
+		font-size: m.vw(20);
+		font-weight: bold;
+		color: v.$brand-blue;
+		transition: transform 0.3s ease;
+	}
+
+	// SP用展開可能エリア
+	&__expandable {
+		width: 100%;
+	}
+
+	// SP用サブメニュー
+	&__submenu {
+		display: none;
+		flex-direction: column;
+		padding-left: m.vw(20);
+		margin-top: m.vw(8);
+		gap: m.vw(8);
+
+		&.is-open {
+			display: flex !important;
+			visibility: visible !important;
+			opacity: 1 !important;
+		}
+	}
+
+	// SP用サブリンク
+	&__sublink {
+		font-family: v.$ja-sans;
+		font-size: m.vw(16);
+		font-weight: 400;
+		color: v.$text-color;
+		text-decoration: none;
+		padding: m.vw(8) 0;
+		text-align: left;
+		opacity: 0.8;
+
+		&:hover {
+			color: v.$brand-blue;
+			opacity: 1;
+		}
+	}
+
+	// プラスボタンの回転アニメーション
+	&__toggle.is-open &__plus {
+		transform: rotate(45deg);
+	}
+}

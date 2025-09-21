@@ -1,0 +1,348 @@
+// Desktop Navigation Component (PC専用)
+@use '../base/variables' as v;
+@use '../base/mixins' as m;
+
+// 下線アニメーション用キーフレーム
+@keyframes slideInLeft {
+	from {
+		transform: translateX(-100%);
+	}
+	to {
+		transform: translateX(0);
+	}
+}
+
+@keyframes slideOutRight {
+	from {
+		transform: translateX(0);
+	}
+	to {
+		transform: translateX(100%);
+	}
+}
+
+.navigation-desktop {
+	// PC専用設定
+	@include m.auto-scale;
+	overflow: visible;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: m.vw(40); // メニューとCTAの間の間隔
+
+	// SPでは非表示
+	@include m.mq(md) {
+		display: none !important;
+	}
+
+	&__menu {
+		display: flex;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		gap: m.vw(20);
+	}
+
+	&__item {
+		// PC Navigation item styles
+	}
+
+	&__link {
+		font-family: v.$ja-sans;
+		font-size: m.vw(16);
+		display: block;
+		color: v.$text-color;
+		text-decoration: none;
+		font-weight: 400;
+		transition: color 0.3s ease;
+		position: relative;
+		overflow: hidden;
+
+		// 下線アニメーション用の擬似要素
+		&::after {
+			content: '';
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			width: 100%;
+			height: 1px;
+			background: #3f3f3f;
+			transform: translateX(-100%);
+		}
+
+		// ホバー時：左から右にスライドイン
+		&:hover::after {
+			animation: slideInLeft 0.4s ease forwards;
+		}
+
+		// ホバーオフ時：右側に消える
+		&:not(:hover)::after {
+			animation: slideOutRight 0.4s ease forwards;
+		}
+
+		&:focus {
+			outline: none;
+		}
+
+		&:focus-visible {
+			outline: 2px solid v.$brand-blue;
+			outline-offset: 2px;
+		}
+	}
+
+	&__item--current &__link {
+		color: v.$brand-red;
+
+		&::after {
+			transform: translateX(0);
+		}
+	}
+
+	// CTAエリア
+	&__cta {
+		display: flex;
+		gap: m.vw(16);
+		overflow: visible;
+	}
+
+	&__cta-button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: m.vw(10) m.vw(24);
+		font-family: v.$ja-sans;
+		font-size: m.vw(14);
+		font-weight: 500;
+		text-decoration: none;
+		border-radius: m.vw(50);
+		position: relative;
+		overflow: hidden;
+		width: m.vw(160);
+		min-width: m.vw(160);
+
+		span {
+			position: relative;
+			z-index: 1;
+			letter-spacing: 0.1em;
+		}
+
+		// ホバーエフェクト用の擬似要素
+		&::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: linear-gradient(
+				135deg,
+				transparent,
+				rgba(255, 255, 255, 0.2)
+			);
+			transform: translateX(-100%);
+			transition: transform 0.3s ease;
+		}
+
+		// ご予約相談ボタン
+		&--reservation {
+			background: #ff6b6b;
+			color: white;
+			border: 1.5px solid transparent;
+			transition: all 0.5s ease;
+
+			&:hover {
+				color: #ff6b6b;
+				background: #fff;
+				border: 1.5px solid #ff6b6b;
+			}
+		}
+
+		// お問い合わせボタン
+		&--inquiry {
+			background: #3f3f3f;
+			color: #fff;
+			border: 1.2px solid transparent;
+			transition: all 0.5s ease;
+
+			&:hover {
+				color: #3f3f3f;
+				background: #fff;
+				border: 1.2px solid #3f3f3f;
+			}
+		}
+
+		// 掲載希望ボタン
+		&--publication {
+			background: v.$brand-blue;
+			color: white;
+			border: 1.2px solid transparent;
+			transition: all 0.5s ease;
+			cursor: pointer;
+
+			&:hover {
+				color: v.$brand-blue;
+				background: #fff;
+				border: 1.2px solid v.$brand-blue;
+			}
+		}
+
+		// フォーカススタイル
+		&:focus {
+			outline: none;
+		}
+
+		&:focus-visible {
+			outline: 2px solid v.$brand-blue;
+			outline-offset: 2px;
+		}
+	}
+
+	// 掲載希望ドロップダウン
+	&__dropdown {
+		position: relative;
+		display: inline-block;
+		overflow: visible;
+	}
+
+	&__dropdown-menu {
+		position: absolute;
+		top: 100%;
+		right: 0;
+		background: v.$brand-blue;
+		border-radius: m.vw(10);
+		padding: m.vw(10);
+		margin-top: m.vw(8);
+		width: m.vw(200);
+		opacity: 0;
+		visibility: hidden;
+		transform: translateY(-10px);
+		transition: all 0.3s ease;
+		z-index: 10001;
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+		white-space: nowrap;
+
+		&.is-open {
+			opacity: 1;
+			visibility: visible;
+			transform: translateY(0);
+		}
+	}
+
+	&__dropdown-content {
+		display: flex;
+		flex-direction: column;
+		gap: m.vw(8);
+	}
+
+	&__dropdown-link {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: m.vw(12) m.vw(20);
+		background: white;
+		color: v.$brand-blue;
+		text-decoration: none;
+		border-radius: m.vw(25);
+		font-family: v.$ja-sans;
+		font-weight: 500;
+		font-size: m.vw(14);
+		transition: all 0.3s ease;
+
+		&:hover {
+			background: rgba(255, 255, 255, 0.9);
+			transform: translateY(-1px);
+		}
+
+		span {
+			white-space: nowrap;
+		}
+	}
+}
+
+// 掲載希望モーダル（PC専用）
+.publication-modal {
+	position: fixed;
+	top: 0;
+	right: 0;
+	width: m.vw(400);
+	height: 100vh;
+	background: v.$brand-blue;
+	z-index: 10000;
+	transform: translateX(100%);
+	transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+	// SPでは非表示
+	@include m.mq(md) {
+		display: none !important;
+	}
+
+	&.is-open {
+		transform: translateX(0);
+	}
+
+	&__content {
+		padding: m.vw(40);
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		position: relative;
+	}
+
+	&__close {
+		position: absolute;
+		top: m.vw(20);
+		right: m.vw(20);
+		background: none;
+		border: none;
+		color: white;
+		font-size: m.vw(30);
+		cursor: pointer;
+		line-height: 1;
+
+		&:hover {
+			opacity: 0.7;
+		}
+	}
+
+	&__title {
+		color: white;
+		font-family: v.$ja-sans;
+		font-size: m.vw(24);
+		font-weight: 600;
+		margin-bottom: m.vw(40);
+		text-align: center;
+	}
+
+	&__links {
+		display: flex;
+		flex-direction: column;
+		gap: m.vw(20);
+		width: 100%;
+		max-width: m.vw(300);
+	}
+
+	&__link {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: m.vw(16) m.vw(24);
+		background: white;
+		color: v.$brand-blue;
+		text-decoration: none;
+		border-radius: m.vw(50);
+		font-family: v.$ja-sans;
+		font-weight: 500;
+		transition: all 0.3s ease;
+
+		&:hover {
+			background: rgba(255, 255, 255, 0.9);
+			transform: translateY(-2px);
+		}
+
+		span {
+			font-size: m.vw(16);
+		}
+	}
+}

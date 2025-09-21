@@ -435,8 +435,19 @@ function theme_678studio_styles() {
 
     wp_enqueue_style('678studio-style', get_stylesheet_directory_uri() . '/dist/css/style.css', ['google-fonts'], $version);
     
-    // Enqueue header script for mobile menu (only on frontend)
+    // Enqueue debug scripts first (only on frontend)
     if (!is_admin()) {
+        if (WP_DEBUG || (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG)) {
+            wp_enqueue_script('wp-debug-logger',
+                get_template_directory_uri() . '/assets/js/debug-logger.js',
+                ['jquery'], '1.0.0', true);
+
+            wp_localize_script('wp-debug-logger', 'wpDebugAjax', [
+                'ajaxurl' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('wp_debug_nonce')
+            ]);
+        }
+
         $header_version = WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/header.js') : '1.0.0';
         wp_enqueue_script('678studio-header',
             get_template_directory_uri() . '/assets/js/header.js',
@@ -448,11 +459,16 @@ function theme_678studio_styles() {
             get_template_directory_uri() . '/assets/js/viewport-controller.js',
             [], $viewport_version, true);
 
-        // Publication Modal (global)
-        $modal_version = WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/publication-modal.js') : '1.0.0';
-        wp_enqueue_script('678studio-publication-modal',
-            get_template_directory_uri() . '/assets/js/publication-modal.js',
-            [], $modal_version, true);
+        // Navigation Scripts - PC and Mobile separated (global)
+        $desktop_nav_version = WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/navigation-desktop.js') : '1.0.0';
+        wp_enqueue_script('678studio-navigation-desktop',
+            get_template_directory_uri() . '/assets/js/navigation-desktop.js',
+            ['wp-debug-logger'], $desktop_nav_version, true);
+
+        $mobile_nav_version = WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/navigation-mobile.js') : '1.0.0';
+        wp_enqueue_script('678studio-navigation-mobile',
+            get_template_directory_uri() . '/assets/js/navigation-mobile.js',
+            ['wp-debug-logger'], $mobile_nav_version, true);
 
         // Page Transitions Script (global)
         $transitions_version = WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/modules/page-transitions.js') : '1.0.0';
@@ -543,19 +559,8 @@ function theme_678studio_styles() {
 }
 add_action('wp_enqueue_scripts', 'theme_678studio_styles');
 
-// Enqueue debug scripts
-function theme_678studio_debug_scripts() {
-    if (WP_DEBUG || (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG)) {
-        wp_enqueue_script('wp-debug-logger', 
-            get_template_directory_uri() . '/assets/js/debug-logger.js', 
-            ['jquery'], '1.0.0', true);
-        
-        wp_localize_script('wp-debug-logger', 'wpDebugAjax', [
-            'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('wp_debug_nonce')
-        ]);
-    }
-    
+// Enqueue additional scripts
+function theme_678studio_additional_scripts() {
     // Always localize gallery AJAX data for gallery pages
     if (is_page_template('page-photo-gallery.php') || is_page('photo-gallery')) {
         wp_localize_script('jquery', 'galleryAjax', [
@@ -564,7 +569,7 @@ function theme_678studio_debug_scripts() {
         ]);
     }
 }
-add_action('wp_enqueue_scripts', 'theme_678studio_debug_scripts');
+add_action('wp_enqueue_scripts', 'theme_678studio_additional_scripts');
 
 // Theme support
 // add_theme_support('title-tag'); // SEOマネージャーで管理するためコメントアウト
