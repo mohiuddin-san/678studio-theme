@@ -1,0 +1,154 @@
+// ================================
+// Auto-Scale Test Page Styles
+// ================================
+// gulp対応のシンプルな自動スケールテスト
+
+@use '../base/mixins' as *;
+@use '../base/variables' as *;
+
+// =============================================================================
+// 自動スケールテストページ
+// =============================================================================
+.auto-scale-test-page {
+	@include auto-scale-container;
+
+	// SP用コンテナ（380px基準）
+	.sp-scale-container {
+		@include auto-scale-sp(380);
+		background: linear-gradient(135deg, #667eea, #764ba2);
+		min-height: 100vh;
+
+		@media (max-width: 767px) {
+			padding: calc(20px * (100vw / 380px));
+		}
+		@media (min-width: 768px) {
+			padding: 20px;
+		}
+
+		h1 {
+			font-size: 24px;
+			color: white;
+			text-align: center;
+			margin-bottom: 20px;
+		}
+
+		p {
+			font-size: 14px;
+			color: white;
+			text-align: center;
+			margin-bottom: 30px;
+		}
+
+		.test-box {
+			background: white;
+			padding: 20px;
+			border-radius: 8px;
+			max-width: 300px;
+			margin: 0 auto;
+			text-align: center;
+
+			h2 {
+				font-size: 18px;
+				color: #333;
+				margin-bottom: 10px;
+			}
+
+			p {
+				font-size: 14px;
+				color: #666;
+				margin-bottom: 20px;
+			}
+
+			.test-btn {
+				background: #667eea;
+				color: white;
+				border: none;
+				padding: 12px 24px;
+				border-radius: 6px;
+				font-size: 14px;
+				cursor: pointer;
+			}
+		}
+	}
+
+	// PC用コンテナ（1440px基準）
+	.pc-scale-container {
+		@include auto-scale-pc(1440);
+		background: linear-gradient(135deg, #667eea, #764ba2);
+		min-height: 100vh;
+
+		@media (max-width: 767px) {
+			padding: 40px;
+		}
+		@media (min-width: 768px) {
+			padding: calc(40px * (100vw / 1440px));
+		}
+
+		h1 {
+			font-size: 48px;
+			color: white;
+			text-align: center;
+			margin-bottom: 30px;
+		}
+
+		p {
+			font-size: 18px;
+			color: white;
+			text-align: center;
+			margin-bottom: 50px;
+		}
+
+		.test-grid {
+			display: grid;
+			grid-template-columns: repeat(3, 300px);
+			gap: 30px;
+			justify-content: center;
+
+			.test-card {
+				background: white;
+				padding: 30px;
+				border-radius: 12px;
+				text-align: center;
+
+				h3 {
+					font-size: 20px;
+					color: #333;
+					margin-bottom: 15px;
+				}
+
+				p {
+					font-size: 14px;
+					color: #666;
+					margin: 0;
+					text-align: center;
+				}
+			}
+		}
+	}
+}
+
+// 情報パネル
+.auto-scale-info-panel {
+	position: fixed;
+	top: 20px;
+	left: 20px;
+	right: 20px;
+	max-width: calc(100vw - 40px);
+	background: rgba(0, 0, 0, 0.8);
+	color: white;
+	padding: 15px;
+	border-radius: 8px;
+	font-family: monospace;
+	font-size: 12px;
+	z-index: 9999;
+	overflow-x: hidden;
+
+	div {
+		margin-bottom: 5px;
+	}
+
+	span {
+		color: #68d391;
+		font-weight: bold;
+	}
+}
