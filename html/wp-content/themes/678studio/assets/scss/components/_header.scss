@@ -1,11 +1,19 @@
 @use '../base/variables' as v;
 @use '../base/mixins' as m;
 
-// Header Component - 統合vw()システム適用
+// Header Component - 統合vw()システム適用（Safari 16.4互換）
 .header {
 	// 自動スケールシステムを有効化
 	@include m.auto-scale;
 	overflow: visible; // モバイルナビゲーションが表示できるように
+
+	// Safari 16.4 専用フォールバック - CSS Custom Properties が効かない場合
+	@supports not (--css: variables) {
+		// Static fallback values for very old Safari versions
+		width: 100%;
+		max-width: 100vw;
+		overflow-x: hidden;
+	}
 
 	&__container {
 		margin: 0 auto;
@@ -92,7 +100,8 @@
 				left: 0;
 				width: 100vw;
 				height: 100vh;
-				height: 100dvh; // Dynamic viewport height for better mobile support
+				/* Safari 16.4+ support for dvh */
+				height: 100dvh;
 				background: white;
 				z-index: 9999;
 				padding: 0;

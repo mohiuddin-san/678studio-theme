@@ -461,14 +461,16 @@ function theme_678studio_styles() {
 
         // Navigation Scripts - PC and Mobile separated (global)
         $desktop_nav_version = WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/navigation-desktop.js') : '1.0.0';
+        $desktop_deps = (WP_DEBUG || (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG)) ? ['wp-debug-logger'] : [];
         wp_enqueue_script('678studio-navigation-desktop',
             get_template_directory_uri() . '/assets/js/navigation-desktop.js',
-            ['wp-debug-logger'], $desktop_nav_version, true);
+            $desktop_deps, $desktop_nav_version, true);
 
         $mobile_nav_version = WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/navigation-mobile.js') : '1.0.0';
+        $mobile_deps = (WP_DEBUG || (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG)) ? ['wp-debug-logger'] : [];
         wp_enqueue_script('678studio-navigation-mobile',
             get_template_directory_uri() . '/assets/js/navigation-mobile.js',
-            ['wp-debug-logger'], $mobile_nav_version, true);
+            $mobile_deps, $mobile_nav_version, true);
 
         // Page Transitions Script (global)
         $transitions_version = WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/modules/page-transitions.js') : '1.0.0';
