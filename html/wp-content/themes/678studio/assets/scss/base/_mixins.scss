@@ -814,14 +814,39 @@ $breakpoints: (
 $figma-sp-base: 380px !default; // SP基準サイズ
 $figma-pc-base: 1440px !default; // PC基準サイズ
 
-// 自動vw変換関数（PC用）
-@function vw($size, $min: 12px) {
-	@return min(#{$min}, calc(#{$size}px * (100vw / #{$figma-pc-base})));
+// =============================================================================
+// 🎯 自動vw変換システム - CSS変数を使った自動判定版
+// =============================================================================
+
+// CSS変数ベースの自動判定vw関数
+@function vw($size, $min: null) {
+	@if $min {
+		@return min(#{$min}, calc(#{$size}px * (100vw / var(--figma-base))));
+	} @else {
+		@return calc(#{$size}px * (100vw / var(--figma-base)));
+	}
 }
 
-// 自動vw変換関数（SP用）
-@function vw-sp($size, $min: 12px) {
-	@return min(#{$min}, calc(#{$size}px * (100vw / #{$figma-sp-base})));
+// フォント専用（最小値付き）
+@function vw-font($size, $min: 12px) {
+	@return min(#{$min}, calc(#{$size}px * (100vw / var(--figma-base))));
+}
+
+// 従来版も維持（明示的に使いたい場合）
+@function vw-pc($size, $min: null) {
+	@if $min {
+		@return min(#{$min}, calc(#{$size}px * (100vw / #{$figma-pc-base})));
+	} @else {
+		@return calc(#{$size}px * (100vw / #{$figma-pc-base}));
+	}
+}
+
+@function vw-sp($size, $min: null) {
+	@if $min {
+		@return min(#{$min}, calc(#{$size}px * (100vw / #{$figma-sp-base})));
+	} @else {
+		@return calc(#{$size}px * (100vw / #{$figma-sp-base}));
+	}
 }
 
 // SP用自動スケールコンテナ
@@ -868,7 +893,17 @@ $figma-pc-base: 1440px !default; // PC基準サイズ
 }
 
 // 横スクロール防止
+// 🎯 自動スケールミクシン - CSS変数自動切り替え対応
 @mixin auto-scale {
+	// PC用（デフォルト）
+	--figma-base: #{$figma-pc-base};
+
+	// SP用（767px以下）
+	@include mq(md) {
+		--figma-base: #{$figma-sp-base};
+	}
+
+	// 横スクロール防止
 	overflow-x: hidden;
 	width: 100%;
 	max-width: 100vw;

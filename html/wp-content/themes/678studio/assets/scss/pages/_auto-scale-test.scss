@@ -15,173 +15,173 @@
 	min-height: 100vh;
 
 	.main-container {
-		// PC用（デフォルト）
+		// 統合vw()関数テスト
 		padding: vw(24);
 
-		// SP用（767px以下）
+		// SP用 - 統合vw()関数
 		@include mq(md) {
-			padding: vw-sp(16);
+			padding: vw(16); // 統合版
 		}
 
 		h1 {
-			// PC用
-			font-size: vw(48);
+			// 統合vw()関数テスト - 自動でSP/PC判定
+			font-size: vw(48, 18px); // フォントには最小値を設定
 			color: white;
 			text-align: center;
-			margin-bottom: vw(30);
+			margin-bottom: vw(30); // margin/paddingには最小値なし
 
-			// SP用
+			// SP用 - 新しい統合関数でもテスト
 			@include mq(md) {
-				font-size: vw-sp(32);
-				margin-bottom: vw-sp(24);
+				font-size: vw(32, 16px); // フォントには最小値
+				margin-bottom: vw(24); // marginには最小値なし
 			}
 		}
 
 		p {
-			// PC用
-			font-size: vw(18);
+			// 統合vw()関数テスト
+			font-size: vw(18, 14px); // フォントには最小値
 			color: white;
 			text-align: center;
-			margin-bottom: vw(40);
+			margin-bottom: vw(40); // marginには最小値なし
 
-			// SP用
+			// SP用 - 統合版
 			@include mq(md) {
-				font-size: vw-sp(16);
-				margin-bottom: vw-sp(24);
+				font-size: vw(16, 12px); // フォントには最小値
+				margin-bottom: vw(24); // marginには最小値なし
 			}
 		}
 
 		.info-panel {
-			// PC用
+			// 統合vw()関数テスト
 			background: rgba(0, 0, 0, 0.8);
 			color: white;
-			padding: vw(16);
-			border-radius: vw(8);
+			padding: vw(16); // 最小値なし
+			border-radius: vw(8); // 最小値なし
 			font-family: monospace;
-			font-size: vw(14);
-			margin-bottom: vw(24);
+			font-size: vw(14, 11px); // フォントには最小値
+			margin-bottom: vw(24); // 最小値なし
 			text-align: center;
 
-			// SP用
+			// SP用 - 統合vw()関数
 			@include mq(md) {
-				padding: vw-sp(12);
-				border-radius: vw-sp(6);
-				font-size: vw-sp(12);
-				margin-bottom: vw-sp(20);
+				padding: vw(12); // 統合版
+				border-radius: vw(6); // 統合版
+				font-size: vw(12, 10px); // 統合版・フォントには最小値
+				margin-bottom: vw(20); // 統合版
 			}
 		}
 
 		.test-content {
 			.test-box {
-				// PC用
+				// PC用 - 統合vw()関数でテスト
 				background: white;
-				padding: vw(30);
-				border-radius: vw(12);
-				max-width: vw(400);
-				margin: 0 auto vw(60);
+				padding: vw(30); // 最小値制限なし
+				border-radius: vw(12); // 最小値制限なし
+				max-width: vw(400); // 最小値制限なし
+				margin: 0 auto vw(60); // 最小値制限なし
 				text-align: center;
 
-				// SP用
+				// SP用 - 統合vw()関数でテスト
 				@include mq(md) {
-					padding: vw-sp(20);
-					border-radius: vw-sp(8);
-					max-width: vw-sp(300);
-					margin-bottom: vw-sp(40);
+					padding: vw(20); // 統合版
+					border-radius: vw(8); // 統合版
+					max-width: vw(300); // 統合版
+					margin-bottom: vw(40); // 統合版
 				}
 
 				h2 {
-					// PC用
-					font-size: vw(24);
+					// 統合vw()関数でテスト
+					font-size: vw(24, 16px); // フォントには最小値
 					color: #333;
-					margin-bottom: vw(15);
+					margin-bottom: vw(15); // marginには最小値なし
 
-					// SP用
+					// SP用 - 統合版
 					@include mq(md) {
-						font-size: vw-sp(18);
-						margin-bottom: vw-sp(10);
+						font-size: vw(18, 14px); // フォントには最小値
+						margin-bottom: vw(10); // marginには最小値なし
 					}
 				}
 
 				p {
-					// PC用
-					font-size: vw(16);
+					// 統合vw()関数でテスト
+					font-size: vw(16, 12px); // フォントには最小値
 					color: #666;
-					margin-bottom: vw(25);
+					margin-bottom: vw(25); // marginには最小値なし
 
-					// SP用
+					// SP用 - 統合版
 					@include mq(md) {
-						font-size: vw-sp(14);
-						margin-bottom: vw-sp(20);
+						font-size: vw(14, 11px); // フォントには最小値
+						margin-bottom: vw(20); // marginには最小値なし
 					}
 				}
 
 				.test-btn {
-					// PC用
+					// 統合vw()関数でテスト
 					background: #667eea;
 					color: white;
 					border: none;
-					padding: vw(16) vw(32);
-					border-radius: vw(8);
-					font-size: vw(16);
+					padding: vw(16) vw(32); // paddingには最小値なし
+					border-radius: vw(8); // border-radiusには最小値なし
+					font-size: vw(16, 12px); // フォントには最小値
 					cursor: pointer;
 
-					// SP用
+					// SP用 - 統合版
 					@include mq(md) {
-						padding: vw-sp(12) vw-sp(24);
-						border-radius: vw-sp(6);
-						font-size: vw-sp(14);
+						padding: vw(12) vw(24); // paddingには最小値なし
+						border-radius: vw(6); // border-radiusには最小値なし
+						font-size: vw(14, 11px); // フォントには最小値
 					}
 				}
 			}
 
 			.test-grid {
-				// PC用
+				// 統合vw()関数テスト
 				display: grid;
-				grid-template-columns: repeat(3, vw(300));
-				gap: vw(30);
+				grid-template-columns: repeat(3, vw(300)); // 最小値なし
+				gap: vw(30); // 最小値なし
 				justify-content: center;
 
-				// SP用
+				// SP用 - 統合vw()関数
 				@include mq(md) {
 					grid-template-columns: 1fr;
-					gap: vw-sp(20);
+					gap: vw(20); // 統合版
 				}
 
 				.test-card {
-					// PC用
+					// 統合vw()関数テスト
 					background: white;
-					padding: vw(30);
-					border-radius: vw(12);
+					padding: vw(30); // 最小値なし
+					border-radius: vw(12); // 最小値なし
 					text-align: center;
 
-					// SP用
+					// SP用 - 統合vw()関数
 					@include mq(md) {
-						padding: vw-sp(20);
-						border-radius: vw-sp(8);
+						padding: vw(20); // 統合版
+						border-radius: vw(8); // 統合版
 					}
 
 					h3 {
-						// PC用
-						font-size: vw(20);
+						// 統合vw()関数テスト
+						font-size: vw(20, 14px); // フォントには最小値
 						color: #333;
-						margin-bottom: vw(15);
+						margin-bottom: vw(15); // 最小値なし
 
-						// SP用
+						// SP用 - 統合vw()関数
 						@include mq(md) {
-							font-size: vw-sp(16);
-							margin-bottom: vw-sp(10);
+							font-size: vw(16, 12px); // 統合版・フォントには最小値
+							margin-bottom: vw(10); // 統合版
 						}
 					}
 
 					p {
-						// PC用
-						font-size: vw(14);
+						// 統合vw()関数テスト - 最終テスト
+						font-size: vw(14, 12px); // フォントには最小値
 						color: #666;
 						margin: 0;
 
-						// SP用
+						// SP用 - 統合vw()関数 - 最終テスト
 						@include mq(md) {
-							font-size: vw-sp(12);
+							font-size: vw(16, 12px); // 統合版・フォントには最小値
 						}
 					}
 				}
