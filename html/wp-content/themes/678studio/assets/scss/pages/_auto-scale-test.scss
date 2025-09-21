@@ -24,50 +24,50 @@
 		}
 
 		h1 {
-			// 統合vw()関数テスト - 自動でSP/PC判定
-			font-size: vw(48, 18px); // フォントには最小値を設定
+			// 統合vw()関数テスト - 最小値なしでテスト
+			font-size: vw(48);
 			color: white;
 			text-align: center;
-			margin-bottom: vw(30); // margin/paddingには最小値なし
+			margin-bottom: vw(30);
 
-			// SP用 - 新しい統合関数でもテスト
+			// SP用 - 統合関数・最小値なし
 			@include mq(md) {
-				font-size: vw(32, 16px); // フォントには最小値
-				margin-bottom: vw(24); // marginには最小値なし
+				font-size: vw(32);
+				margin-bottom: vw(24);
 			}
 		}
 
 		p {
-			// 統合vw()関数テスト
-			font-size: vw(18, 14px); // フォントには最小値
+			// 統合vw()関数テスト - 最小値なし
+			font-size: vw(18);
 			color: white;
 			text-align: center;
-			margin-bottom: vw(40); // marginには最小値なし
+			margin-bottom: vw(40);
 
-			// SP用 - 統合版
+			// SP用 - 統合版・最小値なし
 			@include mq(md) {
-				font-size: vw(16, 12px); // フォントには最小値
-				margin-bottom: vw(24); // marginには最小値なし
+				font-size: vw(16);
+				margin-bottom: vw(24);
 			}
 		}
 
 		.info-panel {
-			// 統合vw()関数テスト
+			// 統合vw()関数テスト - 最小値なし
 			background: rgba(0, 0, 0, 0.8);
 			color: white;
-			padding: vw(16); // 最小値なし
-			border-radius: vw(8); // 最小値なし
+			padding: vw(16);
+			border-radius: vw(8);
 			font-family: monospace;
-			font-size: vw(14, 11px); // フォントには最小値
-			margin-bottom: vw(24); // 最小値なし
+			font-size: vw(14);
+			margin-bottom: vw(24);
 			text-align: center;
 
-			// SP用 - 統合vw()関数
+			// SP用 - 統合vw()関数・最小値なし
 			@include mq(md) {
-				padding: vw(12); // 統合版
-				border-radius: vw(6); // 統合版
-				font-size: vw(12, 10px); // 統合版・フォントには最小値
-				margin-bottom: vw(20); // 統合版
+				padding: vw(12);
+				border-radius: vw(6);
+				font-size: vw(12);
+				margin-bottom: vw(20);
 			}
 		}
 
@@ -90,46 +90,46 @@
 				}
 
 				h2 {
-					// 統合vw()関数でテスト
-					font-size: vw(24, 16px); // フォントには最小値
+					// 統合vw()関数でテスト - 最小値なし
+					font-size: vw(24);
 					color: #333;
-					margin-bottom: vw(15); // marginには最小値なし
+					margin-bottom: vw(15);
 
-					// SP用 - 統合版
+					// SP用 - 統合版・最小値なし
 					@include mq(md) {
-						font-size: vw(18, 14px); // フォントには最小値
-						margin-bottom: vw(10); // marginには最小値なし
+						font-size: vw(18);
+						margin-bottom: vw(10);
 					}
 				}
 
 				p {
-					// 統合vw()関数でテスト
-					font-size: vw(16, 12px); // フォントには最小値
+					// 統合vw()関数でテスト - 最小値なし
+					font-size: vw(16);
 					color: #666;
-					margin-bottom: vw(25); // marginには最小値なし
+					margin-bottom: vw(25);
 
-					// SP用 - 統合版
+					// SP用 - 統合版・最小値なし
 					@include mq(md) {
-						font-size: vw(14, 11px); // フォントには最小値
-						margin-bottom: vw(20); // marginには最小値なし
+						font-size: vw(14);
+						margin-bottom: vw(20);
 					}
 				}
 
 				.test-btn {
-					// 統合vw()関数でテスト
+					// 統合vw()関数でテスト - 最小値なし
 					background: #667eea;
 					color: white;
 					border: none;
-					padding: vw(16) vw(32); // paddingには最小値なし
-					border-radius: vw(8); // border-radiusには最小値なし
-					font-size: vw(16, 12px); // フォントには最小値
+					padding: vw(16) vw(32);
+					border-radius: vw(8);
+					font-size: vw(16);
 					cursor: pointer;
 
-					// SP用 - 統合版
+					// SP用 - 統合版・最小値なし
 					@include mq(md) {
-						padding: vw(12) vw(24); // paddingには最小値なし
-						border-radius: vw(6); // border-radiusには最小値なし
-						font-size: vw(14, 11px); // フォントには最小値
+						padding: vw(12) vw(24);
+						border-radius: vw(6);
+						font-size: vw(14);
 					}
 				}
 			}
@@ -161,27 +161,27 @@
 					}
 
 					h3 {
-						// 統合vw()関数テスト
-						font-size: vw(20, 14px); // フォントには最小値
+						// 統合vw()関数テスト - 最小値なし
+						font-size: vw(20);
 						color: #333;
-						margin-bottom: vw(15); // 最小値なし
+						margin-bottom: vw(15);
 
-						// SP用 - 統合vw()関数
+						// SP用 - 統合vw()関数・最小値なし
 						@include mq(md) {
-							font-size: vw(16, 12px); // 統合版・フォントには最小値
-							margin-bottom: vw(10); // 統合版
+							font-size: vw(16);
+							margin-bottom: vw(10);
 						}
 					}
 
 					p {
-						// 統合vw()関数テスト - 最終テスト
-						font-size: vw(14, 12px); // フォントには最小値
+						// 統合vw()関数テスト - 最小値なしテスト
+						font-size: vw(14);
 						color: #666;
 						margin: 0;
 
-						// SP用 - 統合vw()関数 - 最終テスト
+						// SP用 - 統合vw()関数・最小値なしテスト
 						@include mq(md) {
-							font-size: vw(16, 12px); // 統合版・フォントには最小値
+							font-size: vw(16);
 						}
 					}
 				}
