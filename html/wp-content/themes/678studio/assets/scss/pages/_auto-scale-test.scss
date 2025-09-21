@@ -1,13 +1,13 @@
 // ================================
 // Auto-Scale Test Page Styles
 // ================================
-// 自動スケールシステムテスト
+// 統合vw()関数 + g()関数組み合わせテスト
 
 @use '../base/mixins' as *;
 @use '../base/variables' as *;
 
 // =============================================================================
-// 自動スケールテストページ
+// vw() + g() 統合テストページ
 // =============================================================================
 .auto-scale-test-page {
 	@include auto-scale;
@@ -15,36 +15,33 @@
 	min-height: 100vh;
 
 	.main-container {
-		// 統合vw()関数テスト
 		padding: vw(24);
+		max-width: vw(1200);
+		margin: 0 auto;
 
-		// SP用 - 統合vw()関数
 		@include mq(md) {
-			padding: vw(16); // 統合版
+			padding: vw(16);
+			max-width: vw(360);
 		}
 
 		h1 {
-			// 統合vw()関数テスト - 最小値なしでテスト
 			font-size: vw(48);
 			color: white;
 			text-align: center;
-			margin-bottom: vw(30);
+			margin-bottom: vw(16);
 
-			// SP用 - 統合関数・最小値なし
 			@include mq(md) {
 				font-size: vw(32);
-				margin-bottom: vw(24);
+				margin-bottom: vw(12);
 			}
 		}
 
-		p {
-			// 統合vw()関数テスト - 最小値なし
+		> p {
 			font-size: vw(18);
 			color: white;
 			text-align: center;
 			margin-bottom: vw(40);
 
-			// SP用 - 統合版・最小値なし
 			@include mq(md) {
 				font-size: vw(16);
 				margin-bottom: vw(24);
@@ -52,136 +49,134 @@
 		}
 
 		.info-panel {
-			// 統合vw()関数テスト - 最小値なし
 			background: rgba(0, 0, 0, 0.8);
 			color: white;
 			padding: vw(16);
 			border-radius: vw(8);
 			font-family: monospace;
 			font-size: vw(14);
-			margin-bottom: vw(24);
+			margin-bottom: vw(40);
 			text-align: center;
 
-			// SP用 - 統合vw()関数・最小値なし
 			@include mq(md) {
 				padding: vw(12);
 				border-radius: vw(6);
 				font-size: vw(12);
-				margin-bottom: vw(20);
+				margin-bottom: vw(24);
 			}
 		}
 
-		.test-content {
-			.test-box {
-				// PC用 - 統合vw()関数でテスト
-				background: white;
-				padding: vw(30); // 最小値制限なし
-				border-radius: vw(12); // 最小値制限なし
-				max-width: vw(400); // 最小値制限なし
-				margin: 0 auto vw(60); // 最小値制限なし
+		// =============================================================================
+		// vw() + g() 組み合わせサンプル
+		// =============================================================================
+		.vw-grid-sample {
+			h2 {
+				font-size: vw(36);
+				color: white;
 				text-align: center;
+				margin-bottom: vw(32);
 
-				// SP用 - 統合vw()関数でテスト
 				@include mq(md) {
-					padding: vw(20); // 統合版
-					border-radius: vw(8); // 統合版
-					max-width: vw(300); // 統合版
-					margin-bottom: vw(40); // 統合版
-				}
-
-				h2 {
-					// 統合vw()関数でテスト - 最小値なし
 					font-size: vw(24);
-					color: #333;
-					margin-bottom: vw(15);
-
-					// SP用 - 統合版・最小値なし
-					@include mq(md) {
-						font-size: vw(18);
-						margin-bottom: vw(10);
-					}
-				}
-
-				p {
-					// 統合vw()関数でテスト - 最小値なし
-					font-size: vw(16);
-					color: #666;
-					margin-bottom: vw(25);
-
-					// SP用 - 統合版・最小値なし
-					@include mq(md) {
-						font-size: vw(14);
-						margin-bottom: vw(20);
-					}
-				}
-
-				.test-btn {
-					// 統合vw()関数でテスト - 最小値なし
-					background: #667eea;
-					color: white;
-					border: none;
-					padding: vw(16) vw(32);
-					border-radius: vw(8);
-					font-size: vw(16);
-					cursor: pointer;
-
-					// SP用 - 統合版・最小値なし
-					@include mq(md) {
-						padding: vw(12) vw(24);
-						border-radius: vw(6);
-						font-size: vw(14);
-					}
+					margin-bottom: vw(20);
 				}
 			}
 
-			.test-grid {
-				// 統合vw()関数テスト
-				display: grid;
-				grid-template-columns: repeat(3, vw(300)); // 最小値なし
-				gap: vw(30); // 最小値なし
-				justify-content: center;
+			// グリッドカードレイアウト - g()関数使用
+			.grid-cards {
+				@include g(
+					$cols: (repeat(3, vw(320))),  // vw()でカラム幅指定
+					$gap: vw(24)                  // vw()でギャップ指定
+				);
+				margin-bottom: vw(48);
 
-				// SP用 - 統合vw()関数
 				@include mq(md) {
-					grid-template-columns: 1fr;
-					gap: vw(20); // 統合版
+					@include g(
+						$cols: 1fr,               // SPは1カラム
+						$gap: vw(16)             // vw()でギャップ
+					);
+					margin-bottom: vw(32);
 				}
 
-				.test-card {
-					// 統合vw()関数テスト
+				.card {
 					background: white;
-					padding: vw(30); // 最小値なし
-					border-radius: vw(12); // 最小値なし
+					padding: vw(24);             // vw()でpadding
+					border-radius: vw(12);       // vw()でborder-radius
 					text-align: center;
+					box-shadow: 0 vw(4) vw(12) rgba(0, 0, 0, 0.1);
 
-					// SP用 - 統合vw()関数
 					@include mq(md) {
-						padding: vw(20); // 統合版
-						border-radius: vw(8); // 統合版
+						padding: vw(20);
+						border-radius: vw(8);
 					}
 
 					h3 {
-						// 統合vw()関数テスト - 最小値なし
 						font-size: vw(20);
 						color: #333;
-						margin-bottom: vw(15);
+						margin-bottom: vw(12);
 
-						// SP用 - 統合vw()関数・最小値なし
 						@include mq(md) {
-							font-size: vw(16);
-							margin-bottom: vw(10);
+							font-size: vw(18);
+							margin-bottom: vw(8);
 						}
 					}
 
 					p {
-						// 統合vw()関数テスト - 最小値なしテスト
+						font-size: vw(14);
+						color: #666;
+						line-height: 1.6;
+						margin: 0;
+
+						@include mq(md) {
+							font-size: vw(13);
+						}
+					}
+				}
+			}
+
+			// フレックスグリッド - g()関数使用
+			.flex-grid {
+				@include g(
+					$cols: (vw(480) vw(360)),    // vw()で異なる幅指定
+					$gap: vw(32)                 // vw()でギャップ
+				);
+
+				@include mq(md) {
+					@include g(
+						$cols: 1fr,              // SPは1カラム
+						$gap: vw(20)
+					);
+				}
+
+				.flex-item {
+					background: rgba(255, 255, 255, 0.9);
+					padding: vw(20);
+					border-radius: vw(8);
+					text-align: center;
+
+					@include mq(md) {
+						padding: vw(16);
+						border-radius: vw(6);
+					}
+
+					h4 {
+						font-size: vw(18);
+						color: #333;
+						margin-bottom: vw(8);
+
+						@include mq(md) {
+							font-size: vw(16);
+							margin-bottom: vw(6);
+						}
+					}
+
+					p {
 						font-size: vw(14);
 						color: #666;
 						margin: 0;
 
-						// SP用 - 統合vw()関数・最小値なしテスト
 						@include mq(md) {
-							font-size: vw(16);
+							font-size: vw(12);
 						}
 					}
 				}

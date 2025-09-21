@@ -2,7 +2,7 @@
 /**
  * Template Name: Auto Scale Test
  *
- * 自動スケールmixinテスト
+ * 統合vw()関数 + g()関数 組み合わせテスト
  * SP: 320px〜767px (380px基準), PC: 768px〜∞ (1440px基準)
  */
 
@@ -11,8 +11,8 @@ get_header();
 
 <div class="auto-scale-test-page">
   <div class="main-container">
-    <h1>Auto Scale Test</h1>
-    <p>レスポンシブ自動スケールテスト - SP: 380px基準 / PC: 1440px基準</p>
+    <h1>vw() + g() 統合テスト</h1>
+    <p>統合vw()関数とg()関数の組み合わせテスト</p>
 
     <div class="info-panel">
       現在幅: <span id="current-width">計算中...</span><br>
@@ -21,25 +21,35 @@ get_header();
       倍率: <span id="scale-value">計算中...</span>
     </div>
 
-    <div class="test-content">
-      <div class="test-box">
-        <h2>テストボックス</h2>
-        <p>この要素は画面幅に応じて自動スケールします</p>
-        <button class="test-btn">ボタン</button>
+    <!-- vw() + g() 組み合わせサンプル -->
+    <div class="vw-grid-sample">
+      <h2>vw() + g() 組み合わせ</h2>
+
+      <!-- グリッドカード -->
+      <div class="grid-cards">
+        <div class="card">
+          <h3>カード1</h3>
+          <p>vw()でサイズ設定<br>g()でグリッド配置</p>
+        </div>
+        <div class="card">
+          <h3>カード2</h3>
+          <p>レスポンシブ対応<br>自動スケール</p>
+        </div>
+        <div class="card">
+          <h3>カード3</h3>
+          <p>Figma値直接使用<br>シンプル記述</p>
+        </div>
       </div>
 
-      <div class="test-grid">
-        <div class="test-card">
-          <h3>カード1</h3>
-          <p>自動スケール対応</p>
+      <!-- フレックスグリッド -->
+      <div class="flex-grid">
+        <div class="flex-item">
+          <h4>アイテム1</h4>
+          <p>テキスト</p>
         </div>
-        <div class="test-card">
-          <h3>カード2</h3>
-          <p>レスポンシブ</p>
-        </div>
-        <div class="test-card">
-          <h3>カード3</h3>
-          <p>Figma値使用</p>
+        <div class="flex-item">
+          <h4>アイテム2</h4>
+          <p>テキスト</p>
         </div>
       </div>
     </div>
