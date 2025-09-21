@@ -1,7 +1,7 @@
 // ================================
 // Auto-Scale Test Page Styles
 // ================================
-// gulp対応のシンプルな自動スケールテスト
+// 自動スケールシステムテスト
 
 @use '../base/mixins' as *;
 @use '../base/variables' as *;
@@ -10,145 +10,182 @@
 // 自動スケールテストページ
 // =============================================================================
 .auto-scale-test-page {
-	@include auto-scale-container;
+	@include auto-scale;
+	background: linear-gradient(135deg, #667eea, #764ba2);
+	min-height: 100vh;
 
-	// SP用コンテナ（380px基準）
-	.sp-scale-container {
-		@include auto-scale-sp(380);
-		background: linear-gradient(135deg, #667eea, #764ba2);
-		min-height: 100vh;
+	.main-container {
+		// PC用（デフォルト）
+		padding: vw(24);
 
-		@media (max-width: 767px) {
-			padding: calc(20px * (100vw / 380px));
-		}
-		@media (min-width: 768px) {
-			padding: 20px;
+		// SP用（767px以下）
+		@include mq(md) {
+			padding: vw-sp(16);
 		}
 
 		h1 {
-			font-size: 24px;
+			// PC用
+			font-size: vw(48);
 			color: white;
 			text-align: center;
-			margin-bottom: 20px;
+			margin-bottom: vw(30);
+
+			// SP用
+			@include mq(md) {
+				font-size: vw-sp(32);
+				margin-bottom: vw-sp(24);
+			}
 		}
 
 		p {
-			font-size: 14px;
+			// PC用
+			font-size: vw(18);
 			color: white;
 			text-align: center;
-			margin-bottom: 30px;
-		}
+			margin-bottom: vw(40);
 
-		.test-box {
-			background: white;
-			padding: 20px;
-			border-radius: 8px;
-			max-width: 300px;
-			margin: 0 auto;
-			text-align: center;
-
-			h2 {
-				font-size: 18px;
-				color: #333;
-				margin-bottom: 10px;
-			}
-
-			p {
-				font-size: 14px;
-				color: #666;
-				margin-bottom: 20px;
-			}
-
-			.test-btn {
-				background: #667eea;
-				color: white;
-				border: none;
-				padding: 12px 24px;
-				border-radius: 6px;
-				font-size: 14px;
-				cursor: pointer;
+			// SP用
+			@include mq(md) {
+				font-size: vw-sp(16);
+				margin-bottom: vw-sp(24);
 			}
 		}
-	}
 
-	// PC用コンテナ（1440px基準）
-	.pc-scale-container {
-		@include auto-scale-pc(1440);
-		background: linear-gradient(135deg, #667eea, #764ba2);
-		min-height: 100vh;
-
-		@media (max-width: 767px) {
-			padding: 40px;
-		}
-		@media (min-width: 768px) {
-			padding: calc(40px * (100vw / 1440px));
-		}
-
-		h1 {
-			font-size: 48px;
+		.info-panel {
+			// PC用
+			background: rgba(0, 0, 0, 0.8);
 			color: white;
+			padding: vw(16);
+			border-radius: vw(8);
+			font-family: monospace;
+			font-size: vw(14);
+			margin-bottom: vw(24);
 			text-align: center;
-			margin-bottom: 30px;
+
+			// SP用
+			@include mq(md) {
+				padding: vw-sp(12);
+				border-radius: vw-sp(6);
+				font-size: vw-sp(12);
+				margin-bottom: vw-sp(20);
+			}
 		}
 
-		p {
-			font-size: 18px;
-			color: white;
-			text-align: center;
-			margin-bottom: 50px;
-		}
-
-		.test-grid {
-			display: grid;
-			grid-template-columns: repeat(3, 300px);
-			gap: 30px;
-			justify-content: center;
-
-			.test-card {
+		.test-content {
+			.test-box {
+				// PC用
 				background: white;
-				padding: 30px;
-				border-radius: 12px;
+				padding: vw(30);
+				border-radius: vw(12);
+				max-width: vw(400);
+				margin: 0 auto vw(60);
 				text-align: center;
 
-				h3 {
-					font-size: 20px;
+				// SP用
+				@include mq(md) {
+					padding: vw-sp(20);
+					border-radius: vw-sp(8);
+					max-width: vw-sp(300);
+					margin-bottom: vw-sp(40);
+				}
+
+				h2 {
+					// PC用
+					font-size: vw(24);
 					color: #333;
-					margin-bottom: 15px;
+					margin-bottom: vw(15);
+
+					// SP用
+					@include mq(md) {
+						font-size: vw-sp(18);
+						margin-bottom: vw-sp(10);
+					}
 				}
 
 				p {
-					font-size: 14px;
+					// PC用
+					font-size: vw(16);
 					color: #666;
-					margin: 0;
+					margin-bottom: vw(25);
+
+					// SP用
+					@include mq(md) {
+						font-size: vw-sp(14);
+						margin-bottom: vw-sp(20);
+					}
+				}
+
+				.test-btn {
+					// PC用
+					background: #667eea;
+					color: white;
+					border: none;
+					padding: vw(16) vw(32);
+					border-radius: vw(8);
+					font-size: vw(16);
+					cursor: pointer;
+
+					// SP用
+					@include mq(md) {
+						padding: vw-sp(12) vw-sp(24);
+						border-radius: vw-sp(6);
+						font-size: vw-sp(14);
+					}
+				}
+			}
+
+			.test-grid {
+				// PC用
+				display: grid;
+				grid-template-columns: repeat(3, vw(300));
+				gap: vw(30);
+				justify-content: center;
+
+				// SP用
+				@include mq(md) {
+					grid-template-columns: 1fr;
+					gap: vw-sp(20);
+				}
+
+				.test-card {
+					// PC用
+					background: white;
+					padding: vw(30);
+					border-radius: vw(12);
 					text-align: center;
+
+					// SP用
+					@include mq(md) {
+						padding: vw-sp(20);
+						border-radius: vw-sp(8);
+					}
+
+					h3 {
+						// PC用
+						font-size: vw(20);
+						color: #333;
+						margin-bottom: vw(15);
+
+						// SP用
+						@include mq(md) {
+							font-size: vw-sp(16);
+							margin-bottom: vw-sp(10);
+						}
+					}
+
+					p {
+						// PC用
+						font-size: vw(14);
+						color: #666;
+						margin: 0;
+
+						// SP用
+						@include mq(md) {
+							font-size: vw-sp(12);
+						}
+					}
 				}
 			}
 		}
-	}
-}
-
-// 情報パネル
-.auto-scale-info-panel {
-	position: fixed;
-	top: 20px;
-	left: 20px;
-	right: 20px;
-	max-width: calc(100vw - 40px);
-	background: rgba(0, 0, 0, 0.8);
-	color: white;
-	padding: 15px;
-	border-radius: 8px;
-	font-family: monospace;
-	font-size: 12px;
-	z-index: 9999;
-	overflow-x: hidden;
-
-	div {
-		margin-bottom: 5px;
-	}
-
-	span {
-		color: #68d391;
-		font-weight: bold;
 	}
 }

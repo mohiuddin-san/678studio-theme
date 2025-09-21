@@ -786,52 +786,52 @@ $breakpoints: (
  * 🎯 真の自動スケールシステム
  * Figmaの値をそのまま使用して、画面幅に応じて流動的にスケール
  *
- * 使用例:
+ * プロジェクト設定（デフォルト値）:
+ * $figma-sp-base: 380px !default;   // SP基準サイズ
+ * $figma-pc-base: 1440px !default;  // PC基準サイズ
+ *
+ * 基本的な使用例:
  * .sp-container {
- *   @include auto-scale-sp(380);  // SP用：380px基準
+ *   @include sp;      // デフォルト380px基準
  * }
  *
  * .pc-container {
- *   @include auto-scale-pc(1440); // PC用：1440px基準
+ *   @include pc;      // デフォルト1440px基準
+ * }
+ *
+ * プロジェクト固有の基準サイズ設定:
+ * $figma-sp-base: 320px;
+ * $figma-pc-base: 1200px;
+ * @use 'base/mixins' as m;
+ *
+ * カスタム基準での使用:
+ * .sp-container {
+ *   @include sp(375);   // 375px基準
  * }
  */
 
-// 自動スケール関数（SP用）
-@function auto-vw-sp($size, $base: 380) {
-	@return calc(#{$size}px * (100vw / #{$base}px));
+// プロジェクト設定：Figma基準サイズ
+$figma-sp-base: 380px !default; // SP基準サイズ
+$figma-pc-base: 1440px !default; // PC基準サイズ
+
+// 自動vw変換関数（PC用）
+@function vw($size, $min: 12px) {
+	@return min(#{$min}, calc(#{$size}px * (100vw / #{$figma-pc-base})));
 }
 
-// 自動スケール関数（PC用）
-@function auto-vw-pc($size, $base: 1440) {
-	@return calc(#{$size}px * (100vw / #{$base}px));
+// 自動vw変換関数（SP用）
+@function vw-sp($size, $min: 12px) {
+	@return min(#{$min}, calc(#{$size}px * (100vw / #{$figma-sp-base})));
 }
 
 // SP用自動スケールコンテナ
-@mixin auto-scale-sp($base-width: 380) {
+@mixin sp($base-width: $figma-sp-base) {
 	width: 100%;
 	max-width: 100vw;
 	overflow-x: hidden;
 
 	@media (max-width: 767px) {
-		// 基本的な要素のスケール
-		h1 { font-size: calc(24px * (100vw / #{$base-width}px)) !important; }
-		h2 { font-size: calc(18px * (100vw / #{$base-width}px)) !important; }
-		h3 { font-size: calc(16px * (100vw / #{$base-width}px)) !important; }
-		p { font-size: calc(14px * (100vw / #{$base-width}px)) !important; }
-
-		// パディング・マージンもスケール
-		.test-box {
-			padding: calc(20px * (100vw / #{$base-width}px)) !important;
-			border-radius: calc(8px * (100vw / #{$base-width}px)) !important;
-			max-width: calc(300px * (100vw / #{$base-width}px)) !important;
-			margin: 0 auto !important;
-		}
-
-		button {
-			padding: calc(12px * (100vw / #{$base-width}px)) calc(24px * (100vw / #{$base-width}px)) !important;
-			border-radius: calc(6px * (100vw / #{$base-width}px)) !important;
-			font-size: calc(14px * (100vw / #{$base-width}px)) !important;
-		}
+		// SP範囲でのみ表示
 	}
 
 	@media (min-width: 768px) {
@@ -840,7 +840,7 @@ $breakpoints: (
 }
 
 // PC用自動スケールコンテナ
-@mixin auto-scale-pc($base-width: 1440) {
+@mixin pc($base-width: $figma-pc-base) {
 	width: 100%;
 	max-width: 100vw;
 	overflow-x: hidden;
@@ -850,40 +850,25 @@ $breakpoints: (
 	}
 
 	@media (min-width: 768px) {
-		// 基本的な要素のスケール
-		h1 { font-size: calc(48px * (100vw / #{$base-width}px)) !important; }
-		h2 { font-size: calc(20px * (100vw / #{$base-width}px)) !important; }
-		h3 { font-size: calc(18px * (100vw / #{$base-width}px)) !important; }
-		p { font-size: calc(16px * (100vw / #{$base-width}px)) !important; }
-
-		// パディング・マージンもスケール
-		.test-grid {
-			grid-template-columns: repeat(3, calc(300px * (100vw / #{$base-width}px))) !important;
-			gap: calc(30px * (100vw / #{$base-width}px)) !important;
-		}
-
-		.test-card {
-			padding: calc(30px * (100vw / #{$base-width}px)) !important;
-			border-radius: calc(12px * (100vw / #{$base-width}px)) !important;
-		}
+		// PC範囲でのみ表示
 	}
 }
 
 // 個別要素スケール用mixin
-@mixin auto-size-sp($size, $base: 380) {
+@mixin avw-size($size, $base: $figma-sp-base) {
 	@media (max-width: 767px) {
-		font-size: auto-vw-sp($size, $base) !important;
+		font-size: avw($size, $base) !important;
 	}
 }
 
-@mixin auto-size-pc($size, $base: 1440) {
+@mixin avw-pc-size($size, $base: $figma-pc-base) {
 	@media (min-width: 768px) {
-		font-size: auto-vw-pc($size, $base) !important;
+		font-size: avw-pc($size, $base) !important;
 	}
 }
 
 // 横スクロール防止
-@mixin auto-scale-container {
+@mixin auto-scale {
 	overflow-x: hidden;
 	width: 100%;
 	max-width: 100vw;
@@ -894,4 +879,3 @@ $breakpoints: (
 		max-width: 100vw;
 	}
 }
-

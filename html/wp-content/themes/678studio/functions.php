@@ -430,9 +430,10 @@ function theme_678studio_styles() {
         [], null);
 
     // Use filemtime for cache busting in development
-    $version = WP_DEBUG ? filemtime(get_stylesheet_directory() . '/style.css') : '1.0.0';
+    $css_file = get_stylesheet_directory() . '/dist/css/style.css';
+    $version = WP_DEBUG && file_exists($css_file) ? filemtime($css_file) : '1.0.0';
 
-    wp_enqueue_style('678studio-style', get_stylesheet_uri(), ['google-fonts'], $version);
+    wp_enqueue_style('678studio-style', get_stylesheet_directory_uri() . '/dist/css/style.css', ['google-fonts'], $version);
     
     // Enqueue header script for mobile menu (only on frontend)
     if (!is_admin()) {
