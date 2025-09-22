@@ -13,8 +13,7 @@ const paths = {
   scss: {
     src: 'assets/scss/style.scss',
     watch: 'assets/scss/**/*.scss',
-    dest: 'dist/css/',
-    themeRoot: './'  // テーマルートディレクトリ
+    dest: './'  // テーマルートディレクトリに直接出力
   },
   php: {
     watch: '**/*.php'
@@ -49,7 +48,6 @@ function compileSCSS() {
     }))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(paths.scss.dest))
-    .pipe(gulp.dest(paths.scss.themeRoot)) // Copy to theme root for WordPress
     .pipe(browserSync.stream());
 }
 
@@ -66,7 +64,6 @@ function buildSCSS() {
       cascade: false
     }))
     .pipe(gulp.dest(paths.scss.dest))
-    .pipe(gulp.dest(paths.scss.themeRoot)) // Copy expanded version to theme root for WordPress
     .pipe(cleanCSS())
     .pipe(rename({ suffix: '.min' }))
     .pipe(gulp.dest(paths.scss.dest));

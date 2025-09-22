@@ -116,7 +116,4 @@ get_header(); ?>
 </main>
 <!-- Contact & Booking Section -->
 <?php get_template_part('template-parts/components/contact-booking'); ?>
-<?php
-get_template_part('template-parts/components/footer');
-get_footer();
-?>
+<?php get_footer(); ?>

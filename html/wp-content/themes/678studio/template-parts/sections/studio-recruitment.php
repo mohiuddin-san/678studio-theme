@@ -38,7 +38,7 @@
           掲載希望をお考えの写真館様、まずは資料をダウンロードして<br>
           詳細をご確認ください
         </p>
-        <a href="<?php echo get_template_directory_uri(); ?>/pdf/250918_ロクナナハチ_26_s.pdf" class="download-card__button" id="downloadButton" download>
+        <a href="<?php echo get_template_directory_uri(); ?>/pdf/250922_ロクナナハチ_27_s.pdf" class="download-card__button" id="downloadButton" download>
           資料をダウンロード
         </a>
       </div>

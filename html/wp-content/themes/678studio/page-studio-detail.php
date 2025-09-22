@@ -642,7 +642,4 @@ $map_embed_data = get_map_embed_content($shop);
 
 
 
-<?php
-get_template_part('template-parts/components/footer');
-get_footer();
-?>
+<?php get_footer(); ?>

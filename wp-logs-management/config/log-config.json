@@ -1,0 +1,36 @@
+{
+  "logSettings": {
+    "retentionDays": 7,
+    "maxFileSize": "50MB",
+    "logLevels": {
+      "development": ["DEBUG", "INFO", "WARNING", "ERROR"],
+      "testing": ["WARNING", "ERROR"],
+      "production": ["ERROR"]
+    },
+    "colorOutput": true,
+    "includeStackTrace": true
+  },
+  "paths": {
+    "logDirectory": "../html/wp-content/debug-logs/",
+    "phpLogger": "../html/wp-content/themes/678studio/lib/debug-logger.php",
+    "jsLogger": "../html/wp-content/themes/678studio/assets/js/debug-logger.js",
+    "analysisScript": "./scripts/analyze-wp-logs.js"
+  },
+  "patterns": {
+    "phpLogFile": "wp-debug-YYYY-MM-DD.log",
+    "jsLogFile": "js-debug-YYYY-MM-DD.log"
+  },
+  "commands": {
+    "analyze": "npm run wp-logs:analyze",
+    "errors": "npm run wp-logs:errors",
+    "summary": "npm run wp-logs:summary",
+    "component": "npm run wp-logs:component",
+    "cleanup": "npm run wp-logs:cleanup"
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "lastUpdated": "2025-09-20",
+    "compatibleWith": "WordPress 6.4+",
+    "theme": "678studio"
+  }
+}

@@ -27,20 +27,7 @@
 	@include m.mq(md) {
 		@include m.g(
 			$cols: (
-				minmax(m.f(20), 1fr) 84% minmax(m.f(20), 1fr),
-			),
-			$rows: (
-				1fr,
-			),
-			$gap: 0
-		);
-	}
-
-	// 320px以下の対応
-	@media (max-width: 320px) {
-		@include m.g(
-			$cols: (
-				minmax(m.f(10), 1fr) 90% minmax(m.f(10), 1fr),
+				minmax(m.vw(20), 1fr) minmax(0, m.vw(340)) minmax(m.vw(20), 1fr),
 			),
 			$rows: (
 				1fr,
@@ -130,6 +117,13 @@
 		background-position: center;
 		mix-blend-mode: multiply;
 		z-index: 3;
+
+		@include m.mq(md) {
+			top: m.vw(-20);
+			left: m.vw(-15);
+			width: m.vw(60);
+			height: m.vw(60);
+		}
 	}
 
 	// 右上のテープ
@@ -146,6 +140,13 @@
 		background-position: center;
 		mix-blend-mode: multiply;
 		z-index: 3;
+
+		@include m.mq(md) {
+			top: m.vw(-20);
+			right: m.vw(-15);
+			width: m.vw(60);
+			height: m.vw(60);
+		}
 	}
 }
 
@@ -163,6 +164,10 @@
 	letter-spacing: 0.1em;
 	margin-bottom: m.f(16);
 	position: relative;
+
+	@include m.mq(md) {
+		font-size: m.vw-sp(14);
+	}
 
 	// 下部マーカー装飾（SVG）
 	&::after {
@@ -187,6 +192,10 @@
 	line-height: 1.8;
 	padding-top: m.f(40);
 	text-align: center;
+
+	@include m.mq(md) {
+		font-size: m.vw-sp(13);
+	}
 }
 
 // Articles List
@@ -266,7 +275,7 @@ a.helpful-info__article,
 
 	// モバイル対応
 	@include m.mq(md) {
-		font-size: m.f(11);
+		font-size: m.vw-sp(12);
 	}
 }
 
@@ -279,8 +288,8 @@ a.helpful-info__article,
 
 	// モバイル対応: 2段目に100%幅で配置
 	@include m.mq(md) {
-		font-size: m.fsm(13);
+		font-size: m.vw-sp(13);
 		width: 100%;
-		margin-top: m.fsm(8);
+		margin-top: m.vw-sp(8);
 	}
 }

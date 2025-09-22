@@ -1,0 +1,387 @@
+// ================================
+// 🎯 ワンライナー自動スケールシステム
+// ================================
+
+// 基本設定
+$auto-scale-base-min: 14px !default;
+$auto-scale-base-cqw: 4cqw !default;
+$auto-scale-base-max: 20px !default;
+
+// ================================
+// 🎯 メインmixin（これだけでOK！）
+// ================================
+@mixin auto-scale-app(
+	$base-font-min: $auto-scale-base-min,
+	$base-font-cqw: $auto-scale-base-cqw,
+	$base-font-max: $auto-scale-base-max
+) {
+	// 基本設定
+	width: 100vw;
+	min-height: 100vh;
+	container-type: inline-size;
+
+	// 🎯 CSS Variables で全体スケールを定義
+	--base-font: clamp(#{$base-font-min}, #{$base-font-cqw}, #{$base-font-max});
+	--base-space: clamp(8px, 2cqw, 24px);
+	--base-radius: clamp(4px, 1cqw, 12px);
+	--base-border: max(1px, 0.15cqw);
+
+	// 基準フォントサイズを適用
+	font-size: var(--base-font);
+
+	// ================================
+	// 📐 自動スケールルール
+	// ================================
+
+	// フォントサイズ（em単位で自動スケール）
+	h1 {
+		font-size: 2em;
+	}
+	h2 {
+		font-size: 1.5em;
+	}
+	h3 {
+		font-size: 1.25em;
+	}
+	h4 {
+		font-size: 1.125em;
+	}
+	h5 {
+		font-size: 1em;
+	}
+	h6 {
+		font-size: 0.875em;
+	}
+	p {
+		font-size: 1em;
+	}
+	small {
+		font-size: 0.875em;
+	}
+
+	// ユーティリティクラス：余白
+	.p-0 {
+		padding: 0;
+	}
+	.p-1 {
+		padding: 0.5em;
+	}
+	.p-2 {
+		padding: 1em;
+	}
+	.p-3 {
+		padding: 1.5em;
+	}
+	.p-4 {
+		padding: 2em;
+	}
+	.p-5 {
+		padding: 2.5em;
+	}
+
+	.m-0 {
+		margin: 0;
+	}
+	.m-1 {
+		margin: 0.5em;
+	}
+	.m-2 {
+		margin: 1em;
+	}
+	.m-3 {
+		margin: 1.5em;
+	}
+	.m-4 {
+		margin: 2em;
+	}
+	.m-5 {
+		margin: 2.5em;
+	}
+
+	// 個別方向の余白
+	.pt-1 {
+		padding-top: 0.5em;
+	}
+	.pt-2 {
+		padding-top: 1em;
+	}
+	.pt-3 {
+		padding-top: 1.5em;
+	}
+
+	.pb-1 {
+		padding-bottom: 0.5em;
+	}
+	.pb-2 {
+		padding-bottom: 1em;
+	}
+	.pb-3 {
+		padding-bottom: 1.5em;
+	}
+
+	.pl-1 {
+		padding-left: 0.5em;
+	}
+	.pl-2 {
+		padding-left: 1em;
+	}
+	.pl-3 {
+		padding-left: 1.5em;
+	}
+
+	.pr-1 {
+		padding-right: 0.5em;
+	}
+	.pr-2 {
+		padding-right: 1em;
+	}
+	.pr-3 {
+		padding-right: 1.5em;
+	}
+
+	.mt-1 {
+		margin-top: 0.5em;
+	}
+	.mt-2 {
+		margin-top: 1em;
+	}
+	.mt-3 {
+		margin-top: 1.5em;
+	}
+
+	.mb-1 {
+		margin-bottom: 0.5em;
+	}
+	.mb-2 {
+		margin-bottom: 1em;
+	}
+	.mb-3 {
+		margin-bottom: 1.5em;
+	}
+
+	.ml-1 {
+		margin-left: 0.5em;
+	}
+	.ml-2 {
+		margin-left: 1em;
+	}
+	.ml-3 {
+		margin-left: 1.5em;
+	}
+
+	.mr-1 {
+		margin-right: 0.5em;
+	}
+	.mr-2 {
+		margin-right: 1em;
+	}
+	.mr-3 {
+		margin-right: 1.5em;
+	}
+
+	// ボーダーと角丸
+	.border {
+		border: var(--base-border) solid #e0e0e0;
+	}
+	.border-t {
+		border-top: var(--base-border) solid #e0e0e0;
+	}
+	.border-b {
+		border-bottom: var(--base-border) solid #e0e0e0;
+	}
+	.border-l {
+		border-left: var(--base-border) solid #e0e0e0;
+	}
+	.border-r {
+		border-right: var(--base-border) solid #e0e0e0;
+	}
+
+	.rounded {
+		border-radius: var(--base-radius);
+	}
+	.rounded-sm {
+		border-radius: calc(var(--base-radius) * 0.5);
+	}
+	.rounded-lg {
+		border-radius: calc(var(--base-radius) * 1.5);
+	}
+	.rounded-xl {
+		border-radius: calc(var(--base-radius) * 2);
+	}
+
+	// 最小タッチターゲット確保
+	button,
+	.btn,
+	.nav-item {
+		min-height: 2.75em; // 44px相当を確保
+	}
+
+	// ================================
+	// 📱 レスポンシブ調整
+	// ================================
+	@container (max-width: 480px) {
+		.responsive-stack {
+			flex-direction: column;
+		}
+
+		.responsive-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@container (min-width: 768px) {
+		.responsive-row {
+			flex-direction: row;
+		}
+
+		.responsive-grid {
+			grid-template-columns: repeat(auto-fit, minmax(15em, 1fr));
+		}
+	}
+}
+
+// ================================
+// 🎨 追加コンポーネントmixins
+// ================================
+
+// カード
+@mixin auto-scale-card {
+	background: white;
+	border: var(--base-border) solid #e0e0e0;
+	border-radius: var(--base-radius);
+	box-shadow: 0 0.125em 0.5em rgba(0, 0, 0, 0.1);
+}
+
+// ボタン
+@mixin auto-scale-button($bg-color: #667eea, $text-color: white) {
+	background: #{$bg-color};
+	color: #{$text-color};
+	border: none;
+	border-radius: var(--base-radius);
+	cursor: pointer;
+	transition: background 0.2s;
+	min-height: 2.75em;
+
+	&:hover {
+		background: darken($bg-color, 10%);
+	}
+}
+
+// グリッド
+@mixin auto-scale-grid($min-width: 15em) {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(#{$min-width}, 1fr));
+	gap: 1em;
+}
+
+// ================================
+// 🔧 カスタマイズ用functions
+// ================================
+
+// em値を計算
+@function em($pixels, $context: 16) {
+	@return calc(#{$pixels}px / #{$context}) * 1em;
+}
+
+// CSS Variable値を取得
+@function scale-var($name) {
+	@return var(--base-#{$name});
+}
+
+// ================================
+// 📋 使用例
+// ================================
+
+/*
+// 基本的な使用方法
+
+// 1. メインラッパーに適用
+.app {
+  @include auto-scale-app();
+}
+
+// 2. カスタム設定
+.custom-app {
+  @include auto-scale-app(
+    $base-font-min: 12px,
+    $base-font-cqw: 3.5cqw,
+    $base-font-max: 18px
+  );
+}
+
+// 3. コンポーネント
+.card {
+  @include auto-scale-card();
+}
+
+.btn {
+  @include auto-scale-button();
+}
+
+.grid {
+  @include auto-scale-grid(12em);
+}
+
+// 4. HTML例
+<div class="app">
+  <h1>自動スケールタイトル</h1>
+  <div class="card p-3 m-2 rounded">
+    <p>コンテンツ</p>
+    <button class="btn p-2 rounded">ボタン</button>
+  </div>
+</div>
+*/
+
+// ================================
+// 🚀 プリセット
+// ================================
+
+// モバイルファースト
+@mixin mobile-first-app {
+	@include auto-scale-app(12px, 4.5cqw, 16px);
+}
+
+// デスクトップ重視
+@mixin desktop-first-app {
+	@include auto-scale-app(16px, 3cqw, 22px);
+}
+
+// バランス型（推奨）
+@mixin balanced-app {
+	@include auto-scale-app(14px, 4cqw, 20px);
+}
+
+// ================================
+// 📱 SP/PC分離版
+// ================================
+@mixin sp-pc-auto-scale(
+	$sp-base-min: 12px,
+	$sp-base-cqw: 4.5cqw,
+	$sp-base-max: 16px,
+	$pc-base-min: 16px,
+	$pc-base-cqw: 3cqw,
+	$pc-base-max: 22px,
+	$breakpoint: 768px
+) {
+	width: 100vw;
+	min-height: 100vh;
+	container-type: inline-size;
+
+	@media (max-width: #{$breakpoint - 1px}) {
+		--base-font: clamp(#{$sp-base-min}, #{$sp-base-cqw}, #{$sp-base-max});
+		--base-space: clamp(6px, 1.8cqw, 16px);
+		--base-radius: clamp(3px, 0.8cqw, 8px);
+	}
+
+	@media (min-width: #{$breakpoint}) {
+		--base-font: clamp(#{$pc-base-min}, #{$pc-base-cqw}, #{$pc-base-max});
+		--base-space: clamp(12px, 2.5cqw, 32px);
+		--base-radius: clamp(6px, 1.2cqw, 16px);
+	}
+
+	--base-border: max(1px, 0.15cqw);
+	font-size: var(--base-font);
+
+	// 共通スタイルを含める
+	@include auto-scale-app();
+}

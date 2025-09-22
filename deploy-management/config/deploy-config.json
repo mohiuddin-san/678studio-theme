@@ -1,0 +1,127 @@
+{
+  "deploySettings": {
+    "projectRoot": "/Users/yoshiharajunichi/Desktop/works/inside/678",
+    "remoteHost": "sv12345.xserver.jp",
+    "remoteUser": "deploy_user",
+    "remotePath": "/home/deploy_user/678studio.com/public_html",
+    "defaultTimeout": 300,
+    "maxRetries": 3
+  },
+  "deployTypes": {
+    "full": {
+      "script": "deploy-full.sh",
+      "description": "完全なサイトデプロイ（全ファイル + DB）",
+      "estimatedTime": "10-20分",
+      "backupRequired": true,
+      "safetyLevel": "最高"
+    },
+    "theme": {
+      "script": "deploy-to-prod.sh",
+      "description": "テーマファイルのみデプロイ",
+      "estimatedTime": "5-10分",
+      "backupRequired": true,
+      "safetyLevel": "高"
+    },
+    "single": {
+      "script": "deploy-single-file.sh",
+      "description": "単一ファイルのデプロイ",
+      "estimatedTime": "1-2分",
+      "backupRequired": false,
+      "safetyLevel": "中"
+    }
+  },
+  "excludePatterns": {
+    "development": [
+      "node_modules/",
+      ".git/",
+      ".vscode/",
+      ".idea/",
+      "*.log",
+      ".DS_Store",
+      "Thumbs.db"
+    ],
+    "wordpress": [
+      "wp-config-sample.php",
+      "wp-content/uploads/cache/",
+      "wp-content/debug-logs/",
+      "wp-content/backup*/",
+      "readme.html",
+      "license.txt"
+    ],
+    "custom": [
+      "scripts/",
+      "docker-compose.yml",
+      ".env*",
+      "package*.json",
+      "gulpfile.js",
+      "*.md"
+    ]
+  },
+  "backup": {
+    "enabled": true,
+    "retentionDays": 30,
+    "location": "/home/deploy_user/backups/",
+    "naming": "backup_$(date +%Y%m%d_%H%M%S)",
+    "includeDatabase": true
+  },
+  "database": {
+    "localHost": "localhost",
+    "localUser": "wp_user",
+    "localName": "wordpress_678",
+    "remoteHost": "mysql123.xserver.jp",
+    "remoteUser": "remote_user",
+    "remoteName": "remote_db_name",
+    "charset": "utf8mb4",
+    "collation": "utf8mb4_unicode_ci"
+  },
+  "security": {
+    "sshKey": "~/.ssh/678studio_deploy_key",
+    "sshPort": 22,
+    "strictHostKeyChecking": true,
+    "filePermissions": {
+      "directories": "755",
+      "files": "644",
+      "executables": "755"
+    }
+  },
+  "notifications": {
+    "onSuccess": true,
+    "onError": true,
+    "email": null,
+    "slack": null,
+    "webhook": null
+  },
+  "logging": {
+    "enabled": true,
+    "location": "../logs/deploy-operations.log",
+    "level": "INFO",
+    "includeTimestamp": true,
+    "rotateDaily": true
+  },
+  "preDeployChecks": [
+    "Check local site functionality",
+    "Verify database connection",
+    "Confirm backup space availability",
+    "Test SSH connection",
+    "Validate file permissions"
+  ],
+  "postDeployChecks": [
+    "Verify site accessibility",
+    "Check critical page functionality",
+    "Confirm database integrity",
+    "Review error logs",
+    "Test contact forms"
+  ],
+  "rollback": {
+    "enabled": true,
+    "maxRollbackVersions": 5,
+    "autoRollbackOnError": false,
+    "rollbackTimeout": 600
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "lastUpdated": "2025-09-20",
+    "compatibleWith": "Xserver, WordPress 6.4+",
+    "maintainer": "678 Studio Team"
+  }
+}

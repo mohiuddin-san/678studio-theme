@@ -18,6 +18,12 @@ npm run build        # Production build
 npm run wp-logs:analyze      # Analyze all logs
 npm run wp-logs:errors       # Show errors only
 npm run wp-logs:summary      # Last hour summary
+
+# Manual Backup (Emergency Protection)
+./scripts/manual_backup.sh  # Complete project backup (7.6GB, 100% reliable)
+
+# SEO & Sitemap Management
+ssh xb592942@sv504.xbiz.ne.jp -p 10022 -i ~/.ssh/egao-salon_rsa "cd /home/xb592942/678photo.com/public_html && /usr/bin/php7.4 auto-sitemap-generator-678photo.php generate"  # Manual sitemap generation
 ```
 
 ### Access URLs
@@ -45,6 +51,7 @@ npm run wp-logs:summary      # Last hour summary
 - **SCSS**: Gulp-based compilation with BrowserSync
 - **Debug System**: Comprehensive PHP/JS logging
 - **Deployment**: SSH-based automation (template state)
+- **SEO**: Automatic sitemap generation system (6-hour intervals)
 
 ## 📁 Key Directories
 
@@ -80,6 +87,8 @@ npm run wp-logs:summary      # Last hour summary
 - ✅ WordPress theme active
 - ✅ ACF plugin installed
 - ✅ Debug system implemented
+- ✅ Sitemap auto-generation system (6-hour cron)
+- ✅ SEO optimization with robots.txt
 - 🔄 Deployment scripts (template state)
 
 ## 📚 Detailed Documentation

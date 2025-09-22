@@ -122,7 +122,7 @@
 
 	// Mobile styles (767px以下)
 	@media (max-width: 767px) {
-		padding: m.fsm(60) 0;
+		padding: 0;
 
 		&__container {
 			aspect-ratio: auto;
@@ -130,7 +130,7 @@
 		}
 
 		&__content {
-			padding: m.fsm(40) 0;
+			padding: 0;
 		}
 
 		&__title-bar {

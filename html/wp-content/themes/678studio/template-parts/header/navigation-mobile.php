@@ -15,7 +15,7 @@
         <a href="<?php echo esc_url(home_url('/photo-gallery')); ?>" class="navigation-mobile__link">ギャラリー</a>
       </li>
       <li class="navigation-mobile__item">
-        <a href="<?php echo esc_url(home_url('/articles')); ?>" class="navigation-mobile__link">お役立ち情報</a>
+        <a href="<?php echo get_post_type_archive_link('seo_articles'); ?>" class="navigation-mobile__link">お役立ち情報</a>
       </li>
     </ul>
 

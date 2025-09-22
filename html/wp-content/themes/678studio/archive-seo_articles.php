@@ -227,8 +227,6 @@ get_header(); ?>
     </section>
 </main>
 
-<?php get_template_part('template-parts/components/footer'); ?>
-
 <script>
 // ピルボタンフィルター機能（URL パラメータ対応）
 document.addEventListener('DOMContentLoaded', function() {

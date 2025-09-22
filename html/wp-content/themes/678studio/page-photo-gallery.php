@@ -73,8 +73,6 @@ get_header(); ?>
   </div>
 </div>
 
-<?php get_template_part('template-parts/components/footer'); ?>
-
 <script src="<?php echo get_template_directory_uri(); ?>/assets/js/gallery-lightbox.js"></script>
 
 <script>

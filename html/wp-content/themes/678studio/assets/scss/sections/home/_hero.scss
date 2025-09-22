@@ -97,7 +97,7 @@
 
 	// Sub Text with Blue Background
 	&__sub-text {
-		@include m.breakout-bg('left', 50vw, 84%, #57aace);
+		background-color: #57aace;
 		width: 100%;
 
 		&-content {
@@ -226,13 +226,14 @@
 
 	// SP Subtext
 	&__sp-subtext {
-		@include m.breakout-bg('left', 100vw, 40%, #57aace);
+		background-color: #57aace;
 		color: white;
 		padding: m.fsm(15) m.fsm(20);
 		text-align: center;
 		font-size: m.fsm(16);
 		font-weight: 400;
 		font-family: v.$ja-sans;
+		width: 100%;
 	}
 
 	// SP Points (SVG)

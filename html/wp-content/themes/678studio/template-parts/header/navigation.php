@@ -8,7 +8,7 @@
     </li>
     <li class="navigation__item"><a href="<?php echo esc_url(home_url('/photo-gallery')); ?>"
         class="navigation__link">ギャラリー</a></li>
-    <li class="navigation__item"><a href="<?php echo esc_url(home_url('/articles')); ?>"
+    <li class="navigation__item"><a href="<?php echo get_post_type_archive_link('seo_articles'); ?>"
         class="navigation__link">お役立ち情報</a></li>
   </ul>
 

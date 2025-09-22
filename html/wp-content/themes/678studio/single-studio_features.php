@@ -197,6 +197,4 @@ $studio_contact_info = get_field('studio_contact_info');
     <?php endwhile; ?>
 </main>
 
-<?php get_template_part('template-parts/components/footer'); ?>
-
 <?php get_footer(); ?>

@@ -207,8 +207,6 @@ get_header(); ?>
     </section>
 </main>
 
-<?php get_template_part('template-parts/components/footer'); ?>
-
 <script>
 // フィルター機能
 document.addEventListener('DOMContentLoaded', function() {
