@@ -21,6 +21,4 @@
   <?php // get_template_part('template-parts/sections/home/plan-mobile'); ?>
 </main>
 
-<?php get_template_part('template-parts/components/footer'); ?>
-
 <?php get_footer(); ?>

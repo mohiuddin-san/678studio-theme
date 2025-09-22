@@ -1,0 +1,96 @@
+{
+  "backupSettings": {
+    "projectRoot": "/Users/yoshiharajunichi/Desktop/works/inside/678",
+    "backupDestination": "/Users/yoshiharajunichi/Desktop/manual_backup_$(date +%Y%m%d_%H%M%S)",
+    "retentionDays": 14,
+    "compressionEnabled": false,
+    "dockerStopRequired": true
+  },
+  "backupTypes": {
+    "full": {
+      "script": "manual_backup.sh",
+      "description": "完全バックアップ（全ファイル含む）",
+      "estimatedSize": "7.6GB",
+      "estimatedTime": "5-10分",
+      "reliability": "最高"
+    },
+    "optimized": {
+      "script": "manual_backup_optimized.sh",
+      "description": "最適化バックアップ（除外設定付き）",
+      "estimatedSize": "3-4GB",
+      "estimatedTime": "3-5分",
+      "reliability": "高"
+    },
+    "production": {
+      "script": "backup-from-prod.sh",
+      "description": "本番環境からのバックアップ",
+      "estimatedSize": "変動",
+      "estimatedTime": "10-20分",
+      "reliability": "高"
+    },
+    "sync": {
+      "script": "sync-from-prod.sh",
+      "description": "本番環境との同期",
+      "estimatedSize": "変動",
+      "estimatedTime": "5-15分",
+      "reliability": "中"
+    }
+  },
+  "excludePatterns": {
+    "common": [
+      "node_modules/",
+      "*.log",
+      ".git/",
+      "*.tmp",
+      "cache/",
+      "temp/"
+    ],
+    "development": [
+      ".DS_Store",
+      "Thumbs.db",
+      "*.swp",
+      "*.swo",
+      ".vscode/",
+      ".idea/"
+    ],
+    "wordpress": [
+      "wp-content/uploads/cache/",
+      "wp-content/debug-logs/",
+      "wp-content/backup*/",
+      "wp-config-sample.php"
+    ],
+    "docker": [
+      "docker-compose.override.yml",
+      ".env.local"
+    ]
+  },
+  "restore": {
+    "stopDockerFirst": true,
+    "backupCurrentFirst": true,
+    "restoreSteps": [
+      "Stop Docker containers",
+      "Backup current state (optional)",
+      "Copy files from backup",
+      "Start Docker containers",
+      "Verify site functionality"
+    ]
+  },
+  "notifications": {
+    "onSuccess": true,
+    "onError": true,
+    "email": null,
+    "webhook": null
+  },
+  "monitoring": {
+    "logBackupOperations": true,
+    "logLocation": "../logs/backup-operations.log",
+    "includeTiming": true,
+    "includeFileCount": true
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "lastUpdated": "2025-09-20",
+    "compatibleWith": "Docker, WordPress 6.4+",
+    "maintainer": "678 Studio Team"
+  }
+}

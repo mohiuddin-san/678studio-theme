@@ -88,7 +88,12 @@ function siaes_settings_page() {
                 </tr>
                 <tr>
                     <th><label for="siaes_aws_secret_access_key">AWSシークレットアクセスキー</label></th>
-                    <td><input type="password" name="siaes_aws_secret_access_key" value="<?php echo esc_attr(get_option('siaes_aws_secret_access_key')); ?>" class="regular-text"></td>
+                    <td>
+                        <input type="password" name="siaes_aws_secret_access_key" value="" placeholder="<?php echo get_option('siaes_aws_secret_access_key') ? '●●●●●●●●●●●●●●●●' : 'シークレットアクセスキーを入力'; ?>" class="regular-text">
+                        <?php if (get_option('siaes_aws_secret_access_key')): ?>
+                            <p class="description">既存のキーが設定されています。変更する場合のみ新しいキーを入力してください。</p>
+                        <?php endif; ?>
+                    </td>
                 </tr>
                 <tr>
                     <th><label for="siaes_aws_region">AWSリージョン</label></th>
@@ -165,15 +170,51 @@ function siaes_settings_page() {
     <?php
 }
 
+// Encryption/Decryption functions for AWS credentials
+function siaes_encrypt_credential($value) {
+    if (empty($value)) return '';
+    $key = defined('AUTH_KEY') ? AUTH_KEY : 'fallback_key_678studio';
+    return base64_encode(openssl_encrypt($value, 'AES-256-CBC', $key, 0, substr(hash('sha256', $key), 0, 16)));
+}
+
+function siaes_decrypt_credential($encrypted_value) {
+    if (empty($encrypted_value)) return '';
+    $key = defined('AUTH_KEY') ? AUTH_KEY : 'fallback_key_678studio';
+    return openssl_decrypt(base64_decode($encrypted_value), 'AES-256-CBC', $key, 0, substr(hash('sha256', $key), 0, 16));
+}
+
+// Sanitize and encrypt AWS secret key
+function siaes_sanitize_secret_key($value) {
+    // If empty value, keep existing encrypted value (don't overwrite)
+    if (empty($value)) {
+        return get_option('siaes_aws_secret_access_key');
+    }
+    $sanitized = sanitize_text_field($value);
+    return siaes_encrypt_credential($sanitized);
+}
+
 // Register settings fields
 function siaes_register_settings_fields() {
     register_setting('siaes_settings_group', 'siaes_aws_access_key_id', 'sanitize_text_field');
-    register_setting('siaes_settings_group', 'siaes_aws_secret_access_key', 'sanitize_text_field');
+    register_setting('siaes_settings_group', 'siaes_aws_secret_access_key', 'siaes_sanitize_secret_key');
     register_setting('siaes_settings_group', 'siaes_aws_region', 'sanitize_text_field');
     register_setting('siaes_settings_group', 'siaes_pages', 'sanitize_text_field');
     register_setting('siaes_settings_group', 'siaes_page_settings');
 }
 add_action('admin_init', 'siaes_register_settings_fields');
+
+// Enqueue admin assets
+function siaes_enqueue_admin_assets($hook) {
+    // Only load on our plugin's settings page
+    if ('settings_page_siaes-settings' !== $hook) {
+        return;
+    }
+
+    // Enqueue jQuery UI tabs
+    wp_enqueue_script('jquery-ui-tabs');
+    wp_enqueue_style('wp-jquery-ui-dialog');
+}
+add_action('admin_enqueue_scripts', 'siaes_enqueue_admin_assets');
 
 // Enqueue assets
 function siaes_enqueue_assets() {
@@ -678,7 +719,14 @@ function siaes_send_emails($form_data, $page_slug) {
     $user_subject = str_replace('[company-name]', $company_name, $user_subject);
     $company_message = str_replace('[company-name]', $company_name, $company_message);
     $user_reply_final = str_replace('[company-name]', $company_name, $user_reply_final);
-    
+
+    // Add current datetime for automatic insertion
+    $current_datetime = wp_date('Y年n月j日 H:i', current_time('timestamp'));
+    $company_subject = str_replace('[自動入力：受付日時]', $current_datetime, $company_subject);
+    $user_subject = str_replace('[自動入力：受付日時]', $current_datetime, $user_subject);
+    $company_message = str_replace('[自動入力：受付日時]', $current_datetime, $company_message);
+    $user_reply_final = str_replace('[自動入力：受付日時]', $current_datetime, $user_reply_final);
+
     // Additional replacement for store_name placeholder
     $company_subject = str_replace('[store_name]', $company_name, $company_subject);
     $user_subject = str_replace('[store_name]', $company_name, $user_subject);
@@ -730,7 +778,7 @@ function siaes_send_emails($form_data, $page_slug) {
             'region' => get_option('siaes_aws_region', 'ap-northeast-1'),
             'credentials' => [
                 'key' => get_option('siaes_aws_access_key_id'),
-                'secret' => get_option('siaes_aws_secret_access_key'),
+                'secret' => siaes_decrypt_credential(get_option('siaes_aws_secret_access_key')),
             ],
         ]);
 
@@ -832,7 +880,7 @@ function siaes_test_ses_credentials() {
             'region' => get_option('siaes_aws_region', 'ap-northeast-1'),
             'credentials' => [
                 'key' => get_option('siaes_aws_access_key_id'),
-                'secret' => get_option('siaes_aws_secret_access_key'),
+                'secret' => siaes_decrypt_credential(get_option('siaes_aws_secret_access_key')),
             ],
         ]);
 

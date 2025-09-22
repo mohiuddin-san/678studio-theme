@@ -1,4 +1,4 @@
-.PHONY: help up down sync deploy reset logs status restart shell wp db-backup db-restore clean ssh-setup server-backup backup-from-prod
+.PHONY: help up down sync deploy reset logs status restart shell wp db-backup db-restore clean ssh-setup server-backup backup-from-prod deploy-manager database-manager
 
 # デフォルトターゲット
 help:
@@ -14,6 +14,11 @@ help:
 	@echo "  make deploy-file - 単一ファイルをデプロイ"
 	@echo "  make server-backup - サーバー側でバックアップを作成"
 	@echo "  make backup-from-prod - サーバーからローカルにバックアップ"
+	@echo ""
+	@echo "  make deploy-manager COMMAND=<cmd> - デプロイ管理システム"
+	@echo "    COMMAND: setup, test, deploy, deploy-full, backup, status, logs, clean"
+	@echo "  make database-manager COMMAND=<cmd> - データベース管理システム"
+	@echo "    COMMAND: setup, backup, restore, status, optimize, clean, reset"
 	@echo "  make restart     - 環境を再起動"
 	@echo "  make shell       - WordPressコンテナにアクセス"
 	@echo "  make wp          - WP-CLIコマンドを実行"
@@ -44,7 +49,7 @@ up:
 # SSH認証自動設定
 ssh-setup:
 	@echo "🔐 SSH認証を自動設定します"
-	@./scripts/ssh-setup.sh
+	@./deploy-management/scripts/ssh-setup.sh
 
 # ローカル環境停止
 down:
@@ -65,13 +70,13 @@ sync:
 # ローカル→本番デプロイ（テーマのみ）
 deploy:
 	@echo "🚀 ローカル→本番デプロイを実行します"
-	@./scripts/deploy-to-prod.sh
+	@./deploy-management/scripts/deploy-to-prod.sh
 
 # フルデプロイ（バックアップ＋テーマ＋DB＋プラグイン）
 deploy-full:
 	@echo "🚀 フルデプロイメント（バックアップ付き）を実行します"
 	@echo "⚠️  本番環境のバックアップを取得後、ローカル環境で上書きします"
-	@./scripts/deploy-full.sh
+	@./deploy-management/scripts/deploy-full.sh
 
 # 単一ファイルデプロイ
 deploy-file:
@@ -79,7 +84,7 @@ deploy-file:
 		echo "使用方法: make deploy-file FILE=wp-content/themes/your-theme/style.css"; \
 		exit 1; \
 	fi
-	@./scripts/deploy-single-file.sh $(FILE)
+	@./deploy-management/scripts/deploy-single-file.sh $(FILE)
 
 # 環境リセット
 reset:
@@ -129,14 +134,14 @@ wp:
 # データベースのバックアップ
 db-backup:
 	@echo "💾 データベースをバックアップ中..."
-	@mkdir -p db-backup
-	@docker-compose exec db mysqldump -u wp_user -ppassword wordpress_678 > db-backup/backup-$(shell date +%Y%m%d_%H%M%S).sql
-	@echo "✅ バックアップ完了: db-backup/"
+	@mkdir -p database-management/backups
+	@docker-compose exec db mysqldump -u wp_user -ppassword wordpress_678 > database-management/backups/backup-$(shell date +%Y%m%d_%H%M%S).sql
+	@echo "✅ バックアップ完了: database-management/backups/"
 
 # データベースのリストア
 db-restore:
 	@echo "📥 最新のバックアップからリストア中..."
-	@latest=$$(ls -t db-backup/*.sql | head -1); \
+	@latest=$$(ls -t database-management/backups/*.sql | head -1); \
 	if [ -n "$$latest" ]; then \
 		docker-compose exec -T db mysql -u wp_user -ppassword wordpress_678 < $$latest; \
 		echo "✅ リストア完了: $$latest"; \
@@ -150,7 +155,7 @@ clean:
 	@echo "⚠️  すべてのデータが削除されます！続行しますか？ [y/N]"
 	@read ans; if [ "$$ans" = "y" ] || [ "$$ans" = "Y" ]; then \
 		docker-compose down -v; \
-		rm -rf html/wp-content backup/ db-backup/*.sql; \
+		rm -rf html/wp-content backup/ database-management/backups/*.sql; \
 		echo "✅ クリーンアップ完了"; \
 	else \
 		echo "❌ クリーンアップを中止しました"; \
@@ -175,10 +180,28 @@ server-backup:
 		fi" || \
 	(echo "📤 バックアップスクリプトをアップロード中..." && \
 		source .env.deploy && \
-		scp -P $$SSH_PORT -i $$COMPANY_SSH_KEY scripts/server-backup.sh $$SSH_USER@$$SSH_HOST:/home/$$SSH_USER/ && \
+		scp -P $$SSH_PORT -i $$COMPANY_SSH_KEY backup-management/scripts/server-backup.sh $$SSH_USER@$$SSH_HOST:/home/$$SSH_USER/ && \
 		ssh -p $$SSH_PORT -i $$COMPANY_SSH_KEY $$SSH_USER@$$SSH_HOST "bash /home/$$SSH_USER/server-backup.sh")
 
 # サーバーからローカルにバックアップ
 backup-from-prod:
 	@echo "📥 サーバーからローカルにバックアップを取得します..."
-	@./scripts/backup-from-prod.sh
+	@./backup-management/scripts/backup-from-prod.sh
+
+# デプロイ管理システム（統合）
+deploy-manager:
+	@if [ -z "$(COMMAND)" ]; then \
+		echo "使用方法: make deploy-manager COMMAND=<command>"; \
+		echo "利用可能なコマンド: setup, test, deploy, deploy-full, backup, status, logs, clean"; \
+		exit 1; \
+	fi
+	@./deploy-management/scripts/deploy-manager.sh $(COMMAND)
+
+# データベース管理システム（統合）
+database-manager:
+	@if [ -z "$(COMMAND)" ]; then \
+		echo "使用方法: make database-manager COMMAND=<command>"; \
+		echo "利用可能なコマンド: setup, backup, restore, status, optimize, clean, reset"; \
+		exit 1; \
+	fi
+	@./database-management/scripts/database-manager.sh $(COMMAND)

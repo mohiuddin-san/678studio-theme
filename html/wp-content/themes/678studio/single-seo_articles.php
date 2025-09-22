@@ -417,8 +417,6 @@ $target_conversion = get_field('target_conversion');
     <?php endwhile; ?>
 </main>
 
-<?php get_template_part('template-parts/components/footer'); ?>
-
 <!-- 構造化データ (JSON-LD) -->
 <script type="application/ld+json">
 <?php

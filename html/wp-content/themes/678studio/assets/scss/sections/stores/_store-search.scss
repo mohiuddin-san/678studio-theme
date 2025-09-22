@@ -4,6 +4,22 @@
 @use '../../base/mixins' as m;
 @use '../../base/variables' as v;
 
+// Global input focus ring removal for store search
+input[type="text"],
+input[type="search"],
+input[type="email"],
+input[type="tel"],
+input[type="url"],
+select {
+	&:focus,
+	&:focus-visible,
+	&:active {
+		outline: none !important;
+		box-shadow: none !important;
+		border-color: #a7cbd6;
+	}
+}
+
 .store-search-results {
 	width: 100%;
 	padding: m.fs(72, 0.6) 0;
@@ -116,14 +132,15 @@
 		background: white;
 		border-radius: 50px;
 		padding: m.fs(12) m.fs(20);
-		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-		transition: box-shadow 0.3s ease;
 		width: 100%;
 		min-height: m.fs(48);
+		border: 1px solid #e5e7eb;
+		transition: border-color 0.3s ease;
 
-		&:hover,
 		&:focus-within {
-			box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+			border-color: #a7cbd6;
+			outline: none;
+			box-shadow: none;
 		}
 
 		// モバイル対応
@@ -156,10 +173,21 @@
 		font-size: m.fs(16);
 		padding: m.fs(12) 0;
 		color: #333;
-		outline: none;
+		outline: none !important;
+		box-shadow: none !important;
+		border: none !important;
 
 		&::placeholder {
 			color: #999;
+		}
+
+		&:focus,
+		&:focus-visible,
+		&:active {
+			outline: none !important;
+			border: none !important;
+			box-shadow: none !important;
+			background: none !important;
 		}
 
 		// モバイル対応
@@ -177,7 +205,7 @@
 	&__prefecture-dropdown {
 		width: 100%;
 		padding: m.fs(12) m.fs(20);
-		border: 2px solid #e5e7eb;
+		border: 1px solid #e5e7eb;
 		border-radius: 50px;
 		font-size: m.fs(16);
 		background: white url('/wp-content/themes/678studio/assets/images/down.svg')
@@ -187,7 +215,8 @@
 		cursor: pointer;
 		transition: all 0.3s ease;
 		font-family: v.$ja-sans;
-		outline: none;
+		outline: none !important;
+		box-shadow: none !important;
 		appearance: none;
 		-webkit-appearance: none;
 		-moz-appearance: none;
@@ -196,9 +225,12 @@
 		box-sizing: border-box;
 
 		&:hover,
-		&:focus {
+		&:focus,
+		&:focus-visible,
+		&:active {
 			border-color: #a7cbd6;
-			box-shadow: 0 0 0 3px rgba(167, 203, 214, 0.1);
+			outline: none !important;
+			box-shadow: none !important;
 		}
 
 		// モバイル対応
@@ -231,21 +263,22 @@
 	}
 
 	&__search-btn {
-		background: linear-gradient(135deg, #a7cbd6 0%, #8bb5c4 100%);
+		background: #a7cbd6;
 		color: white;
 		border: none;
 		padding: m.fs(16) m.fs(48);
 		border-radius: 50px;
 		font-size: m.fs(18);
 		font-weight: 600;
+		font-family: v.$ja-sans;
+		letter-spacing: 0.1em;
 		cursor: pointer;
-		transition: all 0.3s ease;
+		transition: opacity 0.3s ease;
 		min-width: 200px;
+		opacity: 1;
 
 		&:hover {
-			background: linear-gradient(135deg, #8bb5c4 0%, #7ba8b8 100%);
-			transform: translateY(-2px);
-			box-shadow: 0 6px 16px rgba(139, 181, 196, 0.4);
+			opacity: 0.8;
 		}
 
 		// モバイル対応
@@ -604,7 +637,8 @@
 		text-decoration: none !important;
 
 		// 自動リンク要素に対しても強制的にスタイルを適用
-		a, & a {
+		a,
+		& a {
 			text-decoration: none !important;
 			color: inherit !important;
 			border: none !important;

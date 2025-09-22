@@ -1,0 +1,52 @@
+# =============================================================================
+# SSH Configuration Template for 678 Studio Deploy
+# Add these entries to your ~/.ssh/config file
+# =============================================================================
+
+# 678photo.com deployment
+Host 678photo
+    HostName sv504.xbiz.ne.jp
+    User xb592942
+    Port 10022
+    IdentityFile ~/.ssh/678photo_rsa
+    StrictHostKeyChecking yes
+    UserKnownHostsFile ~/.ssh/known_hosts
+
+# egao-salon.jp deployment
+Host egao
+    HostName sv504.xbiz.ne.jp
+    User xb592942
+    Port 10022
+    IdentityFile ~/.ssh/egao-salon_rsa
+    StrictHostKeyChecking yes
+    UserKnownHostsFile ~/.ssh/known_hosts
+
+# kokensha.com deployment
+Host kokensha
+    HostName sv504.xbiz.ne.jp
+    User xb592942
+    Port 10022
+    IdentityFile ~/.ssh/kokensha_rsa
+    StrictHostKeyChecking yes
+    UserKnownHostsFile ~/.ssh/known_hosts
+
+# inside.xsrv.jp deployment
+Host xserver
+    HostName sv504.xbiz.ne.jp
+    User xb592942
+    Port 10022
+    IdentityFile ~/.ssh/xserver_rsa
+    StrictHostKeyChecking yes
+    UserKnownHostsFile ~/.ssh/known_hosts
+
+# Generic template for new sites
+Host your-site
+    HostName your-server.domain.jp
+    User your_username
+    Port 22
+    IdentityFile ~/.ssh/your_site_rsa
+    StrictHostKeyChecking yes
+    UserKnownHostsFile ~/.ssh/known_hosts
+    # Optional: Connection keep-alive
+    ServerAliveInterval 60
+    ServerAliveCountMax 3

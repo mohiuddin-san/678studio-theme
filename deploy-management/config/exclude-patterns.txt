@@ -1,0 +1,111 @@
+# =============================================================================
+# 678 Studio Deploy Exclude Patterns
+# Files and directories to exclude from deployment
+# =============================================================================
+
+# Development directories
+node_modules/
+.git/
+.vscode/
+.idea/
+.docker/
+
+# Build artifacts
+dist/
+build/
+tmp/
+temp/
+
+# Log files
+*.log
+logs/
+error_log
+access_log
+
+# Cache files
+cache/
+**/cache/
+wp-content/cache/
+wp-content/uploads/cache/
+
+# Backup files
+backup*/
+backups/
+*.bak
+*.backup
+
+# System files
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*~
+
+# Environment files
+.env*
+!.env.example
+.env.local
+.env.staging
+.env.production
+
+# WordPress specific
+wp-config-sample.php
+wp-content/debug-logs/
+wp-content/upgrade/
+wp-content/backup*/
+readme.html
+license.txt
+wp-admin/install*.php
+
+# Development tools
+package*.json
+gulpfile.js
+webpack.config.js
+tsconfig.json
+.eslintrc*
+.prettierrc*
+.babelrc*
+
+# Source files (if compiled)
+**/*.scss
+**/*.less
+**/*.ts
+**/*.jsx
+**/*.tsx
+
+# Documentation (unless needed)
+*.md
+!README.md
+docs/
+documentation/
+
+# Scripts and tools
+scripts/
+deploy-management/
+wp-logs-management/
+backup-management/
+
+# Docker files
+docker-compose*.yml
+Dockerfile*
+.dockerignore
+
+# Version control
+.gitignore
+.gitattributes
+.gitmodules
+
+# IDE files
+*.sublime-*
+.vscode/
+.idea/
+
+# OS generated files
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+# Temporary files
+*.tmp
+*.temp

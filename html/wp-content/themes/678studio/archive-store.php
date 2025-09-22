@@ -181,7 +181,4 @@ get_header();
 
 </main>
 
-<?php
-get_template_part('template-parts/components/footer');
-get_footer();
-?>
+<?php get_footer(); ?>

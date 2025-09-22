@@ -1,9 +1,6 @@
 <nav class="navigation-desktop" role="navigation" aria-label="Primary Navigation">
   <ul class="navigation-desktop__menu" id="desktop-primary-menu">
     <li class="navigation-desktop__item">
-      <a href="<?php echo esc_url(home_url('/')); ?>" class="navigation-desktop__link">トップ</a>
-    </li>
-    <li class="navigation-desktop__item">
       <a href="<?php echo esc_url(home_url('/about')); ?>" class="navigation-desktop__link">ロクナナハチ撮影とは？</a>
     </li>
     <li class="navigation-desktop__item">
@@ -13,7 +10,7 @@
       <a href="<?php echo esc_url(home_url('/photo-gallery')); ?>" class="navigation-desktop__link">ギャラリー</a>
     </li>
     <li class="navigation-desktop__item">
-      <a href="<?php echo esc_url(home_url('/articles')); ?>" class="navigation-desktop__link">お役立ち情報</a>
+      <a href="<?php echo get_post_type_archive_link('seo_articles'); ?>" class="navigation-desktop__link">お役立ち情報</a>
     </li>
   </ul>
 
