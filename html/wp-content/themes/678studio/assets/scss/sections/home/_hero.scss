@@ -8,6 +8,11 @@
 	height: auto; // コンテンツに応じた高さ
 	overflow: hidden;
 
+	// モバイルで固定ヘッダー分の余白
+	@include m.mq(md) {
+		padding-top: m.vw(80);
+	}
+
 	// PC Hero (default - desktop)
 	&__pc {
 		display: block;
