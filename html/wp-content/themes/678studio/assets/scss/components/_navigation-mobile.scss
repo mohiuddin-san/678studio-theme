@@ -12,18 +12,17 @@
 		display: none !important;
 	}
 
-	// モバイル用 - 上部配置（×ボタンの下から開始）
+	// モバイル用 - ヘッダー下展開式
 	@include m.mq(md) {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: flex-start;
-		min-height: 100vh; // 最小高さを画面全体に
-		height: auto; // 高さを自動調整
+		height: 100%; // 利用可能な高さを全て使用
 		width: 100%;
 		overflow-y: auto; // 縦スクロールを許可
-		padding-top: m.vw(80); // ×ボタンの下あたりから開始
-		padding-bottom: m.vw(20); // 下部にも余白を追加
+		padding-top: m.vw(40); // 上部余白を調整
+		padding-bottom: m.vw(40); // 下部余白
 	}
 
 	&__menu-container {

@@ -24,11 +24,14 @@
 		justify-content: space-between;
 		position: relative;
 		overflow: visible; // モバイルナビゲーションが表示できるように
+		background: white; // 背景を明示的に設定
+		z-index: 9999; // モバイルメニューより前面に
 
 		// SP用 - 自動判定vw()でレスポンシブ対応
 		@include m.mq(md) {
-			padding: m.vw(20) m.vw(20) m.vw(10);
+			padding: m.vw(20) m.vw(20) m.vw(20); // 下部パディングを増やしてロゴエリアを確保
 			justify-content: center;
+			border-bottom: 1px solid rgba(0, 0, 0, 0.05); // 薄い境界線で区切り
 		}
 	}
 
@@ -62,16 +65,16 @@
 		@include m.mq(md) {
 			display: block;
 			position: absolute;
-			right: m.vw(20); // 自動判定vw()
+			right: m.vw(15); // より右側に移動
 			top: 50%;
 			transform: translateY(-50%);
-			width: m.vw(40); // 自動判定vw()
-			height: m.vw(40); // 自動判定vw()
+			width: m.vw(32); // サイズを小さく（40→32）
+			height: m.vw(32); // サイズを小さく（40→32）
 			background: none;
 			border: none;
 			cursor: pointer;
-			padding: m.vw(8); // 自動判定vw()
-			z-index: 10000; // 最前面に配置
+			padding: m.vw(6); // パディングも小さく（8→6）
+			z-index: 10000; // 最前面に配置（ヘッダーコンテナより上）
 		}
 	}
 
@@ -79,16 +82,16 @@
 	&__hamburger-line {
 		@include m.mq(md) {
 			display: block;
-			width: m.vw(24); // 自動判定vw()
-			height: m.vw(2); // 自動判定vw()
+			width: m.vw(20); // 線を短く（24→20）
+			height: m.vw(2); // 線の太さはそのまま
 			background: #000;
-			margin: m.vw(4) 0; // 自動判定vw()
+			margin: m.vw(3) 0; // 間隔を狭く（4→3）
 			transition: 0.3s;
 			position: relative;
 		}
 	}
 
-	// フルスクリーンメニュー（新しい分離システム用）
+	// モバイルメニュー（ヘッダー下展開式）
 	&__navigation-mobile {
 		display: none;
 
@@ -96,21 +99,20 @@
 			@include m.mq(md) {
 				display: flex;
 				position: fixed;
-				top: 0;
+				top: m.vw(120); // ヘッダー高さ分を十分確保
 				left: 0;
 				width: 100vw;
-				height: 100vh;
+				height: calc(100vh - #{m.vw(120)}); // ヘッダー分を除いた残りの高さ
 				/* Safari 16.4+ support for dvh */
-				height: 100dvh;
+				height: calc(100dvh - #{m.vw(120)});
 				background: white;
-				z-index: 9999;
+				z-index: 9998; // ヘッダーより少し下
 				padding: 0;
-				overflow-y: auto; // 縦スクロールを許可
+				overflow-y: auto;
 
-				// ナビゲーション全体の高さ制限を除去
+				// ナビゲーション全体設定
 				.navigation-mobile {
-					min-height: 100vh;
-					height: auto;
+					height: 100%;
 					width: 100%;
 					overflow-y: auto;
 				}
