@@ -21,7 +21,7 @@
 		height: 100%; // 利用可能な高さを全て使用
 		width: 100%;
 		overflow-y: auto; // 縦スクロールを許可
-		padding-top: m.vw(40); // 上部余白を調整
+		padding-top: 0; // 上部余白を0に
 		padding-bottom: m.vw(40); // 下部余白
 	}
 
@@ -44,20 +44,32 @@
 		// モバイル対応 - 左揃えテキストメニュー
 		@include m.mq(md) {
 			flex-direction: column;
-			gap: m.vw(16);
+			gap: 0; // gapを削除してボーダー間の中央配置を最適化
 			width: 100%;
 			justify-content: flex-start;
 			align-items: flex-start;
+		}
+
+		// メニューアイテムのリンクも幅100%にする
+		.navigation-mobile__link {
+			@include m.mq(md) {
+				width: 100%;
+				display: flex;
+			}
 		}
 	}
 
 	&__item {
 		// Mobile navigation item styles
+		@include m.mq(md) {
+			width: 100%; // リストアイテムも幅100%に
+		}
 	}
 
 	&__link {
 		font-family: v.$ja-sans;
-		display: block;
+		display: flex; // アイコンとテキストを横並びに
+		align-items: center; // 垂直方向中央揃え
 		color: v.$text-color;
 		text-decoration: none;
 		font-weight: 400;
@@ -65,10 +77,15 @@
 
 		// モバイル対応 - シンプルなテキストリンクスタイル
 		@include m.mq(md) {
-			font-size: m.vw(18);
-			padding: m.vw(12) 0;
+			font-size: m.vw(16);
+			padding: m.vw(18) 0; // padding-topとbottomを増やして境界線間の中央に配置
 			text-align: left;
 			font-weight: 400;
+			position: relative; // 矢印の配置用
+			width: 100%; // 幅を100%に設定
+			border-bottom: 1px solid #d3d3d3; // 下部に境界線を追加
+			min-height: m.vw(52); // 最小高さを設定してボーダー間のスペースを確保
+			justify-content: flex-start; // コンテンツを左寄せに
 
 			&:hover {
 				color: v.$brand-blue;
@@ -85,17 +102,43 @@
 		}
 	}
 
+	// アイコンスタイル
+	&__icon {
+		@include m.mq(md) {
+			width: m.vw(16); // SP基準で計算される
+			height: m.vw(16);
+			flex-shrink: 0; // アイコンが縮まらないように
+			margin-right: m.vw(15); // アイコンとテキストの間隔
+		}
+
+		// サブメニュー用のアイコンも同じサイズに
+		&--sub {
+			@include m.mq(md) {
+				width: m.vw(16);
+				height: m.vw(16);
+				margin-right: m.vw(15); // アイコンとテキストの間隔
+			}
+		}
+	}
+
 	&__item--current &__link {
 		color: v.$brand-red;
 	}
 
-	// セパレーター（お役立ち情報とご予約相談の間）
-	&__separator {
+	// テキスト部分（中央で伸縮）
+	&__text {
 		@include m.mq(md) {
-			width: 100%;
-			height: 1px;
-			background: #e0e0e0;
-			margin: m.vw(25) auto m.vw(15) auto; // 上下の余白を調整
+			flex: 1; // 残りのスペースを全て使用
+		}
+	}
+
+	// 矢印アイコン（右端固定）
+	&__arrow {
+		@include m.mq(md) {
+			width: m.vw(6); // 矢印の幅を小さく
+			height: m.vw(10); // 矢印の高さを小さく
+			flex-shrink: 0; // 縮まないように
+			margin-left: auto; // 右端に配置
 		}
 	}
 
@@ -105,91 +148,100 @@
 			display: flex;
 			flex-direction: column;
 			width: 100%;
-			gap: m.vw(16); // メニューと同じgapを使用
+			gap: 0; // gapを削除してボーダー間の統一配置
+			margin-top: 0; // マージンも削除して統一感を保つ
 		}
-	}
 
-	// SP用テキストリンク（展開可能リンク用）
-	&__toggle {
-		@include m.mq(md) {
-			font-family: v.$ja-sans;
-			font-size: m.vw(18);
-			font-weight: 400;
-			color: v.$text-color;
-			text-decoration: none;
-			padding: m.vw(12) 0;
-			text-align: left;
-			background: none;
-			border: none;
-			cursor: pointer;
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			width: 100%;
+		// CTAエリアの最後のリンク（お問い合わせ）の境界線を削除
+		a:last-of-type {
+			@include m.mq(md) {
+				border-bottom: none !important;
+			}
+		}
 
-			&:hover {
-				color: v.$brand-blue;
+		// より具体的にお問い合わせリンクの境界線を削除
+		a[href*='studio-inquiry'] {
+			@include m.mq(md) {
+				border-bottom: none !important;
 			}
 		}
 	}
 
-	// SP用プラスボタン
-	&__plus {
-		@include m.mq(md) {
-			font-size: m.vw(20);
-			font-weight: bold;
-			color: v.$brand-blue;
-			transition: transform 0.3s ease;
-		}
-	}
-
-	// SP用展開可能エリア
-	&__expandable {
+	// 掲載希望の方へセクション
+	&__publication {
 		@include m.mq(md) {
 			width: 100%;
+			padding: m.vw(20) 0;
+			text-align: center;
 		}
 	}
 
-	// SP用サブメニュー
-	&__submenu {
-		@include m.mq(md) {
-			display: none;
-			flex-direction: column;
-			padding-left: m.vw(20);
-			margin-top: m.vw(8);
-			gap: m.vw(8);
-
-			&.is-open {
-				display: flex !important;
-				visibility: visible !important;
-				opacity: 1 !important;
-			}
-		}
-	}
-
-	// SP用サブリンク
-	&__sublink {
+	// 掲載希望の方へタイトル
+	&__publication-title {
 		@include m.mq(md) {
 			font-family: v.$ja-sans;
 			font-size: m.vw(16);
-			font-weight: 400;
+			font-weight: 600;
 			color: v.$text-color;
-			text-decoration: none;
-			padding: m.vw(8) 0;
-			text-align: left;
-			opacity: 0.8;
+			margin: 0 0 m.vw(15) 0;
+			text-align: center;
+			padding-bottom: m.vw(15);
+			border-bottom: 1px solid #d3d3d3;
+		}
+	}
 
-			&:hover {
-				color: v.$brand-blue;
-				opacity: 1;
+	// ボタンコンテナ
+	&__publication-buttons {
+		@include m.mq(md) {
+			display: flex;
+			gap: m.vw-sp(10);
+			justify-content: space-between;
+		}
+	}
+
+	// 掲載希望ボタン共通スタイル
+	&__publication-button {
+		@include m.mq(md) {
+			flex: 1;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: m.vw-sp(8);
+			padding: m.vw-sp(12) m.vw-sp(16);
+			text-decoration: none;
+			border-radius: m.vw-sp(5);
+			font-family: v.$ja-sans;
+			font-size: m.vw-sp(13);
+			font-weight: 500;
+			color: white;
+			transition: all 0.3s ease;
+
+			// 資料ダウンロードボタン
+			&--download {
+				background-color: #3498db;
+
+				&:hover {
+					background-color: darken(#3498db, 10%);
+				}
+			}
+
+			// お問い合わせボタン
+			&--inquiry {
+				background-color: #3f3f3f;
+
+				&:hover {
+					background-color: lighten(#3f3f3f, 10%);
+				}
 			}
 		}
 	}
 
-	// プラスボタンの回転アニメーション
-	&__toggle.is-open &__plus {
+	// 掲載希望ボタンアイコン
+	&__publication-icon {
 		@include m.mq(md) {
-			transform: rotate(45deg);
+			width: m.vw-sp(14);
+			height: m.vw-sp(14);
+			flex-shrink: 0;
 		}
 	}
 }

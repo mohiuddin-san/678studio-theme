@@ -15,6 +15,7 @@
 		overflow-x: hidden;
 	}
 
+
 	&__container {
 		margin: 0 auto;
 		// 統合vw()システムでpadding設定
@@ -25,13 +26,24 @@
 		position: relative;
 		overflow: visible; // モバイルナビゲーションが表示できるように
 		background: white; // 背景を明示的に設定
-		z-index: 9999; // モバイルメニューより前面に
+		z-index: 10000; // より高いz-indexに設定
+
+		// CSS変数でヘッダー高さを動的に設定
+		--header-height: calc(#{m.vw(30)} + #{m.vw(10)} + #{m.vw(50)}); // padding-top + padding-bottom + logo-height
 
 		// SP用 - 自動判定vw()でレスポンシブ対応
 		@include m.mq(md) {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			width: 100%;
 			padding: m.vw(20) m.vw(20) m.vw(20); // 下部パディングを増やしてロゴエリアを確保
 			justify-content: center;
 			border-bottom: 1px solid rgba(0, 0, 0, 0.05); // 薄い境界線で区切り
+			--header-height: calc(#{m.vw(20)} + #{m.vw(20)} + #{m.vw(40)}); // SP版のヘッダー高さ
+			background: white !important; // SPでも背景を強制的に白に
+			z-index: 10000; // 最前面に
 		}
 	}
 
@@ -74,7 +86,7 @@
 			border: none;
 			cursor: pointer;
 			padding: m.vw(6); // パディングも小さく（8→6）
-			z-index: 10000; // 最前面に配置（ヘッダーコンテナより上）
+			z-index: 10002; // ロゴより前面に配置
 		}
 	}
 
@@ -99,14 +111,14 @@
 			@include m.mq(md) {
 				display: flex;
 				position: fixed;
-				top: m.vw(120); // ヘッダー高さ分を十分確保
+				top: m.vw(80); // ヘッダーの高さ分下に配置
 				left: 0;
 				width: 100vw;
-				height: calc(100vh - #{m.vw(120)}); // ヘッダー分を除いた残りの高さ
+				height: calc(100vh - #{m.vw(80)}); // 画面の残り全体を使用
 				/* Safari 16.4+ support for dvh */
-				height: calc(100dvh - #{m.vw(120)});
+				height: calc(100dvh - #{m.vw(80)});
 				background: white;
-				z-index: 9998; // ヘッダーより少し下
+				z-index: 9998; // ヘッダーコンテナより下に配置
 				padding: 0;
 				overflow-y: auto;
 
@@ -125,6 +137,8 @@
 .branding {
 	&__logo {
 		display: block;
+		position: relative; // z-indexを確実に適用
+		z-index: 10001; // ヘッダーコンテナより前面に
 
 		@include m.mq(md) {
 			margin: 0 auto;
