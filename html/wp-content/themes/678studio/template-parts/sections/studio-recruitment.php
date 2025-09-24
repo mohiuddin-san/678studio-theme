@@ -13,6 +13,35 @@
     ]
   ]); ?>
 
+  <!-- Explanation Section -->
+  <div class="recruitment-explanation-section">
+    <h1 class="recruitment-explanation__title">掲載希望の写真館へ</h1>
+  </div>
+
+  <!-- Hero/Eyecatch Section -->
+  <div class="recruitment-hero-section">
+    <div class="recruitment-hero-grid">
+      <div class="recruitment-hero__image">
+        <!-- レスポンシブ画像 -->
+        <picture>
+          <source media="(max-width: 767px)" srcset="<?php echo get_template_directory_uri(); ?>/assets/images/dl-icatch-sp.jpg">
+          <img src="<?php echo get_template_directory_uri(); ?>/assets/images/dl-icatch.jpg" alt="シニア世代撮影">
+        </picture>
+      </div>
+      <div class="recruitment-hero__overlay">
+        <div class="recruitment-hero__logo">
+          <!-- ロゴ画像（headerと同じ） -->
+          <img src="<?php echo get_template_directory_uri(); ?>/assets/images/logo.svg" alt="678 Logo">
+        </div>
+        <div class="recruitment-hero__text">
+          <p>60代・70代・80代。<br>
+          シニア世代の撮影で、あなたの写真館に<br>
+          幅広い年代のお客さまを。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Download Content Section -->
   <div class="contact-content download-content">
     <div class="contact-header-container">
