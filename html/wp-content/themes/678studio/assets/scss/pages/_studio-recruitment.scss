@@ -3,6 +3,140 @@
 
 // Studio Recruitment Page Styles
 
+/* Studio Recruitment Specific Contact Section */
+.studio-recruitment .contact-section {
+	padding-bottom: m.vw(80);
+	overflow-x: hidden; // 横スクロール防止
+
+	@include m.mq(md) {
+		padding-bottom: m.vw-sp(60);
+	}
+}
+
+/* Explanation Section */
+.recruitment-explanation-section {
+	background: white;
+	text-align: center;
+}
+
+.recruitment-explanation__title {
+	color: #3f3f3f;
+	leading-trim: both;
+	text-edge: cap;
+	font-family: 'Noto Sans JP', sans-serif;
+	font-size: m.vw(39.06);
+	font-style: normal;
+	font-weight: 500;
+	padding: m.vw(120) 0;
+	margin: 0;
+
+	@include m.mq(md) {
+		color: #3f3f3f;
+		text-align: center;
+		leading-trim: both;
+		text-edge: cap;
+		font-family: 'Noto Sans JP', sans-serif;
+		font-size: m.vw-sp(24);
+		font-style: normal;
+		font-weight: 500;
+		line-height: 200%; /* 62.5px */
+		letter-spacing: m.vw-sp(3.125);
+		padding: m.vw-sp(80) 0;
+	}
+}
+
+/* Hero/Eyecatch Section */
+.recruitment-hero-section {
+	width: 100vw;
+	position: relative;
+	left: 50%;
+	margin-left: -50vw;
+}
+
+.recruitment-hero-grid {
+	position: relative;
+	width: 100%;
+	height: m.vw(480);
+	display: grid;
+	grid-template-areas: 'hero';
+	grid-template-columns: 1fr;
+	grid-template-rows: 1fr;
+
+	@include m.mq(md) {
+		width: 100%;
+		padding-bottom: m.vw-sp(60);
+		height: auto;
+	}
+}
+
+.recruitment-hero__image {
+	grid-area: hero;
+	width: 100%;
+	height: 100%;
+
+	picture {
+		width: 100%;
+		height: 100%;
+		display: block;
+	}
+
+	img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+	}
+}
+
+.recruitment-hero__overlay {
+	grid-area: hero;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	z-index: 2;
+	gap: m.vw(40);
+}
+
+.recruitment-hero__logo {
+	margin-bottom: m.vw(-60);
+
+	@include m.mq(md) {
+		margin-bottom: m.vw-sp(-60);
+	}
+
+	img {
+		height: m.vw(113.97);
+
+		@include m.mq(md) {
+			height: m.vw-sp(60);
+		}
+	}
+}
+
+.recruitment-hero__text {
+	text-align: center;
+	margin-bottom: m.vw(-60);
+	padding-top: m.vw(60);
+
+	@include m.mq(md) {
+		margin-bottom: m.vw-sp(-60);
+		padding-top: m.vw-sp(60);
+	}
+
+	p {
+		font-family: v.$ja-sans;
+		font-size: m.vw(20);
+		color: #3f3f3f;
+		line-height: 1.8;
+		margin: 0;
+
+		@include m.mq(md) {
+			font-size: m.vw(16);
+		}
+	}
+}
+
 /* Separate content sections */
 .download-content {
 	padding-bottom: 0;

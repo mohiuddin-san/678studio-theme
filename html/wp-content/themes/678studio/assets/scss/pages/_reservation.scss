@@ -7,9 +7,9 @@ $border-color: #547e8f;
 $highlight-color: #007bff;
 
 .contact-section {
-	background-color: #e9edf0;
 	width: 100%;
 	padding: 0 m.fs(120, 0.1);
+	@include m.auto-scale;
 
 	@include m.mq(md) {
 		padding: 0 m.fsm(20);
