@@ -42,15 +42,85 @@
     </div>
   </div>
 
-  <!-- Download Content Section -->
-  <div class="contact-content download-content">
-    <div class="contact-header-container">
-      <div class="contact-header">
-        <h2 class="contact-header__title">Studio Recruitment</h2>
+  <!-- About Section (ロクナナハチ撮影でできること) -->
+  <div class="recruitment-about-section">
+    <div class="recruitment-about-container">
+      <div class="recruitment-about__frame-left">
+        <!-- レスポンシブSVG -->
+        <picture>
+          <source media="(max-width: 767px)" srcset="<?php echo get_template_directory_uri(); ?>/assets/images/dl-about-upper-sp.svg">
+          <img src="<?php echo get_template_directory_uri(); ?>/assets/images/dl-about-left.svg" alt="">
+        </picture>
+      </div>
+
+      <div class="recruitment-about__content">
+        <!-- Item 1: Title -->
+        <h2 class="recruitment-about__title">ロクナナハチ撮影でできること</h2>
+
+        <!-- SP用モック画像（PCでは非表示） -->
+        <div class="recruitment-about__image-mobile">
+          <img src="<?php echo get_template_directory_uri(); ?>/assets/images/dl-about.jpg" alt="678撮影サイトのPC・スマホ表示例">
+        </div>
+
+        <!-- Item 2: テキストとモック横並び -->
+        <div class="recruitment-about__main">
+          <div class="recruitment-about__text">
+            <div class="recruitment-about__description">
+              <div class="recruitment-about__highlight">
+                <span>シニア撮影専用の集客サイトで</span>
+                <span>撮影したいお客様と</span>
+                <span>写真館をつなげます。</span>
+              </div>
+
+              <p>あなたの写真館の魅力を伝えるための<br>
+              専用ページをご用意しました。<br>
+              オフィシャルサイトへのリンク設置も可能です。<br>
+              ギャラリーに撮影した写真を掲載することで<br>
+              お客様に撮影イメージを伝え、集客につなげます。</p>
+            </div>
+          </div>
+
+          <div class="recruitment-about__image">
+            <img src="<?php echo get_template_directory_uri(); ?>/assets/images/dl-about.jpg" alt="678撮影サイトのPC・スマホ表示例">
+          </div>
+        </div>
+      </div>
+
+      <div class="recruitment-about__frame-right">
+        <!-- レスポンシブSVG -->
+        <picture>
+          <source media="(max-width: 767px)" srcset="<?php echo get_template_directory_uri(); ?>/assets/images/dl-about-bottom-sp.svg">
+          <img src="<?php echo get_template_directory_uri(); ?>/assets/images/dl-about-right.svg" alt="">
+        </picture>
       </div>
     </div>
-    <h1 class="contact__main-title">掲載希望の写真館へ</h1>
+  </div>
 
+  <!-- Merits Section (ロクナナハチ撮影の3つのメリット) -->
+  <div class="recruitment-merits-section">
+    <!-- Title Block -->
+    <div class="recruitment-merits__title-block">
+      <h2 class="recruitment-merits__title">ロクナナハチ撮影の3つのメリット</h2>
+    </div>
+
+    <!-- Cards Grid Container -->
+    <div class="recruitment-merits-container">
+      <div class="recruitment-merits__cards">
+        <div class="recruitment-merits__card">
+          <!-- カード内容は後で追加 -->
+        </div>
+        <div class="recruitment-merits__card">
+          <!-- カード内容は後で追加 -->
+        </div>
+        <div class="recruitment-merits__card">
+          <!-- カード内容は後で追加 -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Download Content Section -->
+  <div class="contact-content download-content">
     <!-- Download Section -->
     <div class="recruitment-download-section">
       <div class="contact-header-container">

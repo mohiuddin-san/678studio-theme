@@ -1,0 +1,244 @@
+@use '../base/mixins' as m;
+@use '../base/variables' as v;
+
+// Recruitment About Section Styles
+
+/* About Section (ロクナナハチ撮影でできること) */
+.recruitment-about-section {
+	padding: m.vw(120) 0 m.vw(80) 0;
+}
+
+.recruitment-about-container {
+	display: grid;
+	grid-template-columns: 1fr m.vw(990) 1fr;
+	align-items: start;
+	position: relative;
+
+	@include m.mq(md) {
+		display: block;
+	}
+}
+
+.recruitment-about__frame-left {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+
+	img {
+		width: auto;
+		height: m.vw(462);
+
+		@include m.mq(md) {
+			height: m.vw-sp(34);
+		}
+	}
+
+	@include m.mq(md) {
+		justify-content: center;
+		margin-bottom: m.vw-sp(20);
+	}
+}
+
+.recruitment-about__frame-right {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+
+	img {
+		width: auto;
+		height: m.vw(462);
+
+		@include m.mq(md) {
+			height: m.vw-sp(34);
+		}
+	}
+
+	@include m.mq(md) {
+		justify-content: center;
+		margin-top: m.vw-sp(20);
+	}
+}
+
+.recruitment-about__content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: m.vw(40);
+}
+
+.recruitment-about__title {
+	display: inline-block;
+	background: #57aace;
+	color: white;
+	font-family: 'Noto Sans JP', sans-serif;
+	font-size: m.vw(25);
+	font-weight: 500;
+	padding: m.vw(12) m.vw(32);
+	border-radius: 9999px;
+	text-align: center;
+	margin: 0;
+
+	@include m.mq(md) {
+		font-size: m.vw-sp(20);
+		padding: m.vw-sp(8) m.vw-sp(24);
+	}
+}
+
+.recruitment-about__main {
+	display: flex;
+	gap: m.vw(60);
+	align-items: center;
+	width: 100%;
+
+	@include m.mq(md) {
+		flex-direction: column;
+		gap: m.vw-sp(40);
+		align-items: stretch;
+	}
+}
+
+.recruitment-about__text {
+	flex: 1;
+}
+
+.recruitment-about__description {
+	p {
+		font-family: v.$ja-sans;
+		font-size: m.vw(16);
+		color: #333;
+		line-height: 2em;
+		margin-bottom: m.vw(24);
+
+		@include m.mq(md) {
+			font-size: m.vw-sp(14);
+		}
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+}
+
+.recruitment-about__highlight {
+	display: flex;
+	flex-direction: column;
+	gap: m.vw(16);
+	margin-bottom: m.vw(24);
+	align-items: flex-start;
+
+	@include m.mq(md) {
+		margin-bottom: m.vw(30);
+	}
+
+	span {
+		display: inline;
+		background: #f5e6df;
+		color: #3f3f3f;
+		font-family: 'Noto Sans JP', sans-serif;
+		font-size: m.vw(25);
+		font-weight: 500;
+		padding: 0 m.vw(16);
+
+		@include m.mq(md) {
+			font-size: m.vw-sp(18);
+			padding: 0 m.vw-sp(12);
+		}
+	}
+}
+
+// SP用モック画像（タイトル直下）
+.recruitment-about__image-mobile {
+	display: none;
+	justify-content: center;
+	align-items: center;
+	margin-bottom: m.vw-sp(24);
+
+	@include m.mq(md) {
+		display: flex;
+		padding-top: m.vw(30);
+	}
+
+	img {
+		width: 100%;
+		max-width: m.vw-sp(300);
+		height: auto;
+		border-radius: m.vw-sp(8);
+	}
+}
+
+.recruitment-about__image {
+	flex: 1;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	@include m.mq(md) {
+		display: none;
+	}
+
+	img {
+		width: 100%;
+		height: auto;
+		border-radius: m.vw(8);
+	}
+}
+
+// Merits Section (ロクナナハチ撮影の3つのメリット)
+.recruitment-merits-section {
+	padding: m.vw(120) 0 m.vw(80) 0;
+}
+
+.recruitment-merits__title-block {
+	text-align: center;
+	margin-bottom: m.vw(60);
+
+	@include m.mq(md) {
+		margin-bottom: m.vw-sp(40);
+	}
+}
+
+.recruitment-merits__title {
+	display: inline-block;
+	background: #57aace;
+	color: white;
+	font-family: 'Noto Sans JP', sans-serif;
+	font-size: m.vw(25);
+	font-weight: 500;
+	padding: m.vw(12) m.vw(32);
+	border-radius: 9999px;
+	text-align: center;
+	margin: 0;
+
+	@include m.mq(md) {
+		font-size: m.vw-sp(20);
+		padding: m.vw-sp(8) m.vw-sp(24);
+	}
+}
+
+.recruitment-merits-container {
+	margin: 0 auto;
+}
+
+.recruitment-merits__cards {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: m.vw(24);
+
+	@include m.mq(md) {
+		grid-template-columns: 1fr;
+		gap: m.vw-sp(20);
+	}
+}
+
+.recruitment-merits__card {
+	background: #f5f5f5;
+	border-radius: m.vw(16);
+	padding: m.vw(24);
+	min-height: m.vw(400);
+
+	@include m.mq(md) {
+		border-radius: m.vw-sp(12);
+		padding: m.vw-sp(20);
+		min-height: m.vw-sp(300);
+	}
+}
