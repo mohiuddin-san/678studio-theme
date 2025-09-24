@@ -315,3 +315,339 @@
 		text-align: left;
 	}
 }
+
+// Registration Fee Section
+.recruitment-fee-section {
+	width: 100vw;
+	position: relative;
+	left: 50%;
+	margin-left: -50vw;
+	min-height: m.vw(269);
+	padding-bottom: m.vw(60);
+
+	@include m.mq(md) {
+		min-height: auto;
+		margin-left: -50vw;
+		padding: m.vw-sp(40) 0 m.vw-sp(50) 0;
+	}
+}
+
+.recruitment-fee__grid {
+	// g() function implementation
+	display: grid;
+	grid-template-columns: 1fr m.vw(736) 1fr;
+	grid-template-rows: m.vw(269) 1fr;
+	width: 100%;
+	overflow: visible;
+	position: relative;
+
+	@include m.mq(md) {
+		display: block;
+		padding: 0 m.vw-sp(20);
+	}
+}
+
+.recruitment-fee__item-1 {
+	// gitem() function implementation for background
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: auto;
+	z-index: 1;
+	display: flex;
+	align-items: flex-start;
+	justify-content: center;
+
+	@include m.mq(md) {
+		display: none; // モバイルでは背景SVGを非表示
+	}
+
+	img {
+		width: 100%;
+		height: auto;
+		display: block;
+	}
+}
+
+.recruitment-fee__item-2 {
+	// gitem() function implementation for content
+	grid-column: 2 / 3;
+	grid-row: 1 / -1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: m.vw(40);
+	padding: m.vw(40) 0;
+	position: relative;
+	z-index: 2;
+
+	@include m.mq(md) {
+		grid-column: auto;
+		grid-row: auto;
+		padding: 0;
+		gap: m.vw-sp(30);
+		position: static;
+		z-index: auto;
+	}
+}
+
+.recruitment-fee__card {
+	// カードの背景スタイル
+	background: #F5E2CF;
+	border-radius: m.vw(30);
+	padding: m.vw(40);
+	width: 100%;
+	height: m.vw(269);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	gap: m.vw(20);
+	position: relative;
+
+	@include m.mq(md) {
+		border-radius: m.vw-sp(20);
+		padding: m.vw-sp(30);
+		height: auto;
+		min-height: m.vw-sp(200);
+		gap: m.vw-sp(16);
+	}
+}
+
+.recruitment-fee__card-header {
+	// 青い背景のヘッダーブロック
+	display: flex;
+	width: m.vw(483);
+	height: m.vw(66);
+	padding: m.vw(24) m.vw(32);
+	justify-content: center;
+	align-items: center;
+	gap: m.vw(10);
+	flex-shrink: 0;
+	border-radius: m.vw(30);
+	background: #57AACE;
+
+	@include m.mq(md) {
+		width: 90%;
+		max-width: m.vw-sp(300);
+		height: m.vw-sp(50);
+		padding: m.vw-sp(16) m.vw-sp(24);
+		border-radius: m.vw-sp(25);
+	}
+}
+
+.recruitment-fee__card-title {
+	color: #FFF;
+	leading-trim: both;
+	text-edge: cap;
+	font-family: 'Noto Sans JP', sans-serif;
+	font-size: m.vw(25);
+	font-style: normal;
+	font-weight: 700;
+	line-height: 200%;
+	letter-spacing: m.vw(5);
+	margin: 0;
+
+	@include m.mq(md) {
+		font-size: m.vw-sp(18);
+		letter-spacing: m.vw-sp(3);
+	}
+}
+
+.recruitment-fee__card-content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0;
+}
+
+.recruitment-fee__card-subtitle {
+	color: #3F3F3F;
+	text-align: center;
+	leading-trim: both;
+	text-edge: cap;
+	font-family: 'Noto Sans JP', sans-serif;
+	font-size: m.vw(20);
+	font-style: normal;
+	font-weight: 700;
+	line-height: 200%;
+	letter-spacing: m.vw(2);
+	margin: 0;
+
+	@include m.mq(md) {
+		font-size: m.vw-sp(16);
+		letter-spacing: m.vw-sp(1.5);
+	}
+}
+
+.recruitment-fee__price {
+	display: flex;
+	align-items: baseline;
+	justify-content: center;
+	gap: m.vw(4);
+	margin-top: m.vw(-24);
+}
+
+.recruitment-fee__price-number {
+	color: #3F3F3F;
+	leading-trim: both;
+	text-edge: cap;
+	font-family: 'Noto Sans JP', sans-serif;
+	font-size: m.vw(48.83);
+	font-style: normal;
+	font-weight: 700;
+	line-height: 200%;
+
+	@include m.mq(md) {
+		font-size: m.vw-sp(32);
+	}
+}
+
+.recruitment-fee__price-unit {
+	color: #3F3F3F;
+	leading-trim: both;
+	text-edge: cap;
+	font-family: 'Noto Sans JP', sans-serif;
+	font-size: m.vw(31.25);
+	font-style: normal;
+	font-weight: 700;
+	line-height: 200%;
+
+	@include m.mq(md) {
+		font-size: m.vw-sp(20);
+	}
+}
+
+.recruitment-fee__price-tax {
+	color: #3F3F3F;
+	leading-trim: both;
+	text-edge: cap;
+	font-family: 'Noto Sans JP', sans-serif;
+	font-size: m.vw(20);
+	font-style: normal;
+	font-weight: 700;
+	line-height: 200%;
+	margin-right: m.vw(-1);
+
+	@include m.mq(md) {
+		font-size: m.vw-sp(14);
+		margin-right: m.vw-sp(-1);
+	}
+}
+
+.recruitment-fee__price-slash {
+	color: #3F3F3F;
+	leading-trim: both;
+	text-edge: cap;
+	font-family: 'Noto Sans JP', sans-serif;
+	font-size: m.vw(20);
+	font-style: normal;
+	font-weight: 700;
+	line-height: 200%;
+	margin-right: m.vw(3);
+
+	@include m.mq(md) {
+		font-size: m.vw-sp(14);
+		margin-right: m.vw-sp(3);
+	}
+}
+
+.recruitment-fee__price-year {
+	color: #3F3F3F;
+	leading-trim: both;
+	text-edge: cap;
+	font-family: 'Noto Sans JP', sans-serif;
+	font-size: m.vw(20);
+	font-style: normal;
+	font-weight: 700;
+	line-height: 200%;
+
+	@include m.mq(md) {
+		font-size: m.vw-sp(14);
+	}
+}
+
+.recruitment-fee__illustrations {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: m.vw(110);
+	pointer-events: none;
+
+	@include m.mq(md) {
+		height: m.vw-sp(80);
+	}
+}
+
+.recruitment-fee__illustration-left {
+	position: absolute;
+	bottom: m.vw(-6);
+	left: m.vw(82);
+
+	@include m.mq(md) {
+		bottom: m.vw-sp(-6);
+		left: m.vw-sp(10);
+	}
+
+	img {
+		height: m.vw(110);
+		width: auto;
+
+		@include m.mq(md) {
+			height: m.vw-sp(50);
+		}
+	}
+}
+
+.recruitment-fee__illustration-right {
+	position: absolute;
+	bottom: m.vw(-6);
+	right: m.vw(82);
+
+	@include m.mq(md) {
+		bottom: m.vw-sp(-6);
+		right: m.vw-sp(20);
+	}
+
+	img {
+		height: m.vw(110);
+		width: auto;
+
+		@include m.mq(md) {
+			height: m.vw-sp(50);
+		}
+	}
+}
+
+.recruitment-fee__details {
+	display: flex;
+	flex-direction: column;
+	gap: m.vw(16);
+	width: 100%;
+
+	@include m.mq(md) {
+		gap: m.vw-sp(12);
+	}
+}
+
+.recruitment-fee__detail-item {
+	color: #3F3F3F;
+	font-family: 'Noto Sans JP', sans-serif;
+	font-size: m.vw(16);
+	font-weight: 400;
+	line-height: 180%;
+	margin: 0;
+	text-align: left;
+
+	@include m.mq(md) {
+		font-size: m.vw-sp(14);
+		line-height: 170%;
+	}
+}
+
+.recruitment-fee__bullet {
+	color: #F8AB9B;
+}

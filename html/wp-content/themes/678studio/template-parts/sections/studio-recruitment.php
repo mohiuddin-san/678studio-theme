@@ -161,6 +161,54 @@
     </div>
   </div>
 
+  <!-- Registration Fee Section -->
+  <div class="recruitment-fee-section">
+    <div class="recruitment-fee__grid">
+      <div class="recruitment-fee__item-1">
+        <!-- Background SVG -->
+        <img src="<?php echo get_template_directory_uri(); ?>/assets/images/cost-bg.svg" alt="">
+      </div>
+      <div class="recruitment-fee__item-2">
+        <!-- Fee Card -->
+        <div class="recruitment-fee__card">
+          <div class="recruitment-fee__card-header">
+            <span class="recruitment-fee__card-title">登録費用</span>
+          </div>
+          <div class="recruitment-fee__card-content">
+            <h3 class="recruitment-fee__card-subtitle">年間登録費</h3>
+            <div class="recruitment-fee__price">
+              <span class="recruitment-fee__price-number">30,000</span>
+              <span class="recruitment-fee__price-unit">円</span>
+              <span class="recruitment-fee__price-tax">（税込）</span><span class="recruitment-fee__price-slash">／</span><span class="recruitment-fee__price-year">年</span>
+            </div>
+          </div>
+          <!-- Illustrations -->
+          <div class="recruitment-fee__illustrations">
+            <div class="recruitment-fee__illustration-left">
+              <img src="<?php echo get_template_directory_uri(); ?>/assets/images/cost-left-lady.svg" alt="">
+            </div>
+            <div class="recruitment-fee__illustration-right">
+              <img src="<?php echo get_template_directory_uri(); ?>/assets/images/cost-right-men.svg" alt="">
+            </div>
+          </div>
+        </div>
+
+        <!-- Fee Details Text -->
+        <div class="recruitment-fee__details">
+          <p class="recruitment-fee__detail-item">
+            <span class="recruitment-fee__bullet">●</span>登録や運営にあたり、必要となる費用は「年間登録費」のみです。
+          </p>
+          <p class="recruitment-fee__detail-item">
+            <span class="recruitment-fee__bullet">●</span>成果報酬や仲介手数料などを別途お支払いいただく必要はございません。
+          </p>
+          <p class="recruitment-fee__detail-item">
+            <span class="recruitment-fee__bullet">●</span>同一グループ内で複数の店舗をご登録いただく場合、店舗ごとに年間登録費が必要となります。
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Download Content Section -->
   <div class="contact-content download-content">
     <!-- Download Section -->
