@@ -107,13 +107,55 @@
     <div class="recruitment-merits-container">
       <div class="recruitment-merits__cards">
         <div class="recruitment-merits__card">
-          <!-- カード内容は後で追加 -->
+          <!-- Card 01: シニア世代のお客様が増える -->
+          <div class="recruitment-merits__card-icon">
+            <img src="<?php echo get_template_directory_uri(); ?>/assets/images/adv-01.svg" alt="">
+          </div>
+          <h3 class="recruitment-merits__card-title">
+            シニア世代の<br>
+            お客様が増える
+          </h3>
+          <div class="recruitment-merits__card-illustration">
+            <img src="<?php echo get_template_directory_uri(); ?>/assets/images/adv-01-illust.svg" alt="">
+          </div>
+          <p class="recruitment-merits__card-text">
+            これまで写真館を利用する機会が少なかったシニア層の新規集客が見込まれます。<br>
+            従来のファミリー層や子ども向け撮影に加え、新たな顧客層としてシニア層を取り込むことで、ターゲット層の幅が広がり、来店数全体の底上げや売上拡大にもつながります。
+          </p>
         </div>
         <div class="recruitment-merits__card">
-          <!-- カード内容は後で追加 -->
+          <!-- Card 02: 既存客へのアプローチができる -->
+          <div class="recruitment-merits__card-icon">
+            <img src="<?php echo get_template_directory_uri(); ?>/assets/images/adv-02.svg" alt="">
+          </div>
+          <h3 class="recruitment-merits__card-title">
+            既存客への<br>
+            アプローチができる
+          </h3>
+          <div class="recruitment-merits__card-illustration">
+            <img src="<?php echo get_template_directory_uri(); ?>/assets/images/adv-02-illust.svg" alt="">
+          </div>
+          <p class="recruitment-merits__card-text">
+            すでに写真館をご利用いただいている既存のお客様へのアプローチも可能です。<br>
+            たとえば、七五三などでお子さまの撮影に訪れた親御さまに対して、「ご両親への写真撮影をプレゼントしてみませんか？」といった、シニア世代に向けた新たなご提案が行えます。
+          </p>
         </div>
         <div class="recruitment-merits__card">
-          <!-- カード内容は後で追加 -->
+          <!-- Card 03: ベテラン従業員の経験が活きる -->
+          <div class="recruitment-merits__card-icon">
+            <img src="<?php echo get_template_directory_uri(); ?>/assets/images/adv-03.svg" alt="">
+          </div>
+          <h3 class="recruitment-merits__card-title">
+            ベテラン従業員の<br>
+            経験が活きる
+          </h3>
+          <div class="recruitment-merits__card-illustration">
+            <img src="<?php echo get_template_directory_uri(); ?>/assets/images/adv-illust-03.svg" alt="">
+          </div>
+          <p class="recruitment-merits__card-text">
+            これまでに培ってきた熟練の撮影技術や高い接客力を活かし、シニア世代への対応を通じて、ベテラン従業員が新たに活躍できる場を創出します。<br>
+            年齢を重ねても第一線で活躍できる、キャリア支援の仕組みとしても機能します。
+          </p>
         </div>
       </div>
     </div>
