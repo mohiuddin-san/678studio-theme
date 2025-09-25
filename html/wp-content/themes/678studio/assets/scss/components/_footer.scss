@@ -57,9 +57,9 @@
 	}
 
 	&__logo {
-		margin-bottom: m.f(40);
+		margin-bottom: m.f(20);
 		img {
-			height: m.f(60);
+			height: m.f(50);
 			width: auto;
 		}
 	}
@@ -76,8 +76,7 @@
 	&__nav {
 		width: 100%;
 		margin-bottom: m.f(20);
-		padding-top: m.f(40);
-		border-top: 1px solid #d0d5da;
+		padding-top: m.f(20);
 
 		@include m.mq(md) {
 			margin-bottom: m.f(15);
@@ -86,15 +85,27 @@
 	}
 
 	&__nav-grid {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: m.f(40);
 		max-width: m.f(900);
 		margin: 0 auto;
+	}
+
+	&__nav-desktop {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: m.f(40);
 
 		@include m.mq(md) {
+			display: none;
+		}
+	}
+
+	&__nav-mobile {
+		display: none;
+
+		@include m.mq(md) {
+			display: grid;
 			grid-template-columns: repeat(2, 1fr);
-			gap: m.f(30);
+			gap: 0 m.f(20);
 		}
 	}
 
@@ -106,7 +117,15 @@
 		position: relative;
 
 		@include m.mq(md) {
-			gap: m.f(10);
+			gap: 0; // モバイルではgapを0に（境界線で区切るため）
+			align-self: start; // 各列を上端に揃える
+		}
+
+		// 企業情報セクション
+		&--company {
+			@include m.mq(md) {
+				margin-top: m.f(20); // 上部に余白のみ追加
+			}
 		}
 
 		// PC版での縦線（列間の区切り）
@@ -135,11 +154,28 @@
 		text-decoration: none;
 		border-bottom: 1px solid #e0e5ea;
 		width: 100%;
+		display: flex;
+		align-items: center;
+		gap: m.f(6);
 
 		@include m.mq(md) {
 			font-size: m.f(12);
-			margin-bottom: m.f(10);
-			padding-bottom: m.f(6);
+			margin-bottom: 0; // モバイルでは下マージンを削除
+			padding: m.f(18) 0; // リンクと同じパディング
+			border-bottom: 1px solid #d3d3d3; // リンクと同じ境界線
+			min-height: m.f(52); // リンクと同じ高さ
+		}
+	}
+
+	&__nav-icon {
+		width: m.f(16);
+		height: m.f(16);
+		flex-shrink: 0;
+		color: #57aace;
+
+		@include m.mq(md) {
+			width: m.f(14);
+			height: m.f(14);
 		}
 	}
 
@@ -154,9 +190,16 @@
 		position: relative;
 		overflow: hidden;
 		display: inline-block;
+		box-shadow: none;
 
 		@include m.mq(md) {
 			font-size: m.f(14);
+			width: 100%;
+			padding: m.f(18) 0; // 上下パディングで境界線間の中央配置
+			border-bottom: 1px solid #d3d3d3; // モバイル版で下線を追加
+			display: flex;
+			align-items: center; // 垂直中央揃え
+			min-height: m.f(52); // ナビゲーションと同じ高さ
 		}
 
 		// 下線アニメーション用の擬似要素
@@ -183,6 +226,7 @@
 
 		&:hover {
 			color: #57aace;
+			box-shadow: none !important;
 		}
 
 		&--indent {
@@ -206,7 +250,6 @@
 		background-color: #fff;
 		padding: m.f(44) 0;
 		text-align: center;
-		border-top: 1px solid #d0d5da;
 	}
 
 	// Copyright

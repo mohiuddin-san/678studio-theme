@@ -429,11 +429,11 @@ $structured_data = array(
     'dateModified' => get_the_modified_date('c'),
     'author' => array(
         '@type' => 'Organization',
-        'name' => '678 Studio'
+        'name' => 'ロクナナハチ(678)'
     ),
     'publisher' => array(
         '@type' => 'Organization',
-        'name' => '678 Studio',
+        'name' => 'ロクナナハチ(678)',
         'logo' => array(
             '@type' => 'ImageObject',
             'url' => get_theme_file_uri('/assets/images/logo.png')

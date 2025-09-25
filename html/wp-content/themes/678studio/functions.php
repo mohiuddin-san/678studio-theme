@@ -2233,3 +2233,80 @@ function studio_shop_admin_script() {
 }
 add_action('admin_footer-post.php', 'studio_shop_admin_script');
 add_action('admin_footer-post-new.php', 'studio_shop_admin_script');
+
+// Cookie Consent Script
+function enqueue_cookie_consent_script() {
+    wp_enqueue_script(
+        'cookie-consent',
+        get_template_directory_uri() . '/assets/js/cookie-consent.js',
+        [],
+        '1.0.0',
+        true // Load in footer
+    );
+}
+add_action('wp_enqueue_scripts', 'enqueue_cookie_consent_script');
+
+// Header Height Manager Script
+function enqueue_header_height_manager() {
+    wp_enqueue_script(
+        'header-height-manager',
+        get_template_directory_uri() . '/assets/js/header-height-manager.js',
+        [],
+        '1.0.0',
+        false // Load in head for early execution
+    );
+}
+add_action('wp_enqueue_scripts', 'enqueue_header_height_manager', 5);
+
+// AJAX handler for form submissions - DISABLED to allow plugin handler to work
+// function siaes_submit_form_handler() {
+//     // Log form submission attempt
+//     siaes_debug_log('=== Theme AJAX handler triggered ===');
+//     siaes_debug_log('POST data: ' . print_r($_POST, true));
+//
+//     // Verify nonce (temporarily more lenient for debugging)
+//     if (!empty($_POST['nonce']) && !wp_verify_nonce($_POST['nonce'], 'siaes_form_nonce')) {
+//         siaes_debug_log('Nonce verification failed');
+//         wp_die(json_encode(['success' => false, 'message' => 'セキュリティチェックに失敗しました。']));
+//     }
+//
+//     // Log form submission attempt
+//     siaes_debug_log('Form submission received:', $_POST);
+//
+//     try {
+//         // Get form data
+//         $page_id = sanitize_text_field($_POST['page_id'] ?? '');
+//         $form_data = [];
+//
+//         // Extract all form fields
+//         foreach ($_POST as $key => $value) {
+//             if (!in_array($key, ['action', 'nonce', 'page_id'])) {
+//                 $form_data[$key] = sanitize_textarea_field($value);
+//             }
+//         }
+//
+//         siaes_debug_log('Processed form data:', $form_data);
+//
+//         // Here you would normally process the form data
+//         // (save to database, send email, etc.)
+//
+//         // For now, just return success
+//         wp_die(json_encode([
+//             'success' => true,
+//             'message' => 'フォームが正常に送信されました。ありがとうございます。'
+//         ]));
+//
+//     } catch (Exception $e) {
+//         siaes_debug_log('Form submission error:', $e->getMessage());
+//         wp_die(json_encode([
+//             'success' => false,
+//             'message' => '送信に失敗しました。しばらく時間をおいて再度お試しください。'
+//         ]));
+//     }
+// }
+// // Remove plugin's form handler and add ours - DISABLED
+// // remove_action('wp_ajax_siaes_submit_form', 'siaes_handle_form_submission');
+// // remove_action('wp_ajax_nopriv_siaes_submit_form', 'siaes_handle_form_submission');
+// // add_action('wp_ajax_siaes_submit_form', 'siaes_submit_form_handler', 20);
+// // add_action('wp_ajax_nopriv_siaes_submit_form', 'siaes_submit_form_handler', 20);
+

@@ -145,6 +145,7 @@ $highlight-color: #007bff;
 		border-radius: m.fs(8);
 		width: 100%;
 		box-sizing: border-box;
+		margin-bottom: m.vw(60);
 
 		@include m.mq(md) {
 			padding: m.fsm(44) m.fsm(20);
