@@ -422,6 +422,268 @@ add_action('wp_ajax_nopriv_get_gallery_studios', 'ajax_get_gallery_studios');
 add_action('wp_ajax_studio_search', 'ajax_studio_search');
 add_action('wp_ajax_nopriv_studio_search', 'ajax_studio_search');
 
+/**
+ * Secret Studio Recruitment Management
+ */
+function studio_secret_admin_menu() {
+    add_options_page(
+        'シークレット募集設定',
+        'シークレット募集設定',
+        'manage_options',
+        'studio-secret-settings',
+        'studio_secret_settings_page'
+    );
+}
+add_action('admin_menu', 'studio_secret_admin_menu');
+
+// 申し込み管理メニューの追加
+function studio_applications_admin_menu() {
+    add_management_page(
+        '申し込み管理',
+        '申し込み管理',
+        'manage_options',
+        'studio-applications',
+        'studio_applications_page'
+    );
+}
+add_action('admin_menu', 'studio_applications_admin_menu');
+
+function studio_applications_page() {
+    if (!current_user_can('manage_options')) {
+        wp_die('権限がありません');
+    }
+
+    // 申し込みデータを取得（プラグインからのデータ）
+    $submissions = get_option('siaes_submissions', []);
+
+    // フィルタ処理
+    $filter = isset($_GET['filter']) ? $_GET['filter'] : 'all';
+    $filtered_submissions = [];
+
+    foreach ($submissions as $submission) {
+        $source_type = isset($submission['source_type']) ? $submission['source_type'] : 'regular';
+
+        if ($filter === 'all' ||
+            ($filter === 'secret' && $source_type === 'secret') ||
+            ($filter === 'regular' && $source_type === 'regular')) {
+            $filtered_submissions[] = $submission;
+        }
+    }
+
+    ?>
+    <div class="wrap">
+        <h1>申し込み管理</h1>
+
+        <div class="tablenav top">
+            <div class="alignleft actions">
+                <select name="filter" onchange="location.href='<?php echo admin_url('tools.php?page=studio-applications'); ?>&filter=' + this.value;">
+                    <option value="all" <?php selected($filter, 'all'); ?>>すべて表示</option>
+                    <option value="regular" <?php selected($filter, 'regular'); ?>>通常ページ</option>
+                    <option value="secret" <?php selected($filter, 'secret'); ?>>シークレットページ</option>
+                </select>
+            </div>
+        </div>
+
+        <?php if (!empty($filtered_submissions)): ?>
+            <table class="wp-list-table widefat fixed striped">
+                <thead>
+                    <tr>
+                        <th>申し込み日時</th>
+                        <th>お名前</th>
+                        <th>メールアドレス</th>
+                        <th>種別</th>
+                        <th>ページ</th>
+                        <th>詳細</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach (array_reverse($filtered_submissions) as $index => $submission):
+                        $source_type = isset($submission['source_type']) ? $submission['source_type'] : 'regular';
+                        $page_slug = isset($submission['page_slug']) ? $submission['page_slug'] : 'unknown';
+                    ?>
+                        <tr>
+                            <td><?php echo esc_html($submission['timestamp'] ?? 'N/A'); ?></td>
+                            <td><?php echo esc_html($submission['contact_name'] ?? $submission['name'] ?? 'N/A'); ?></td>
+                            <td><?php echo esc_html($submission['email_address'] ?? $submission['email'] ?? 'N/A'); ?></td>
+                            <td>
+                                <?php if ($source_type === 'secret'): ?>
+                                    <span class="secret-badge">🔐 シークレット</span>
+                                <?php else: ?>
+                                    <span class="regular-badge">通常</span>
+                                <?php endif; ?>
+                            </td>
+                            <td><?php echo esc_html($page_slug); ?></td>
+                            <td>
+                                <button type="button" class="button" onclick="showSubmissionDetails(<?php echo $index; ?>)">詳細表示</button>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <p>申し込みデータがありません。</p>
+        <?php endif; ?>
+
+        <!-- 詳細表示モーダル -->
+        <div id="submission-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999;">
+            <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; max-width:600px; max-height:80%; overflow-y:auto; border-radius:5px;">
+                <h3>申し込み詳細</h3>
+                <div id="submission-details"></div>
+                <button type="button" class="button" onclick="document.getElementById('submission-modal').style.display='none'">閉じる</button>
+            </div>
+        </div>
+
+        <script>
+        const submissions = <?php echo json_encode(array_values($filtered_submissions)); ?>;
+
+        function showSubmissionDetails(index) {
+            const submission = submissions[index];
+            let details = '<table class="form-table">';
+
+            for (const [key, value] of Object.entries(submission)) {
+                if (key !== 'timestamp' && value && value !== '') {
+                    const label = getFieldLabel(key);
+                    details += `<tr><th>${label}</th><td>${escapeHtml(value)}</td></tr>`;
+                }
+            }
+
+            details += '</table>';
+            document.getElementById('submission-details').innerHTML = details;
+            document.getElementById('submission-modal').style.display = 'block';
+        }
+
+        function getFieldLabel(key) {
+            const labels = {
+                'contact_name': 'お名前',
+                'contact_kana': 'フリガナ',
+                'company_name': '法人名',
+                'phone_number': '電話番号',
+                'email_address': 'メールアドレス',
+                'website_url': 'WEBサイト',
+                'inquiry_details': 'お問い合わせ内容',
+                'source_type': '申し込み種別',
+                'page_slug': 'ページ'
+            };
+            return labels[key] || key;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        </script>
+
+        <style>
+        .secret-badge {
+            background: #e74c3c;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .regular-badge {
+            background: #95a5a6;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        </style>
+    </div>
+    <?php
+}
+
+function studio_secret_settings_page() {
+    if (!current_user_can('manage_options')) {
+        wp_die('権限がありません');
+    }
+
+    // 設定保存処理
+    if ($_POST && isset($_POST['studio_secret_nonce']) && wp_verify_nonce($_POST['studio_secret_nonce'], 'studio_secret_settings')) {
+        if (isset($_POST['studio_secret_password']) && !empty($_POST['studio_secret_password'])) {
+            update_option('studio_secret_password', sanitize_text_field($_POST['studio_secret_password']));
+            echo '<div class="notice notice-success"><p>パスワードを更新しました。</p></div>';
+        }
+
+        if (isset($_POST['clear_access_log'])) {
+            delete_option('studio_secret_access_log');
+            echo '<div class="notice notice-success"><p>アクセスログをクリアしました。</p></div>';
+        }
+    }
+
+    $current_password = get_option('studio_secret_password', 'recruit2024special');
+    $access_log = get_option('studio_secret_access_log', []);
+    ?>
+    <div class="wrap">
+        <h1>シークレット募集ページ設定</h1>
+
+        <form method="post" action="">
+            <?php wp_nonce_field('studio_secret_settings', 'studio_secret_nonce'); ?>
+
+            <table class="form-table">
+                <tr>
+                    <th scope="row">アクセスパスワード</th>
+                    <td>
+                        <input type="text" name="studio_secret_password" value="<?php echo esc_attr($current_password); ?>" class="regular-text">
+                        <p class="description">シークレットページにアクセスするためのパスワードです。</p>
+                    </td>
+                </tr>
+            </table>
+
+            <?php submit_button('設定を保存'); ?>
+        </form>
+
+        <h2>アクセス情報</h2>
+        <p><strong>シークレットページURL:</strong> <code><?php echo home_url('/studio-recruitment-secret/'); ?></code></p>
+
+        <h3>アクセスログ</h3>
+        <?php if (!empty($access_log)): ?>
+            <table class="wp-list-table widefat fixed striped">
+                <thead>
+                    <tr>
+                        <th>日時</th>
+                        <th>IPアドレス</th>
+                        <th>ステータス</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    // 最新10件のログを表示
+                    $recent_logs = array_slice(array_reverse($access_log), 0, 10);
+                    foreach ($recent_logs as $log): ?>
+                        <tr>
+                            <td><?php echo esc_html($log['timestamp']); ?></td>
+                            <td><?php echo esc_html($log['ip_address']); ?></td>
+                            <td>
+                                <span class="<?php echo $log['status'] === 'success' ? 'success' : 'failed'; ?>">
+                                    <?php echo $log['status'] === 'success' ? '✓ 成功' : '✗ 失敗'; ?>
+                                </span>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+
+            <form method="post" action="" style="margin-top: 20px;">
+                <?php wp_nonce_field('studio_secret_settings', 'studio_secret_nonce'); ?>
+                <input type="hidden" name="clear_access_log" value="1">
+                <?php submit_button('アクセスログをクリア', 'delete', '', false, array('onclick' => 'return confirm("アクセスログをクリアしてもよろしいですか？");')); ?>
+            </form>
+        <?php else: ?>
+            <p>アクセスログがありません。</p>
+        <?php endif; ?>
+
+        <style>
+        .success { color: #46b450; font-weight: bold; }
+        .failed { color: #dc3232; font-weight: bold; }
+        </style>
+    </div>
+    <?php
+}
+
 // Enqueue styles and scripts
 function theme_678studio_styles() {
     // Enqueue Google Fonts - Noto Sans JP with multiple weights including 500
@@ -1633,8 +1895,8 @@ true // Load in footer
 add_action('wp_enqueue_scripts', 'enqueue_inquiry_script');
 
 function enqueue_recruitment_script() {
-// Check if the current page slug is 'studio-recruitment'
-if (is_page('studio-recruitment')) {
+// Check if the current page slug is 'studio-recruitment' or if using secret template
+if (is_page('studio-recruitment') || is_page_template('page-studio-recruitment-secret.php')) {
 // フォーム処理用のスクリプト（日本語メッセージ対応）
 wp_enqueue_script(
 'recruitment-form-script',
