@@ -10,6 +10,7 @@ if (!session_id()) {
 }
 
 // パスワード設定を取得
+// SECURITY: デフォルトパスワードは本番環境では必ず変更してください
 $secret_password = get_option('studio_secret_password', 'recruit2024special');
 $password_hash = wp_hash($secret_password);
 
@@ -19,8 +20,24 @@ $error_message = '';
 $max_attempts = 5;
 $lockout_time = 1800; // 30分
 
-// 試行回数チェック
-$attempt_key = 'secret_attempts_' . $_SERVER['REMOTE_ADDR'];
+// 試行回数チェック（IP偽装対策）
+function get_real_ip_address() {
+    $ip_keys = ['HTTP_CF_CONNECTING_IP', 'HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR'];
+    foreach ($ip_keys as $key) {
+        if (array_key_exists($key, $_SERVER) === true) {
+            foreach (explode(',', $_SERVER[$key]) as $ip) {
+                $ip = trim($ip);
+                if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false) {
+                    return $ip;
+                }
+            }
+        }
+    }
+    return $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+}
+
+$client_ip = get_real_ip_address();
+$attempt_key = 'secret_attempts_' . md5($client_ip);
 $attempts = get_transient($attempt_key) ?: 0;
 
 if ($_POST && isset($_POST['secret_password'])) {
@@ -42,14 +59,17 @@ if ($_POST && isset($_POST['secret_password'])) {
             // アクセスログ記録
             $log_data = array(
                 'timestamp' => current_time('mysql'),
-                'ip_address' => $_SERVER['REMOTE_ADDR'],
+                'ip_address' => $client_ip,
                 'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
                 'status' => 'success'
             );
-            update_option('studio_secret_access_log', array_merge(
-                (array)get_option('studio_secret_access_log', []),
-                [$log_data]
-            ));
+            // ログの無限蓄積防止（最新500件まで保持）
+            $existing_logs = (array)get_option('studio_secret_access_log', []);
+            $existing_logs[] = $log_data;
+            if (count($existing_logs) > 500) {
+                $existing_logs = array_slice($existing_logs, -500);
+            }
+            update_option('studio_secret_access_log', $existing_logs);
         } else {
             // 認証失敗
             $attempts++;
@@ -59,17 +79,21 @@ if ($_POST && isset($_POST['secret_password'])) {
             // 失敗ログ記録
             $log_data = array(
                 'timestamp' => current_time('mysql'),
-                'ip_address' => $_SERVER['REMOTE_ADDR'],
+                'ip_address' => $client_ip,
                 'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
                 'status' => 'failed'
             );
-            update_option('studio_secret_access_log', array_merge(
-                (array)get_option('studio_secret_access_log', []),
-                [$log_data]
-            ));
+            // ログの無限蓄積防止（最新500件まで保持）
+            $existing_logs = (array)get_option('studio_secret_access_log', []);
+            $existing_logs[] = $log_data;
+            if (count($existing_logs) > 500) {
+                $existing_logs = array_slice($existing_logs, -500);
+            }
+            update_option('studio_secret_access_log', $existing_logs);
         }
     }
 }
+
 
 // セッション確認
 if (isset($_SESSION['studio_secret_auth']) && $_SESSION['studio_secret_auth'] === true) {
@@ -108,12 +132,13 @@ get_header(); ?>
                 </div>
             <?php endif; ?>
 
+
             <?php if ($attempts < $max_attempts): ?>
                 <form method="post" class="secret-auth-form">
                     <?php wp_nonce_field('secret_access_nonce', 'secret_nonce'); ?>
                     <div class="secret-auth-field">
                         <label for="secret_password">パスワード</label>
-                        <input type="password" id="secret_password" name="secret_password" required>
+                        <input type="password" id="secret_password" name="secret_password" required autocomplete="off" maxlength="50">
                     </div>
                     <button type="submit" class="secret-auth-submit">ページにアクセス</button>
                 </form>
