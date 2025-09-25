@@ -1,0 +1,111 @@
+@use '../../base/mixins' as m;
+@use '../../base/variables' as v;
+
+// Studio Hero Slider Section (nii-photo.com style)
+.studio-hero-slider {
+    width: 100%;
+    height: 80vh; // 80% viewport height with bottom spacing
+    position: relative;
+    background: white;
+    display: flex;
+    align-items: center;
+    overflow: hidden; // Prevent spillover
+
+    &__container {
+        width: 100%;
+        height: 80vh; // Match container height
+        position: relative;
+    }
+
+    // Splide カスタマイズ (nii-photo.com風)
+    .splide {
+        height: 80vh; // Match container height
+
+        &__track {
+            height: 100%;
+        }
+
+        &__list {
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        &__slide {
+            height: 76vh; // Adjusted for 80vh container (slightly less)
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: m.vw(200); // Large border radius like nii-photo.com
+            overflow: hidden;
+
+            @include m.mq(md) {
+                height: 64vh; // Mobile height adjusted for 80vh container
+                border-radius: m.vw-sp(82); // Mobile border radius
+            }
+        }
+    }
+
+    &__image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; // Cover entire slide area
+        object-position: center;
+        display: block;
+    }
+
+    // 矢印は非表示
+    .splide__arrows {
+        display: none !important;
+    }
+
+    // カスタムページネーション
+    .splide__pagination {
+        position: absolute;
+        bottom: m.vw(60); // Bottom spacing
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex !important;
+        gap: m.vw(16);
+        z-index: 10;
+
+        @include m.mq(md) {
+            bottom: m.vw-sp(40);
+            gap: m.vw-sp(12);
+        }
+
+        &__page {
+            width: m.vw(12);
+            height: m.vw(12);
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            @include m.mq(md) {
+                width: m.vw-sp(10);
+                height: m.vw-sp(10);
+                border-width: 1px;
+            }
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.8);
+                transform: scale(1.1);
+            }
+
+            &.is-active {
+                background: rgba(255, 255, 255, 0.95);
+                transform: scale(1.2);
+                box-shadow: 0 0 m.vw(20) rgba(255, 255, 255, 0.6);
+
+                @include m.mq(md) {
+                    box-shadow: 0 0 m.vw-sp(15) rgba(255, 255, 255, 0.6);
+                }
+            }
+        }
+    }
+
+    // Auto-scale mixin適用
+    @include m.auto-scale;
+}
