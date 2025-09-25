@@ -489,7 +489,36 @@ function theme_678studio_styles() {
             get_template_directory_uri() . '/assets/js/gallery.js', 
             [], $js_version, true);
     }
-    
+
+    // Enqueue Splide.js for studio detail pages
+    if (is_page_template('page-studio-detail.php')) {
+        // Splide CSS
+        wp_enqueue_style(
+            'splide-css',
+            'https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css',
+            array(),
+            '4.1.4'
+        );
+
+        // Splide JS
+        wp_enqueue_script(
+            'splide-js',
+            'https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js',
+            array(),
+            '4.1.4',
+            true
+        );
+
+        // Custom studio slider initialization
+        wp_enqueue_script(
+            'studio-slider-js',
+            get_template_directory_uri() . '/assets/js/studio-slider.js',
+            array('splide-js'),
+            $js_version,
+            true
+        );
+    }
+
     // Enqueue GSAP and media slider on front page
     if (is_front_page() || is_home()) {
         // GSAP Core
