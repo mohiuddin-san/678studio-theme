@@ -272,7 +272,7 @@
                     }
                 });
 
-                const response = await fetch(window.siaes_ajax?.ajax_url || '/wp-admin/admin-ajax.php', {
+                const response = await fetch(window.siaes_ajax?.ajax_url || 'http://localhost:8080/wp-admin/admin-ajax.php', {
                     method: 'POST',
                     body: formData
                 });

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVGアニメーションデモ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+
+        .demo-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* CSS Rotationアニメーション */
+        .rotating-star {
+            animation: rotate 3s linear infinite;
+            transform-origin: center;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* CSS Transition（ホバー効果） */
+        .hover-circle {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .hover-circle:hover {
+            fill: #ff6b6b;
+            transform: scale(1.2);
+        }
+
+        /* 波のアニメーション */
+        .wave {
+            animation: wave 2s ease-in-out infinite;
+        }
+
+        @keyframes wave {
+            0%, 100% { d: path("M0,50 Q50,30 100,50 T200,50"); }
+            50% { d: path("M0,50 Q50,70 100,50 T200,50"); }
+        }
+
+        /* パルスアニメーション */
+        .pulse {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* パスの描画アニメーション */
+        .draw-path {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: draw 3s ease-in-out infinite;
+        }
+
+        @keyframes draw {
+            0% { stroke-dashoffset: 1000; }
+            50% { stroke-dashoffset: 0; }
+            100% { stroke-dashoffset: -1000; }
+        }
+    </style>
+</head>
+<body>
+    <h1>SVGアニメーションデモ</h1>
+
+    <div class="demo-section">
+        <h2>1. CSS Rotation（回転）</h2>
+        <svg width="200" height="200" viewBox="0 0 200 200">
+            <polygon class="rotating-star"
+                     points="100,20 120,70 170,70 130,110 150,160 100,130 50,160 70,110 30,70 80,70"
+                     fill="#4CAF50"/>
+        </svg>
+    </div>
+
+    <div class="demo-section">
+        <h2>2. Hover Effects（ホバー効果）</h2>
+        <svg width="300" height="100" viewBox="0 0 300 100">
+            <circle class="hover-circle" cx="75" cy="50" r="30" fill="#2196F3"/>
+            <circle class="hover-circle" cx="150" cy="50" r="30" fill="#9C27B0"/>
+            <circle class="hover-circle" cx="225" cy="50" r="30" fill="#FF9800"/>
+        </svg>
+        <p>円の上にマウスを置いてください</p>
+    </div>
+
+    <div class="demo-section">
+        <h2>3. SVG内蔵アニメーション</h2>
+        <svg width="300" height="150" viewBox="0 0 300 150">
+            <circle cx="75" cy="75" r="20" fill="#E91E63">
+                <animate attributeName="cy" values="75;25;75" dur="2s" repeatCount="indefinite"/>
+            </circle>
+            <rect x="125" y="55" width="40" height="40" fill="#3F51B5">
+                <animateTransform
+                    attributeName="transform"
+                    type="rotate"
+                    values="0 145 75;360 145 75"
+                    dur="3s"
+                    repeatCount="indefinite"/>
+            </rect>
+            <ellipse cx="225" cy="75" rx="30" ry="20" fill="#009688">
+                <animate attributeName="rx" values="30;50;30" dur="1.5s" repeatCount="indefinite"/>
+                <animate attributeName="ry" values="20;10;20" dur="1.5s" repeatCount="indefinite"/>
+            </ellipse>
+        </svg>
+    </div>
+
+    <div class="demo-section">
+        <h2>4. パルスアニメーション</h2>
+        <svg width="200" height="200" viewBox="0 0 200 200">
+            <circle class="pulse" cx="100" cy="100" r="50" fill="#FF5722" opacity="0.8"/>
+        </svg>
+    </div>
+
+    <div class="demo-section">
+        <h2>5. パス描画アニメーション</h2>
+        <svg width="400" height="200" viewBox="0 0 400 200">
+            <path class="draw-path"
+                  d="M50,100 Q100,50 150,100 T250,100 Q300,50 350,100"
+                  stroke="#673AB7"
+                  stroke-width="4"
+                  fill="none"/>
+        </svg>
+    </div>
+
+    <div class="demo-section">
+        <h2>6. JavaScript制御アニメーション</h2>
+        <svg width="300" height="150" viewBox="0 0 300 150">
+            <rect id="js-rect" x="100" y="50" width="50" height="50" fill="#795548" style="cursor: pointer;"/>
+            <text x="130" y="120" text-anchor="middle" font-size="12">クリックしてください</text>
+        </svg>
+    </div>
+
+    <script>
+        // JavaScript制御アニメーション
+        const rect = document.getElementById('js-rect');
+        let isAnimating = false;
+
+        rect.addEventListener('click', () => {
+            if (isAnimating) return;
+
+            isAnimating = true;
+            rect.style.transition = 'all 0.5s ease';
+            rect.style.transform = 'translateX(100px) rotate(180deg)';
+            rect.style.fill = '#E91E63';
+
+            setTimeout(() => {
+                rect.style.transform = 'translateX(0) rotate(0deg)';
+                rect.style.fill = '#795548';
+
+                setTimeout(() => {
+                    isAnimating = false;
+                }, 500);
+            }, 500);
+        });
+    </script>
+</body>
+</html>

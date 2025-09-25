@@ -8,10 +8,7 @@
 	height: auto; // コンテンツに応じた高さ
 	overflow: hidden;
 
-	// モバイルで固定ヘッダー分の余白
-	@include m.mq(md) {
-		padding-top: m.vw(80);
-	}
+	// ヒーローセクションは全体のbodyパディングで対応済み
 
 	// PC Hero (default - desktop)
 	&__pc {

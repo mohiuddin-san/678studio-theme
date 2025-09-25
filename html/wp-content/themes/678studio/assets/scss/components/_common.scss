@@ -2,6 +2,21 @@
 @use '../base/mixins' as m;
 @use 'sass:color';
 
+// Global mobile header compensation
+// ヘッダーの高さが変更されても、CSS変数で自動的に全ページが調整される
+body {
+	@include m.mq(md) {
+		// --header-heightは_header.scssで定義
+		// 変更時は_header.scssの値のみ更新すればOK
+		padding-top: var(--header-height, m.vw(46)); // fallback: padding(10+10) + logo(26) = 46
+
+		// 767px付近での微調整
+		@media (max-width: 768px) and (min-width: 767px) {
+			padding-top: calc(var(--header-height, m.vw(46)) + 2px);
+		}
+	}
+}
+
 // Utility Classes for Responsive Display
 .pc-only {
 	display: block;

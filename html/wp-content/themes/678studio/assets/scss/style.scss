@@ -15,6 +15,7 @@
 @use 'components/contact-booking';
 @use 'components/footer';
 @use 'components/scroll-animations';
+@use 'components/cookie-consent';
 @use 'base/page-transitions';
 
 // Sections
@@ -46,6 +47,7 @@
 @use 'pages/single-studio-shops';
 @use 'pages/reservation';
 @use 'pages/studio-recruitment';
+@use 'pages/recruitment-about';
 @use 'pages/gallery' as gallery-page;
 @use 'pages/gallery-animations';
 @use 'pages/privacy';
