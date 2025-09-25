@@ -1,9 +1,140 @@
-// サイト確認：
-//  - メインサイト: https://xb451134.xbiz.jp/cptest/
-//  - オーバーレイ確認用: https://xb451134.xbiz.jp/cptest/application-completed.php
-//
-//  ベーシック認証情報：
-//  - ユーザー名: hisamitsu
-//  - パスワード: icFPfMEa6o
-  
-  
+// About Page Styles
+// =============================================================================
+
+@use '../base/mixins' as m;
+@use '../base/variables' as v;
+
+.about-page {
+  width: 100%;
+
+  // About Page Breadcrumb - Bottom border only
+  .breadcrumb {
+    border-bottom: 1px solid #eee;
+  }
+}
+
+// About FV Section (Specific to About page only)
+.about-fv {
+  width: 100%;
+  background: white;
+
+  // Container
+  &__container {
+    width: 100%;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr m.fs(856, 0.5);
+    grid-template-rows: 1fr;
+    gap: 0;
+    align-items: center;
+  }
+
+  // Content Area (Left)
+  &__content {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: m.fs(80, 0.5);
+    padding-right: m.fs(40, 0.5);
+  }
+
+  &__text {
+    max-width: m.fs(480, 0.7);
+  }
+
+  // Title Section Component overrides
+  &__title-section {
+    .title-section__title {
+      .thoughts-title {
+        font-family: v.$ja;
+        font-size: m.fs(48, 0.6);
+        font-weight: 400;
+        color: #333;
+        line-height: 1.3;
+        margin-bottom: m.fs(24, 0.5);
+
+        .about-fv__subtitle {
+          display: block;
+          margin-top: m.fs(8, 0.4);
+        }
+      }
+    }
+
+    .title-section__content {
+      .thoughts-text {
+        font-family: v.$ja-sans;
+        font-size: m.fs(18, 0.5);
+        font-weight: 400;
+        color: #666;
+        line-height: 1.7;
+        margin: 0;
+      }
+    }
+  }
+
+  // Image Area (Right)
+  &__image {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+  }
+
+  &__image-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+}
+
+// About Mobile FV Section (Mobile specific)
+.about-mobile-fv {
+  display: none;
+  width: 100%;
+  background: white;
+
+  @include m.mq(md) {
+    display: block;
+    padding-top: m.vw-sp(60);
+    padding-bottom: m.vw-sp(40);
+    @include m.auto-scale;
+  }
+
+  // Container
+  &__container {
+    width: 100%;
+    padding: 0 m.vw-sp(20);
+  }
+
+  // Text section
+  &__text-section {
+    margin-bottom: m.vw-sp(30);
+  }
+
+  &__text-image {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  // Image section - full width
+  &__image-section {
+    width: calc(100% + #{m.vw-sp(40)});
+    margin-left: calc(-1 * #{m.vw-sp(20)});
+  }
+
+  &__image {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+}
+
+// Hide desktop version on mobile
+@include m.mq(md) {
+  .about-fv {
+    display: none;
+  }
+}

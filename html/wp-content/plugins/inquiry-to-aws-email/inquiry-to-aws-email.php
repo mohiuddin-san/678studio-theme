@@ -65,7 +65,7 @@ function siaes_settings_page() {
     ];
     $page_fields_map = [];
     foreach ($target_pages as $slug) {
-        if ($slug === 'studio-recruitment') {
+        if ($slug === 'studio-recruitment' || $slug === 'studio-recruitment-secret') {
             $page_fields_map[$slug] = $recruitment_fields;
         } elseif ($slug === 'corporate-inquiry') {
             $page_fields_map[$slug] = $corporate_fields;
@@ -240,23 +240,48 @@ function siaes_enqueue_assets() {
     if (in_array($current_page_slug, $target_pages)) {
         siaes_debug_log("Enqueuing assets for page ID: $current_page_id, Slug: $current_page_slug");
 
-        wp_enqueue_script(
-            'siaes-form-handler',
-            plugin_dir_url(__FILE__) . 'assets/js/form-handler.js',
-            ['jquery'],
-            $version,
-            true
-        );
+        // Check if this is a recruitment page (they have their own JS handlers)
+        $recruitment_pages = ['studio-recruitment', 'studio-recruitment-secret'];
+        $is_recruitment_page = in_array($current_page_slug, $recruitment_pages);
 
+        // Only enqueue form-handler.js for non-recruitment pages
+        if (!$is_recruitment_page) {
+            wp_enqueue_script(
+                'siaes-form-handler',
+                plugin_dir_url(__FILE__) . 'assets/js/form-handler.js',
+                ['jquery'],
+                $version,
+                true
+            );
+        } else {
+            siaes_debug_log("Skipping form-handler.js for recruitment page: $current_page_slug");
+        }
+
+        // Always provide AJAX configuration (needed for both plugin and theme JS)
         $ajax_url = admin_url('admin-ajax.php');
         $nonce = wp_create_nonce('siaes_form_nonce');
-        wp_localize_script('siaes-form-handler', 'siaes_ajax', [
-            'ajax_url' => $ajax_url,
-            'nonce' => $nonce,
-            'page_id' => $current_page_id,
-            'api_url' => 'https://678photo.com/api/get_all_studio_shop.php',
-            'is_user_logged_in' => is_user_logged_in() ? 1 : 0
-        ]);
+
+        // For recruitment pages, attach to window object for theme JS access
+        if ($is_recruitment_page) {
+            wp_add_inline_script('jquery', "
+                window.siaes_ajax = {
+                    ajax_url: '$ajax_url',
+                    nonce: '$nonce',
+                    page_id: '$current_page_id',
+                    api_url: 'https://678photo.com/api/get_all_studio_shop.php',
+                    is_user_logged_in: " . (is_user_logged_in() ? '1' : '0') . "
+                };
+            ");
+        } else {
+            // For regular pages, use wp_localize_script as before
+            wp_localize_script('siaes-form-handler', 'siaes_ajax', [
+                'ajax_url' => $ajax_url,
+                'nonce' => $nonce,
+                'page_id' => $current_page_id,
+                'api_url' => 'https://678photo.com/api/get_all_studio_shop.php',
+                'is_user_logged_in' => is_user_logged_in() ? 1 : 0
+            ]);
+        }
 
         siaes_debug_log("AJAX URL set to: $ajax_url");
         siaes_debug_log("Nonce created: $nonce");
@@ -271,7 +296,7 @@ function siaes_validate_form_data($form_data, $page_slug) {
     $errors = [];
 
     // Common validations for all forms
-    if ($page_slug === 'studio-recruitment' || $page_slug === 'corporate-inquiry') {
+    if ($page_slug === 'studio-recruitment' || $page_slug === 'studio-recruitment-secret' || $page_slug === 'corporate-inquiry') {
         // Recruitment and corporate forms validation
         if (empty($form_data['contact_name']) || strlen(trim($form_data['contact_name'])) < 2) {
             $errors[] = 'お名前は2文字以上で入力してください';
@@ -496,7 +521,7 @@ function siaes_handle_form_submission() {
         }
 
         // Check required fields based on page type
-        if ($page_slug === 'studio-recruitment' || $page_slug === 'corporate-inquiry') {
+        if ($page_slug === 'studio-recruitment' || $page_slug === 'studio-recruitment-secret' || $page_slug === 'corporate-inquiry') {
             // For recruitment and corporate pages, check email_address instead of email
             if (!isset($form_data['email_address']) || empty($form_data['email_address'])) {
                 // Email is optional for these forms, so don't require it
@@ -603,7 +628,7 @@ function siaes_send_emails($form_data, $page_slug) {
     $fixed_source_email = 'info@678photo.com';
 
     // Handle different page types
-    if ($page_slug === 'studio-recruitment' || $page_slug === 'corporate-inquiry') {
+    if ($page_slug === 'studio-recruitment' || $page_slug === 'studio-recruitment-secret' || $page_slug === 'corporate-inquiry') {
         // For recruitment and corporate pages, use special san-creation email for company notifications
         $company_email = 'info@san-creation.com'; // Special email for recruitment/corporate inquiries
         $company_name = get_option('siaes_company_name', 'ロクナナハチ撮影');
@@ -618,7 +643,7 @@ function siaes_send_emails($form_data, $page_slug) {
     }
 
     // Get shop data from ACF-based system using theme function (only for non-recruitment/corporate pages)
-    if ($page_slug !== 'studio-recruitment' && $page_slug !== 'corporate-inquiry' && function_exists('get_cached_studio_data')) {
+    if ($page_slug !== 'studio-recruitment' && $page_slug !== 'studio-recruitment-secret' && $page_slug !== 'corporate-inquiry' && function_exists('get_cached_studio_data')) {
         $studio_data = get_cached_studio_data();
         siaes_debug_log("Shop data retrieved from ACF-based function");
 
@@ -740,6 +765,14 @@ function siaes_send_emails($form_data, $page_slug) {
     $company_message = str_replace('[company_address]', $company_name, $company_message);
     $user_reply_final = str_replace('[company_address]', $company_name, $user_reply_final);
 
+    // Add secret page identification to subject
+    $source_type = isset($form_data['source_type']) ? $form_data['source_type'] : 'regular';
+    if ($source_type === 'secret' || $page_slug === 'studio-recruitment-secret') {
+        $company_subject = '【シークレット】' . $company_subject;
+        $user_subject = '【限定募集】' . $user_subject;
+        siaes_debug_log("Secret page identified - added prefix to subjects");
+    }
+
     // Log after replacement
     siaes_debug_log("After shortcode replacement - Company subject: $company_subject");
     siaes_debug_log("After shortcode replacement - User subject: $user_subject");
@@ -798,14 +831,22 @@ function siaes_send_emails($form_data, $page_slug) {
         siaes_debug_log('✅ Company email sent successfully. MessageId: ' . $result['MessageId']);
 
         // Send thank-you email to user if email is provided
+        // Check both 'email' and 'email_address' fields for recruitment forms
+        $user_email = '';
         if (!empty($form_data['email']) && filter_var($form_data['email'], FILTER_VALIDATE_EMAIL)) {
-            siaes_debug_log('🔄 Attempting to send thank-you email to: ' . $form_data['email'] . ' from: ' . $fixed_source_email);
+            $user_email = $form_data['email'];
+        } elseif (!empty($form_data['email_address']) && filter_var($form_data['email_address'], FILTER_VALIDATE_EMAIL)) {
+            $user_email = $form_data['email_address'];
+        }
+
+        if (!empty($user_email)) {
+            siaes_debug_log('🔄 Attempting to send thank-you email to: ' . $user_email . ' from: ' . $fixed_source_email);
             siaes_debug_log('📧 User email subject: ' . $user_subject);
             siaes_debug_log('📝 User email body preview: ' . substr($thank_you_message, 0, 200) . '...');
 
             $user_result = $ses_client->sendEmail([
                 'Source' => $fixed_source_email,
-                'Destination' => ['ToAddresses' => [$form_data['email']]],
+                'Destination' => ['ToAddresses' => [$user_email]],
                 'Message' => [
                     'Subject' => ['Data' => $user_subject, 'Charset' => 'UTF-8'],
                     'Body' => ['Text' => ['Data' => $thank_you_message, 'Charset' => 'UTF-8']],
@@ -813,11 +854,43 @@ function siaes_send_emails($form_data, $page_slug) {
             ]);
             siaes_debug_log('✅ Thank-you email sent successfully. MessageId: ' . $user_result['MessageId']);
         } else {
-            siaes_debug_log('⚠️ Invalid or no user email provided: ' . ($form_data['email'] ?? 'Not set'));
+            siaes_debug_log('⚠️ Invalid or no user email provided. email: ' . ($form_data['email'] ?? 'Not set') . ', email_address: ' . ($form_data['email_address'] ?? 'Not set'));
         }
+
+        // Save submission data for management
+        siaes_save_submission($form_data, $page_slug);
+
     } catch (Exception $e) {
         siaes_debug_log('❌ Failed to send email: ' . $e->getMessage() . ' (Code: ' . $e->getCode() . ')');
         throw new Exception('Failed to send email: ' . $e->getMessage());
+    }
+}
+
+// Save submission data
+function siaes_save_submission($form_data, $page_slug) {
+    try {
+        // Add timestamp and page info
+        $submission_data = $form_data;
+        $submission_data['timestamp'] = current_time('mysql');
+        $submission_data['page_slug'] = $page_slug;
+
+        // Get existing submissions
+        $existing_submissions = get_option('siaes_submissions', []);
+
+        // Add new submission
+        $existing_submissions[] = $submission_data;
+
+        // Keep only last 1000 submissions to prevent database bloat
+        if (count($existing_submissions) > 1000) {
+            $existing_submissions = array_slice($existing_submissions, -1000);
+        }
+
+        // Save updated submissions
+        update_option('siaes_submissions', $existing_submissions);
+
+        siaes_debug_log('✅ Submission data saved successfully for page: ' . $page_slug);
+    } catch (Exception $e) {
+        siaes_debug_log('❌ Failed to save submission data: ' . $e->getMessage());
     }
 }
 

@@ -15130,6 +15130,130 @@ body.single[class*=studio_features] .seo-article-title {
   }
 }
 
+.secret-auth-wrapper {
+  min-height: 100vh;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 20px;
+  font-family: "Noto Sans JP", sans-serif;
+}
+
+.secret-auth-container {
+  background: white;
+  border-radius: 12px;
+  -webkit-box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.secret-auth-content {
+  padding: 40px;
+  text-align: center;
+  font-family: "Noto Sans JP", sans-serif;
+}
+
+.secret-auth-logo img {
+  max-height: 60px;
+  margin-bottom: 24px;
+}
+
+.secret-auth-title {
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: #3f3f3f;
+  margin-bottom: 12px;
+}
+
+.secret-auth-description {
+  font-family: "Noto Sans JP", sans-serif;
+  color: #666666;
+  margin-bottom: 32px;
+  line-height: 1.6;
+}
+
+.secret-auth-error {
+  background: #fee;
+  color: #c33;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  border-left: 4px solid #c33;
+  font-family: "Noto Sans JP", sans-serif;
+}
+
+.secret-auth-form {
+  margin-bottom: 24px;
+}
+
+.secret-auth-field {
+  margin-bottom: 20px;
+  text-align: left;
+}
+.secret-auth-field label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #3f3f3f;
+  font-family: "Noto Sans JP", sans-serif;
+}
+.secret-auth-field input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: "Noto Sans JP", sans-serif;
+  -webkit-transition: border-color 0.3s ease;
+  transition: border-color 0.3s ease;
+}
+.secret-auth-field input:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.secret-auth-submit {
+  width: 100%;
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 14px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  font-family: "Noto Sans JP", sans-serif;
+  cursor: pointer;
+  -webkit-transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease;
+}
+.secret-auth-submit:hover {
+  background: rgb(33.1380753138, 125.1882845188, 186.8619246862);
+}
+
+.secret-auth-contact {
+  font-size: 14px;
+  color: #888;
+  font-family: "Noto Sans JP", sans-serif;
+}
+
+@media (max-width: 767px) {
+  .secret-auth-content {
+    padding: 24px;
+  }
+  .secret-auth-title {
+    font-size: 24px;
+  }
+}
 .about-introduction {
   width: 100%;
   background-color: white;
