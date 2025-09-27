@@ -200,25 +200,27 @@ if (empty($shop)) {
             ?>
         </div>
 
-        <!-- Store Image (Center) with Decorations -->
-        <div class="store-basic-info-section-mobile__image-container">
-            <div class="store-basic-info-section-mobile__image">
-                <?php
-                // Same image logic as desktop
-                $main_image_id = get_post_thumbnail_id();
-                if ($main_image_id) {
-                    $store_image = wp_get_attachment_image_url($main_image_id, 'full');
-                } elseif (!empty($shop['main_image'])) {
-                    $store_image = $shop['main_image'];
-                } elseif (!empty($shop['image_urls']) && !empty($shop['image_urls'][0])) {
-                    $store_image = $shop['image_urls'][0];
-                } else {
-                    $store_image = get_template_directory_uri() . '/assets/images/cardpic-sample.jpg';
-                }
-                ?>
-                <img src="<?php echo esc_url($store_image); ?>" alt="店舗内観" class="store-basic-info-section-mobile__store-img">
+        <!-- Store Image Area (Full Width Wrapper) -->
+        <div class="store-basic-info-section-mobile__image-area">
+            <div class="store-basic-info-section-mobile__image-container">
+                <div class="store-basic-info-section-mobile__image">
+                    <?php
+                    // Same image logic as desktop
+                    $main_image_id = get_post_thumbnail_id();
+                    if ($main_image_id) {
+                        $store_image = wp_get_attachment_image_url($main_image_id, 'full');
+                    } elseif (!empty($shop['main_image'])) {
+                        $store_image = $shop['main_image'];
+                    } elseif (!empty($shop['image_urls']) && !empty($shop['image_urls'][0])) {
+                        $store_image = $shop['image_urls'][0];
+                    } else {
+                        $store_image = get_template_directory_uri() . '/assets/images/cardpic-sample.jpg';
+                    }
+                    ?>
+                    <img src="<?php echo esc_url($store_image); ?>" alt="店舗内観" class="store-basic-info-section-mobile__store-img">
+                </div>
             </div>
-            <!-- Decorative Elements -->
+            <!-- Decorative Elements (Independent) -->
             <div class="store-basic-info-section-mobile__decorations">
                 <img src="<?php echo get_template_directory_uri(); ?>/assets/images/detail-wave-ilst-01.svg" alt="" class="store-basic-info-section-mobile__wave-1">
                 <img src="<?php echo get_template_directory_uri(); ?>/assets/images/detail-wave-ilst-2-sp.svg" alt="" class="store-basic-info-section-mobile__wave-2">

@@ -345,6 +345,7 @@
 	padding: m.vw-sp(60) 0 m.vw-sp(180);
 	padding-left: m.vw-sp(20);
 	max-width: 100vw;
+	// overflow-x: hidden を削除 - sticky positioning維持のため
 
 	@include m.mq(md) {
 		display: block;
@@ -363,16 +364,17 @@
 	// Mobile Vertical Title
 	&__vertical-title {
 		position: sticky;
-		left: m.vw-sp(10);
+		left: 0;
 		top: m.vw-sp(80);
 		display: flex;
 		flex-direction: row;
 		align-items: center;
 		gap: m.vw-sp(12);
-		transform: rotate(90deg);
+		transform: rotate(90deg) translateX(m.vw-sp(-10));
 		transform-origin: left top;
 		z-index: 10;
 		align-self: flex-start;
+		margin-left: m.vw-sp(-10); // モバイル用関数に修正
 	}
 
 	&__circle {
@@ -487,16 +489,22 @@
 		}
 	}
 
-	// Plan Image (Center)
-	&__image-container {
-		width: 100vw;
+	// Plan Image Area (Full Width Wrapper)
+	&__image-area {
+		position: relative;
+		width: calc(100vw - m.vw-sp(20)); // セクションの左パディング分だけ引く
 		margin-left: calc(-1 * m.vw-sp(40)); // コンテナーの左右パディングを相殺
+		overflow-x: hidden; // この要素のみoverflowを制御
+	}
+
+	// Plan Image Container (Image Only)
+	&__image-container {
+		width: 100%;
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		position: relative;
-		overflow-x: hidden; // 横方向のはみ出しのみカット
-		overflow-y: visible; // 縦方向は表示
+		overflow: visible; // 明示的にvisible指定
 	}
 
 	&__image {
