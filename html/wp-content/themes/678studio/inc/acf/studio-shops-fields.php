@@ -176,6 +176,22 @@ acf_add_local_field_group(array(
             'append' => '',
         ),
         array(
+            'key' => 'field_studio_website_url_new',
+            'label' => 'ウェブサイトURL',
+            'name' => 'website_url',
+            'type' => 'text',
+            'instructions' => '店舗の公式ウェブサイトURLを入力してください',
+            'required' => 0,
+            'conditional_logic' => 0,
+            'wrapper' => array(
+                'width' => '50',
+            ),
+            'default_value' => '',
+            'placeholder' => 'https://example.com',
+            'prepend' => '',
+            'append' => '',
+        ),
+        array(
             'key' => 'field_studio_prefecture',
             'label' => '都道府県',
             'name' => 'prefecture',

@@ -157,6 +157,7 @@ function get_cached_studio_data_acf() {
             'company_email' => get_field('company_email', $post->ID) ?: '',
             'prefecture' => get_field('prefecture', $post->ID) ?: '',
             'access_details' => get_field('access_details', $post->ID) ?: '',
+            'website_url' => get_field('website_url', $post->ID) ?: '',
             'main_image' => $main_image_url,
             'main_gallery_images' => $final_gallery_urls,
             'staff' => $staff_data,
@@ -381,6 +382,7 @@ function get_studio_shop_data_acf($shop_id) {
     // 認定店でない場合はギャラリー画像を表示しない
     $final_gallery_urls = $is_certified ? $gallery_urls : array();
     
+
     $shop_data = array(
         'id' => get_field('shop_id', $post->ID) ?: $post->ID,
         'name' => get_field('store_name', $post->ID) ?: $post->post_title,
@@ -393,6 +395,7 @@ function get_studio_shop_data_acf($shop_id) {
         'company_email' => get_field('company_email', $post->ID) ?: '',
         'prefecture' => get_field('prefecture', $post->ID) ?: '',
         'access_details' => get_field('access_details', $post->ID) ?: '',
+        'website_url' => get_field('website_url', $post->ID) ?: '',
         'main_image' => $main_image_url,
         'main_gallery_images' => $final_gallery_urls,
         'staff' => $staff_data,

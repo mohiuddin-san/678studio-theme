@@ -23,24 +23,39 @@ const paths = {
   }
 };
 
-// Error handling
+// Error handling - improved to continue watching after errors
 const handleError = (err) => {
   notify.onError({
     title: 'Gulp Error',
     message: 'Error: <%= error.message %>',
     sound: 'Beep'
   })(err);
+  console.log('\n🚨 SASS Error:');
   console.log(err.toString());
+  console.log('👀 Still watching for changes...\n');
+  // Important: this.emit('end') prevents the task from stopping
 };
 
-// SCSS compilation task
+// SCSS compilation task with enhanced error handling
 function compileSCSS() {
   return gulp.src(paths.scss.src)
-    .pipe(plumber({ errorHandler: handleError }))
+    .pipe(plumber({
+      errorHandler: function(err) {
+        handleError(err);
+        this.emit('end'); // Prevent task from stopping
+      }
+    }))
     .pipe(sourcemaps.init())
     .pipe(sass({
       outputStyle: 'expanded',
       includePaths: ['assets/scss/']
+    }).on('error', function(err) {
+      console.log('\n🔥 SASS Compilation Error:');
+      console.log('File:', err.file);
+      console.log('Line:', err.line);
+      console.log('Message:', err.message);
+      console.log('\n🔄 Fix the error and save to try again...\n');
+      this.emit('end'); // Continue watching
     }))
     .pipe(autoprefixer({
       overrideBrowserslist: ['last 2 versions'],
@@ -48,7 +63,7 @@ function compileSCSS() {
     }))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(paths.scss.dest))
-    .pipe(browserSync.stream());
+    .pipe(browserSync.stream({ match: '**/*.css' }));
 }
 
 // SCSS build task (production)
@@ -89,24 +104,40 @@ function initBrowserSync() {
   });
 }
 
-// Watch task
+// Watch task with improved error handling
 function watchFiles() {
-  // SCSS watch with verbose logging
-  const watcher = gulp.watch(paths.scss.watch, compileSCSS);
-  
-  watcher.on('change', function(path) {
-    console.log('File changed: ' + path);
+  console.log('👀 Starting file watchers...');
+
+  // SCSS watch with better error handling
+  const scssWatcher = gulp.watch(paths.scss.watch, gulp.series(compileSCSS));
+
+  scssWatcher.on('change', function(path) {
+    console.log('📝 SCSS file changed: ' + path.replace(process.cwd(), ''));
   });
-  
-  watcher.on('add', function(path) {
-    console.log('File added: ' + path);
+
+  scssWatcher.on('add', function(path) {
+    console.log('➕ SCSS file added: ' + path.replace(process.cwd(), ''));
   });
-  
+
+  scssWatcher.on('error', function(err) {
+    console.log('❌ Watch error:', err);
+  });
+
   // PHP watch
-  gulp.watch(paths.php.watch).on('change', browserSync.reload);
-  
+  const phpWatcher = gulp.watch(paths.php.watch);
+  phpWatcher.on('change', function(path) {
+    console.log('🐘 PHP file changed: ' + path.replace(process.cwd(), ''));
+    browserSync.reload();
+  });
+
   // JS watch
-  gulp.watch(paths.js.watch).on('change', browserSync.reload);
+  const jsWatcher = gulp.watch(paths.js.watch);
+  jsWatcher.on('change', function(path) {
+    console.log('⚡ JS file changed: ' + path.replace(process.cwd(), ''));
+    browserSync.reload();
+  });
+
+  console.log('✅ All watchers are active. Press Ctrl+C to stop.');
 }
 
 // Create dist directories
@@ -115,10 +146,17 @@ function createDirs() {
     .pipe(gulp.dest(paths.scss.dest));
 }
 
+// Utility task to restart watching if it gets stuck
+function restartWatch() {
+  console.log('🔄 Restarting watch tasks...');
+  return watchFiles();
+}
+
 // Export tasks
 exports.sass = compileSCSS;
 exports.build = gulp.series(createDirs, buildSCSS);
 exports.watch = gulp.series(createDirs, compileSCSS, watchFiles);
+exports.restart = restartWatch;
 exports.default = gulp.series(createDirs, compileSCSS, gulp.parallel(initBrowserSync, watchFiles));
 
 // Task descriptions
@@ -126,7 +164,9 @@ compileSCSS.description = 'Compile SCSS files to CSS with sourcemaps';
 buildSCSS.description = 'Build minified CSS for production';
 watchFiles.description = 'Watch for file changes';
 initBrowserSync.description = 'Initialize BrowserSync for live reload';
+restartWatch.description = 'Restart watch tasks if they get stuck';
 exports.default.description = 'Default task: compile SCSS, start BrowserSync, and watch files';
 exports.build.description = 'Production build: compile and minify CSS';
 exports.watch.description = 'Watch files without BrowserSync';
+exports.restart.description = 'Restart watch tasks (use if watch gets stuck)';
 exports.sass.description = 'Compile SCSS files only';

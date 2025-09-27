@@ -12,11 +12,11 @@ function fetch_studio_shop_by_id($shop_id) {
     if (function_exists('get_studio_shop_data_acf')) {
         return get_studio_shop_data_acf($shop_id);
     }
-    
+
     // フォールバック：従来のシステム
     $cache_key = 'studio_shop_' . $shop_id;
     $cached_shop = get_transient($cache_key);
-    
+
     if ($cached_shop !== false) {
         return ['shop' => $cached_shop, 'error' => null];
     }
@@ -141,6 +141,11 @@ $map_embed_data = get_map_embed_content($shop);
     ]
   ]); ?>
 
+  <!-- Studio Info Header -->
+  <?php get_template_part('template-parts/sections/studio/studio-info-header', null, [
+    'shop' => $shop
+  ]); ?>
+
   <!-- Studio Hero Slider Section -->
   <?php
   // Get gallery images for the slider
@@ -165,6 +170,11 @@ $map_embed_data = get_map_embed_content($shop);
     ]);
   }
   ?>
+
+  <!-- Store Basic Information Section -->
+  <?php get_template_part('template-parts/sections/studio/store-basic-info', null, [
+    'shop' => $shop
+  ]); ?>
 
   <!-- Store Hero Section -->
   <section class="store-hero">
