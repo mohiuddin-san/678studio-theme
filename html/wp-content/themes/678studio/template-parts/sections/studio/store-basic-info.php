@@ -95,15 +95,18 @@ $shop = $args['shop'] ?? array();
 
                     <!-- Website -->
                     <?php
-                    // $shop配列からWebサイトURLを取得
+                    // 新しいヘルパー関数を使用してWebサイトURLを取得
                     $website_url = '';
 
                     // まず$shop配列のwebsite_urlをチェック
                     if (!empty($shop['website_url'])) {
                         $website_url = $shop['website_url'];
-                    } else {
-                        // フォールバック：店舗ID 122の場合の管理画面設定URL
-                        if (!empty($shop['id']) && $shop['id'] == 122) {
+                    } else if (!empty($shop['id'])) {
+                        // 新しいヘルパー関数で直接ACFから取得
+                        $website_url = get_studio_shop_field($shop['id'], 'website_url');
+
+                        // 新しいヘルパー関数でも取得できない場合のフォールバック
+                        if (empty($website_url) && $shop['id'] == 122) {
                             $website_url = 'https://www.1122.co.jp/studio/ichino/index.html';
                         }
                     }
