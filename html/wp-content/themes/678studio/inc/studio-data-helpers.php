@@ -150,8 +150,11 @@ function get_studio_shop_basic_info($shop_id) {
     $address = str_replace(array('<br>', '<br/>', '<br />'), ' ', $address);
     $address = trim(preg_replace('/\s+/', ' ', $address));
 
+    // IDフィールドの確定
+    $final_id = isset($fields['shop_id']) && !empty($fields['shop_id']) ? $fields['shop_id'] : $shop_id;
+
     $basic_info = array(
-        'id' => isset($fields['shop_id']) ? $fields['shop_id'] : $shop_id,
+        'id' => $final_id,
         'name' => isset($fields['store_name']) ? $fields['store_name'] : get_the_title($post_id),
         'address' => $address,
         'phone' => isset($fields['phone']) ? $fields['phone'] : '',
@@ -254,12 +257,20 @@ function get_studio_shop_data_simple($shop_id) {
                     $formatted_duration = $plan_duration . '分';
                 }
 
+                // プラン画像の取得
+                $plan_image = get_field("plan{$i}_image", $post_id);
+                $plan_image_url = '';
+                if ($plan_image) {
+                    $plan_image_url = is_array($plan_image) ? $plan_image['url'] : wp_get_attachment_url($plan_image);
+                }
+
                 $photo_plans[] = array(
                     'plan_name' => $plan_name ?: '',
                     'plan_price' => $plan_price ?: 0,
                     'plan_duration' => $plan_duration ?: '',
                     'plan_description' => $plan_description ?: '',
-                    'formatted_price' => '¥' . number_format($plan_price ?: 0) . '円',
+                    'plan_image' => $plan_image_url,
+                    'formatted_price' => '¥' . number_format($plan_price ?: 0),
                     'formatted_duration' => $formatted_duration,
                 );
             }
@@ -307,6 +318,64 @@ function get_studio_shop_data_simple($shop_id) {
 
     $result = array(
         'shop' => $shop_data,
+        'error' => null
+    );
+
+    StudioDataCache::set($cache_key, $result);
+    return $result;
+}
+
+/**
+ * 全店舗データの取得（検索・一覧表示用）
+ *
+ * 既存のget_cached_studio_data()の代替機能
+ * 全店舗の基本情報を配列で返します
+ *
+ * @return array 全店舗データ（errorキーを含む可能性あり）
+ */
+function get_all_studio_shops_data() {
+    $cache_key = 'all_studio_shops_data';
+
+    if (StudioDataCache::has($cache_key)) {
+        return StudioDataCache::get($cache_key);
+    }
+
+    // studio_shopsポストタイプの全投稿を取得
+    $posts = get_posts(array(
+        'post_type' => 'studio_shops',
+        'post_status' => 'publish',
+        'posts_per_page' => -1,
+        'fields' => 'ids'
+    ));
+
+    if (empty($posts)) {
+        $error_result = array(
+            'shops' => array(),
+            'error' => 'No studio shops found'
+        );
+        StudioDataCache::set($cache_key, $error_result);
+        return $error_result;
+    }
+
+    $shops_data = array();
+    foreach ($posts as $post_id) {
+        $shop_id_field = get_field('shop_id', $post_id);
+        // shop_idフィールドが設定されていない場合はPost IDを使用
+        $shop_id = (!empty($shop_id_field)) ? $shop_id_field : $post_id;
+
+        // 基本情報を取得（Post IDを引数として渡す）
+        $basic_info = get_studio_shop_basic_info($post_id);
+
+        // IDを正しく設定
+        $basic_info['id'] = $shop_id;
+
+        if (!empty($basic_info['name'])) {
+            $shops_data[] = $basic_info;
+        }
+    }
+
+    $result = array(
+        'shops' => $shops_data,
         'error' => null
     );
 

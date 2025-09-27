@@ -7,110 +7,194 @@
 @use '../base/variables' as v;
 
 .contact-booking {
-	padding: m.fs(80, 0.5) 0;
+	padding: m.vw(100) 0;
 	background: #ffffff;
 	position: relative;
-	z-index: 10; // Ensure section is above other elements
+	z-index: 10;
 
-	// モバイル対応
 	@include m.mq(md) {
-		padding: m.fsm(60) 0;
+		padding: m.vw-sp(80) 0;
 	}
 
 	&__container {
 		max-width: 1200px;
 		margin: 0 auto;
-		padding: 0 m.fs(20, 0.5);
-
-		// モバイル対応
-		@include m.mq(md) {
-			padding: 0 m.fsm(20);
-		}
-	}
-
-	&__header {
+		padding: 0 m.vw(20);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
 		text-align: center;
-		margin-bottom: m.fs(60, 0.5);
 
-		// モバイル対応
 		@include m.mq(md) {
-			margin-bottom: m.fsm(40);
+			padding: 0 m.vw-sp(20);
 		}
 	}
 
-	&__label {
-		margin-bottom: m.fs(64, 0.5);
+	// Decorative Header
+	&__decoration {
+		margin-bottom: m.vw(71);
 
-		// モバイル対応
 		@include m.mq(md) {
-			margin-bottom: m.fsm(40);
+			margin-bottom: m.vw-sp(50);
+		}
+	}
+
+	&__decoration-img {
+		width: m.vw(809);
+		height: m.vw(45);
+		flex-shrink: 0;
+		max-width: 100%;
+
+		@include m.mq(md) {
+			width: 90%;
+			max-width: 100vw;
+			height: auto;
+		}
+	}
+
+	// Main Title
+	&__main-title {
+		color: #000;
+		text-align: center;
+		font-family: 'Noto Sans JP';
+		font-size: m.vw(25);
+		font-style: normal;
+		font-weight: 700;
+		line-height: 160%;
+		letter-spacing: m.vw(2.5);
+		margin: 0 0 m.vw(20) 0;
+
+		@include m.mq(md) {
+			font-size: m.vw-sp(20);
+			letter-spacing: m.vw-sp(2);
+			margin-bottom: m.vw-sp(16);
+		}
+	}
+
+	// Sub Title
+	&__sub-title {
+		color: #000;
+		text-align: center;
+		font-family: 'Noto Sans JP';
+		font-size: m.vw(20);
+		font-style: normal;
+		font-weight: 700;
+		line-height: 160%;
+		letter-spacing: m.vw(2);
+		margin: 0 0 m.vw(70) 0;
+
+		@include m.mq(md) {
+			font-size: m.vw-sp(16);
+			letter-spacing: m.vw-sp(1.6);
+			margin-bottom: m.vw-sp(50);
+		}
+	}
+
+	// Description
+	&__description {
+		margin-bottom: m.vw(60);
+
+		@include m.mq(md) {
+			margin-bottom: m.vw-sp(40);
 		}
 
-		&-text {
-			display: inline-block;
-			background: #3f3f3f;
-			color: #ffffff;
-			font-size: m.fs(14, 0.5);
-			font-family: v.$ja-sans;
+		p {
+			color: #000;
+			text-align: center;
+			font-family: 'Noto Sans JP';
+			font-size: m.vw(16);
+			font-style: normal;
 			font-weight: 400;
-			padding: m.fs(16, 0.5) m.fs(24, 0.5);
-			letter-spacing: 0.05em;
-			text-transform: uppercase;
+			line-height: 160%;
+			letter-spacing: m.vw(1.6);
+			margin: 0;
 
-			// モバイル対応
 			@include m.mq(md) {
-				font-size: m.fsm(12);
-				padding: m.fsm(12) m.fsm(20);
+				font-size: m.vw-sp(14);
+				letter-spacing: m.vw-sp(1.4);
 			}
 		}
 	}
 
-	&__title {
-		font-size: m.fs(39.06, 0.5);
-		font-weight: 700;
-		color: #333333;
-		margin-bottom: m.fs(32, 0.5);
-		line-height: 1.4;
-		letter-spacing: 0.1em;
-
-		// モバイル対応
-		@include m.mq(md) {
-			font-size: m.fsm(24);
-			margin-bottom: m.fsm(24);
-			letter-spacing: 0.05em;
-		}
-	}
-
-	&__description {
-		font-size: m.fs(16);
-		color: v.$main-color;
-		font-family: v.$ja-sans;
-		line-height: 1.6;
-		margin: 0;
-
-		// モバイル対応
-		@include m.mq(md) {
-			font-size: m.fsm(14);
-			line-height: 1.5;
-		}
-	}
-
+	// Buttons Area
 	&__buttons {
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		gap: m.fs(40, 0.5);
-		flex-wrap: wrap;
+		gap: m.vw(40);
 
-		// モバイル対応
 		@include m.mq(md) {
-			gap: m.fsm(20);
 			flex-direction: column;
-			width: 100%;
+			gap: m.vw-sp(20);
 		}
 	}
 
+	// Button Base Styles
 	&__button {
-		// ボタンコンテナのスタイル（必要に応じて）
+		display: flex;
+		width: m.vw(260.4);
+		height: m.vw(70);
+		justify-content: center;
+		align-items: center;
+		flex-shrink: 0;
+		border-radius: m.vw(40);
+		border: 2px solid #4E99FF;
+		text-decoration: none;
+		transition: all 0.3s ease;
+
+		@include m.mq(md) {
+			width: m.vw-sp(250);
+			height: m.vw-sp(60);
+			border-radius: m.vw-sp(30);
+		}
+
+		span {
+			text-align: center;
+			font-family: 'Noto Sans JP';
+			font-size: m.vw(25);
+			font-style: normal;
+			font-weight: 700;
+			line-height: 160%;
+			letter-spacing: m.vw(2.5);
+
+			@include m.mq(md) {
+				font-size: m.vw-sp(20);
+				letter-spacing: m.vw-sp(2);
+			}
+		}
+
+		// Primary Button (ご予約)
+		&--primary {
+			background: #4E99FF;
+
+			span {
+				color: #FFF;
+			}
+
+			&:hover {
+				background: #FFF;
+
+				span {
+					color: #4E99FF;
+				}
+			}
+		}
+
+		// Secondary Button (お問い合わせ)
+		&--secondary {
+			background: #FFF;
+
+			span {
+				color: #4E99FF;
+			}
+
+			&:hover {
+				background: #4E99FF;
+
+				span {
+					color: #FFF;
+				}
+			}
+		}
 	}
 }

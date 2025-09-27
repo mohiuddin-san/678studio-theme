@@ -218,8 +218,7 @@ if (empty($shop)) {
                 ?>
                 <img src="<?php echo esc_url($store_image); ?>" alt="店舗内観" class="store-basic-info-section-mobile__store-img">
             </div>
-
-            <!-- Decorative Elements outside image -->
+            <!-- Decorative Elements -->
             <div class="store-basic-info-section-mobile__decorations">
                 <img src="<?php echo get_template_directory_uri(); ?>/assets/images/detail-wave-ilst-01.svg" alt="" class="store-basic-info-section-mobile__wave-1">
                 <img src="<?php echo get_template_directory_uri(); ?>/assets/images/detail-wave-ilst-2-sp.svg" alt="" class="store-basic-info-section-mobile__wave-2">

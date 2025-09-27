@@ -1,0 +1,551 @@
+@use '../../base/variables' as v;
+@use '../../base/mixins' as m;
+
+.store-access-section {
+	background: #fff;
+	padding: m.vw(76) 0 m.vw(120);
+
+	@include m.mq(md) {
+		display: none;
+	}
+
+	&__container {
+		width: 100%;
+		margin: 0 auto;
+		@include m.design-grid(
+			$cols: (
+				m.vw(215),
+				1fr,
+				m.vw(80),
+			)
+		);
+	}
+
+	// 縦書きタイトル
+	&__vertical-title {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: m.vw(16);
+		align-self: start;
+		transform: rotate(90deg);
+		transform-origin: left top;
+		margin-left: 50%;
+		margin-top: m.vw(10);
+		position: sticky;
+		top: 20vh;
+		z-index: 10;
+	}
+
+	&__circle {
+		font-size: m.vw(5);
+		color: #f39556;
+		font-weight: 400;
+	}
+
+	&__title {
+		font-family: 'Noto Sans CJK JP';
+		font-size: m.vw(16);
+		font-weight: 500;
+		color: #3f3f3f;
+		margin: 0;
+		letter-spacing: 1.6px;
+		line-height: 200%;
+		text-align: center;
+		white-space: nowrap;
+	}
+
+	&__title-en {
+		font-family: v.$en;
+		font-size: m.vw(14);
+		color: #666;
+		font-weight: 400;
+		letter-spacing: 0.05em;
+	}
+
+	// メインコンテンツエリア
+	&__main {
+		position: relative;
+	}
+
+	// 上部ブロック：アクセスタイトル
+	&__header {
+		margin-bottom: m.vw(60);
+	}
+
+	// 下部ブロック：アクセス情報と地図の2カラムレイアウト（1:1）
+	&__body {
+		@include m.design-grid(
+			$cols: (
+				1fr,
+				1fr,
+			)
+		);
+		align-items: start;
+	}
+
+	// アクセス情報エリア
+	&__content {
+		display: flex;
+		flex-direction: column;
+		gap: m.vw(48);
+		padding-right: m.vw(52);
+	}
+
+	// 店舗名エリア
+	&__store-name {
+		display: flex;
+		align-items: center;
+		gap: m.vw(20);
+		margin-bottom: m.vw(24);
+	}
+
+	&__name-icon {
+		width: m.vw(44);
+		height: m.vw(44);
+		flex-shrink: 0;
+	}
+
+	&__name {
+		font-family: 'Noto Sans CJK JP';
+		font-size: m.vw(31.25);
+		font-weight: 700;
+		color: #3f3f3f;
+		margin: 0;
+		line-height: 35px;
+		letter-spacing: 1.563px;
+	}
+
+	// 住所セクション
+	&__address {
+		margin-bottom: m.vw(32);
+	}
+
+	&__address-title {
+		color: #a99f3c;
+		font-family: 'Noto Sans JP';
+		font-size: m.vw(20);
+		font-weight: 700;
+		line-height: 200%;
+		letter-spacing: 1px;
+		margin: 0 0 m.vw(16) 0;
+	}
+
+	&__address-text {
+		color: #000;
+		font-family: 'Noto Sans JP';
+		font-size: m.vw(16);
+		font-weight: 350;
+		line-height: 200%;
+		letter-spacing: 0.8px;
+		margin: 0;
+	}
+
+	// アクセス情報セクション
+	&__access-info {
+		display: flex;
+		flex-direction: column;
+		gap: m.vw(32);
+	}
+
+	&__access-item {
+		margin-bottom: m.vw(24);
+	}
+
+	&__access-label {
+		color: #a99f3c;
+		font-family: 'Noto Sans JP';
+		font-size: m.vw(18);
+		font-weight: 600;
+		line-height: 200%;
+		letter-spacing: 0.9px;
+		margin: 0 0 m.vw(12) 0;
+	}
+
+	&__access-text {
+		color: #000;
+		font-family: 'Noto Sans JP';
+		font-size: m.vw(16);
+		font-weight: 350;
+		line-height: 200%;
+		letter-spacing: 0.8px;
+		margin: 0;
+	}
+
+	// アクセスルート
+	&__access-routes {
+		display: flex;
+		flex-direction: column;
+		gap: m.vw(40);
+	}
+
+	&__route-item {
+		padding-left: m.vw(20);
+	}
+
+	&__route-title {
+		color: #3f3f3f;
+		font-family: 'Noto Sans JP';
+		font-size: m.vw(18);
+		font-weight: 600;
+		line-height: 200%;
+		letter-spacing: 0.9px;
+		margin: 0 0 m.vw(16) 0;
+	}
+
+	&__route-details {
+		display: flex;
+		flex-direction: column;
+		gap: m.vw(8);
+
+		p {
+			color: #000;
+			font-family: 'Noto Sans JP';
+			font-size: m.vw(16);
+			font-weight: 350;
+			line-height: 200%;
+			letter-spacing: 0.8px;
+			margin: 0;
+		}
+	}
+
+	// 地図エリア
+	&__map {
+		position: relative;
+		width: 100%;
+		height: m.vw(517);
+	}
+
+	&__map-container {
+		width: 100%;
+		height: 100%;
+		border-radius: m.vw(20);
+		overflow: hidden;
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+	}
+
+	&__map-iframe {
+		width: 100%;
+		height: 100%;
+		border: none;
+		border-radius: m.vw(20);
+	}
+
+	// Container for embedded iframe from database
+	&__map-iframe-container {
+		width: 100%;
+		height: 100%;
+		border-radius: m.vw(20);
+		overflow: hidden;
+
+		iframe {
+			width: 100% !important;
+			height: 100% !important;
+			border: none !important;
+			border-radius: m.vw(20);
+		}
+	}
+
+	&__map-placeholder {
+		width: 100%;
+		height: 100%;
+		background: #f5f5f5;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		border-radius: m.vw(20);
+		gap: m.vw(16);
+
+		p {
+			color: #666;
+			font-family: 'Noto Sans JP';
+			font-size: m.vw(16);
+			text-align: center;
+			margin: 0;
+		}
+
+		a {
+			color: #f39556;
+			font-family: 'Noto Sans JP';
+			font-size: m.vw(14);
+			text-decoration: none;
+			padding: m.vw(8) m.vw(16);
+			border: 1px solid #f39556;
+			border-radius: m.vw(4);
+			transition: all 0.3s ease;
+
+			&:hover {
+				background: #f39556;
+				color: #fff;
+			}
+		}
+	}
+
+	// レスポンシブ対応
+	@include m.mq(md) {
+		padding: m.vw(60) 0 m.vw(100);
+
+		&__body {
+			@include m.design-grid(
+				$cols: (
+					1fr,
+				)
+			);
+			gap: m.vw(60);
+		}
+
+		&__map {
+			width: 100%;
+			height: m.vw(300);
+		}
+
+		&__name {
+			font-size: m.vw(24);
+		}
+
+		&__address-title {
+			font-size: m.vw(18);
+		}
+
+		&__access-label {
+			font-size: m.vw(16);
+		}
+
+		&__route-title {
+			font-size: m.vw(16);
+		}
+
+		&__address-text,
+		&__access-text,
+		&__route-details p {
+			font-size: m.vw(14);
+		}
+	}
+}
+
+// Mobile Layout
+.store-access-section-mobile {
+	display: none;
+	background: #fff;
+	padding: m.vw-sp(60) 0 m.vw-sp(80);
+	padding-left: m.vw-sp(20);
+
+	@include m.mq(md) {
+		display: block;
+	}
+
+	&__container {
+		padding: 0 m.vw-sp(20);
+		padding-left: m.vw-sp(20);
+		display: flex;
+		flex-direction: column;
+		position: relative;
+		height: auto;
+		overflow: visible;
+	}
+
+	// Mobile Vertical Title
+	&__vertical-title {
+		position: sticky;
+		left: m.vw-sp(10);
+		top: m.vw-sp(80);
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: m.vw-sp(12);
+		transform: rotate(90deg);
+		transform-origin: left top;
+		z-index: 10;
+		align-self: flex-start;
+	}
+
+	&__circle {
+		font-size: m.vw-sp(4);
+		color: #f39556;
+		font-weight: 400;
+	}
+
+	&__title {
+		font-family: 'Noto Sans CJK JP';
+		font-size: m.vw-sp(10.24);
+		font-weight: 500;
+		color: #3f3f3f;
+		margin: 0;
+		letter-spacing: m.vw-sp(1.024);
+		line-height: 200%;
+		text-align: center;
+		white-space: nowrap;
+	}
+
+	&__title-en {
+		font-family: v.$en;
+		font-size: m.vw-sp(8.5);
+		color: #666;
+		font-weight: 400;
+		letter-spacing: 0.05em;
+	}
+
+	// Access Title with Icon
+	&__store-name {
+		display: flex;
+		align-items: center;
+		gap: m.vw-sp(8);
+		justify-content: flex-start;
+		margin-bottom: m.vw-sp(40);
+	}
+
+	&__name-icon {
+		width: m.vw-sp(25);
+		height: m.vw-sp(25);
+		flex-shrink: 0;
+	}
+
+	&__name {
+		font-family: 'Noto Sans CJK JP';
+		font-size: m.vw-sp(20);
+		font-weight: 700;
+		color: #3f3f3f;
+		margin: 0;
+		line-height: m.vw-sp(35);
+		letter-spacing: m.vw-sp(1);
+	}
+
+	// Access Information
+	&__access-info {
+		display: flex;
+		flex-direction: column;
+		gap: m.vw-sp(32);
+		margin-bottom: m.vw-sp(40);
+	}
+
+	&__access-item {
+		margin-bottom: m.vw-sp(24);
+	}
+
+	&__access-label {
+		color: #a99f3c;
+		font-family: 'Noto Sans JP';
+		font-size: m.vw-sp(16);
+		font-weight: 600;
+		line-height: 200%;
+		letter-spacing: m.vw-sp(0.8);
+		margin: 0 0 m.vw-sp(12) 0;
+	}
+
+	&__access-text {
+		color: #000;
+		font-family: 'Noto Sans JP';
+		font-size: m.vw-sp(14);
+		font-weight: 350;
+		line-height: 200%;
+		letter-spacing: m.vw-sp(0.7);
+		margin: 0;
+		text-align: justify;
+	}
+
+	// Access Routes
+	&__access-routes {
+		display: flex;
+		flex-direction: column;
+		gap: m.vw-sp(32);
+	}
+
+	&__route-item {
+		padding-left: 0;
+	}
+
+	&__route-title {
+		color: #3f3f3f;
+		font-family: 'Noto Sans JP';
+		font-size: m.vw-sp(16);
+		font-weight: 600;
+		line-height: 200%;
+		letter-spacing: m.vw-sp(0.8);
+		margin: 0 0 m.vw-sp(12) 0;
+	}
+
+	&__route-details {
+		display: flex;
+		flex-direction: column;
+		gap: m.vw-sp(8);
+
+		p {
+			color: #000;
+			font-family: 'Noto Sans JP';
+			font-size: m.vw-sp(14);
+			font-weight: 350;
+			line-height: 200%;
+			letter-spacing: m.vw-sp(0.7);
+			margin: 0;
+			text-align: justify;
+		}
+	}
+
+	// Google Maps
+	&__map {
+		position: relative;
+		width: 100%;
+		height: m.vw-sp(300);
+		border-radius: m.vw-sp(15);
+		overflow: hidden;
+	}
+
+	&__map-iframe {
+		width: 100%;
+		height: 100%;
+		border: none;
+		border-radius: m.vw-sp(15);
+	}
+
+	// Container for embedded iframe from database
+	&__map-iframe-container {
+		width: 100%;
+		height: 100%;
+		border-radius: m.vw-sp(15);
+		overflow: hidden;
+
+		iframe {
+			width: 100% !important;
+			height: 100% !important;
+			border: none !important;
+			border-radius: m.vw-sp(15);
+		}
+	}
+
+	&__map-placeholder {
+		width: 100%;
+		height: 100%;
+		background: #f5f5f5;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		border-radius: m.vw-sp(15);
+		gap: m.vw-sp(16);
+
+		p {
+			color: #666;
+			font-family: 'Noto Sans JP';
+			font-size: m.vw-sp(14);
+			text-align: center;
+			margin: 0;
+		}
+
+		a {
+			color: #f39556;
+			font-family: 'Noto Sans JP';
+			font-size: m.vw-sp(12);
+			text-decoration: none;
+			padding: m.vw-sp(8) m.vw-sp(16);
+			border: 1px solid #f39556;
+			border-radius: m.vw-sp(4);
+			transition: all 0.3s ease;
+
+			&:hover {
+				background: #f39556;
+				color: #fff;
+			}
+		}
+	}
+}

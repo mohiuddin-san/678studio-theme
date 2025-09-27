@@ -1,0 +1,627 @@
+@use '../../base/variables' as v;
+@use '../../base/mixins' as m;
+
+.store-plan-section {
+	background: #fff;
+	padding: m.vw(76) 0 m.vw(120);
+
+	@include m.mq(md) {
+		display: none;
+	}
+
+	&__container {
+		width: 100%;
+		margin: 0 auto;
+		@include m.design-grid(
+			$cols: (
+				m.vw(215),
+				1fr,
+				m.vw(80),
+			)
+		);
+	}
+
+	// 縦書きタイトル
+	&__vertical-title {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: m.vw(16);
+		align-self: start;
+		transform: rotate(90deg);
+		transform-origin: left top;
+		margin-left: 50%;
+		margin-top: m.vw(10);
+		position: sticky;
+		top: 20vh;
+		z-index: 10;
+	}
+
+	&__circle {
+		font-size: m.vw(5);
+		color: #f39556;
+		font-weight: 400;
+	}
+
+	&__title {
+		font-family: 'Noto Sans CJK JP';
+		font-size: m.vw(16);
+		font-weight: 500;
+		color: #3f3f3f;
+		margin: 0;
+		letter-spacing: 1.6px;
+		line-height: 200%;
+		text-align: center;
+		white-space: nowrap;
+	}
+
+	&__title-en {
+		font-family: v.$en;
+		font-size: m.vw(14);
+		color: #666;
+		font-weight: 400;
+		letter-spacing: 0.05em;
+	}
+
+	// メインコンテンツエリア
+	&__main {
+		position: relative;
+
+		// 右下装飾要素（複数プランの場合のみ）
+		&--multiple-plans {
+			&::after {
+				content: '';
+				position: absolute;
+				right: 0;
+				bottom: m.vw(-200);
+				width: m.vw(72);
+				height: m.vw(328);
+				flex-shrink: 0;
+				background-image: url('/wp-content/themes/678studio/assets/images/detail-plan-bottom-illust.svg');
+				background-size: contain;
+				background-repeat: no-repeat;
+				background-position: center;
+			}
+		}
+	}
+
+	// 各プランアイテム
+	&__plan-item {
+		margin-bottom: m.vw(213);
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+
+		@include m.mq(md) {
+			margin-bottom: m.vw(160);
+		}
+	}
+
+	// 上部ブロック：プランタイトル
+	&__header {
+		margin-bottom: m.vw(60);
+	}
+
+	// 下部ブロック：プラン画像と詳細の2カラムレイアウト
+	&__body {
+		@include m.design-grid(
+			$cols: (
+				m.vw(406),
+				1fr,
+			)
+		);
+		gap: m.vw(134);
+		align-items: start;
+	}
+
+	// Visual Section (Plan Image + Decorations)
+	&__visual {
+		position: relative;
+		width: m.vw(406);
+		height: m.vw(406);
+	}
+
+	// 画像エリア（Figma仕様に基づく）
+	&__image-container {
+		display: inline-flex;
+		width: m.vw(406);
+		height: m.vw(406);
+		justify-content: flex-end;
+		align-items: center;
+		flex-shrink: 0;
+		border-radius: m.vw(400) m.vw(300);
+		overflow: hidden;
+		position: relative;
+		z-index: 2;
+		background: lightgray 50% / cover no-repeat;
+	}
+
+	&__plan-img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: center;
+	}
+
+	// 装飾要素（プラン専用）
+	&__decorations {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		pointer-events: none;
+		z-index: 3;
+	}
+
+	&__plan-illust {
+		position: absolute;
+		left: m.vw(-20);
+		bottom: m.vw(-112);
+		width: m.vw(75);
+		height: m.vw(305);
+		flex-shrink: 0;
+	}
+
+	// Content Section (Plan Details)
+	&__content {
+		display: flex;
+		flex-direction: column;
+	}
+
+	&__plan-name {
+		color: #a99f3c;
+		font-family: 'Noto Sans JP';
+		font-size: m.vw(25);
+		font-style: normal;
+		font-weight: 700;
+		line-height: 200%;
+		letter-spacing: 1.25px;
+		margin: 0;
+		padding-bottom: m.vw(48);
+
+		@include m.mq(md) {
+			font-size: m.vw(20);
+			padding-bottom: m.vw(32);
+		}
+	}
+
+	// 店舗名エリア（テンプレート）
+	&__store-name {
+		display: flex;
+		align-items: center;
+		gap: m.vw(20);
+		margin-bottom: m.vw(24);
+	}
+
+	&__name-icon {
+		width: m.vw(44);
+		height: m.vw(44);
+		flex-shrink: 0;
+	}
+
+	&__name {
+		font-family: 'Noto Sans CJK JP';
+		font-size: m.vw(31.25);
+		font-weight: 700;
+		color: #3f3f3f;
+		margin: 0;
+		line-height: 35px;
+		letter-spacing: 1.563px;
+	}
+
+	&__description {
+		color: #000;
+		font-family: 'Noto Sans JP';
+		font-size: m.vw(16);
+		font-style: normal;
+		font-weight: 350;
+		line-height: 200%;
+		letter-spacing: 0.8px;
+		padding-bottom: m.vw(64);
+
+		@include m.mq(md) {
+			font-size: m.vw(14);
+			padding-bottom: m.vw(48);
+		}
+
+		p {
+			margin: 0 0 m.vw(16) 0;
+
+			@include m.mq(md) {
+				margin: 0 0 m.vw(14) 0;
+			}
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+	}
+
+	// Plan Details Table (2 Column Card Layout)
+	&__details {
+		background: #fff;
+		border-radius: m.vw(20);
+		border: 1px solid #f39556;
+		width: m.vw(232); // 116 * 2
+		border-collapse: separate;
+		border-spacing: 0;
+		position: relative;
+		overflow: hidden;
+
+		@include m.mq(md) {
+			border-radius: m.vw(15);
+			width: m.vw(200); // 100 * 2
+		}
+
+		tr {
+			display: table-row;
+		}
+
+		// 中央の縦線（tableの上下端から余白）
+		&::before {
+			content: '';
+			position: absolute;
+			top: m.vw(3);
+			bottom: m.vw(3);
+			left: 50%;
+			transform: translateX(-50%);
+			width: 1px;
+			background-color: #f39556;
+		}
+
+		th,
+		td {
+			width: m.vw(116);
+			text-align: center;
+			box-sizing: border-box;
+			border: none;
+
+			@include m.mq(md) {
+				width: m.vw(100);
+			}
+		}
+
+		// ヘッダー行の下に横線を追加（左右にvw(5)の余白）
+		th {
+			position: relative;
+
+			&::after {
+				content: '';
+				position: absolute;
+				bottom: 0;
+				left: m.vw(5);
+				right: m.vw(5);
+				height: 1px;
+				background-color: #f39556;
+			}
+		}
+	}
+
+	&__detail-label {
+		color: #3f3f3f;
+		font-family: 'Noto Sans JP';
+		font-size: m.vw(16);
+		font-style: normal;
+		font-weight: 500;
+		line-height: 200%;
+		letter-spacing: 0.8px;
+		border-bottom: 1px solid #f39556;
+		padding: m.vw(12) m.vw(5) m.vw(8) m.vw(5);
+
+		@include m.mq(md) {
+			font-size: m.vw(14);
+			padding: m.vw(10) m.vw(5) m.vw(6) m.vw(5);
+		}
+	}
+
+	&__detail-value {
+		color: #a99f3c;
+		text-align: center;
+		font-family: 'Noto Sans JP';
+		font-size: m.vw(16);
+		font-style: normal;
+		font-weight: 500;
+		line-height: 200%;
+		letter-spacing: 0.8px;
+		padding: m.vw(12) m.vw(5);
+
+		@include m.mq(md) {
+			font-size: m.vw(14);
+			padding: m.vw(10) m.vw(5);
+		}
+
+		&.store-plan-section__price {
+			color: #a99f3c;
+		}
+	}
+}
+
+// Mobile Layout
+.store-plan-section-mobile {
+	display: none;
+	background: #fff;
+	padding: m.vw-sp(60) 0 m.vw-sp(180);
+	padding-left: m.vw-sp(20);
+	max-width: 100vw;
+
+	@include m.mq(md) {
+		display: block;
+	}
+
+	&__container {
+		padding: 0 m.vw-sp(20);
+		padding-left: m.vw-sp(20);
+		display: flex;
+		flex-direction: column;
+		position: relative;
+		height: auto;
+		overflow: visible;
+	}
+
+	// Mobile Vertical Title
+	&__vertical-title {
+		position: sticky;
+		left: m.vw-sp(10);
+		top: m.vw-sp(80);
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: m.vw-sp(12);
+		transform: rotate(90deg);
+		transform-origin: left top;
+		z-index: 10;
+		align-self: flex-start;
+	}
+
+	&__circle {
+		font-size: m.vw-sp(4);
+		color: #f39556;
+		font-weight: 400;
+	}
+
+	&__title {
+		font-family: 'Noto Sans CJK JP';
+		font-size: m.vw-sp(10.24);
+		font-weight: 500;
+		color: #3f3f3f;
+		margin: 0;
+		letter-spacing: m.vw-sp(1.024);
+		line-height: 200%;
+		text-align: center;
+		white-space: nowrap;
+	}
+
+	&__title-en {
+		font-family: v.$en;
+		font-size: m.vw-sp(8.5);
+		color: #666;
+		font-weight: 400;
+		letter-spacing: 0.05em;
+	}
+
+	// Plan Items Loop
+	&__plan-item {
+		margin-bottom: m.vw-sp(73);
+		position: relative;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+
+		// 最後のプランの右下装飾要素（複数プランの場合のみ）
+		&--last {
+			&::after {
+				content: '';
+				position: absolute;
+				right: m.vw-sp(0);
+				bottom: m.vw-sp(-170);
+				width: m.vw-sp(71);
+				height: m.vw-sp(158);
+				flex-shrink: 0;
+				background-image: url('/wp-content/themes/678studio/assets/images/about-detail-wave-3-sp.svg');
+				background-size: contain;
+				background-repeat: no-repeat;
+				background-position: center;
+			}
+		}
+	}
+
+	// Store Name (Section Title)
+	&__store-name {
+		display: flex;
+		align-items: center;
+		gap: m.vw-sp(8);
+		justify-content: flex-start;
+		margin-bottom: m.vw-sp(20);
+	}
+
+	&__name-icon {
+		width: m.vw-sp(25);
+		height: m.vw-sp(25);
+		flex-shrink: 0;
+	}
+
+	&__name {
+		font-family: 'Noto Sans CJK JP';
+		font-size: m.vw-sp(20);
+		font-weight: 700;
+		color: #3f3f3f;
+		margin: 0;
+		line-height: m.vw-sp(35);
+		letter-spacing: m.vw-sp(1);
+	}
+
+	// Plan Name (Individual Plan Title)
+	&__plan-name {
+		text-align: center;
+		margin-bottom: m.vw-sp(20);
+		margin-top: m.vw-sp(24);
+	}
+
+	&__plan-title {
+		font-family: 'Noto Sans JP';
+		font-size: m.vw-sp(20);
+		font-weight: 700;
+		color: #a99f3c;
+		margin: 0;
+		line-height: 200%;
+		letter-spacing: m.vw-sp(1);
+	}
+
+	// Plan Description
+	&__description {
+		text-align: justify;
+		margin-bottom: m.vw-sp(40);
+
+		p {
+			font-family: 'Noto Sans JP';
+			font-size: m.vw-sp(16);
+			font-weight: 350;
+			line-height: 200%;
+			color: #000;
+			letter-spacing: m.vw-sp(0.8);
+			font-feature-settings: 'palt' on;
+			margin: 0;
+		}
+	}
+
+	// Plan Image (Center)
+	&__image-container {
+		width: 100vw;
+		margin-left: calc(-1 * m.vw-sp(40)); // コンテナーの左右パディングを相殺
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		position: relative;
+		overflow-x: hidden; // 横方向のはみ出しのみカット
+		overflow-y: visible; // 縦方向は表示
+	}
+
+	&__image {
+		display: flex;
+		width: m.vw-sp(219);
+		height: m.vw-sp(215);
+		justify-content: center;
+		align-items: center;
+		flex-shrink: 0;
+		border-radius: m.vw-sp(400) m.vw-sp(300);
+		overflow: hidden;
+		position: relative;
+		z-index: 2;
+	}
+
+	&__plan-img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: center;
+	}
+
+	// Decorative Elements for Mobile
+	&__decorations {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		pointer-events: none;
+		z-index: 3;
+	}
+
+	&__wave-1 {
+		position: absolute;
+		top: m.vw-sp(80);
+		left: m.vw-sp(20);
+		width: m.vw-sp(75);
+		height: m.vw-sp(165);
+		flex-shrink: 0;
+	}
+
+	// Plan Details (Bottom)
+	&__details {
+		display: flex;
+		flex-direction: column;
+		gap: m.vw-sp(20);
+		align-items: center;
+	}
+
+	&__details-table {
+		background: #fff;
+		border-radius: m.vw-sp(15);
+		border: 1px solid #f39556;
+		width: m.vw-sp(200);
+		border-collapse: separate;
+		border-spacing: 0;
+		position: relative;
+		overflow: hidden;
+
+		tr {
+			display: table-row;
+		}
+
+		// 中央の縦線（tableの上下端から余白）
+		&::before {
+			content: '';
+			position: absolute;
+			top: m.vw-sp(3);
+			bottom: m.vw-sp(3);
+			left: 50%;
+			transform: translateX(-50%);
+			width: 1px;
+			background-color: #f39556;
+		}
+
+		th,
+		td {
+			width: m.vw-sp(100);
+			text-align: center;
+			box-sizing: border-box;
+			border: none;
+		}
+
+		// ヘッダー行の下に横線を追加（左右にvw-sp(5)の余白）
+		th {
+			position: relative;
+
+			&::after {
+				content: '';
+				position: absolute;
+				bottom: 0;
+				left: m.vw-sp(5);
+				right: m.vw-sp(5);
+				height: 1px;
+				background-color: #f39556;
+			}
+		}
+	}
+
+	&__detail-label {
+		color: #3f3f3f;
+		font-family: 'Noto Sans JP';
+		font-size: m.vw-sp(12.9);
+		font-style: normal;
+		font-weight: 500;
+		line-height: 180%;
+		letter-spacing: m.vw-sp(0.645);
+		border-bottom: 1px solid #f39556;
+		padding: m.vw-sp(10) m.vw-sp(5) m.vw-sp(6) m.vw-sp(5);
+	}
+
+	&__detail-value {
+		color: #a99f3c;
+		text-align: center;
+		font-family: 'Noto Sans JP';
+		font-size: m.vw-sp(12.9);
+		font-style: normal;
+		font-weight: 500;
+		line-height: 180%;
+		letter-spacing: m.vw-sp(0.645);
+		padding: m.vw-sp(10) m.vw-sp(5);
+
+		&.store-plan-section-mobile__price {
+			color: #a99f3c;
+		}
+	}
+}

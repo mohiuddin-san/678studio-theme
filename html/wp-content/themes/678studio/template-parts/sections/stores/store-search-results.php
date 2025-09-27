@@ -37,10 +37,14 @@ function get_minimum_plan_duration($shop) {
 }
 
 function fetch_studio_shops($search_query = '', $prefecture = '', $page = 1, $per_page = 6) {
-    // functions.phpのキャッシュ機能を使用
-    $data = get_cached_studio_data();
-    
-    
+    // Phase 3-1: 新しいヘルパー関数を使用
+    if (function_exists('get_all_studio_shops_data')) {
+        $data = get_all_studio_shops_data();
+    } else {
+        // フォールバック：既存システム
+        $data = get_cached_studio_data();
+    }
+
     if (isset($data['error'])) {
         return ['certified_shops' => [], 'regular_shops' => [], 'total' => 0, 'error' => $data['error']];
     }
@@ -61,18 +65,18 @@ function fetch_studio_shops($search_query = '', $prefecture = '', $page = 1, $pe
     if (!empty($prefecture)) {
         $filtered_shops = array_filter($filtered_shops, function($shop) use ($prefecture) {
             $address = $shop['address'] ?? '';
-            
+
             // 直接的なマッチ（住所に都道府県名が含まれている場合）
             $address_match = stripos($address, $prefecture) !== false;
             
-            // 東京都の特別区のマッピング
-            if (!$address_match && $prefecture === '東京都') {
+            // 東京都の特別区のマッピング（東京都が住所に含まれている場合のみ）
+            if (!$address_match && $prefecture === '東京都' && stripos($address, '東京都') !== false) {
                 $tokyo_wards = [
                     '千代田区', '中央区', '港区', '新宿区', '文京区', '台東区', '墨田区', '江東区',
                     '品川区', '目黒区', '大田区', '世田谷区', '渋谷区', '中野区', '杉並区', '豊島区',
                     '北区', '荒川区', '板橋区', '練馬区', '足立区', '葛飾区', '江戸川区'
                 ];
-                
+
                 foreach ($tokyo_wards as $ward) {
                     if (stripos($address, $ward) !== false) {
                         $address_match = true;
@@ -80,7 +84,7 @@ function fetch_studio_shops($search_query = '', $prefecture = '', $page = 1, $pe
                     }
                 }
             }
-            
+
             return $address_match;
         });
     }

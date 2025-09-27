@@ -158,6 +158,12 @@ function get_studio_data_from_server_api() {
 
 // キャッシュ機能付きスタジオデータ取得
 function get_cached_studio_data() {
+    // Phase 3: 新しいヘルパー関数を使用（フォールバック付き）
+    if (function_exists('get_all_studio_shops_data')) {
+        return get_all_studio_shops_data();
+    }
+
+    // フォールバック：既存システム
     $cache_key = 'studio_shops_data';
     $cache_duration = 300; // 5分キャッシュ
 
@@ -173,14 +179,14 @@ function get_cached_studio_data() {
     } else {
         $data = get_studio_data_from_server_api();
     }
-    
+
     // キャッシュに保存（エラーの場合でも短時間キャッシュ）
     if (isset($data['error'])) {
         set_transient($cache_key, $data, 60); // エラー時は1分キャッシュ
     } else {
         set_transient($cache_key, $data, $cache_duration);
     }
-    
+
     return $data;
 }
 
@@ -243,9 +249,14 @@ function get_studio_shop_by_id($shop_id) {
         return ['shop' => $cached_shop, 'error' => null];
     }
     
-    // 統一キャッシュシステムから全ショップデータを取得
-    $all_shops_data = get_cached_studio_data();
-    
+    // Phase 3-3: 新ヘルパー関数使用
+    if (function_exists('get_all_studio_shops_data')) {
+        $all_shops_data = get_all_studio_shops_data();
+    } else {
+        // フォールバック：既存システム
+        $all_shops_data = get_cached_studio_data();
+    }
+
     if (isset($all_shops_data['error'])) {
         return ['shop' => null, 'error' => $all_shops_data['error']];
     }
@@ -285,7 +296,13 @@ function ajax_get_gallery_studios() {
         return;
     }
 
-    $studio_data = get_cached_studio_data();
+    // Phase 3-3: 新ヘルパー関数使用
+    if (function_exists('get_all_studio_shops_data')) {
+        $studio_data = get_all_studio_shops_data();
+    } else {
+        // フォールバック：既存システム
+        $studio_data = get_cached_studio_data();
+    }
     
     if (isset($studio_data['error'])) {
         wp_send_json_error(['message' => $studio_data['error']]);
@@ -307,8 +324,13 @@ function ajax_studio_search() {
     $page = isset($_POST['page']) ? max(1, intval($_POST['page'])) : 1;
     $per_page = 6;
 
-    // キャッシュされたデータを使用
-    $data = get_cached_studio_data();
+    // Phase 3-3: 新ヘルパー関数使用
+    if (function_exists('get_all_studio_shops_data')) {
+        $data = get_all_studio_shops_data();
+    } else {
+        // フォールバック：既存システム
+        $data = get_cached_studio_data();
+    }
     
     if (isset($data['error'])) {
         wp_send_json_error(['message' => $data['error']]);
@@ -1420,8 +1442,13 @@ class StudioSEOManager {
             return ['shop' => $cached_shop];
         }
         
-        // キャッシュがない場合は全店舗データから検索
-        $all_shops_data = get_cached_studio_data();
+        // Phase 3-3: 新ヘルパー関数使用
+        if (function_exists('get_all_studio_shops_data')) {
+            $all_shops_data = get_all_studio_shops_data();
+        } else {
+            // フォールバック：既存システム
+            $all_shops_data = get_cached_studio_data();
+        }
         if (isset($all_shops_data['shops']) && is_array($all_shops_data['shops'])) {
             foreach ($all_shops_data['shops'] as $shop) {
                 if (isset($shop['id']) && intval($shop['id']) === $shop_id) {
@@ -1714,8 +1741,14 @@ echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   $this->outputUrlEntry($page['url'], $page['priority'], $page['changefreq']);
   }
 
-  // 店舗詳細ページ（動的）
-  $shops_data = get_cached_studio_data();
+  // 店舗詳細ページ（動的）- Phase 3-2: 新ヘルパー関数使用
+  if (function_exists('get_all_studio_shops_data')) {
+      $shops_data = get_all_studio_shops_data();
+  } else {
+      // フォールバック：既存システム
+      $shops_data = get_cached_studio_data();
+  }
+
   if (isset($shops_data['shops']) && is_array($shops_data['shops'])) {
   foreach ($shops_data['shops'] as $shop) {
   if (isset($shop['id'])) {

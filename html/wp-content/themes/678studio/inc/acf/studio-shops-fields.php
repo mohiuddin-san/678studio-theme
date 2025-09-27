@@ -417,6 +417,36 @@ acf_add_local_field_group(array(
             'rows' => 4,
             'new_lines' => 'br',
         ),
+        array(
+            'key' => 'field_studio_plan1_image',
+            'label' => '撮影プラン1 - 画像',
+            'name' => 'plan1_image',
+            'type' => 'image',
+            'instructions' => 'このプランを表現する画像を選択してください（推奨サイズ: 800x600px以上）',
+            'required' => 0,
+            'conditional_logic' => array(
+                array(
+                    array(
+                        'field' => 'field_studio_certified_store',
+                        'operator' => '==',
+                        'value' => '1',
+                    ),
+                ),
+            ),
+            'wrapper' => array(
+                'width' => '',
+            ),
+            'return_format' => 'array',
+            'preview_size' => 'medium',
+            'library' => 'all',
+            'min_width' => 400,
+            'min_height' => 300,
+            'min_size' => '',
+            'max_width' => 2000,
+            'max_height' => 2000,
+            'max_size' => '5 MB',
+            'mime_types' => 'jpg,jpeg,png,webp',
+        ),
         
         // 撮影プラン2
         array(
@@ -519,6 +549,36 @@ acf_add_local_field_group(array(
             'rows' => 4,
             'new_lines' => 'br',
         ),
+        array(
+            'key' => 'field_studio_plan2_image',
+            'label' => '撮影プラン2 - 画像',
+            'name' => 'plan2_image',
+            'type' => 'image',
+            'instructions' => 'このプランを表現する画像を選択してください（推奨サイズ: 800x600px以上）',
+            'required' => 0,
+            'conditional_logic' => array(
+                array(
+                    array(
+                        'field' => 'field_studio_certified_store',
+                        'operator' => '==',
+                        'value' => '1',
+                    ),
+                ),
+            ),
+            'wrapper' => array(
+                'width' => '',
+            ),
+            'return_format' => 'array',
+            'preview_size' => 'medium',
+            'library' => 'all',
+            'min_width' => 400,
+            'min_height' => 300,
+            'min_size' => '',
+            'max_width' => 2000,
+            'max_height' => 2000,
+            'max_size' => '5 MB',
+            'mime_types' => 'jpg,jpeg,png,webp',
+        ),
         
         // 撮影プラン3
         array(
@@ -620,6 +680,36 @@ acf_add_local_field_group(array(
             'maxlength' => '',
             'rows' => 4,
             'new_lines' => 'br',
+        ),
+        array(
+            'key' => 'field_studio_plan3_image',
+            'label' => '撮影プラン3 - 画像',
+            'name' => 'plan3_image',
+            'type' => 'image',
+            'instructions' => 'このプランを表現する画像を選択してください（推奨サイズ: 800x600px以上）',
+            'required' => 0,
+            'conditional_logic' => array(
+                array(
+                    array(
+                        'field' => 'field_studio_certified_store',
+                        'operator' => '==',
+                        'value' => '1',
+                    ),
+                ),
+            ),
+            'wrapper' => array(
+                'width' => '',
+            ),
+            'return_format' => 'array',
+            'preview_size' => 'medium',
+            'library' => 'all',
+            'min_width' => 400,
+            'min_height' => 300,
+            'min_size' => '',
+            'max_width' => 2000,
+            'max_height' => 2000,
+            'max_size' => '5 MB',
+            'mime_types' => 'jpg,jpeg,png,webp',
         ),
         
         // 地図タブ

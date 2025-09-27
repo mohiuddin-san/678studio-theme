@@ -39,6 +39,9 @@
 		transform-origin: left top;
 		margin-left: 50%;
 		margin-top: m.vw(10);
+		position: sticky;
+		top: 20vh;
+		z-index: 10;
 
 		@include m.mq(md) {
 			display: none;
@@ -287,7 +290,6 @@
 		width: m.vw(57.09);
 		height: m.vw(32.99);
 		flex-shrink: 0;
-		opacity: 0.7;
 	}
 
 	&__wave-2 {
@@ -297,7 +299,6 @@
 		width: m.vw(298);
 		height: auto;
 		flex-shrink: 0;
-		opacity: 0.6;
 	}
 
 	&__logo-illust {
@@ -307,7 +308,6 @@
 		width: m.vw(71);
 		height: auto;
 		flex-shrink: 0;
-		opacity: 0.8;
 	}
 }
 
@@ -315,8 +315,9 @@
 .store-basic-info-section-mobile {
 	display: none;
 	background: #fff;
-	padding: m.vw-sp(60) 0 m.vw-sp(80);
+	padding: m.vw-sp(60) 0 m.vw-sp(120);
 	padding-left: m.vw-sp(20); // 画面左からのパディング
+	max-width: 100vw;
 
 	@include m.mq(md) {
 		display: block;
@@ -330,20 +331,23 @@
 		display: flex;
 		flex-direction: column;
 		position: relative;
+		height: auto;
+		overflow: visible;
 	}
 
 	// Mobile Vertical Title
 	&__vertical-title {
-		position: absolute;
-		left: m.vw-sp(10); // コンテナーの左パディング内に配置
-		top: 0;
+		position: sticky;
+		left: m.vw-sp(10);
+		top: m.vw-sp(80);
 		display: flex;
 		flex-direction: row;
 		align-items: center;
 		gap: m.vw-sp(12);
 		transform: rotate(90deg);
 		transform-origin: left top;
-		z-index: 1;
+		z-index: 10;
+		align-self: flex-start;
 	}
 
 	&__circle {
@@ -417,12 +421,13 @@
 	// Store Image (Center)
 	&__image-container {
 		width: 100vw;
-		margin-left: calc(-1 * m.vw-sp(40)); // コンテナーの左パディングを相殺
+		margin-left: calc(-1 * m.vw-sp(40)); // コンテナーの左右パディングを相殺
 		margin-bottom: m.vw-sp(72); // 下の詳細セクションとの間隔
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		position: relative;
+		overflow-x: hidden; // 横方向のみカット
 	}
 
 	&__image {
@@ -477,7 +482,6 @@
 		right: m.vw-sp(40);
 		width: m.vw-sp(35);
 		height: auto;
-		opacity: 0.8;
 	}
 
 	// Store Details (Bottom)
