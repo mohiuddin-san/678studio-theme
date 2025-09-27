@@ -2,10 +2,36 @@
 /**
  * Store Basic Information Section
  * Display store details with vertical title and 2-column layout
+ *
+ * Phase 2: Fully migrated to new studio data helpers
  */
 
-// Get data passed from parent template
-$shop = $args['shop'] ?? array();
+// Get shop_id from various sources
+$shop_id = 0;
+if (isset($args['shop']['id'])) {
+    $shop_id = $args['shop']['id'];
+} elseif (isset($_GET['shop_id'])) {
+    $shop_id = intval($_GET['shop_id']);
+}
+
+// Use new helper functions to get data
+$shop = array();
+if ($shop_id > 0 && function_exists('get_studio_shop_data_simple')) {
+    $shop_data = get_studio_shop_data_simple($shop_id);
+    if (!isset($shop_data['error']) && !empty($shop_data['shop'])) {
+        $shop = $shop_data['shop'];
+    }
+}
+
+// Fallback to existing data if new system fails
+if (empty($shop) && isset($args['shop'])) {
+    $shop = $args['shop'];
+}
+
+// Don't render if no shop data
+if (empty($shop)) {
+    return;
+}
 ?>
 
 <section class="store-basic-info-section">
@@ -95,20 +121,12 @@ $shop = $args['shop'] ?? array();
 
                     <!-- Website -->
                     <?php
-                    // 新しいヘルパー関数を使用してWebサイトURLを取得
-                    $website_url = '';
+                    // Website URL (already included in shop data from new helper functions)
+                    $website_url = $shop['website_url'] ?? '';
 
-                    // まず$shop配列のwebsite_urlをチェック
-                    if (!empty($shop['website_url'])) {
-                        $website_url = $shop['website_url'];
-                    } else if (!empty($shop['id'])) {
-                        // 新しいヘルパー関数で直接ACFから取得
-                        $website_url = get_studio_shop_field($shop['id'], 'website_url');
-
-                        // 新しいヘルパー関数でも取得できない場合のフォールバック
-                        if (empty($website_url) && $shop['id'] == 122) {
-                            $website_url = 'https://www.1122.co.jp/studio/ichino/index.html';
-                        }
+                    // Fallback for shop ID 122 if still needed
+                    if (empty($website_url) && !empty($shop['id']) && $shop['id'] == 122) {
+                        $website_url = 'https://www.1122.co.jp/studio/ichino/index.html';
                     }
 
                     if (!empty($website_url)):

@@ -2,11 +2,34 @@
 /**
  * Studio Hero Slider Section
  * Display gallery images in a slider format for studio detail page
+ *
+ * Phase 2: Enhanced with new studio data helpers
  */
 
-// Get data passed from parent template
+// Get shop_id from various sources
+$shop_id = 0;
+if (isset($args['shop']['id'])) {
+    $shop_id = $args['shop']['id'];
+} elseif (isset($_GET['shop_id'])) {
+    $shop_id = intval($_GET['shop_id']);
+}
+
+// Try to get data using new helper functions first
 $gallery_images = $args['gallery_images'] ?? array();
 $shop_name = $args['shop_name'] ?? '';
+
+if ($shop_id > 0 && function_exists('get_studio_shop_data_simple')) {
+    $shop_data = get_studio_shop_data_simple($shop_id);
+    if (!isset($shop_data['error']) && !empty($shop_data['shop'])) {
+        // Use data from new helper functions
+        if (empty($gallery_images) && !empty($shop_data['shop']['main_gallery_images'])) {
+            $gallery_images = $shop_data['shop']['main_gallery_images'];
+        }
+        if (empty($shop_name)) {
+            $shop_name = $shop_data['shop']['name'];
+        }
+    }
+}
 
 // Don't render if no images
 if (empty($gallery_images)) {

@@ -2,12 +2,33 @@
 /**
  * Studio Info Header Component
  * Display store name, rating and certification status above the slider
+ *
+ * Phase 2: Migrated to use new studio data helpers
  */
 
-// Get data passed from parent template
-$shop = $args['shop'] ?? array();
-$shop_name = $shop['name'] ?? '';
-$is_certified = !empty($shop['is_certified_store']);
+// Get shop_id from various sources
+$shop_id = 0;
+if (isset($args['shop']['id'])) {
+    $shop_id = $args['shop']['id'];
+} elseif (isset($_GET['shop_id'])) {
+    $shop_id = intval($_GET['shop_id']);
+}
+
+// Use new helper functions to get data
+if ($shop_id > 0) {
+    $shop_name = get_studio_shop_field($shop_id, 'store_name');
+    $is_certified = (bool)get_studio_shop_field($shop_id, 'is_certified_store');
+} else {
+    // Fallback to existing data
+    $shop = $args['shop'] ?? array();
+    $shop_name = $shop['name'] ?? '';
+    $is_certified = !empty($shop['is_certified_store']);
+}
+
+// Ensure we have a shop name
+if (empty($shop_name) && isset($args['shop']['name'])) {
+    $shop_name = $args['shop']['name'];
+}
 ?>
 
 <section class="studio-info-header">
