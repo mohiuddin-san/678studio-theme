@@ -25,7 +25,7 @@
             <!-- Column 1: Main Services -->
             <div class="footer__nav-column">
               <a href="/" class="footer__nav-link">トップページ</a>
-              <a href="/about" class="footer__nav-link">678撮影について</a>
+              <a href="/about" class="footer__nav-link">ロクナナハチ撮影について</a>
               <a href="/photo-gallery" class="footer__nav-link">ギャラリー</a>
             </div>
 
@@ -67,7 +67,7 @@
             <!-- Left Column -->
             <div class="footer__nav-column">
               <a href="/" class="footer__nav-link">トップページ</a>
-              <a href="/about" class="footer__nav-link">678撮影について</a>
+              <a href="/about" class="footer__nav-link">ロクナナハチ撮影について</a>
               <a href="/photo-gallery" class="footer__nav-link">ギャラリー</a>
               <a href="/stores" class="footer__nav-link">写真館検索</a>
               <a href="/studio-reservation" class="footer__nav-link">ご予約相談</a>

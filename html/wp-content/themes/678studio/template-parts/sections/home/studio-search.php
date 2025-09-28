@@ -16,7 +16,7 @@
         ]); ?>
       </div>
       <h2 class="studio-search-section__title">お近くのフォトスタジオを探す</h2>
-      <p class="studio-search-section__subtitle">全国の写真館で678撮影が受けられます</p>
+      <p class="studio-search-section__subtitle">全国の写真館でロクナナハチ撮影が受けられます</p>
     </div>
 
     <!-- 検索フォーム -->
