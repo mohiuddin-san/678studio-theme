@@ -34,18 +34,18 @@ if ($shop_id > 0) {
     <h2 class="contact-booking__main-title">Bookings & Inquiries</h2>
 
     <!-- Sub Title -->
-    <h3 class="contact-booking__sub-title">お問い合わせ・ご予約相談</h3>
+    <h3 class="contact-booking__sub-title">ご予約相談・お問い合わせ</h3>
 
     <!-- Description -->
     <div class="contact-booking__description">
-      <p>ロクナナハチ<br>撮影のご予約・ご相談はこちらから</p>
+      <p>ロクナナハチ撮影の<br>ご予約相談・お問い合わせはこちらから</p>
     </div>
 
     <!-- Buttons Area -->
     <div class="contact-booking__buttons">
       <!-- ご予約ボタン (左側) -->
       <a href="<?php echo esc_url($reservation_url); ?>" class="contact-booking__button contact-booking__button--primary">
-        <span>ご予約</span>
+        <span>ご予約相談</span>
       </a>
 
       <!-- お問い合わせボタン (右側) -->
