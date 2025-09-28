@@ -7,10 +7,31 @@
     .splide__pagination {
         flex-wrap: nowrap !important;
         white-space: nowrap !important;
+        display: flex !important; // 強制的に表示
+        opacity: 1 !important;
+        visibility: visible !important;
 
         // 複数のページネーションが生成されることを防ぐ
         &:nth-of-type(n+2) {
             display: none !important;
+        }
+
+        // Splideのデフォルトページネーションボタンも表示
+        .splide__pagination__page {
+            opacity: 1 !important;
+            visibility: visible !important;
+            background: rgba(255, 153, 0, 0.7) !important; // オレンジ色
+            width: 8px !important;
+            height: 8px !important;
+            border-radius: 50% !important;
+            display: inline-block !important;
+            margin: 0 4px !important;
+
+            &.is-active {
+                background: #ff9900 !important; // アクティブ時は濃いオレンジ
+                width: 20px !important;
+                border-radius: 4px !important;
+            }
         }
     }
 }
@@ -71,11 +92,11 @@
 
             @include m.mq(md) {
                 height: 64vh; // Mobile height adjusted for 80vh container
-                border-radius: m.vw-sp(82); // Mobile border radius
-                // スワイプを阻害しないセンタリング
-                width: 90%; // 適度な幅
-                margin: 0 auto; // シンプルな中央配置
-                max-width: 90vw; // Ensure it doesn't exceed viewport
+                border-radius: m.vw-sp(20); // より小さい角丸でかわいく
+                // 余白を考慮したサイズ
+                width: calc(100% - 32px); // 左右に16pxずつ余白
+                margin: 0 auto; // 中央配置
+                max-width: calc(100vw - 10%); // ビューポート幅から余白を引く
             }
         }
     }
@@ -139,11 +160,15 @@
         overflow: hidden; // はみ出し部分を隠す
 
         @include m.mq(md) {
-            bottom: m.vw-sp(40);
-            gap: m.vw-sp(4); // さらに狭める
+            bottom: m.vw-sp(30) !important; // 位置を上げて確実に見えるように
+            gap: m.vw-sp(8) !important; // ギャップを広げる
             max-width: 95%;
             flex-wrap: nowrap !important; // 強制的に改行しない
             height: auto !important; // 高さを自動調整
+            display: flex !important; // 強制的に表示
+            opacity: 1 !important; // 透明度を確実に1に
+            visibility: visible !important; // 確実に表示
+            pointer-events: auto !important; // クリック可能に
 
             // 複数のページネーションが表示されるのを防ぐ
             &:not(:first-of-type) {
@@ -156,20 +181,25 @@
             width: m.vw(8);
             height: m.vw(8);
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 153, 0, 0.4); // オレンジ色（半透明）
             border: none;
             cursor: pointer;
             transition: all 0.4s ease;
 
             @include m.mq(md) {
-                width: m.vw-sp(4); // さらに小さく
-                height: m.vw-sp(4);
-                min-width: m.vw-sp(4); // 最小サイズを保証
+                width: m.vw-sp(8) !important; // さらに大きく
+                height: m.vw-sp(8) !important;
+                min-width: m.vw-sp(8) !important; // 最小サイズを保証
                 flex-shrink: 0; // 縮小しない
+                background: rgba(255, 153, 0, 0.7) !important; // より濃いオレンジ色で見やすく
+                opacity: 1 !important; // 確実に表示
+                visibility: visible !important; // 確実に表示
+                display: block !important; // ブロック要素として表示
+                pointer-events: auto !important; // クリック可能
             }
 
             &:hover {
-                background: rgba(255, 255, 255, 0.7);
+                background: rgba(255, 153, 0, 0.7); // オレンジ色（ホバー時）
                 transform: scale(1.2);
             }
 
@@ -178,19 +208,62 @@
                 width: m.vw(24);
                 height: m.vw(3);
                 border-radius: m.vw(1.5);
-                background: rgba(255, 255, 255, 0.95);
+                background: #ff9900; // 濃いオレンジ色（アクティブ時）
                 transform: none;
-                box-shadow: 0 0 m.vw(8) rgba(255, 255, 255, 0.4);
+                box-shadow: none; // box-shadowなし
 
                 @include m.mq(md) {
-                    width: m.vw-sp(12); // アクティブ時ももう少し小さく
-                    height: m.vw-sp(2);
-                    border-radius: m.vw-sp(1);
-                    box-shadow: 0 0 m.vw-sp(4) rgba(255, 255, 255, 0.4);
-                    min-width: m.vw-sp(12);
+                    width: m.vw-sp(20) !important; // より大きく
+                    height: m.vw-sp(4) !important;
+                    border-radius: m.vw-sp(2) !important;
+                    box-shadow: none !important; // box-shadowなし
+                    min-width: m.vw-sp(20) !important;
                     flex-shrink: 0;
+                    background: #ff9900 !important; // 濃いオレンジ色を保持
+                    opacity: 1 !important; // 確実に表示
+                    visibility: visible !important;
+                    display: block !important;
                 }
             }
+        }
+    }
+
+    // Image counter for many slides
+    &__counter {
+        position: absolute;
+        bottom: m.vw(30);
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        padding: m.vw(8) m.vw(16);
+        border-radius: m.vw(20);
+        font-size: m.vw(14);
+        font-weight: 500;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        gap: m.vw(4);
+
+        @include m.mq(md) {
+            bottom: m.vw-sp(20);
+            padding: m.vw-sp(6) m.vw-sp(12);
+            border-radius: m.vw-sp(15);
+            font-size: m.vw-sp(12);
+            gap: m.vw-sp(3);
+        }
+
+        &-current {
+            color: #ff9900; // オレンジ色
+            font-weight: 700;
+        }
+
+        &-separator {
+            opacity: 0.7;
+        }
+
+        &-total {
+            opacity: 0.9;
         }
     }
 

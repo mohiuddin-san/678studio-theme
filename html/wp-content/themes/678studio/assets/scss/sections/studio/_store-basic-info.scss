@@ -268,7 +268,7 @@
 		}
 	}
 
-	// 画像エリア（Figma仕様に基づく）
+	// 画像エリア（元の形状を保ちながら微細なうねうね）
 	&__image {
 		width: m.vw(506);
 		height: m.vw(499);
@@ -278,6 +278,28 @@
 		overflow: hidden;
 		position: relative;
 		z-index: 2;
+
+		// 微細なうねうねアニメーション（形状はほぼ維持）
+		animation: subtle-wave 12s ease-in-out infinite;
+	}
+
+	// 微細なうねうねアニメーション
+	@keyframes subtle-wave {
+		0% {
+			border-radius: m.vw(300) m.vw(400);
+		}
+		25% {
+			border-radius: m.vw(310) m.vw(390);
+		}
+		50% {
+			border-radius: m.vw(290) m.vw(410);
+		}
+		75% {
+			border-radius: m.vw(305) m.vw(395);
+		}
+		100% {
+			border-radius: m.vw(300) m.vw(400);
+		}
 	}
 
 	&__store-img {
@@ -305,6 +327,170 @@
 		width: m.vw(57.09);
 		height: m.vw(32.99);
 		flex-shrink: 0;
+
+		// 位相差アニメーション - 波の山と谷の位置が変化
+		.wave-line-1 {
+			animation: wave-phase 6s ease-in-out infinite;
+			animation-delay: 0s;
+		}
+
+		.wave-line-2 {
+			animation: wave-phase 6s ease-in-out infinite;
+			animation-delay: 1s; // 1秒遅れて位相をずらす
+		}
+
+		.wave-line-3 {
+			animation: wave-phase 6s ease-in-out infinite;
+			animation-delay: 2s; // 2秒遅れて位相をずらす
+		}
+	}
+
+	// パターン1: ゆらゆら揺れるアニメーション
+	@keyframes wave-sway {
+		0%, 100% { transform: rotate(-2deg) scale(1); }
+		50% { transform: rotate(2deg) scale(1.02); }
+	}
+
+	// パターン2: 上下に浮遊するアニメーション
+	@keyframes wave-float {
+		0%, 100% { transform: translateY(0px); }
+		50% { transform: translateY(-8px); }
+	}
+
+	// パターン3: 脈動アニメーション
+	@keyframes wave-pulse {
+		0%, 100% {
+			transform: scale(1);
+			opacity: 0.8;
+		}
+		50% {
+			transform: scale(1.05);
+			opacity: 1;
+		}
+	}
+
+	// パターン4: 組み合わせ（現在適用中）
+	@keyframes wave-combined {
+		0%, 100% {
+			transform: translateY(0px) rotate(-1deg) scale(1);
+			opacity: 0.85;
+		}
+		25% {
+			transform: translateY(-4px) rotate(0deg) scale(1.01);
+			opacity: 0.9;
+		}
+		75% {
+			transform: translateY(-2px) rotate(1deg) scale(1.02);
+			opacity: 0.95;
+		}
+	}
+
+	// NEW: 1本ずつ線が波打つかわいいアニメーション
+	@keyframes line-wave {
+		0%, 100% {
+			transform: scaleY(1);
+			opacity: 0.8;
+		}
+		50% {
+			transform: scaleY(1.1);
+			opacity: 1;
+		}
+	}
+
+	// 全体のwave脈動アニメーション（動作確認用）
+	@keyframes wave-pulse-whole {
+		0%, 100% {
+			transform: scale(1);
+			opacity: 0.9;
+		}
+		50% {
+			transform: scale(1.05);
+			opacity: 1;
+		}
+	}
+
+	// 波形が流れるアニメーション（旧版）
+	@keyframes wave-flow {
+		0% {
+			stroke-dashoffset: 0;
+		}
+		100% {
+			stroke-dashoffset: 30; // ダッシュが流れる距離
+		}
+	}
+
+	// 連続した線でうねうね動くアニメーション（新版）
+	@keyframes wave-wiggle {
+		0%, 100% {
+			transform: translateY(0px) scaleY(1);
+		}
+		25% {
+			transform: translateY(-1px) scaleY(1.02);
+		}
+		50% {
+			transform: translateY(1px) scaleY(0.98);
+		}
+		75% {
+			transform: translateY(-0.5px) scaleY(1.01);
+		}
+	}
+
+	// 波形が上下に反転するアニメーション
+	@keyframes wave-flip {
+		0%, 100% {
+			transform: scaleY(1);
+		}
+		50% {
+			transform: scaleY(-1);
+		}
+	}
+
+	// 位相差アニメーション - 波の山と谷の位置が微妙にずれる
+	@keyframes wave-phase {
+		0%, 100% {
+			transform: translateX(0px);
+		}
+		25% {
+			transform: translateX(2px);
+		}
+		50% {
+			transform: translateX(-3px);
+		}
+		75% {
+			transform: translateX(1px);
+		}
+	}
+
+	// 口がちょっと動くアニメーション（位置は変えずにサイズのみ）
+	@keyframes mouth-wiggle {
+		0%, 100% {
+			transform: scale(1);
+		}
+		25% {
+			transform: scale(1.05);
+		}
+		50% {
+			transform: scale(0.98);
+		}
+		75% {
+			transform: scale(1.02);
+		}
+	}
+
+	// 左右の口用：より控えめなアニメーション（欠けないように）
+	@keyframes subtle-mouth-wiggle {
+		0%, 100% {
+			transform: scale(1);
+		}
+		25% {
+			transform: scale(1.015);
+		}
+		50% {
+			transform: scale(0.99);
+		}
+		75% {
+			transform: scale(1.01);
+		}
 	}
 
 	&__wave-2 {
@@ -314,6 +500,20 @@
 		width: m.vw(298);
 		height: auto;
 		flex-shrink: 0;
+
+		// wave-2の12個の線にも位相差アニメーション
+		.wave-2-line-1 { animation: wave-phase 8s ease-in-out infinite; animation-delay: 0s; }
+		.wave-2-line-2 { animation: wave-phase 8s ease-in-out infinite; animation-delay: 0.3s; }
+		.wave-2-line-3 { animation: wave-phase 8s ease-in-out infinite; animation-delay: 0.6s; }
+		.wave-2-line-4 { animation: wave-phase 8s ease-in-out infinite; animation-delay: 0.9s; }
+		.wave-2-line-5 { animation: wave-phase 8s ease-in-out infinite; animation-delay: 1.2s; }
+		.wave-2-line-6 { animation: wave-phase 8s ease-in-out infinite; animation-delay: 1.5s; }
+		.wave-2-line-7 { animation: wave-phase 8s ease-in-out infinite; animation-delay: 1.8s; }
+		.wave-2-line-8 { animation: wave-phase 8s ease-in-out infinite; animation-delay: 2.1s; }
+		.wave-2-line-9 { animation: wave-phase 8s ease-in-out infinite; animation-delay: 2.4s; }
+		.wave-2-line-10 { animation: wave-phase 8s ease-in-out infinite; animation-delay: 2.7s; }
+		.wave-2-line-11 { animation: wave-phase 8s ease-in-out infinite; animation-delay: 3s; }
+		.wave-2-line-12 { animation: wave-phase 8s ease-in-out infinite; animation-delay: 3.3s; }
 	}
 
 	&__logo-illust {
@@ -323,6 +523,25 @@
 		width: m.vw(71);
 		height: auto;
 		flex-shrink: 0;
+
+		// 口だけがちょっと動くかわいいアニメーション
+		.mouth-center {
+			animation: mouth-wiggle 4s ease-in-out infinite;
+			animation-delay: 0s;
+			transform-origin: center;
+		}
+
+		.face-left-outline {
+			animation: subtle-mouth-wiggle 4s ease-in-out infinite;
+			animation-delay: 1s; // 1秒遅れて動く
+			transform-origin: center;
+		}
+
+		.face-right-outline {
+			animation: subtle-mouth-wiggle 4s ease-in-out infinite;
+			animation-delay: 2s; // 2秒遅れて動く
+			transform-origin: center;
+		}
 	}
 }
 
@@ -486,6 +705,28 @@
 		overflow: hidden;
 		position: relative;
 		z-index: 2;
+
+		// モバイル版も微細なうねうねアニメーション
+		animation: subtle-wave-mobile 12s ease-in-out infinite;
+	}
+
+	// モバイル版微細なうねうねアニメーション
+	@keyframes subtle-wave-mobile {
+		0% {
+			border-radius: m.vw-sp(300) m.vw-sp(400);
+		}
+		25% {
+			border-radius: m.vw-sp(310) m.vw-sp(390);
+		}
+		50% {
+			border-radius: m.vw-sp(290) m.vw-sp(410);
+		}
+		75% {
+			border-radius: m.vw-sp(305) m.vw-sp(395);
+		}
+		100% {
+			border-radius: m.vw-sp(300) m.vw-sp(400);
+		}
 	}
 
 	&__store-img {
@@ -514,6 +755,22 @@
 		width: m.vw-sp(57.09);
 		height: m.vw-sp(32.99);
 		flex-shrink: 0;
+
+		// モバイル版も位相差アニメーション - 波の山と谷の位置が変化
+		.wave-line-1 {
+			animation: wave-phase 6s ease-in-out infinite;
+			animation-delay: 0s;
+		}
+
+		.wave-line-2 {
+			animation: wave-phase 6s ease-in-out infinite;
+			animation-delay: 1s; // 1秒遅れて位相をずらす
+		}
+
+		.wave-line-3 {
+			animation: wave-phase 6s ease-in-out infinite;
+			animation-delay: 2s; // 2秒遅れて位相をずらす
+		}
 	}
 
 	&__wave-2 {
@@ -522,6 +779,9 @@
 		right: m.vw-sp(0);
 		width: m.vw-sp(120);
 		height: auto;
+
+		// とりあえず全体的なゆらゆらアニメーション
+		animation: wave-float 8s ease-in-out infinite;
 	}
 
 	&__logo-illust {
@@ -530,6 +790,25 @@
 		right: m.vw-sp(40);
 		width: m.vw-sp(35);
 		height: auto;
+
+		// モバイル版も口だけがちょっと動くかわいいアニメーション
+		.mouth-center {
+			animation: mouth-wiggle 4s ease-in-out infinite;
+			animation-delay: 0s;
+			transform-origin: center;
+		}
+
+		.face-left-outline {
+			animation: subtle-mouth-wiggle 4s ease-in-out infinite;
+			animation-delay: 1s; // 1秒遅れて動く
+			transform-origin: center;
+		}
+
+		.face-right-outline {
+			animation: subtle-mouth-wiggle 4s ease-in-out infinite;
+			animation-delay: 2s; // 2秒遅れて動く
+			transform-origin: center;
+		}
 	}
 
 	// Store Details (Bottom)

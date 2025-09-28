@@ -23,6 +23,15 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
 
+    // Determine pagination type based on number of slides
+    const slideCount = slides.length;
+    let paginationType = true;  // Default: show pagination
+
+    if (slideCount > 10) {
+        // Too many slides - hide pagination on mobile
+        paginationType = false;
+    }
+
     // Mobile touch handling for better scroll experience
     let touchStartX = 0;
     let touchStartY = 0;
@@ -40,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Navigation
         arrows: false,
-        pagination: true,
+        pagination: paginationType,  // Dynamic based on slide count
 
         // Layout settings (key differences!)
         padding: "28%",        // Large left/right padding
@@ -61,8 +70,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Responsive settings matching nii-photo.com
         breakpoints: {
             768: {
-                padding: "5%", // Small padding for better swipe detection
-                gap: "16px",
+                padding: '5%', // 左右に余白を追加
+                gap: '16px', // 写真間にギャップを追加
                 focus: 'center', // Center the current slide
                 perPage: 1, // Show one slide at a time
                 perMove: 1, // Move one slide at a time
@@ -77,7 +86,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 waitForTransition: false, // Don't block interactions during transition
                 flickPower: 300, // Normal flick sensitivity
                 flickMaxPages: 1, // Limit flick to one page
-                speed: 400 // Faster transition for better response
+                speed: 400, // Faster transition for better response
+                pagination: slideCount <= 10 // Only show pagination if 10 or fewer slides
             }
         }
     });
@@ -157,6 +167,12 @@ document.addEventListener('DOMContentLoaded', function() {
     slider.on('moved', function(newIndex, prevIndex, destIndex) {
         // Update current slide info for analytics if needed
         // console.log('Moved to slide:', newIndex);
+
+        // Update counter if it exists
+        const counterCurrent = document.querySelector('.studio-hero-slider__counter-current');
+        if (counterCurrent) {
+            counterCurrent.textContent = newIndex + 1;
+        }
     });
 
     slider.on('autoplay:playing', function(rate) {

@@ -367,10 +367,15 @@ function siaes_validate_form_data($form_data, $page_slug) {
             if (!empty($form_data['reservation_date_1']) && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $form_data['reservation_date_1'])) {
                 $errors[] = '撮影希望日の形式が正しくありません';
             }
-            // Check if date is in the future
+            // Check if date is in the future (using Japan timezone)
             if (!empty($form_data['reservation_date_1'])) {
                 $reservation_date = strtotime($form_data['reservation_date_1']);
-                if ($reservation_date && $reservation_date < strtotime('today')) {
+                // Get today's date in Japan timezone
+                $japan_tz = new DateTimeZone('Asia/Tokyo');
+                $today_japan = new DateTime('now', $japan_tz);
+                $today_japan_timestamp = strtotime($today_japan->format('Y-m-d'));
+
+                if ($reservation_date && $reservation_date < $today_japan_timestamp) {
                     $errors[] = '撮影希望日は今日以降の日付を選択してください';
                 }
             }
@@ -408,7 +413,7 @@ function siaes_is_rate_limited($ip) {
     $attempts = get_transient($rate_limit_key);
 
     // Allow 5 submissions per 15 minutes
-    $max_attempts = 5;
+    $max_attempts = 10; // テスト用に一時的に増やす
     $time_window = 15 * 60; // 15 minutes in seconds
 
     if ($attempts === false) {
@@ -645,11 +650,13 @@ function siaes_send_emails($form_data, $page_slug) {
     // Get shop data from ACF-based system using theme function (only for non-recruitment/corporate pages)
     if ($page_slug !== 'studio-recruitment' && $page_slug !== 'studio-recruitment-secret' && $page_slug !== 'corporate-inquiry' && function_exists('get_cached_studio_data')) {
         $studio_data = get_cached_studio_data();
-        siaes_debug_log("Shop data retrieved from ACF-based function");
+        siaes_debug_log("Shop data retrieved from ACF-based function - function exists: " . (function_exists('get_cached_studio_data') ? 'YES' : 'NO'));
 
         if (isset($studio_data['shops']) && is_array($studio_data['shops'])) {
+            siaes_debug_log("Searching for shop ID $shop_id in " . count($studio_data['shops']) . " shops");
             foreach ($studio_data['shops'] as $shop) {
                 if ($shop['id'] == $shop_id) {
+                    siaes_debug_log("✅ FOUND shop for ID $shop_id: ID=" . ($shop['id'] ?? 'NO_ID') . ", Email=" . ($shop['company_email'] ?? 'NO_COMPANY_EMAIL') . ", Name=" . ($shop['name'] ?? 'NO_NAME'));
                     $company_email = $shop['company_email'] ?? $shop['email'] ?? '';
                     $company_name = $shop['name'] ?? '';
                     $company_phone = $shop['phone'] ?? '';
@@ -662,10 +669,94 @@ function siaes_send_emails($form_data, $page_slug) {
                     $form_data['company_address'] = $company_address;
                     $form_data['company_hours'] = $company_hours;
                     $form_data['company_email'] = $company_email;
-                    siaes_debug_log("Found shop for ID $shop_id: Email=$company_email, Name=$company_name");
+                    siaes_debug_log("✅ Shop data extracted: Email=$company_email, Name=$company_name");
                     break;
                 }
             }
+
+            if (empty($company_name)) {
+                siaes_debug_log("❌ No shop found for ID $shop_id. Available shops: " . implode(', ', array_map(function($s) { return $s['id'] . '(' . ($s['name'] ?? 'no_name') . ')'; }, $studio_data['shops'])));
+            }
+        } else {
+            siaes_debug_log("No shops array found in studio data or not an array");
+        }
+    }
+
+    // Direct ACF fallback if company_email is still empty (regardless of company_name)
+    if (empty($company_email) && $shop_id > 0 && function_exists('get_posts') && function_exists('get_field')) {
+        siaes_debug_log("🔍 company_email is empty, attempting direct ACF lookup for shop ID $shop_id");
+
+        // Try multiple methods to find the post
+        $posts = get_posts(array(
+            'post_type' => 'studio_shops',
+            'meta_query' => array(
+                array(
+                    'key' => 'shop_id',
+                    'value' => $shop_id,
+                    'compare' => '='
+                )
+            ),
+            'posts_per_page' => 1
+        ));
+
+        // If meta_query fails, try getting all studio_shops posts and check manually
+        if (empty($posts)) {
+            siaes_debug_log("🔍 Meta query failed, trying to get all studio_shops posts");
+            $all_posts = get_posts(array(
+                'post_type' => 'studio_shops',
+                'posts_per_page' => -1,
+                'post_status' => 'publish'
+            ));
+
+            siaes_debug_log("📊 Found " . count($all_posts) . " total studio_shops posts");
+
+            foreach ($all_posts as $post) {
+                $post_shop_id = get_field('shop_id', $post->ID);
+                siaes_debug_log("🔍 Checking post ID {$post->ID}: shop_id = " . ($post_shop_id ?: 'EMPTY'));
+
+                // Check both ACF shop_id field and post ID itself
+                if ($post_shop_id == $shop_id || $post->ID == $shop_id) {
+                    $posts = array($post);
+                    if ($post_shop_id == $shop_id) {
+                        siaes_debug_log("✅ Found matching post via ACF shop_id: Post ID {$post->ID}");
+                    } else {
+                        siaes_debug_log("✅ Found matching post via Post ID match: Post ID {$post->ID}");
+                    }
+                    break;
+                }
+            }
+        }
+
+        if (!empty($posts)) {
+            $post_id = $posts[0]->ID;
+            siaes_debug_log("📋 Using post ID $post_id for shop $shop_id");
+
+            // Try different possible field names for email
+            $acf_company_email = get_field('company_email', $post_id);
+            $acf_email = get_field('email', $post_id);
+            $acf_contact_email = get_field('contact_email', $post_id);
+
+            siaes_debug_log("📧 ACF email fields: company_email=" . ($acf_company_email ?: 'EMPTY') . ", email=" . ($acf_email ?: 'EMPTY') . ", contact_email=" . ($acf_contact_email ?: 'EMPTY'));
+
+            $company_email = $acf_company_email ?: $acf_email ?: $acf_contact_email ?: '';
+
+            if (empty($company_name)) {
+                $company_name = get_field('store_name_base', $post_id) ?: get_field('store_name', $post_id) ?: '';
+                $company_phone = get_field('phone', $post_id) ?: '';
+                $company_address = get_field('address', $post_id) ?: '';
+                $company_hours = get_field('business_hours', $post_id) ?: '';
+
+                // Add to $form_data for shortcode replacement
+                $form_data['company_name'] = $company_name;
+                $form_data['company_phone'] = $company_phone;
+                $form_data['company_address'] = $company_address;
+                $form_data['company_hours'] = $company_hours;
+            }
+
+            $form_data['company_email'] = $company_email;
+            siaes_debug_log("✅ Direct ACF lookup result for shop $shop_id: Email=" . ($company_email ?: 'STILL_EMPTY') . ", Name=$company_name");
+        } else {
+            siaes_debug_log("❌ Direct ACF lookup failed: No studio_shops posts found with shop_id $shop_id");
         }
     }
     
@@ -702,9 +793,8 @@ function siaes_send_emails($form_data, $page_slug) {
     }
 
     if (empty($company_email)) {
-        siaes_debug_log("No company email found for shop ID: $shop_id. Using fallback.");
-        $company_email = get_option('siaes_fallback_email', 'info@san-developer.com');
-        $company_name = get_option('siaes_company_name', 'KOKENSHA');
+        siaes_debug_log("❌ CRITICAL: No company email found for shop ID: $shop_id. Cannot send company notification email.");
+        return false; // フォールバックではなく、エラーとして処理
     }
 
     // Validate page slug

@@ -142,72 +142,20 @@ $map_embed_data = get_map_embed_content_access($shop);
                 <div class="store-access-section__content">
                     <!-- Access Methods -->
                     <div class="store-access-section__access-info">
-                        <!-- Nearest Station -->
-                        <?php if (!empty($shop['nearest_station'])): ?>
-                        <div class="store-access-section__access-item">
-                            <h5 class="store-access-section__access-label">最寄り駅</h5>
-                            <p class="store-access-section__access-text"><?php echo esc_html($shop['nearest_station']); ?></p>
-                        </div>
-                        <?php endif; ?>
-
-                        <!-- Access Routes from Custom Fields -->
+                        <!-- Access Details from Custom Fields -->
                         <div class="store-access-section__access-routes">
                             <?php
-                            // アクセス情報を取得（既存のaccess_detailsフィールドを使用）
-                            $access_info = isset($shop['access_details']) ? $shop['access_details'] : '';
+                            // アクセス詳細を取得（管理画面のアクセス詳細フィールドをそのまま表示）
+                            $access_details = isset($shop['access_details']) ? $shop['access_details'] : '';
 
-                            if (!empty($access_info)) {
-                                // アクセス情報を改行で分割して順次処理
-                                $access_lines = explode("\n", $access_info);
-                                $current_section = '';
-                                $route_details = array();
-
-                                foreach ($access_lines as $line) {
-                                    $line = trim($line);
-                                    if (empty($line)) continue;
-
-                                    // 【】で囲まれたタイトル行かどうかチェック
-                                    if (preg_match('/^【(.+)】/', $line, $matches)) {
-                                        // 前のセクション（【】形式または通常テキスト）を出力
-                                        if ($current_section || !empty($route_details)) {
-                                            echo '<div class="store-access-section__route-item">';
-                                            if ($current_section) {
-                                                echo '<h5 class="store-access-section__route-title">' . esc_html($current_section) . '</h5>';
-                                            } else {
-                                                echo '<h5 class="store-access-section__route-title">アクセス情報</h5>';
-                                            }
-                                            echo '<div class="store-access-section__route-details">';
-                                            foreach ($route_details as $detail) {
-                                                echo '<p>' . esc_html($detail) . '</p>';
-                                            }
-                                            echo '</div>';
-                                            echo '</div>';
-                                        }
-
-                                        // 新しい【】セクション開始
-                                        $current_section = $line;
-                                        $route_details = array();
-                                    } else {
-                                        // 詳細行（【】タイトルの下、または通常のテキスト）
-                                        $route_details[] = $line;
-                                    }
-                                }
-
-                                // 最後のセクションを出力
-                                if ($current_section || !empty($route_details)) {
-                                    echo '<div class="store-access-section__route-item">';
-                                    if ($current_section) {
-                                        echo '<h5 class="store-access-section__route-title">' . esc_html($current_section) . '</h5>';
-                                    } else {
-                                        echo '<h5 class="store-access-section__route-title">アクセス情報</h5>';
-                                    }
-                                    echo '<div class="store-access-section__route-details">';
-                                    foreach ($route_details as $detail) {
-                                        echo '<p>' . esc_html($detail) . '</p>';
-                                    }
-                                    echo '</div>';
-                                    echo '</div>';
-                                }
+                            if (!empty($access_details)) {
+                                echo '<div class="store-access-section__route-item">';
+                                echo '<h5 class="store-access-section__route-title">アクセス詳細</h5>';
+                                echo '<div class="store-access-section__route-details">';
+                                // 改行を<br>タグに変換してそのまま表示
+                                echo '<p>' . nl2br(esc_html($access_details)) . '</p>';
+                                echo '</div>';
+                                echo '</div>';
                             } else {
                                 // フォールバック：アクセス情報がない場合
                                 echo '<div class="store-access-section__route-item">';
@@ -291,72 +239,20 @@ $map_embed_data = get_map_embed_content_access($shop);
 
         <!-- Access Information -->
         <div class="store-access-section-mobile__access-info">
-            <!-- Nearest Station -->
-            <?php if (!empty($shop['nearest_station'])): ?>
-            <div class="store-access-section-mobile__access-item">
-                <h5 class="store-access-section-mobile__access-label">最寄り駅</h5>
-                <p class="store-access-section-mobile__access-text"><?php echo esc_html($shop['nearest_station']); ?></p>
-            </div>
-            <?php endif; ?>
-
-            <!-- Access Routes from Custom Fields -->
+            <!-- Access Details from Custom Fields -->
             <div class="store-access-section-mobile__access-routes">
                 <?php
-                // アクセス情報を取得（既存のaccess_detailsフィールドを使用）
-                $access_info = isset($shop['access_details']) ? $shop['access_details'] : '';
+                // アクセス詳細を取得（管理画面のアクセス詳細フィールドをそのまま表示）
+                $access_details = isset($shop['access_details']) ? $shop['access_details'] : '';
 
-                if (!empty($access_info)) {
-                    // アクセス情報を改行で分割して順次処理
-                    $access_lines = explode("\n", $access_info);
-                    $current_section = '';
-                    $route_details = array();
-
-                    foreach ($access_lines as $line) {
-                        $line = trim($line);
-                        if (empty($line)) continue;
-
-                        // 【】で囲まれたタイトル行かどうかチェック
-                        if (preg_match('/^【(.+)】/', $line, $matches)) {
-                            // 前のセクション（【】形式または通常テキスト）を出力
-                            if ($current_section || !empty($route_details)) {
-                                echo '<div class="store-access-section-mobile__route-item">';
-                                if ($current_section) {
-                                    echo '<h5 class="store-access-section-mobile__route-title">' . esc_html($current_section) . '</h5>';
-                                } else {
-                                    echo '<h5 class="store-access-section-mobile__route-title">アクセス情報</h5>';
-                                }
-                                echo '<div class="store-access-section-mobile__route-details">';
-                                foreach ($route_details as $detail) {
-                                    echo '<p>' . esc_html($detail) . '</p>';
-                                }
-                                echo '</div>';
-                                echo '</div>';
-                            }
-
-                            // 新しい【】セクション開始
-                            $current_section = $line;
-                            $route_details = array();
-                        } else {
-                            // 詳細行（【】タイトルの下、または通常のテキスト）
-                            $route_details[] = $line;
-                        }
-                    }
-
-                    // 最後のセクションを出力
-                    if ($current_section || !empty($route_details)) {
-                        echo '<div class="store-access-section-mobile__route-item">';
-                        if ($current_section) {
-                            echo '<h5 class="store-access-section-mobile__route-title">' . esc_html($current_section) . '</h5>';
-                        } else {
-                            echo '<h5 class="store-access-section-mobile__route-title">アクセス情報</h5>';
-                        }
-                        echo '<div class="store-access-section-mobile__route-details">';
-                        foreach ($route_details as $detail) {
-                            echo '<p>' . esc_html($detail) . '</p>';
-                        }
-                        echo '</div>';
-                        echo '</div>';
-                    }
+                if (!empty($access_details)) {
+                    echo '<div class="store-access-section-mobile__route-item">';
+                    echo '<h5 class="store-access-section-mobile__route-title">アクセス詳細</h5>';
+                    echo '<div class="store-access-section-mobile__route-details">';
+                    // 改行を<br>タグに変換してそのまま表示
+                    echo '<p>' . nl2br(esc_html($access_details)) . '</p>';
+                    echo '</div>';
+                    echo '</div>';
                 } else {
                     // フォールバック：アクセス情報がない場合
                     echo '<div class="store-access-section-mobile__route-item">';
