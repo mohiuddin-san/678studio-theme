@@ -445,54 +445,6 @@ $current_page = $shop_data['current_page'];
         <div class="store-search-results__cards">
         <?php foreach ($regular_shops as $shop): ?>
         <div class="studio-card studio-card--regular" onclick="location.href='<?php echo home_url('/studio-detail/?shop_id=' . $shop['id']); ?>'" style="cursor: pointer;">
-          <!-- 登録店舗の画像表示 -->
-          <div class="studio-card__image">
-            <?php
-            $image_src = '';
-            if (!empty($shop['main_image'])) {
-                if (strpos($shop['main_image'], 'data:image') === 0) {
-                    $image_src = $shop['main_image'];
-                } else {
-                    $image_src = esc_url($shop['main_image']);
-                }
-            } elseif (!empty($shop['image_urls']) && !empty($shop['image_urls'][0])) {
-                if (strpos($shop['image_urls'][0], 'data:image') === 0) {
-                    $image_src = $shop['image_urls'][0];
-                } else {
-                    $image_src = esc_url($shop['image_urls'][0]);
-                }
-            } else {
-                $image_src = get_template_directory_uri() . '/assets/images/cardpic-sample.jpg';
-            }
-            ?>
-            <img src="<?php echo $image_src; ?>" alt="<?php echo esc_attr($shop['name'] ?? 'スタジオ写真'); ?>">
-
-            <div class="studio-card__location">
-              <?php
-              // 都道府県を表示（住所から抽出または直接取得）
-              $prefecture_display = '';
-              $address = $shop['address'] ?? '';
-              $prefecture_field = $shop['prefecture'] ?? '';
-
-              // 住所から都道府県を抽出
-              if (!empty($address) && preg_match('/^(.+?[都道府県])/u', $address, $matches)) {
-                $prefecture_display = $matches[1];
-              }
-              // 住所に都道府県が含まれていない場合は、prefectureフィールドを使用
-              else if (!empty($prefecture_field)) {
-                $prefecture_display = $prefecture_field;
-              }
-              // フォールバック
-              else if (!empty($address)) {
-                // 住所の最初の部分を使用
-                $parts = explode(' ', $address);
-                $prefecture_display = $parts[0] ?? '';
-              }
-
-              echo esc_html($prefecture_display ?: 'N/A');
-              ?>
-            </div>
-          </div>
 
           <div class="studio-card__content">
             <!-- 最寄り駅ラベル -->
@@ -513,20 +465,10 @@ $current_page = $shop_data['current_page'];
               ?>
             </div>
 
-            <!-- 基本情報 -->
-            <div class="studio-card__info">
-              <!-- 最寄り駅 -->
-              <?php if (!empty($shop['nearest_station'])): ?>
+            <!-- 基本情報（認定店と同じスタイル） -->
+            <div class="studio-card__info-row">
               <div class="studio-card__info-item">
-                <img src="<?php echo get_template_directory_uri(); ?>/assets/images/map_icon.svg" alt="最寄り駅"
-                  class="studio-card__info-icon">
-                <span class="studio-card__info-text"><?php echo esc_html($shop['nearest_station']); ?></span>
-              </div>
-              <?php endif; ?>
-
-              <!-- 住所 -->
-              <div class="studio-card__info-item">
-                <img src="<?php echo get_template_directory_uri(); ?>/assets/images/map_icon.svg" alt="住所"
+                <img src="<?php echo get_template_directory_uri(); ?>/assets/images/map_icon.svg" alt="場所"
                   class="studio-card__info-icon">
                 <span class="studio-card__info-text">
                   <?php
