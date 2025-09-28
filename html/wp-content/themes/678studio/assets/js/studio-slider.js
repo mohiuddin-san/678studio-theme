@@ -57,7 +57,14 @@ document.addEventListener('DOMContentLoaded', function() {
         breakpoints: {
             768: {
                 padding: "16px",
-                gap: "16px"
+                gap: "16px",
+                // Mobile touch optimization
+                dragMinThreshold: {
+                    mouse: 0,
+                    touch: 40 // Require more horizontal movement to trigger slide
+                },
+                flickPower: 300, // Reduce flick sensitivity
+                flickMaxPages: 1 // Limit flick to one page
             }
         }
     });

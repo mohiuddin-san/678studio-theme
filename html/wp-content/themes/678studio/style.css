@@ -7724,6 +7724,13 @@ select:active {
 .studio-hero-slider .splide__track {
   height: 100%;
 }
+@media (max-width: 767px) {
+  .studio-hero-slider .splide__track {
+    -ms-touch-action: pan-y pinch-zoom;
+    touch-action: pan-y pinch-zoom;
+    -webkit-overflow-scrolling: touch;
+  }
+}
 .studio-hero-slider .splide__list {
   height: 100%;
   display: -webkit-box;
@@ -7986,7 +7993,7 @@ select:active {
   font-weight: 400;
 }
 .store-basic-info-section__title {
-  font-family: "Noto Sans CJK JP";
+  font-family: "Noto Sans JP";
   font-size: 1.1111111111vw;
   font-weight: 500;
   color: #3f3f3f;
@@ -8086,7 +8093,7 @@ select:active {
   }
 }
 .store-basic-info-section__name {
-  font-family: "Noto Sans CJK JP";
+  font-family: "Noto Sans JP";
   font-size: 2.1701388889vw;
   font-weight: 700;
   color: #3f3f3f;
@@ -8318,7 +8325,7 @@ select:active {
   font-weight: 400;
 }
 .store-basic-info-section-mobile__title {
-  font-family: "Noto Sans CJK JP";
+  font-family: "Noto Sans JP";
   font-size: calc(10.24px * 100vw / 380px);
   font-weight: 500;
   color: #3f3f3f;
@@ -8355,7 +8362,7 @@ select:active {
   flex-shrink: 0;
 }
 .store-basic-info-section-mobile__name {
-  font-family: "Noto Sans CJK JP";
+  font-family: "Noto Sans JP";
   font-size: calc(20px * 100vw / 380px);
   font-weight: 700;
   color: #3f3f3f;
@@ -8561,7 +8568,7 @@ select:active {
   font-weight: 400;
 }
 .store-plan-section__title {
-  font-family: "Noto Sans CJK JP";
+  font-family: "Noto Sans JP";
   font-size: 1.1111111111vw;
   font-weight: 500;
   color: #3f3f3f;
@@ -8711,7 +8718,7 @@ select:active {
   flex-shrink: 0;
 }
 .store-plan-section__name {
-  font-family: "Noto Sans CJK JP";
+  font-family: "Noto Sans JP";
   font-size: 2.1701388889vw;
   font-weight: 700;
   color: #3f3f3f;
@@ -8895,7 +8902,7 @@ select:active {
   font-weight: 400;
 }
 .store-plan-section-mobile__title {
-  font-family: "Noto Sans CJK JP";
+  font-family: "Noto Sans JP";
   font-size: calc(10.24px * 100vw / 380px);
   font-weight: 500;
   color: #3f3f3f;
@@ -8953,7 +8960,7 @@ select:active {
   flex-shrink: 0;
 }
 .store-plan-section-mobile__name {
-  font-family: "Noto Sans CJK JP";
+  font-family: "Noto Sans JP";
   font-size: calc(20px * 100vw / 380px);
   font-weight: 700;
   color: #3f3f3f;
@@ -9183,7 +9190,7 @@ select:active {
   font-weight: 400;
 }
 .store-access-section__title {
-  font-family: "Noto Sans CJK JP";
+  font-family: "Noto Sans JP";
   font-size: 1.1111111111vw;
   font-weight: 500;
   color: #3f3f3f;
@@ -9241,7 +9248,7 @@ select:active {
   flex-shrink: 0;
 }
 .store-access-section__name {
-  font-family: "Noto Sans CJK JP";
+  font-family: "Noto Sans JP";
   font-size: 2.1701388889vw;
   font-weight: 700;
   color: #3f3f3f;
@@ -9500,7 +9507,7 @@ select:active {
   font-weight: 400;
 }
 .store-access-section-mobile__title {
-  font-family: "Noto Sans CJK JP";
+  font-family: "Noto Sans JP";
   font-size: calc(10.24px * 100vw / 380px);
   font-weight: 500;
   color: #3f3f3f;
@@ -9537,7 +9544,7 @@ select:active {
   flex-shrink: 0;
 }
 .store-access-section-mobile__name {
-  font-family: "Noto Sans CJK JP";
+  font-family: "Noto Sans JP";
   font-size: calc(20px * 100vw / 380px);
   font-weight: 700;
   color: #3f3f3f;

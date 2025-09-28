@@ -23,6 +23,12 @@
 
         &__track {
             height: 100%;
+            // モバイルでのタッチ操作最適化
+            @include m.mq(md) {
+                // 縦スクロールを優先しつつ横スワイプも許可
+                touch-action: pan-y pinch-zoom;
+                -webkit-overflow-scrolling: touch; // iOS向けの慣性スクロール
+            }
         }
 
         &__list {
