@@ -5614,9 +5614,6 @@ select:active {
     gap: clamp(12px, 4.1666666667vw, 36px);
   }
 }
-.store-section--certified .studio-card {
-  border: 2px solid rgba(58, 137, 255, 0.1);
-}
 .store-section--regular .studio-card {
   border: 1px solid #e5e7eb;
 }

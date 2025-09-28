@@ -1,0 +1,1 @@
+// JavaScript削除済み

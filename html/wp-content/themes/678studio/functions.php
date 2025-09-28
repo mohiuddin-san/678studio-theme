@@ -746,6 +746,12 @@ function theme_678studio_styles() {
             get_template_directory_uri() . '/assets/js/viewport-controller.js',
             [], $viewport_version, true);
 
+        // Mobile Sticky Title Controller (global)
+        $sticky_version = WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/mobile-sticky-title.js') : '1.0.0';
+        wp_enqueue_script('678studio-mobile-sticky-title',
+            get_template_directory_uri() . '/assets/js/mobile-sticky-title.js',
+            [], $sticky_version, true);
+
         // Navigation Scripts - PC and Mobile separated (global)
         $desktop_nav_version = WP_DEBUG ? filemtime(get_template_directory() . '/assets/js/navigation-desktop.js') : '1.0.0';
         $desktop_deps = (WP_DEBUG || (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG)) ? ['wp-debug-logger'] : [];
