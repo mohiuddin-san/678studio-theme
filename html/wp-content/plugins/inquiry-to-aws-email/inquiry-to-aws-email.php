@@ -307,7 +307,7 @@ function siaes_validate_form_data($form_data, $page_slug) {
         if (empty($form_data['contact_kana'])) {
             $errors[] = 'フリガナを入力してください';
         }
-        if (!empty($form_data['contact_kana']) && !preg_match('/^[ァ-ヴー\s]+$/u', $form_data['contact_kana'])) {
+        if (!empty($form_data['contact_kana']) && !preg_match('/^[\p{Katakana}\s]+$/u', $form_data['contact_kana'])) {
             $errors[] = 'フリガナはカタカナで入力してください';
         }
         if (empty($form_data['phone_number'])) {
@@ -339,7 +339,7 @@ function siaes_validate_form_data($form_data, $page_slug) {
         if (empty($form_data['kana'])) {
             $errors[] = 'フリガナを入力してください';
         }
-        if (!empty($form_data['kana']) && !preg_match('/^[ァ-ヴー\s]+$/u', $form_data['kana'])) {
+        if (!empty($form_data['kana']) && !preg_match('/^[\p{Katakana}\s]+$/u', $form_data['kana'])) {
             $errors[] = 'フリガナはカタカナで入力してください';
         }
         if (empty($form_data['email'])) {
@@ -993,4 +993,265 @@ function siaes_test_email_sending() {
     }
 }
 add_action('wp_ajax_siaes_test_email', 'siaes_test_email_sending');
+
+// Error notification system for administrators
+function siaes_send_error_notification($form_data, $page_slug, $error_message, $error_type = 'form_failure') {
+    // Only send notifications for critical errors
+    $critical_errors = ['email_send_failure', 'aws_connection_failure', 'validation_failure', 'nonce_failure'];
+
+    if (!in_array($error_type, $critical_errors)) {
+        return false;
+    }
+
+    // Rate limiting: Max 5 error notifications per hour to avoid spam
+    $rate_limit_key = 'siaes_error_notifications_' . $error_type;
+    $notification_count = get_transient($rate_limit_key);
+
+    if ($notification_count === false) {
+        // First notification in this hour
+        set_transient($rate_limit_key, 1, 3600); // 1 hour
+    } elseif ($notification_count >= 5) {
+        // Rate limit exceeded
+        siaes_debug_log("Error notification rate limit exceeded for type: $error_type");
+        return false;
+    } else {
+        // Increment counter
+        set_transient($rate_limit_key, $notification_count + 1, 3600);
+    }
+
+    // Prepare error notification email
+    $admin_email = 'yoshihara@san-creation.com';
+    $site_name = get_bloginfo('name');
+    $site_url = get_home_url();
+    $timestamp = current_time('Y年n月j日 H:i:s');
+
+    // Error type labels
+    $error_labels = [
+        'email_send_failure' => 'メール送信失敗',
+        'aws_connection_failure' => 'AWS接続失敗',
+        'validation_failure' => 'データ検証失敗',
+        'nonce_failure' => 'セキュリティ検証失敗'
+    ];
+
+    $error_label = $error_labels[$error_type] ?? '不明なエラー';
+
+    // Get user info safely
+    $user_name = '';
+    $user_email = '';
+    if ($page_slug === 'studio-recruitment' || $page_slug === 'studio-recruitment-secret') {
+        $user_name = $form_data['contact_name'] ?? 'N/A';
+        $user_email = $form_data['email_address'] ?? 'N/A';
+    } else {
+        $user_name = $form_data['name'] ?? 'N/A';
+        $user_email = $form_data['email'] ?? 'N/A';
+    }
+
+    $subject = "【{$site_name}】フォームエラー通知 - {$error_label}";
+
+    $message = "フォーム送信でエラーが発生しました。\n\n";
+    $message .= "■ エラー情報\n";
+    $message .= "発生時刻: {$timestamp}\n";
+    $message .= "エラー種別: {$error_label}\n";
+    $message .= "エラー詳細: {$error_message}\n\n";
+
+    $message .= "■ フォーム情報\n";
+    $message .= "送信ページ: {$page_slug}\n";
+    $message .= "サイトURL: {$site_url}\n\n";
+
+    $message .= "■ ユーザー情報\n";
+    $message .= "お名前: {$user_name}\n";
+    $message .= "メールアドレス: {$user_email}\n\n";
+
+    $message .= "■ その他の情報\n";
+    if (isset($form_data['phone_number'])) {
+        $message .= "電話番号: " . ($form_data['phone_number'] ?? 'N/A') . "\n";
+    }
+    if (isset($form_data['contact'])) {
+        $message .= "連絡先: " . ($form_data['contact'] ?? 'N/A') . "\n";
+    }
+
+    $message .= "\n詳細は管理画面の申し込み管理ページでご確認ください。\n";
+    $message .= "管理画面: {$site_url}/wp-admin/tools.php?page=studio-applications\n\n";
+
+    $message .= "※このメールは1時間に最大5通まで送信されます。";
+
+    try {
+        // Use AWS SES to send error notification
+        $autoload_path = plugin_dir_path(__FILE__) . 'vendor/autoload.php';
+        if (!file_exists($autoload_path)) {
+            siaes_debug_log('ERROR: AWS SDK not found for error notification');
+            return false;
+        }
+        require_once $autoload_path;
+
+        $ses_client = new Aws\Ses\SesClient([
+            'version' => 'latest',
+            'region' => get_option('siaes_aws_region', 'ap-northeast-1'),
+            'credentials' => [
+                'key' => get_option('siaes_aws_access_key_id'),
+                'secret' => siaes_decrypt_credential(get_option('siaes_aws_secret_access_key')),
+            ],
+        ]);
+
+        $result = $ses_client->sendEmail([
+            'Source' => 'info@678photo.com',
+            'Destination' => ['ToAddresses' => [$admin_email]],
+            'Message' => [
+                'Subject' => ['Data' => $subject, 'Charset' => 'UTF-8'],
+                'Body' => ['Text' => ['Data' => $message, 'Charset' => 'UTF-8']],
+            ],
+        ]);
+
+        siaes_debug_log("✅ Error notification sent to admin. MessageId: " . $result['MessageId']);
+        return true;
+
+    } catch (Exception $e) {
+        siaes_debug_log("❌ Failed to send error notification: " . $e->getMessage());
+        return false;
+    }
+}
+
+// Hook error notification into form submission failures
+function siaes_handle_form_submission_with_notifications() {
+    siaes_debug_log('=== AJAX handler triggered ===');
+    siaes_debug_log('Request method: ' . $_SERVER['REQUEST_METHOD']);
+    siaes_debug_log('Content type: ' . (isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : 'Not set'));
+    siaes_debug_log('User agent: ' . (isset($_SERVER['HTTP_USER_AGENT']) ? substr($_SERVER['HTTP_USER_AGENT'], 0, 100) : 'Unknown'));
+    siaes_debug_log('Referer: ' . (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'Unknown'));
+    siaes_debug_log('Is user logged in: ' . (is_user_logged_in() ? 'Yes' : 'No'));
+    siaes_debug_log('Current user ID: ' . get_current_user_id());
+    siaes_debug_log('POST data received: ' . (!empty($_POST) ? 'Yes' : 'No'));
+    siaes_debug_log('POST data keys: ' . (!empty($_POST) ? implode(', ', array_keys($_POST)) : 'None'));
+
+    if (!defined('DOING_AJAX') || !DOING_AJAX) {
+        siaes_debug_log('ERROR: Not a proper AJAX request');
+        wp_send_json_error('Invalid request type');
+        return;
+    }
+
+    if (!isset($_POST['action']) || $_POST['action'] !== 'siaes_submit_form') {
+        siaes_debug_log('ERROR: Invalid or missing action. Received: ' . (isset($_POST['action']) ? $_POST['action'] : 'None'));
+        wp_send_json_error('Invalid action');
+        return;
+    }
+
+    if (!isset($_POST['nonce'])) {
+        siaes_debug_log('ERROR: No nonce provided in request');
+        // Send error notification for nonce failure
+        siaes_send_error_notification($_POST, 'unknown', 'セキュリティトークンが提供されていません', 'nonce_failure');
+        wp_send_json_error('Security check failed: No nonce provided');
+        return;
+    }
+
+    siaes_debug_log('Received nonce: ' . $_POST['nonce']);
+    if (!wp_verify_nonce($_POST['nonce'], 'siaes_form_nonce')) {
+        siaes_debug_log('ERROR: Nonce verification failed for nonce: ' . $_POST['nonce']);
+        // Send error notification for nonce failure
+        siaes_send_error_notification($_POST, 'unknown', 'セキュリティトークンの検証に失敗しました', 'nonce_failure');
+        wp_send_json_error('Security check failed: Invalid nonce');
+        return;
+    }
+
+    siaes_debug_log('✅ Nonce verification passed');
+
+    $page_id = isset($_POST['page_id']) ? intval($_POST['page_id']) : 0;
+    if ($page_id <= 0) {
+        siaes_debug_log('ERROR: Invalid page ID: ' . $page_id);
+        wp_send_json_error('Invalid page ID');
+        return;
+    }
+
+    $page_slug = get_post_field('post_name', $page_id);
+    if (!$page_slug) {
+        siaes_debug_log('ERROR: Could not get page slug for ID: ' . $page_id);
+        wp_send_json_error('Invalid page');
+        return;
+    }
+
+    $target_pages = array_map('trim', explode(',', get_option('siaes_pages', '')));
+    siaes_debug_log("Form submission for page ID: $page_id, Slug: $page_slug");
+    siaes_debug_log("Target pages: " . print_r($target_pages, true));
+
+    if (in_array($page_slug, $target_pages)) {
+        $form_data = array();
+        foreach ($_POST as $key => $value) {
+            if (!in_array($key, ['action', 'page_id', 'nonce', 'submit'])) {
+                $form_data[$key] = sanitize_text_field($value);
+            }
+        }
+
+        siaes_debug_log("Sanitized form data: " . json_encode($form_data));
+
+        if (empty($form_data)) {
+            siaes_debug_log('ERROR: No form data received');
+            // Send error notification
+            siaes_send_error_notification([], $page_slug, 'フォームデータが受信されませんでした', 'validation_failure');
+            wp_send_json_error('No form data received');
+            return;
+        }
+
+        // Enhanced server-side validation
+        $validation_errors = siaes_validate_form_data($form_data, $page_slug);
+        if (!empty($validation_errors)) {
+            siaes_debug_log('ERROR: Validation failed: ' . implode(', ', $validation_errors));
+            // Send error notification for validation failure
+            siaes_send_error_notification($form_data, $page_slug, 'データ検証エラー: ' . implode(', ', $validation_errors), 'validation_failure');
+            wp_send_json_error('入力内容にエラーがあります: ' . implode(', ', $validation_errors));
+            return;
+        }
+
+        // Check required fields based on page type
+        if ($page_slug === 'studio-recruitment' || $page_slug === 'studio-recruitment-secret' || $page_slug === 'corporate-inquiry') {
+            // For recruitment and corporate pages, check email_address instead of email
+            if (!isset($form_data['email_address']) || empty($form_data['email_address'])) {
+                // Email is optional for these forms, so don't require it
+                siaes_debug_log("Note: No email provided for $page_slug form (optional)");
+            } elseif (!filter_var($form_data['email_address'], FILTER_VALIDATE_EMAIL)) {
+                siaes_debug_log("ERROR: Invalid email provided in $page_slug form data");
+                wp_send_json_error('Valid email address required if provided');
+                return;
+            }
+        } else {
+            // For other pages, require shop selection and email
+            if (!isset($form_data['shop-id']) && !isset($form_data['store'])) {
+                siaes_debug_log('ERROR: No shop-id or store provided in form data');
+                wp_send_json_error('Shop selection required');
+                return;
+            }
+            if (!isset($form_data['email']) || !filter_var($form_data['email'], FILTER_VALIDATE_EMAIL)) {
+                siaes_debug_log('ERROR: Invalid or no email provided in form data');
+                wp_send_json_error('Valid email address required');
+                return;
+            }
+        }
+
+        ob_start();
+        try {
+            siaes_send_emails($form_data, $page_slug);
+            $output = ob_get_clean();
+            siaes_debug_log('✅ Emails sent successfully');
+            wp_send_json_success('Form submitted successfully!' . ($output ? ' | Output: ' . $output : ''));
+        } catch (Exception $e) {
+            $output = ob_get_clean();
+            siaes_debug_log('❌ Error in siaes_send_emails: ' . $e->getMessage());
+            siaes_debug_log('❌ Error trace: ' . $e->getTraceAsString());
+
+            // Send error notification for email sending failure
+            $error_type = (strpos($e->getMessage(), 'AWS') !== false) ? 'aws_connection_failure' : 'email_send_failure';
+            siaes_send_error_notification($form_data, $page_slug, $e->getMessage(), $error_type);
+
+            wp_send_json_error('Server error: ' . $e->getMessage() . ($output ? ' | Output: ' . $output : ''));
+        }
+    } else {
+        siaes_debug_log("❌ Invalid page. Page slug: $page_slug not in target pages");
+        wp_send_json_error('Invalid page: ' . $page_slug);
+    }
+}
+
+// Replace the original form submission handler
+remove_action('wp_ajax_siaes_submit_form', 'siaes_handle_form_submission');
+remove_action('wp_ajax_nopriv_siaes_submit_form', 'siaes_handle_form_submission');
+add_action('wp_ajax_siaes_submit_form', 'siaes_handle_form_submission_with_notifications');
+add_action('wp_ajax_nopriv_siaes_submit_form', 'siaes_handle_form_submission_with_notifications');
+
 ?>
