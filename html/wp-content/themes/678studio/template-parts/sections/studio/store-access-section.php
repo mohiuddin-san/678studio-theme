@@ -131,7 +131,7 @@ $map_embed_data = get_map_embed_content_access($shop);
             <div class="store-access-section__header">
                 <!-- Access Title with Icon -->
                 <div class="store-access-section__store-name">
-                    <img src="<?php echo get_template_directory_uri(); ?>/assets/images/detaiil-plan-icon.svg" alt="" class="store-access-section__name-icon">
+                    <img src="<?php echo get_template_directory_uri(); ?>/assets/images/detail-access-title-icon.svg" alt="" class="store-access-section__name-icon">
                     <h3 class="store-access-section__name">アクセス</h3>
                 </div>
             </div>
@@ -285,7 +285,7 @@ $map_embed_data = get_map_embed_content_access($shop);
 
         <!-- Access Title with Icon -->
         <div class="store-access-section-mobile__store-name">
-            <img src="<?php echo get_template_directory_uri(); ?>/assets/images/detaiil-plan-icon.svg" alt="" class="store-access-section-mobile__name-icon">
+            <img src="<?php echo get_template_directory_uri(); ?>/assets/images/detail-access-title-icon.svg" alt="" class="store-access-section-mobile__name-icon">
             <h3 class="store-access-section-mobile__name">アクセス</h3>
         </div>
 
