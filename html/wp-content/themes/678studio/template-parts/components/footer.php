@@ -2,6 +2,22 @@
 /**
  * Footer Component - サイトフッター
  */
+
+// 現在のページが店舗詳細ページかどうかチェックして、shop_idを取得
+$current_shop_id = 0;
+if (is_page_template('page-studio-detail.php') ||
+    (isset($_GET['shop_id']) && intval($_GET['shop_id']) > 0)) {
+    $current_shop_id = isset($_GET['shop_id']) ? intval($_GET['shop_id']) : 0;
+}
+
+// 予約・お問い合わせリンクURLを構築
+$reservation_url = '/studio-reservation';
+$inquiry_url = '/studio-inquiry';
+
+if ($current_shop_id > 0) {
+    $reservation_url = add_query_arg('shop_id', $current_shop_id, $reservation_url);
+    $inquiry_url = add_query_arg('shop_id', $current_shop_id, $inquiry_url);
+}
 ?>
 
 <footer class="footer">
@@ -32,8 +48,8 @@
             <!-- Column 2: User Services -->
             <div class="footer__nav-column">
               <a href="/stores" class="footer__nav-link">写真館検索</a>
-              <a href="/studio-reservation" class="footer__nav-link">ご予約相談</a>
-              <a href="/studio-inquiry" class="footer__nav-link">お問合せ</a>
+              <a href="<?php echo esc_url($reservation_url); ?>" class="footer__nav-link">ご予約相談</a>
+              <a href="<?php echo esc_url($inquiry_url); ?>" class="footer__nav-link">お問合せ</a>
               <a href="<?php echo get_post_type_archive_link('seo_articles'); ?>" class="footer__nav-link">お役立ち情報</a>
             </div>
 
