@@ -29,7 +29,7 @@
 
 		// CSS変数でヘッダー高さを動的に設定（PC版）
 		--header-height: calc(
-			#{m.vw(30)} + #{m.vw(10)} + #{m.vw(50)}
+			#{m.vw(30)} + #{m.vw(10)} + #{m.vw(42)}
 		); // padding-top + padding-bottom + logo-height
 
 		// SP用 - 自動判定vw()でレスポンシブ対応
@@ -158,7 +158,7 @@
 
 	&__image {
 		height: auto;
-		max-height: m.vw(50); // 統合vw()に変更
+		max-height: m.vw(42); // PCロゴサイズを小さく (50→42)
 
 		@include m.mq(md) {
 			max-height: m.vw(26); // 自動判定vw() - モバイル時のロゴサイズを縮小

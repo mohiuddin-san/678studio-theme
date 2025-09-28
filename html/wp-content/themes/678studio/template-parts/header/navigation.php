@@ -30,7 +30,7 @@
                 aria-expanded="false"
                 aria-haspopup="true"
                 aria-controls="publication-dropdown">
-          <span>掲載希望の方へ</span>
+          <span>掲載希望の写真館へ</span>
         </button>
 
         <!-- PCドロップダウンメニュー -->
@@ -64,7 +64,7 @@
       </a>
       <div class="navigation__mobile-expandable">
         <button class="navigation__mobile-link navigation__mobile-toggle" id="mobile-publication-toggle">
-          掲載希望の方へ
+          掲載希望の写真館へ
           <span class="navigation__mobile-plus">+</span>
         </button>
         <div class="navigation__mobile-submenu" id="mobile-publication-submenu">

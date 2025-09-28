@@ -110,7 +110,7 @@
 		align-items: center;
 		justify-content: center;
 		gap: m.vw(8); // テキストとアイコンの間隔
-		padding: m.vw(10) m.vw(24);
+		padding: m.vw(6) m.vw(24);
 		font-family: v.$ja-sans;
 		font-size: m.vw(14);
 		font-weight: 500;
@@ -125,6 +125,7 @@
 			position: relative;
 			z-index: 1;
 			letter-spacing: 0.1em;
+			white-space: nowrap;
 		}
 	}
 

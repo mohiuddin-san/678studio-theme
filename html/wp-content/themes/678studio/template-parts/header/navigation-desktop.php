@@ -34,7 +34,7 @@
 
     <button class="navigation-desktop__cta-button navigation-desktop__cta-button--publication"
             id="desktop-publication-modal-trigger">
-      <span>掲載希望の方へ</span>
+      <span>掲載希望の写真館へ</span>
     </button>
   </div>
 </nav>
@@ -43,7 +43,7 @@
 <div class="publication-modal" id="desktop-publication-modal">
   <div class="publication-modal__content">
     <button class="publication-modal__close" id="desktop-publication-modal-close">&times;</button>
-    <h3 class="publication-modal__title">掲載希望の方へ</h3>
+    <h3 class="publication-modal__title">掲載希望の写真館へ</h3>
     <div class="publication-modal__links">
       <a href="<?php echo esc_url(home_url('/studio-recruitment')); ?>" class="publication-modal__link">
         <span>資料ダウンロード</span>

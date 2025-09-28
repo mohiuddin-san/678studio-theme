@@ -207,13 +207,14 @@
 			align-items: center;
 			justify-content: center;
 			gap: m.vw-sp(8);
-			padding: m.vw-sp(12) m.vw-sp(16);
+			padding: m.vw-sp(8) m.vw-sp(16);
 			text-decoration: none;
 			border-radius: m.vw-sp(5);
 			font-family: v.$ja-sans;
 			font-size: m.vw-sp(13);
 			font-weight: 500;
 			color: white;
+			white-space: nowrap;
 			transition: all 0.3s ease;
 
 			// 資料ダウンロードボタン

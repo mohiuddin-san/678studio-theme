@@ -59,7 +59,7 @@ if ($current_shop_id > 0) {
                 <svg class="footer__nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                 </svg>
-                掲載希望の方へ
+                掲載希望の写真館へ
               </span>
               <a href="/studio-recruitment" class="footer__nav-link">資料ダウンロード</a>
               <a href="/corporate-inquiry" class="footer__nav-link">お問い合わせ</a>
@@ -97,7 +97,7 @@ if ($current_shop_id > 0) {
                 <svg class="footer__nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                 </svg>
-                掲載希望の方へ
+                掲載希望の写真館へ
               </span>
               <a href="/studio-recruitment" class="footer__nav-link">資料ダウンロード</a>
               <a href="/corporate-inquiry" class="footer__nav-link">お問い合わせ</a>

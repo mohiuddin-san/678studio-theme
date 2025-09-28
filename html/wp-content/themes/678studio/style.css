@@ -456,7 +456,7 @@ br.sp-only {
   background: white;
   z-index: 10000;
   --header-height: calc(
-  	2.0833333333vw + 0.6944444444vw + 3.4722222222vw
+  	2.0833333333vw + 0.6944444444vw + 2.9166666667vw
   );
 }
 @media (max-width: 767px) {
@@ -600,7 +600,7 @@ br.sp-only {
 }
 .branding__image {
   height: auto;
-  max-height: 3.4722222222vw;
+  max-height: 2.9166666667vw;
 }
 @media (max-width: 767px) {
   .branding__image {
@@ -774,7 +774,7 @@ br.sp-only {
   -ms-flex-pack: center;
   justify-content: center;
   gap: 0.5555555556vw;
-  padding: 0.6944444444vw 1.6666666667vw;
+  padding: 0.4166666667vw 1.6666666667vw;
   font-family: "Noto Sans JP", sans-serif;
   font-size: 0.9722222222vw;
   font-weight: 500;
@@ -789,6 +789,7 @@ br.sp-only {
   position: relative;
   z-index: 1;
   letter-spacing: 0.1em;
+  white-space: nowrap;
 }
 .navigation-desktop__icon {
   width: 1.25vw;
@@ -1271,13 +1272,14 @@ br.sp-only {
     -ms-flex-pack: center;
     justify-content: center;
     gap: calc(8px * 100vw / 380px);
-    padding: calc(12px * 100vw / 380px) calc(16px * 100vw / 380px);
+    padding: calc(8px * 100vw / 380px) calc(16px * 100vw / 380px);
     text-decoration: none;
     border-radius: calc(5px * 100vw / 380px);
     font-family: "Noto Sans JP", sans-serif;
     font-size: calc(13px * 100vw / 380px);
     font-weight: 500;
     color: white;
+    white-space: nowrap;
     -webkit-transition: all 0.3s ease;
     transition: all 0.3s ease;
   }

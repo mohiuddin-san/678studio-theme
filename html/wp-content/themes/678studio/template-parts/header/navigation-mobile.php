@@ -55,7 +55,7 @@
 
       <!-- 掲載希望の方へセクション -->
       <div class="navigation-mobile__publication">
-        <h3 class="navigation-mobile__publication-title">掲載希望の方へ</h3>
+        <h3 class="navigation-mobile__publication-title">掲載希望の写真館へ</h3>
         <div class="navigation-mobile__publication-buttons">
           <a href="<?php echo esc_url(home_url('/studio-recruitment')); ?>" class="navigation-mobile__publication-button navigation-mobile__publication-button--download">
             <img src="<?php echo get_template_directory_uri(); ?>/assets/images/header-download-icon.svg" alt="" class="navigation-mobile__publication-icon">
