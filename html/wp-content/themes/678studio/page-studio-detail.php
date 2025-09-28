@@ -148,26 +148,35 @@ $map_embed_data = get_map_embed_content($shop);
 
   <!-- Studio Hero Slider Section -->
   <?php
-  // Get gallery images for the slider
-  $gallery_images = array();
-  if (!empty($shop['main_gallery_images']) && is_array($shop['main_gallery_images'])) {
-    $gallery_images = $shop['main_gallery_images'];
-  } elseif (!empty($shop['gallery_images']) && is_array($shop['gallery_images'])) {
-    $gallery_images = $shop['gallery_images'];
-  } elseif (!empty($shop['image_urls']) && is_array($shop['image_urls'])) {
-    // Fallback to image_urls
-    $gallery_images = $shop['image_urls'];
-  } elseif (!empty($shop['images']) && is_array($shop['images'])) {
-    // Final fallback to general images
-    $gallery_images = $shop['images'];
+  // Check if this is a certified store
+  $is_certified = false;
+  if (isset($shop['is_certified_store'])) {
+    $is_certified = ($shop['is_certified_store'] === true || $shop['is_certified_store'] === 1 || $shop['is_certified_store'] === '1');
   }
 
-  // Only show slider if we have images
-  if (!empty($gallery_images)) {
-    get_template_part('template-parts/sections/studio/hero-slider', null, [
-      'gallery_images' => $gallery_images,
-      'shop_name' => $shop['name'] ?? ''
-    ]);
+  // Only show gallery for certified stores
+  if ($is_certified) {
+    // Get gallery images for the slider
+    $gallery_images = array();
+    if (!empty($shop['main_gallery_images']) && is_array($shop['main_gallery_images'])) {
+      $gallery_images = $shop['main_gallery_images'];
+    } elseif (!empty($shop['gallery_images']) && is_array($shop['gallery_images'])) {
+      $gallery_images = $shop['gallery_images'];
+    } elseif (!empty($shop['image_urls']) && is_array($shop['image_urls'])) {
+      // Fallback to image_urls
+      $gallery_images = $shop['image_urls'];
+    } elseif (!empty($shop['images']) && is_array($shop['images'])) {
+      // Final fallback to general images
+      $gallery_images = $shop['images'];
+    }
+
+    // Only show slider if we have images
+    if (!empty($gallery_images)) {
+      get_template_part('template-parts/sections/studio/hero-slider', null, [
+        'gallery_images' => $gallery_images,
+        'shop_name' => $shop['name'] ?? ''
+      ]);
+    }
   }
   ?>
 

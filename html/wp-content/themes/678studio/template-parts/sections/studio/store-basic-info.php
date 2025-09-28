@@ -50,7 +50,14 @@ if (empty($shop)) {
                 <!-- Store Name with Icon -->
                 <div class="store-basic-info-section__store-name">
                     <img src="<?php echo get_template_directory_uri(); ?>/assets/images/detail-logo-icon.svg" alt="" class="store-basic-info-section__name-icon">
-                    <h3 class="store-basic-info-section__name"><?php echo esc_html($shop['name'] ?? ''); ?></h3>
+                    <h3 class="store-basic-info-section__name">
+                        <?php if (!empty($shop['store_name'])): ?>
+                            <div class="store-basic-info-section__main-name"><?php echo esc_html($shop['store_name']); ?></div>
+                        <?php endif; ?>
+                        <?php if (!empty($shop['branch_name'])): ?>
+                            <div class="store-basic-info-section__branch-name"><?php echo esc_html($shop['branch_name']); ?></div>
+                        <?php endif; ?>
+                    </h3>
                 </div>
 
                 <!-- Store Description -->
@@ -187,7 +194,14 @@ if (empty($shop)) {
         <!-- Store Name (Top) -->
         <div class="store-basic-info-section-mobile__store-name">
             <img src="<?php echo get_template_directory_uri(); ?>/assets/images/detail-logo-icon.svg" alt="" class="store-basic-info-section-mobile__name-icon">
-            <h3 class="store-basic-info-section-mobile__name"><?php echo esc_html($shop['name'] ?? ''); ?></h3>
+            <h3 class="store-basic-info-section-mobile__name">
+                <?php if (!empty($shop['store_name'])): ?>
+                    <div class="store-basic-info-section-mobile__main-name"><?php echo esc_html($shop['store_name']); ?></div>
+                <?php endif; ?>
+                <?php if (!empty($shop['branch_name'])): ?>
+                    <div class="store-basic-info-section-mobile__branch-name"><?php echo esc_html($shop['branch_name']); ?></div>
+                <?php endif; ?>
+            </h3>
         </div>
 
         <!-- Store Description -->

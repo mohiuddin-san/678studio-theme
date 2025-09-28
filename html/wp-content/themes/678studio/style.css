@@ -5817,6 +5817,36 @@ select:active {
     letter-spacing: clamp(0.6px, 0.2083333333vw, 1.8px);
   }
 }
+.studio-card__store-name {
+  font-size: calc(9px + (9) * (100vw - 768px) / (672));
+  font-weight: 600;
+  color: #333;
+  font-family: "Noto Sans JP", sans-serif;
+  letter-spacing: calc(0.74px + (0.26) * (100vw - 768px) / (672));
+  line-height: 1.2;
+  margin-bottom: calc(1.2px + (2.8) * (100vw - 768px) / (672));
+}
+@media (max-width: 767px) {
+  .studio-card__store-name {
+    font-size: clamp(9.6px, 3.3333333333vw, 28.8px);
+    letter-spacing: clamp(0.6px, 0.2083333333vw, 1.8px);
+    margin-bottom: clamp(2.4px, 0.8333333333vw, 7.2px);
+  }
+}
+.studio-card__branch-name {
+  font-size: calc(7.5px + (7.5) * (100vw - 768px) / (672));
+  font-weight: 400;
+  color: #666;
+  font-family: "Noto Sans JP", sans-serif;
+  letter-spacing: calc(0.37px + (0.13) * (100vw - 768px) / (672));
+  line-height: 1.3;
+}
+@media (max-width: 767px) {
+  .studio-card__branch-name {
+    font-size: clamp(8.4px, 2.9166666667vw, 25.2px);
+    letter-spacing: clamp(0.3px, 0.1041666667vw, 0.9px);
+  }
+}
 .studio-card--certified .studio-card__name {
   font-size: calc(9.6px + (6.4) * (100vw - 768px) / (672));
   line-height: 1.3;
@@ -5825,6 +5855,24 @@ select:active {
 @media (max-width: 767px) {
   .studio-card--certified .studio-card__name {
     font-size: clamp(9px, 3.125vw, 27px);
+  }
+}
+.studio-card--certified .studio-card__store-name {
+  font-size: calc(9.6px + (6.4) * (100vw - 768px) / (672));
+  font-weight: 600;
+}
+@media (max-width: 767px) {
+  .studio-card--certified .studio-card__store-name {
+    font-size: clamp(9px, 3.125vw, 27px);
+  }
+}
+.studio-card--certified .studio-card__branch-name {
+  font-size: calc(7px + (7) * (100vw - 768px) / (672));
+  font-weight: 400;
+}
+@media (max-width: 767px) {
+  .studio-card--certified .studio-card__branch-name {
+    font-size: clamp(7.8px, 2.7083333333vw, 23.4px);
   }
 }
 .studio-card__certified-badge {
@@ -7948,6 +7996,20 @@ select:active {
     font-size: calc(20px * 100vw / 380px);
   }
 }
+.studio-info-header__store-name {
+  line-height: 1.3;
+}
+.studio-info-header__branch-name {
+  line-height: 1.3;
+  margin-top: 0.5555555556vw;
+  font-size: 1.6666666667vw;
+}
+@media (max-width: 767px) {
+  .studio-info-header__branch-name {
+    margin-top: calc(4px * 100vw / 380px);
+    font-size: calc(16px * 100vw / 380px);
+  }
+}
 .studio-info-header__badge {
   display: -webkit-inline-box;
   display: -ms-inline-flexbox;
@@ -8143,9 +8205,9 @@ select:active {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
+  -webkit-box-align: start;
+  -ms-flex-align: start;
+  align-items: flex-start;
   gap: 1.3888888889vw;
   margin-bottom: 1.6666666667vw;
 }
@@ -8181,6 +8243,20 @@ select:active {
     font-size: calc(24px * 100vw / 380px);
     line-height: 1.4;
     letter-spacing: 1.2px;
+  }
+}
+.store-basic-info-section__main-name {
+  line-height: 1.3;
+}
+.store-basic-info-section__branch-name {
+  line-height: 1.3;
+  margin-top: 0.5555555556vw;
+  font-size: 1.6666666667vw;
+}
+@media (max-width: 767px) {
+  .store-basic-info-section__branch-name {
+    margin-top: calc(4px * 100vw / 380px);
+    font-size: calc(18px * 100vw / 380px);
   }
 }
 .store-basic-info-section__description {
@@ -8421,9 +8497,9 @@ select:active {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
+  -webkit-box-align: start;
+  -ms-flex-align: start;
+  align-items: flex-start;
   gap: calc(8px * 100vw / 380px);
   -webkit-box-pack: start;
   -ms-flex-pack: start;
@@ -8444,6 +8520,14 @@ select:active {
   margin: 0;
   line-height: calc(35px * 100vw / 380px);
   letter-spacing: calc(1px * 100vw / 380px);
+}
+.store-basic-info-section-mobile__main-name {
+  line-height: 1.3;
+}
+.store-basic-info-section-mobile__branch-name {
+  line-height: 1.3;
+  margin-top: calc(4px * 100vw / 380px);
+  font-size: calc(15px * 100vw / 380px);
 }
 .store-basic-info-section-mobile__description {
   text-align: justify;

@@ -125,7 +125,7 @@
 	// 店舗名エリア（テンプレート）
 	&__store-name {
 		display: flex;
-		align-items: center;
+		align-items: flex-start; // アイコンを上部に合わせる
 		gap: m.vw(20);
 		margin-bottom: m.vw(24);
 
@@ -159,6 +159,21 @@
 			font-size: m.vw-sp(24);
 			line-height: 1.4;
 			letter-spacing: 1.2px;
+		}
+	}
+
+	&__main-name {
+		line-height: 1.3;
+	}
+
+	&__branch-name {
+		line-height: 1.3;
+		margin-top: m.vw(8);
+		font-size: m.vw(24); // メイン店舗名より小さく（約77%）
+
+		@include m.mq(md) {
+			margin-top: m.vw-sp(4);
+			font-size: m.vw-sp(18); // モバイルでも小さく（約75%）
 		}
 	}
 
@@ -390,7 +405,7 @@
 	// Store Name (Top)
 	&__store-name {
 		display: flex;
-		align-items: center;
+		align-items: flex-start; // アイコンを上部に合わせる
 		gap: m.vw-sp(8);
 		justify-content: flex-start;
 		margin-bottom: m.vw-sp(20);
@@ -410,6 +425,16 @@
 		margin: 0;
 		line-height: m.vw-sp(35);
 		letter-spacing: m.vw-sp(1);
+	}
+
+	&__main-name {
+		line-height: 1.3;
+	}
+
+	&__branch-name {
+		line-height: 1.3;
+		margin-top: m.vw-sp(4);
+		font-size: m.vw-sp(15); // メイン店舗名より小さく（約75%）
 	}
 
 	// Store Description

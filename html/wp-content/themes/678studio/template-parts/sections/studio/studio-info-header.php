@@ -16,18 +16,25 @@ if (isset($args['shop']['id'])) {
 
 // Use new helper functions to get data
 if ($shop_id > 0) {
-    $shop_name = get_studio_shop_field($shop_id, 'store_name');
+    $store_name_base = get_studio_shop_field($shop_id, 'store_name_base');
+    $branch_name = get_studio_shop_field($shop_id, 'branch_name');
     $is_certified = (bool)get_studio_shop_field($shop_id, 'is_certified_store');
 } else {
     // Fallback to existing data
     $shop = $args['shop'] ?? array();
-    $shop_name = $shop['name'] ?? '';
+    $store_name_base = $shop['store_name'] ?? '';
+    $branch_name = $shop['branch_name'] ?? '';
     $is_certified = !empty($shop['is_certified_store']);
 }
 
-// Ensure we have a shop name
-if (empty($shop_name) && isset($args['shop']['name'])) {
-    $shop_name = $args['shop']['name'];
+// If new fields are empty, try to get from args
+if (empty($store_name_base) && empty($branch_name)) {
+    if (isset($args['shop']['store_name'])) {
+        $store_name_base = $args['shop']['store_name'];
+    }
+    if (isset($args['shop']['branch_name'])) {
+        $branch_name = $args['shop']['branch_name'];
+    }
 }
 ?>
 
@@ -36,7 +43,12 @@ if (empty($shop_name) && isset($args['shop']['name'])) {
         <div class="studio-info-header__content">
             <!-- Store Name -->
             <h1 class="studio-info-header__name">
-                <?php echo esc_html($shop_name); ?>
+                <?php if (!empty($store_name_base)): ?>
+                    <div class="studio-info-header__store-name"><?php echo esc_html($store_name_base); ?></div>
+                <?php endif; ?>
+                <?php if (!empty($branch_name)): ?>
+                    <div class="studio-info-header__branch-name"><?php echo esc_html($branch_name); ?></div>
+                <?php endif; ?>
             </h1>
 
             <!-- Certification Status -->

@@ -39,6 +39,21 @@
 		}
 	}
 
+	&__store-name {
+		line-height: 1.3;
+	}
+
+	&__branch-name {
+		line-height: 1.3;
+		margin-top: m.vw(8);
+		font-size: m.vw(24); // 店舗名より小さく（元の約77%）
+
+		@include m.mq(md) {
+			margin-top: m.vw-sp(4);
+			font-size: m.vw-sp(16); // モバイルでも小さく（元の約80%）
+		}
+	}
+
 	&__badge {
 		display: inline-flex;
 		align-items: center;

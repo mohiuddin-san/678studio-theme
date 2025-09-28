@@ -9,14 +9,14 @@ function get_minimum_plan_price($shop) {
     if (empty($shop['photo_plans'])) {
         return null;
     }
-    
+
     $min_price = PHP_INT_MAX;
     foreach ($shop['photo_plans'] as $plan) {
         if (!empty($plan['plan_price']) && is_numeric($plan['plan_price'])) {
             $min_price = min($min_price, (int)$plan['plan_price']);
         }
     }
-    
+
     return $min_price === PHP_INT_MAX ? null : $min_price;
 }
 
@@ -25,14 +25,14 @@ function get_minimum_plan_duration($shop) {
     if (empty($shop['photo_plans'])) {
         return null;
     }
-    
+
     $min_duration = PHP_INT_MAX;
     foreach ($shop['photo_plans'] as $plan) {
         if (!empty($plan['plan_duration']) && is_numeric($plan['plan_duration'])) {
             $min_duration = min($min_duration, (int)$plan['plan_duration']);
         }
     }
-    
+
     return $min_duration === PHP_INT_MAX ? null : $min_duration;
 }
 
@@ -125,6 +125,7 @@ $certified_shops = $shop_data['certified_shops'];
 $regular_shops = $shop_data['regular_shops'];
 $total_pages = $shop_data['total_pages'];
 $current_page = $shop_data['current_page'];
+
 
 
 ?>
@@ -301,9 +302,17 @@ $current_page = $shop_data['current_page'];
             </div>
           </div>
           <div class="studio-card__content">
-            <h3 class="studio-card__name">
-              <?php echo nl2br(esc_html($shop['name'] ?? 'Unknown')); ?>
-            </h3>
+            <div class="studio-card__name">
+              <?php
+              $names = get_shop_display_name($shop, 'separated');
+              if (!empty($names['store'])) {
+                echo '<div class="studio-card__store-name">' . esc_html($names['store']) . '</div>';
+              }
+              if (!empty($names['branch'])) {
+                echo '<div class="studio-card__branch-name">' . esc_html($names['branch']) . '</div>';
+              }
+              ?>
+            </div>
 
             <!-- 新しいアイコン付きの情報行 -->
             <div class="studio-card__info-row">
@@ -436,6 +445,55 @@ $current_page = $shop_data['current_page'];
         <div class="store-search-results__cards">
         <?php foreach ($regular_shops as $shop): ?>
         <div class="studio-card studio-card--regular" onclick="location.href='<?php echo home_url('/studio-detail/?shop_id=' . $shop['id']); ?>'" style="cursor: pointer;">
+          <!-- 登録店舗の画像表示 -->
+          <div class="studio-card__image">
+            <?php
+            $image_src = '';
+            if (!empty($shop['main_image'])) {
+                if (strpos($shop['main_image'], 'data:image') === 0) {
+                    $image_src = $shop['main_image'];
+                } else {
+                    $image_src = esc_url($shop['main_image']);
+                }
+            } elseif (!empty($shop['image_urls']) && !empty($shop['image_urls'][0])) {
+                if (strpos($shop['image_urls'][0], 'data:image') === 0) {
+                    $image_src = $shop['image_urls'][0];
+                } else {
+                    $image_src = esc_url($shop['image_urls'][0]);
+                }
+            } else {
+                $image_src = get_template_directory_uri() . '/assets/images/cardpic-sample.jpg';
+            }
+            ?>
+            <img src="<?php echo $image_src; ?>" alt="<?php echo esc_attr($shop['name'] ?? 'スタジオ写真'); ?>">
+
+            <div class="studio-card__location">
+              <?php
+              // 都道府県を表示（住所から抽出または直接取得）
+              $prefecture_display = '';
+              $address = $shop['address'] ?? '';
+              $prefecture_field = $shop['prefecture'] ?? '';
+
+              // 住所から都道府県を抽出
+              if (!empty($address) && preg_match('/^(.+?[都道府県])/u', $address, $matches)) {
+                $prefecture_display = $matches[1];
+              }
+              // 住所に都道府県が含まれていない場合は、prefectureフィールドを使用
+              else if (!empty($prefecture_field)) {
+                $prefecture_display = $prefecture_field;
+              }
+              // フォールバック
+              else if (!empty($address)) {
+                // 住所の最初の部分を使用
+                $parts = explode(' ', $address);
+                $prefecture_display = $parts[0] ?? '';
+              }
+
+              echo esc_html($prefecture_display ?: 'N/A');
+              ?>
+            </div>
+          </div>
+
           <div class="studio-card__content">
             <!-- 最寄り駅ラベル -->
             <div class="studio-card__station-label">
@@ -443,7 +501,17 @@ $current_page = $shop_data['current_page'];
             </div>
 
             <!-- 店舗名 -->
-            <h3 class="studio-card__name"><?php echo nl2br(esc_html($shop['name'] ?? 'Unknown')); ?></h3>
+            <div class="studio-card__name">
+              <?php
+              $names = get_shop_display_name($shop, 'separated');
+              if (!empty($names['store'])) {
+                echo '<div class="studio-card__store-name">' . esc_html($names['store']) . '</div>';
+              }
+              if (!empty($names['branch'])) {
+                echo '<div class="studio-card__branch-name">' . esc_html($names['branch']) . '</div>';
+              }
+              ?>
+            </div>
 
             <!-- 基本情報 -->
             <div class="studio-card__info">
@@ -464,31 +532,28 @@ $current_page = $shop_data['current_page'];
                   <?php
                   // 住所の整形（認定店舗と同じロジック）
                   $found_address = $shop['address'] ?? '';
-                  
+
                   if (!empty($found_address)) {
-                    // 住所が都道府県から始まっているかチェック
-                    $prefectures = ['北海道', '青森県', '岩手県', '宮城県', '秋田県', '山形県', '福島県', '茨城県', '栃木県', '群馬県', '埼玉県', '千葉県', '東京都', '神奈川県', '新潟県', '富山県', '石川県', '福井県', '山梨県', '長野県', '岐阜県', '静岡県', '愛知県', '三重県', '滋賀県', '京都府', '大阪府', '兵庫県', '奈良県', '和歌山県', '鳥取県', '島根県', '岡山県', '広島県', '山口県', '徳島県', '香川県', '愛媛県', '高知県', '福岡県', '佐賀県', '長崎県', '熊本県', '大分県', '宮崎県', '鹿児島県', '沖縄県'];
-                    
-                    $has_prefecture = false;
-                    foreach ($prefectures as $pref) {
-                      if (strpos($found_address, $pref) === 0) {
-                        $has_prefecture = true;
-                        break;
-                      }
+                    // 都道府県+市区町村パターン（マルチバイト対応）
+                    if (preg_match('/(.+?[都道府県])(.+?[市区町村])/u', $found_address, $matches)) {
+                      echo esc_html($matches[1] . $matches[2]);
                     }
-                    
-                    if (!$has_prefecture) {
-                      // 都道府県が含まれていない場合、東京都を前に追加
-                      echo '東京都' . esc_html($found_address);
-                    } else {
-                      // 住所に都道府県が含まれている場合
-                      if (preg_match('/^(.+?[都道府県])(.+?[市区町村])/', $found_address, $matches)) {
-                        echo esc_html($matches[1] . $matches[2]);
-                      } else {
-                        // フォールバック：住所をそのまま表示（最初の部分のみ）
-                        $address_parts = explode(' ', $found_address);
-                        echo esc_html($address_parts[0] ?? $found_address);
+                    // 市区町村のみ
+                    else if (preg_match('/(.+?[市区町村])/u', $found_address, $matches)) {
+                      echo esc_html($matches[1]);
+                    }
+                    // 区のみ（東京都推定）
+                    else if (preg_match('/(.+?区)/u', $found_address, $matches)) {
+                      echo '東京都' . esc_html($matches[1]);
+                    }
+                    // フォールバック：最初の部分
+                    else {
+                      $parts = preg_split('/[0-9\-]/u', $found_address);
+                      $display_address = $parts[0] ?? $found_address;
+                      if (mb_strlen($display_address) > 15) {
+                        $display_address = mb_substr($display_address, 0, 15) . '...';
                       }
+                      echo esc_html(trim($display_address));
                     }
                   } else {
                     echo '住所情報が見つかりません';

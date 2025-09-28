@@ -22,6 +22,9 @@ require_once get_template_directory() . '/inc/studio-shops-compat.php';
 // Load Studio Data Helpers (New simplified data access layer)
 require_once get_template_directory() . '/inc/studio-data-helpers.php';
 
+// Load Studio Shop Management (Store name + branch name system)
+require_once get_template_directory() . '/functions-shop-management.php';
+
 // Load Admin Enhancements
 require_once get_template_directory() . '/inc/admin-enhancements.php';
 

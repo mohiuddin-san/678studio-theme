@@ -652,6 +652,39 @@ select {
 		}
 	}
 
+	// 店舗名分離表示用スタイル
+	&__store-name {
+		font-size: m.fs(18, 0.5);
+		font-weight: 600;
+		color: #333;
+		font-family: v.$ja-sans;
+		letter-spacing: m.fs(1);
+		line-height: 1.2;
+		margin-bottom: m.fs(4, 0.3);
+
+		// モバイル対応
+		@include m.mq(md) {
+			font-size: m.fsm(16);
+			letter-spacing: m.fsm(1);
+			margin-bottom: m.fsm(4);
+		}
+	}
+
+	&__branch-name {
+		font-size: m.fs(15, 0.5);
+		font-weight: 400;
+		color: #666;
+		font-family: v.$ja-sans;
+		letter-spacing: m.fs(0.5);
+		line-height: 1.3;
+
+		// モバイル対応
+		@include m.mq(md) {
+			font-size: m.fsm(14);
+			letter-spacing: m.fsm(0.5);
+		}
+	}
+
 	// 認定店カードの店舗名を調整
 	&--certified &__name {
 		font-size: m.fs(16, 0.6);
@@ -661,6 +694,27 @@ select {
 		// モバイル対応
 		@include m.mq(md) {
 			font-size: m.fsm(15);
+		}
+	}
+
+	// 認定店カードの分離表示スタイル
+	&--certified &__store-name {
+		font-size: m.fs(16, 0.6);
+		font-weight: 600;
+
+		// モバイル対応
+		@include m.mq(md) {
+			font-size: m.fsm(15);
+		}
+	}
+
+	&--certified &__branch-name {
+		font-size: m.fs(14, 0.5);
+		font-weight: 400;
+
+		// モバイル対応
+		@include m.mq(md) {
+			font-size: m.fsm(13);
 		}
 	}
 

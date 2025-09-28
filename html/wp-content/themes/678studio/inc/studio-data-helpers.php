@@ -153,9 +153,33 @@ function get_studio_shop_basic_info($shop_id) {
     // IDフィールドの確定
     $final_id = isset($fields['shop_id']) && !empty($fields['shop_id']) ? $fields['shop_id'] : $shop_id;
 
+    // 店舗名・支店名の取得と分離
+    $original_name = isset($fields['store_name']) ? $fields['store_name'] : get_the_title($post_id);
+    $store_name = isset($fields['store_name_base']) ? $fields['store_name_base'] : '';
+    $branch_name = isset($fields['branch_name']) ? $fields['branch_name'] : '';
+
+    // 新しいフィールドが未設定の場合は既存データから推測（移行期間用）
+    if (empty($store_name) && empty($branch_name) && !empty($original_name)) {
+        $name_parts = explode(' ', $original_name, 2);
+        if (count($name_parts) === 2) {
+            $store_name = $name_parts[0];
+            $branch_name = $name_parts[1];
+        } else {
+            $store_name = $original_name;
+        }
+    }
+
+    // 後方互換性: original_nameが空で新しいフィールドがある場合は結合した名前を使用
+    $display_name = $original_name;
+    if (empty($original_name) && (!empty($store_name) || !empty($branch_name))) {
+        $display_name = trim($store_name . ($branch_name ? ' ' . $branch_name : ''));
+    }
+
     $basic_info = array(
         'id' => $final_id,
-        'name' => isset($fields['store_name']) ? $fields['store_name'] : get_the_title($post_id),
+        'name' => $display_name, // 後方互換性のため保持（新しいフィールドがある場合は結合名を使用）
+        'store_name' => $store_name,
+        'branch_name' => $branch_name,
         'address' => $address,
         'phone' => isset($fields['phone']) ? $fields['phone'] : '',
         'nearest_station' => isset($fields['nearest_station']) ? $fields['nearest_station'] : '',
@@ -242,38 +266,36 @@ function get_studio_shop_data_simple($shop_id) {
         }
     }
 
-    // 撮影プランの取得（認定店のみ）
+    // 撮影プランの取得（全店舗対応）
     $photo_plans = array();
-    if ($basic_info['is_certified_store']) {
-        for ($i = 1; $i <= 3; $i++) {
-            $plan_name = get_field("plan{$i}_name", $post_id);
-            $plan_price = get_field("plan{$i}_price", $post_id);
-            $plan_duration = get_field("plan{$i}_duration", $post_id);
-            $plan_description = get_field("plan{$i}_description", $post_id);
+    for ($i = 1; $i <= 3; $i++) {
+        $plan_name = get_field("plan{$i}_name", $post_id);
+        $plan_price = get_field("plan{$i}_price", $post_id);
+        $plan_duration = get_field("plan{$i}_duration", $post_id);
+        $plan_description = get_field("plan{$i}_description", $post_id);
 
-            if (!empty($plan_name) || !empty($plan_price)) {
-                $formatted_duration = '';
-                if (!empty($plan_duration) && is_numeric($plan_duration)) {
-                    $formatted_duration = $plan_duration . '分';
-                }
-
-                // プラン画像の取得
-                $plan_image = get_field("plan{$i}_image", $post_id);
-                $plan_image_url = '';
-                if ($plan_image) {
-                    $plan_image_url = is_array($plan_image) ? $plan_image['url'] : wp_get_attachment_url($plan_image);
-                }
-
-                $photo_plans[] = array(
-                    'plan_name' => $plan_name ?: '',
-                    'plan_price' => $plan_price ?: 0,
-                    'plan_duration' => $plan_duration ?: '',
-                    'plan_description' => $plan_description ?: '',
-                    'plan_image' => $plan_image_url,
-                    'formatted_price' => '¥' . number_format($plan_price ?: 0),
-                    'formatted_duration' => $formatted_duration,
-                );
+        if (!empty($plan_name) || !empty($plan_price)) {
+            $formatted_duration = '';
+            if (!empty($plan_duration) && is_numeric($plan_duration)) {
+                $formatted_duration = $plan_duration . '分';
             }
+
+            // プラン画像の取得
+            $plan_image = get_field("plan{$i}_image", $post_id);
+            $plan_image_url = '';
+            if ($plan_image) {
+                $plan_image_url = is_array($plan_image) ? $plan_image['url'] : wp_get_attachment_url($plan_image);
+            }
+
+            $photo_plans[] = array(
+                'plan_name' => $plan_name ?: '',
+                'plan_price' => $plan_price ?: 0,
+                'plan_duration' => $plan_duration ?: '',
+                'plan_description' => $plan_description ?: '',
+                'plan_image' => $plan_image_url,
+                'formatted_price' => '¥' . number_format($plan_price ?: 0),
+                'formatted_duration' => $formatted_duration,
+            );
         }
     }
 
@@ -358,6 +380,8 @@ function get_all_studio_shops_data() {
     }
 
     $shops_data = array();
+
+
     foreach ($posts as $post_id) {
         $shop_id_field = get_field('shop_id', $post_id);
         // shop_idフィールドが設定されていない場合はPost IDを使用
@@ -368,6 +392,86 @@ function get_all_studio_shops_data() {
 
         // IDを正しく設定
         $basic_info['id'] = $shop_id;
+
+        // 画像情報を追加
+        $main_image = get_field('main_image', $post_id);
+        $main_image_url = '';
+        if ($main_image) {
+            $main_image_url = is_array($main_image) ? $main_image['url'] : wp_get_attachment_url($main_image);
+        } elseif (has_post_thumbnail($post_id)) {
+            $main_image_url = get_the_post_thumbnail_url($post_id, 'full');
+        }
+        $basic_info['main_image'] = $main_image_url;
+        $basic_info['image_urls'] = array($main_image_url);
+
+        // 認定店のみギャラリー画像を取得（パフォーマンス考慮）
+        $gallery_urls = array();
+        if ($basic_info['is_certified_store']) {
+            // WordPressメタフィールドから取得
+            $gallery_image_ids = get_post_meta($post_id, '_gallery_image_ids', true);
+
+            if (!empty($gallery_image_ids)) {
+                $image_ids = explode(',', $gallery_image_ids);
+                foreach ($image_ids as $image_id) {
+                    $image_id = trim($image_id);
+                    if ($image_id && is_numeric($image_id)) {
+                        $image_url = wp_get_attachment_url($image_id);
+                        if ($image_url) {
+                            $gallery_urls[] = array('url' => $image_url);
+                        }
+                    }
+                }
+            }
+
+            // ACFギャラリーフィールドとの後方互換性
+            if (empty($gallery_urls)) {
+                $gallery_images = get_field('gallery_images', $post_id);
+                if ($gallery_images && is_array($gallery_images)) {
+                    foreach ($gallery_images as $image) {
+                        if (is_array($image)) {
+                            $gallery_urls[] = array('url' => $image['url']);
+                        } else {
+                            $gallery_urls[] = array('url' => wp_get_attachment_url($image));
+                        }
+                    }
+                }
+            }
+        }
+        $basic_info['main_gallery_images'] = $gallery_urls;
+
+        // 撮影プランの取得（全店舗対応）
+        $photo_plans = array();
+        for ($i = 1; $i <= 3; $i++) {
+            $plan_name = get_field("plan{$i}_name", $post_id);
+            $plan_price = get_field("plan{$i}_price", $post_id);
+            $plan_duration = get_field("plan{$i}_duration", $post_id);
+            $plan_description = get_field("plan{$i}_description", $post_id);
+
+            if (!empty($plan_name) || !empty($plan_price)) {
+                $formatted_duration = '';
+                if (!empty($plan_duration) && is_numeric($plan_duration)) {
+                    $formatted_duration = $plan_duration . '分';
+                }
+
+                // プラン画像の取得
+                $plan_image = get_field("plan{$i}_image", $post_id);
+                $plan_image_url = '';
+                if ($plan_image) {
+                    $plan_image_url = is_array($plan_image) ? $plan_image['url'] : wp_get_attachment_url($plan_image);
+                }
+
+                $photo_plans[] = array(
+                    'plan_name' => $plan_name ?: '',
+                    'plan_price' => $plan_price ?: 0,
+                    'plan_duration' => $plan_duration ?: '',
+                    'plan_description' => $plan_description ?: '',
+                    'plan_image' => $plan_image_url,
+                    'formatted_price' => '¥' . number_format($plan_price ?: 0),
+                    'formatted_duration' => $formatted_duration,
+                );
+            }
+        }
+        $basic_info['photo_plans'] = $photo_plans;
 
         if (!empty($basic_info['name'])) {
             $shops_data[] = $basic_info;
@@ -393,6 +497,87 @@ function clear_studio_data_helpers_cache() {
 }
 
 /**
+ * 店舗名の表示形式を選択して取得
+ *
+ * @param array $shop 店舗データ
+ * @param string $format 表示形式 ('full', 'store_only', 'branch_only', 'separated', 'short')
+ * @return string|array 表示用店舗名
+ */
+function get_shop_display_name($shop, $format = 'full') {
+    $store_name = isset($shop['store_name']) ? $shop['store_name'] : $shop['name'];
+    $branch_name = isset($shop['branch_name']) ? $shop['branch_name'] : '';
+
+    // 既存の name フィールドから branch_name を分離する処理（移行期間用）
+    if (empty($branch_name) && !empty($shop['name'])) {
+        // よくあるパターンでの分離を試行
+        $name_parts = explode(' ', $shop['name'], 2);
+        if (count($name_parts) === 2) {
+            $store_name = $name_parts[0];
+            $branch_name = $name_parts[1];
+        }
+    }
+
+    switch($format) {
+        case 'store_only':
+            return $store_name;
+
+        case 'branch_only':
+            return $branch_name;
+
+        case 'separated':
+            return array(
+                'store' => $store_name,
+                'branch' => $branch_name
+            );
+
+        case 'short':
+            // モバイル用短縮表示
+            if (empty($branch_name)) {
+                return $store_name;
+            }
+            return $store_name . ' (' . $branch_name . ')';
+
+        case 'full':
+        default:
+            if (empty($branch_name)) {
+                return $store_name;
+            }
+            return trim($store_name . ' ' . $branch_name);
+    }
+}
+
+/**
+ * 店舗選択セレクトボックス用のオプションを生成
+ *
+ * @param array $shops 店舗データの配列
+ * @param bool $mobile_optimized モバイル最適化するか
+ * @return string HTMLオプション文字列
+ */
+function generate_shop_select_options($shops, $mobile_optimized = false) {
+    if (empty($shops) || !is_array($shops)) {
+        return '<option value="">店舗データが見つかりません</option>';
+    }
+
+    $options = '<option value="">ご予約・お問い合わせの店舗をお選びください</option>';
+    $format = $mobile_optimized ? 'short' : 'full';
+
+    foreach ($shops as $shop) {
+        $shop_id = isset($shop['id']) ? $shop['id'] : '';
+        $display_name = get_shop_display_name($shop, $format);
+
+        if (!empty($shop_id)) {
+            $options .= sprintf(
+                '<option value="%s">%s</option>',
+                esc_attr($shop_id),
+                esc_html($display_name)
+            );
+        }
+    }
+
+    return $options;
+}
+
+/**
  * デバッグ情報の取得
  *
  * 現在のキャッシュ状況やデータの整合性をチェックします。
@@ -404,7 +589,7 @@ function get_studio_data_helpers_debug_info() {
         'cache_count' => count(StudioDataCache::$cache),
         'cache_keys' => array_keys(StudioDataCache::$cache),
         'memory_usage' => memory_get_usage(true),
-        'version' => '1.0.0',
+        'version' => '1.1.0',
         'status' => 'active'
     );
 }

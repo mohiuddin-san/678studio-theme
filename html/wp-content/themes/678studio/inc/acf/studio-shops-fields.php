@@ -41,12 +41,46 @@ acf_add_local_field_group(array(
             'readonly' => 1,
         ),
         array(
+            'key' => 'field_studio_store_name_base',
+            'label' => '基本店舗名',
+            'name' => 'store_name_base',
+            'type' => 'text',
+            'instructions' => '例: スタジオアリス、写真の○○など（基本となる店舗ブランド名）',
+            'required' => 1,
+            'conditional_logic' => 0,
+            'wrapper' => array(
+                'width' => '50',
+            ),
+            'default_value' => '',
+            'placeholder' => 'スタジオアリス',
+            'prepend' => '',
+            'append' => '',
+            'maxlength' => '',
+        ),
+        array(
+            'key' => 'field_studio_branch_name',
+            'label' => '支店名',
+            'name' => 'branch_name',
+            'type' => 'text',
+            'instructions' => '例: 新宿東口店、渋谷本店など（支店・店舗名）',
+            'required' => 0,
+            'conditional_logic' => 0,
+            'wrapper' => array(
+                'width' => '50',
+            ),
+            'default_value' => '',
+            'placeholder' => '新宿東口店',
+            'prepend' => '',
+            'append' => '',
+            'maxlength' => '',
+        ),
+        array(
             'key' => 'field_studio_store_name',
-            'label' => '店舗名',
+            'label' => '店舗名（旧フィールド）',
             'name' => 'store_name',
             'type' => 'textarea',
-            'instructions' => '店舗の名前を入力してください（管理画面のタイトルも自動更新されます）',
-            'required' => 1,
+            'instructions' => '既存データとの互換性用（新しい基本店舗名+支店名を使用してください）',
+            'required' => 0,
             'conditional_logic' => 0,
             'wrapper' => array(
                 'width' => '100',
@@ -298,23 +332,15 @@ acf_add_local_field_group(array(
             'new_lines' => 'br',
         ),
         
-        // 認定店情報タブ
+        // 撮影プランタブ
         array(
-            'key' => 'field_studio_tab_certified',
-            'label' => '認定店情報',
+            'key' => 'field_studio_tab_plans',
+            'label' => '撮影プラン',
             'name' => '',
             'type' => 'tab',
             'placement' => 'top',
             'endpoint' => 0,
-            'conditional_logic' => array(
-                array(
-                    array(
-                        'field' => 'field_studio_certified_store',
-                        'operator' => '==',
-                        'value' => '1',
-                    ),
-                ),
-            ),
+            'conditional_logic' => 0,
         ),
         // 撮影プラン1
         array(
@@ -324,15 +350,7 @@ acf_add_local_field_group(array(
             'type' => 'text',
             'instructions' => '1つ目の撮影プランのタイトル',
             'required' => 0,
-            'conditional_logic' => array(
-                array(
-                    array(
-                        'field' => 'field_studio_certified_store',
-                        'operator' => '==',
-                        'value' => '1',
-                    ),
-                ),
-            ),
+            'conditional_logic' => 0,
             'wrapper' => array(
                 'width' => '60',
             ),
@@ -346,15 +364,7 @@ acf_add_local_field_group(array(
             'type' => 'number',
             'instructions' => '料金を数字のみで入力（¥マークは自動で付加されます）',
             'required' => 0,
-            'conditional_logic' => array(
-                array(
-                    array(
-                        'field' => 'field_studio_certified_store',
-                        'operator' => '==',
-                        'value' => '1',
-                    ),
-                ),
-            ),
+            'conditional_logic' => 0,
             'wrapper' => array(
                 'width' => '20',
             ),
@@ -373,15 +383,7 @@ acf_add_local_field_group(array(
             'type' => 'number',
             'instructions' => '撮影の目安時間を分単位で入力してください',
             'required' => 0,
-            'conditional_logic' => array(
-                array(
-                    array(
-                        'field' => 'field_studio_certified_store',
-                        'operator' => '==',
-                        'value' => '1',
-                    ),
-                ),
-            ),
+            'conditional_logic' => 0,
             'wrapper' => array(
                 'width' => '20',
             ),
@@ -399,15 +401,7 @@ acf_add_local_field_group(array(
             'type' => 'textarea',
             'instructions' => 'プランの内容や特徴を詳しく記述してください',
             'required' => 0,
-            'conditional_logic' => array(
-                array(
-                    array(
-                        'field' => 'field_studio_certified_store',
-                        'operator' => '==',
-                        'value' => '1',
-                    ),
-                ),
-            ),
+            'conditional_logic' => 0,
             'wrapper' => array(
                 'width' => '',
             ),
@@ -424,15 +418,7 @@ acf_add_local_field_group(array(
             'type' => 'image',
             'instructions' => 'このプランを表現する画像を選択してください（推奨サイズ: 800x600px以上）',
             'required' => 0,
-            'conditional_logic' => array(
-                array(
-                    array(
-                        'field' => 'field_studio_certified_store',
-                        'operator' => '==',
-                        'value' => '1',
-                    ),
-                ),
-            ),
+            'conditional_logic' => 0,
             'wrapper' => array(
                 'width' => '',
             ),
@@ -456,15 +442,7 @@ acf_add_local_field_group(array(
             'type' => 'text',
             'instructions' => '2つ目の撮影プランのタイトル（任意）',
             'required' => 0,
-            'conditional_logic' => array(
-                array(
-                    array(
-                        'field' => 'field_studio_certified_store',
-                        'operator' => '==',
-                        'value' => '1',
-                    ),
-                ),
-            ),
+            'conditional_logic' => 0,
             'wrapper' => array(
                 'width' => '60',
             ),
@@ -478,15 +456,7 @@ acf_add_local_field_group(array(
             'type' => 'number',
             'instructions' => '料金を数字のみで入力（¥マークは自動で付加されます）',
             'required' => 0,
-            'conditional_logic' => array(
-                array(
-                    array(
-                        'field' => 'field_studio_certified_store',
-                        'operator' => '==',
-                        'value' => '1',
-                    ),
-                ),
-            ),
+            'conditional_logic' => 0,
             'wrapper' => array(
                 'width' => '20',
             ),
@@ -505,15 +475,7 @@ acf_add_local_field_group(array(
             'type' => 'number',
             'instructions' => '撮影の目安時間を分単位で入力してください',
             'required' => 0,
-            'conditional_logic' => array(
-                array(
-                    array(
-                        'field' => 'field_studio_certified_store',
-                        'operator' => '==',
-                        'value' => '1',
-                    ),
-                ),
-            ),
+            'conditional_logic' => 0,
             'wrapper' => array(
                 'width' => '20',
             ),
@@ -531,15 +493,7 @@ acf_add_local_field_group(array(
             'type' => 'textarea',
             'instructions' => 'プランの内容や特徴を詳しく記述してください',
             'required' => 0,
-            'conditional_logic' => array(
-                array(
-                    array(
-                        'field' => 'field_studio_certified_store',
-                        'operator' => '==',
-                        'value' => '1',
-                    ),
-                ),
-            ),
+            'conditional_logic' => 0,
             'wrapper' => array(
                 'width' => '',
             ),
@@ -556,15 +510,7 @@ acf_add_local_field_group(array(
             'type' => 'image',
             'instructions' => 'このプランを表現する画像を選択してください（推奨サイズ: 800x600px以上）',
             'required' => 0,
-            'conditional_logic' => array(
-                array(
-                    array(
-                        'field' => 'field_studio_certified_store',
-                        'operator' => '==',
-                        'value' => '1',
-                    ),
-                ),
-            ),
+            'conditional_logic' => 0,
             'wrapper' => array(
                 'width' => '',
             ),
@@ -588,15 +534,7 @@ acf_add_local_field_group(array(
             'type' => 'text',
             'instructions' => '3つ目の撮影プランのタイトル（任意）',
             'required' => 0,
-            'conditional_logic' => array(
-                array(
-                    array(
-                        'field' => 'field_studio_certified_store',
-                        'operator' => '==',
-                        'value' => '1',
-                    ),
-                ),
-            ),
+            'conditional_logic' => 0,
             'wrapper' => array(
                 'width' => '60',
             ),
@@ -610,15 +548,7 @@ acf_add_local_field_group(array(
             'type' => 'number',
             'instructions' => '料金を数字のみで入力（¥マークは自動で付加されます）',
             'required' => 0,
-            'conditional_logic' => array(
-                array(
-                    array(
-                        'field' => 'field_studio_certified_store',
-                        'operator' => '==',
-                        'value' => '1',
-                    ),
-                ),
-            ),
+            'conditional_logic' => 0,
             'wrapper' => array(
                 'width' => '20',
             ),
@@ -637,15 +567,7 @@ acf_add_local_field_group(array(
             'type' => 'number',
             'instructions' => '撮影の目安時間を分単位で入力してください',
             'required' => 0,
-            'conditional_logic' => array(
-                array(
-                    array(
-                        'field' => 'field_studio_certified_store',
-                        'operator' => '==',
-                        'value' => '1',
-                    ),
-                ),
-            ),
+            'conditional_logic' => 0,
             'wrapper' => array(
                 'width' => '20',
             ),
@@ -663,15 +585,7 @@ acf_add_local_field_group(array(
             'type' => 'textarea',
             'instructions' => 'プランの内容や特徴を詳しく記述してください',
             'required' => 0,
-            'conditional_logic' => array(
-                array(
-                    array(
-                        'field' => 'field_studio_certified_store',
-                        'operator' => '==',
-                        'value' => '1',
-                    ),
-                ),
-            ),
+            'conditional_logic' => 0,
             'wrapper' => array(
                 'width' => '',
             ),
@@ -688,15 +602,7 @@ acf_add_local_field_group(array(
             'type' => 'image',
             'instructions' => 'このプランを表現する画像を選択してください（推奨サイズ: 800x600px以上）',
             'required' => 0,
-            'conditional_logic' => array(
-                array(
-                    array(
-                        'field' => 'field_studio_certified_store',
-                        'operator' => '==',
-                        'value' => '1',
-                    ),
-                ),
-            ),
+            'conditional_logic' => 0,
             'wrapper' => array(
                 'width' => '',
             ),
