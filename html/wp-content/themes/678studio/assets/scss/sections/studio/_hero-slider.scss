@@ -2,6 +2,19 @@
 @use '../../base/variables' as v;
 
 // Studio Hero Slider Section (nii-photo.com style)
+// グローバルなSplideページネーション設定
+@include m.mq(md) {
+    .splide__pagination {
+        flex-wrap: nowrap !important;
+        white-space: nowrap !important;
+
+        // 複数のページネーションが生成されることを防ぐ
+        &:nth-of-type(n+2) {
+            display: none !important;
+        }
+    }
+}
+
 .studio-hero-slider {
     width: 100%;
     height: 80vh; // 80% viewport height with bottom spacing
@@ -29,20 +42,11 @@
                 touch-action: auto;
                 -webkit-overflow-scrolling: touch; // iOS向けの慣性スクロール
 
-                // スワイプ領域を明確にするための視覚的ヒント
-                &::after {
-                    content: '';
-                    position: absolute;
-                    bottom: m.vw-sp(100);
-                    left: 50%;
-                    transform: translateX(-50%);
-                    width: m.vw-sp(60);
-                    height: m.vw-sp(4);
-                    background: rgba(255, 255, 255, 0.3);
-                    border-radius: m.vw-sp(2);
-                    pointer-events: none;
-                    z-index: 5;
-                }
+                // Safariでのセンタリング問題を解決（スワイプを阻害しないように）
+                padding: 0 !important; // 強制的にpaddingを除去
+                margin: 0 !important;
+
+                // スワイプヒントは削除（ページネーションがあるため不要）
             }
         }
 
@@ -50,6 +54,11 @@
             height: 100%;
             display: flex;
             align-items: center;
+
+            @include m.mq(md) {
+                // スワイプ機能を維持しながらセンタリング
+                padding: 0 !important; // Splideのpaddingを強制的に除去
+            }
         }
 
         &__slide {
@@ -63,8 +72,10 @@
             @include m.mq(md) {
                 height: 64vh; // Mobile height adjusted for 80vh container
                 border-radius: m.vw-sp(82); // Mobile border radius
-                width: 90%; // Slightly smaller width for visual margin
-                margin: 0 auto; // Center horizontally
+                // スワイプを阻害しないセンタリング
+                width: 90%; // 適度な幅
+                margin: 0 auto; // シンプルな中央配置
+                max-width: 90vw; // Ensure it doesn't exceed viewport
             }
         }
     }
@@ -119,41 +130,65 @@
         left: 50%;
         transform: translateX(-50%);
         display: flex !important;
-        gap: m.vw(16);
+        justify-content: center;
+        align-items: center;
+        gap: m.vw(8);
         z-index: 10;
+        max-width: 80%; // 最大幅を制限
+        flex-wrap: nowrap; // 改行しない
+        overflow: hidden; // はみ出し部分を隠す
 
         @include m.mq(md) {
             bottom: m.vw-sp(40);
-            gap: m.vw-sp(12);
+            gap: m.vw-sp(4); // さらに狭める
+            max-width: 95%;
+            flex-wrap: nowrap !important; // 強制的に改行しない
+            height: auto !important; // 高さを自動調整
+
+            // 複数のページネーションが表示されるのを防ぐ
+            &:not(:first-of-type) {
+                display: none !important;
+            }
         }
 
         &__page {
-            width: m.vw(12);
-            height: m.vw(12);
+            // ハイブリッドインジケーター：通常はドット、アクティブ時のみライン
+            width: m.vw(8);
+            height: m.vw(8);
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.5);
-            border: 2px solid rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.4);
+            border: none;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
 
             @include m.mq(md) {
-                width: m.vw-sp(10);
-                height: m.vw-sp(10);
-                border-width: 1px;
+                width: m.vw-sp(4); // さらに小さく
+                height: m.vw-sp(4);
+                min-width: m.vw-sp(4); // 最小サイズを保証
+                flex-shrink: 0; // 縮小しない
             }
 
             &:hover {
-                background: rgba(255, 255, 255, 0.8);
-                transform: scale(1.1);
+                background: rgba(255, 255, 255, 0.7);
+                transform: scale(1.2);
             }
 
             &.is-active {
+                // アクティブ時はライン型に変化
+                width: m.vw(24);
+                height: m.vw(3);
+                border-radius: m.vw(1.5);
                 background: rgba(255, 255, 255, 0.95);
-                transform: scale(1.2);
-                box-shadow: 0 0 m.vw(20) rgba(255, 255, 255, 0.6);
+                transform: none;
+                box-shadow: 0 0 m.vw(8) rgba(255, 255, 255, 0.4);
 
                 @include m.mq(md) {
-                    box-shadow: 0 0 m.vw-sp(15) rgba(255, 255, 255, 0.6);
+                    width: m.vw-sp(12); // アクティブ時ももう少し小さく
+                    height: m.vw-sp(2);
+                    border-radius: m.vw-sp(1);
+                    box-shadow: 0 0 m.vw-sp(4) rgba(255, 255, 255, 0.4);
+                    min-width: m.vw-sp(12);
+                    flex-shrink: 0;
                 }
             }
         }

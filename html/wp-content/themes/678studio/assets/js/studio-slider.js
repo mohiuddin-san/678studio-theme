@@ -61,11 +61,12 @@ document.addEventListener('DOMContentLoaded', function() {
         // Responsive settings matching nii-photo.com
         breakpoints: {
             768: {
-                padding: 0, // No padding for centered single image
+                padding: "5%", // Small padding for better swipe detection
                 gap: "16px",
                 focus: 'center', // Center the current slide
                 perPage: 1, // Show one slide at a time
                 perMove: 1, // Move one slide at a time
+                width: '100%', // Ensure full width for swipe detection
                 // Mobile touch optimization
                 drag: true, // Enable drag
                 dragMinThreshold: {
