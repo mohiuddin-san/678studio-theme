@@ -345,7 +345,7 @@
 	padding: m.vw-sp(60) 0 m.vw-sp(180);
 	padding-left: m.vw-sp(20);
 	max-width: 100vw;
-	// overflow-x: hidden を削除 - sticky positioning維持のため
+	// overflow-x: hidden; // sticky動作のためコメントアウト（body要素で制御）
 
 	@include m.mq(md) {
 		display: block;
@@ -363,18 +363,20 @@
 
 	// Mobile Vertical Title
 	&__vertical-title {
-		position: sticky;
-		left: 0;
-		top: m.vw-sp(80);
 		display: flex;
 		flex-direction: row;
 		align-items: center;
 		gap: m.vw-sp(12);
 		transform: rotate(90deg) translateX(m.vw-sp(-10));
 		transform-origin: left top;
+		align-self: flex-start; // Flexbox内でのsticky動作に必要
+		margin-left: m.vw-sp(-10);
+
+		// Sticky実装（Safari対応含む）
+		position: -webkit-sticky; // Safari用プレフィックス
+		position: sticky;
+		top: calc(var(--header-height, 12.1052631579vw) + m.vw-sp(60)); // store-nameの位置に合わせて調整
 		z-index: 10;
-		align-self: flex-start;
-		margin-left: m.vw-sp(-10); // モバイル用関数に修正
 	}
 
 	&__circle {
@@ -541,7 +543,7 @@
 	&__wave-1 {
 		position: absolute;
 		top: m.vw-sp(80);
-		left: m.vw-sp(20);
+		left: m.vw-sp(-10);
 		width: m.vw-sp(75);
 		height: m.vw-sp(165);
 		flex-shrink: 0;

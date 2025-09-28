@@ -274,6 +274,7 @@ body {
   line-height: 1.6;
   color: #3f3f3f;
   background-color: #ffffff;
+  overflow-x: hidden;
 }
 
 ul,
@@ -8265,6 +8266,8 @@ select:active {
   padding: calc(60px * 100vw / 380px) 0 calc(120px * 100vw / 380px);
   padding-left: calc(20px * 100vw / 380px);
   max-width: 100vw;
+  position: relative;
+  min-height: 100vh;
 }
 @media (max-width: 767px) {
   .store-basic-info-section-mobile {
@@ -8282,13 +8285,11 @@ select:active {
   -ms-flex-direction: column;
   flex-direction: column;
   position: relative;
+  min-height: 100vh;
   height: auto;
   overflow: visible;
 }
 .store-basic-info-section-mobile__vertical-title {
-  position: sticky;
-  left: 0;
-  top: calc(80px * 100vw / 380px);
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -8304,10 +8305,12 @@ select:active {
   transform: rotate(90deg) translateX(calc(-10px * 100vw / 380px));
   -webkit-transform-origin: left top;
   transform-origin: left top;
-  z-index: 10;
   -ms-flex-item-align: start;
   align-self: flex-start;
   margin-left: calc(-10px * 100vw / 380px);
+  position: sticky;
+  top: calc(var(--header-height, 12.1052631579vw) + 75px * 100vw / 380px);
+  z-index: 10;
 }
 .store-basic-info-section-mobile__circle {
   font-size: calc(4px * 100vw / 380px);
@@ -8377,12 +8380,11 @@ select:active {
 }
 .store-basic-info-section-mobile__image-area {
   position: relative;
-  width: calc(100vw - 20px * 100vw / 380px);
-  margin-left: calc(-1 * 40px * 100vw / 380px);
+  left: calc(-53vw + 50%);
+  width: 100vw;
   margin-bottom: calc(72px * 100vw / 380px);
-  overflow-x: hidden;
-  overflow-y: visible;
   height: auto;
+  min-height: 0;
 }
 .store-basic-info-section-mobile__image-container {
   width: 100%;
@@ -8437,7 +8439,7 @@ select:active {
 }
 .store-basic-info-section-mobile__wave-2 {
   position: absolute;
-  bottom: calc(-20px * 100vw / 380px);
+  bottom: calc(-400px * 100vw / 380px);
   right: calc(0px * 100vw / 380px);
   width: calc(120px * 100vw / 380px);
   height: auto;
@@ -8865,9 +8867,6 @@ select:active {
   overflow: visible;
 }
 .store-plan-section-mobile__vertical-title {
-  position: sticky;
-  left: 0;
-  top: calc(80px * 100vw / 380px);
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -8883,10 +8882,12 @@ select:active {
   transform: rotate(90deg) translateX(calc(-10px * 100vw / 380px));
   -webkit-transform-origin: left top;
   transform-origin: left top;
-  z-index: 10;
   -ms-flex-item-align: start;
   align-self: flex-start;
   margin-left: calc(-10px * 100vw / 380px);
+  position: sticky;
+  top: calc(var(--header-height, 12.1052631579vw) + 60px * 100vw / 380px);
+  z-index: 10;
 }
 .store-plan-section-mobile__circle {
   font-size: calc(4px * 100vw / 380px);
@@ -9048,7 +9049,7 @@ select:active {
 .store-plan-section-mobile__wave-1 {
   position: absolute;
   top: calc(80px * 100vw / 380px);
-  left: calc(20px * 100vw / 380px);
+  left: calc(-10px * 100vw / 380px);
   width: calc(75px * 100vw / 380px);
   height: calc(165px * 100vw / 380px);
   -ms-flex-negative: 0;
@@ -9449,6 +9450,7 @@ select:active {
   background: #fff;
   padding: calc(60px * 100vw / 380px) 0 calc(80px * 100vw / 380px);
   padding-left: calc(20px * 100vw / 380px);
+  max-width: 100vw;
 }
 @media (max-width: 767px) {
   .store-access-section-mobile {
@@ -9470,9 +9472,6 @@ select:active {
   overflow: visible;
 }
 .store-access-section-mobile__vertical-title {
-  position: sticky;
-  left: 0;
-  top: calc(80px * 100vw / 380px);
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -9488,10 +9487,12 @@ select:active {
   transform: rotate(90deg) translateX(calc(-10px * 100vw / 380px));
   -webkit-transform-origin: left top;
   transform-origin: left top;
-  z-index: 10;
   -ms-flex-item-align: start;
   align-self: flex-start;
   margin-left: calc(-10px * 100vw / 380px);
+  position: sticky;
+  top: calc(var(--header-height, 12.1052631579vw) + 60px * 100vw / 380px);
+  z-index: 10;
 }
 .store-access-section-mobile__circle {
   font-size: calc(4px * 100vw / 380px);
@@ -18368,3 +18369,4 @@ body.single[class*=studio_features] .seo-article-title {
   height: auto;
   opacity: 1;
 }
+/*# sourceMappingURL=style.css.map */

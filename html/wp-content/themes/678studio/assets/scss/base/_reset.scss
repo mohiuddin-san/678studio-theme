@@ -36,6 +36,9 @@ body {
 	line-height: $line-height-base;
 	color: $text-color;
 	background-color: $background-color;
+
+	// 横スクロールを防ぐ（モバイルでのsticky動作のため）
+	overflow-x: hidden;
 }
 
 // Remove default styling
