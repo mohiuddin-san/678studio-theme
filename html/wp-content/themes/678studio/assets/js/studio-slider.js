@@ -23,6 +23,11 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
 
+    // Mobile touch handling for better scroll experience
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let isHorizontalSwipe = null;
+
     // Initialize Splide slider with nii-photo.com configuration
     const slider = new Splide('#studio-gallery-slider', {
         // Core settings matching nii-photo.com
@@ -44,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Behavior
         keyboard: true,
-        drag: true,
+        drag: 'free', // Use free drag for better control
 
         // Performance
         lazyLoad: 'nearby',
@@ -56,18 +61,70 @@ document.addEventListener('DOMContentLoaded', function() {
         // Responsive settings matching nii-photo.com
         breakpoints: {
             768: {
-                padding: "16px",
+                padding: 0, // No padding for centered single image
                 gap: "16px",
+                focus: 'center', // Center the current slide
+                perPage: 1, // Show one slide at a time
+                perMove: 1, // Move one slide at a time
                 // Mobile touch optimization
+                drag: true, // Enable drag
                 dragMinThreshold: {
                     mouse: 0,
-                    touch: 40 // Require more horizontal movement to trigger slide
+                    touch: 10 // Lower threshold for horizontal swipe detection
                 },
-                flickPower: 300, // Reduce flick sensitivity
-                flickMaxPages: 1 // Limit flick to one page
+                dragAngleThreshold: 60, // Angle threshold (degrees) - vertical if angle > 60°
+                waitForTransition: false, // Don't block interactions during transition
+                flickPower: 300, // Normal flick sensitivity
+                flickMaxPages: 1, // Limit flick to one page
+                speed: 400 // Faster transition for better response
             }
         }
     });
+
+    // Add touch event handlers for better mobile scroll control
+    if (sliderElement && window.matchMedia('(max-width: 768px)').matches) {
+        const track = sliderElement.querySelector('.splide__track');
+
+        if (track) {
+            track.addEventListener('touchstart', function(e) {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+                isHorizontalSwipe = null;
+            }, { passive: true });
+
+            track.addEventListener('touchmove', function(e) {
+                if (isHorizontalSwipe !== null) return;
+
+                const touchEndX = e.touches[0].clientX;
+                const touchEndY = e.touches[0].clientY;
+
+                const diffX = Math.abs(touchEndX - touchStartX);
+                const diffY = Math.abs(touchEndY - touchStartY);
+
+                // Determine swipe direction based on angle (not ratio)
+                const angle = Math.atan2(diffY, diffX) * 180 / Math.PI;
+
+                if (angle > 45) {
+                    // Vertical scroll detected (angle > 45 degrees)
+                    isHorizontalSwipe = false;
+                    track.style.touchAction = 'pan-y';
+                    e.stopPropagation(); // Stop event from reaching Splide
+                } else if (diffX > 10) {
+                    // Horizontal swipe detected (angle < 45 degrees and moved > 10px)
+                    isHorizontalSwipe = true;
+                    track.style.touchAction = 'pan-x';
+                }
+            }, { passive: true });
+
+            track.addEventListener('touchend', function() {
+                // Reset for next touch
+                setTimeout(() => {
+                    track.style.touchAction = '';
+                    isHorizontalSwipe = null;
+                }, 100);
+            }, { passive: true });
+        }
+    }
 
     // Handle slider events with nii-photo.com autoplay behavior
     slider.on('mounted', function() {

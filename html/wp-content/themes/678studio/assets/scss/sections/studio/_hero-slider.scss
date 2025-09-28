@@ -25,9 +25,24 @@
             height: 100%;
             // モバイルでのタッチ操作最適化
             @include m.mq(md) {
-                // 縦スクロールを優先しつつ横スワイプも許可
-                touch-action: pan-y pinch-zoom;
+                // デフォルトは自動（JSで動的に制御）
+                touch-action: auto;
                 -webkit-overflow-scrolling: touch; // iOS向けの慣性スクロール
+
+                // スワイプ領域を明確にするための視覚的ヒント
+                &::after {
+                    content: '';
+                    position: absolute;
+                    bottom: m.vw-sp(100);
+                    left: 50%;
+                    transform: translateX(-50%);
+                    width: m.vw-sp(60);
+                    height: m.vw-sp(4);
+                    background: rgba(255, 255, 255, 0.3);
+                    border-radius: m.vw-sp(2);
+                    pointer-events: none;
+                    z-index: 5;
+                }
             }
         }
 
@@ -48,6 +63,8 @@
             @include m.mq(md) {
                 height: 64vh; // Mobile height adjusted for 80vh container
                 border-radius: m.vw-sp(82); // Mobile border radius
+                width: 90%; // Slightly smaller width for visual margin
+                margin: 0 auto; // Center horizontally
             }
         }
     }
@@ -60,9 +77,39 @@
         display: block;
     }
 
-    // 矢印は非表示
+    // モバイルでタップ可能な矢印
     .splide__arrows {
-        display: none !important;
+        @include m.mq(md) {
+            display: flex !important;
+        }
+        display: none;
+    }
+
+    .splide__arrow {
+        @include m.mq(md) {
+            background: rgba(255, 255, 255, 0.8);
+            border: none;
+            width: m.vw-sp(40);
+            height: m.vw-sp(40);
+            opacity: 0.8;
+            transition: opacity 0.3s;
+
+            &:hover {
+                opacity: 1;
+            }
+
+            &--prev {
+                left: m.vw-sp(10);
+            }
+
+            &--next {
+                right: m.vw-sp(10);
+            }
+
+            svg {
+                fill: #333;
+            }
+        }
     }
 
     // カスタムページネーション
