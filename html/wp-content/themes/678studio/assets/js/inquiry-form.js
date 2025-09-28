@@ -26,6 +26,32 @@
     const submitButton = document.getElementById('submitButton');
     const confirmButton = document.querySelector('.confirm-button');
 
+    // URLパラメータから店舗IDを取得して自動選択
+    function handleShopPreselection() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const shopId = urlParams.get('shop_id');
+
+        if (shopId) {
+            debug('Shop ID from URL:', shopId);
+
+            // 店舗選択セレクトボックスを取得
+            const storeSelect = document.getElementById('store-select');
+            if (storeSelect) {
+                // 該当する店舗を選択
+                const option = storeSelect.querySelector(`option[value="${shopId}"]`);
+                if (option) {
+                    storeSelect.value = shopId;
+                    debug('Pre-selected shop:', option.text);
+
+                    // 選択イベントを発火（他の処理がある場合）
+                    storeSelect.dispatchEvent(new Event('change'));
+                } else {
+                    debug('Shop not found in options:', shopId);
+                }
+            }
+        }
+    }
+
     // 必須フィールドの定義
     const requiredFields = [
         { id: 'name', errorId: 'name-error', message: 'お名前を入力してください' },
@@ -208,6 +234,9 @@
     function initialize() {
         // 全エラーメッセージを非表示
         hideAllErrors();
+
+        // URLパラメータから店舗を事前選択
+        handleShopPreselection();
 
         // 確認ボタンを強制的に有効化
         if (confirmButton) {

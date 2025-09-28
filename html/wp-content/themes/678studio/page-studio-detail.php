@@ -192,7 +192,9 @@ $map_embed_data = get_map_embed_content($shop);
 
 
   <!-- Contact & Booking Section -->
-  <?php get_template_part('template-parts/components/contact-booking'); ?>
+  <?php get_template_part('template-parts/components/contact-booking', null, [
+    'shop_id' => $shop_id
+  ]); ?>
 </main>
 
 <!-- Lightbox Modal -->

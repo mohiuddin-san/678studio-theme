@@ -5,7 +5,21 @@
  *
  * 使用方法:
  * <?php get_template_part('template-parts/components/contact-booking'); ?>
+ * または店舗IDを指定:
+ * <?php get_template_part('template-parts/components/contact-booking', null, ['shop_id' => $shop_id]); ?>
 */
+
+// 渡された引数を取得
+$shop_id = isset($args['shop_id']) ? intval($args['shop_id']) : 0;
+
+// URLパラメータを構築
+$reservation_url = home_url('/studio-reservation/');
+$inquiry_url = home_url('/studio-inquiry/');
+
+if ($shop_id > 0) {
+    $reservation_url = add_query_arg('shop_id', $shop_id, $reservation_url);
+    $inquiry_url = add_query_arg('shop_id', $shop_id, $inquiry_url);
+}
 ?>
 
 <section class="contact-booking">
@@ -30,12 +44,12 @@
     <!-- Buttons Area -->
     <div class="contact-booking__buttons">
       <!-- ご予約ボタン (左側) -->
-      <a href="<?php echo home_url('/studio-reservation/'); ?>" class="contact-booking__button contact-booking__button--primary">
+      <a href="<?php echo esc_url($reservation_url); ?>" class="contact-booking__button contact-booking__button--primary">
         <span>ご予約</span>
       </a>
 
       <!-- お問い合わせボタン (右側) -->
-      <a href="<?php echo home_url('/studio-inquiry/'); ?>" class="contact-booking__button contact-booking__button--secondary">
+      <a href="<?php echo esc_url($inquiry_url); ?>" class="contact-booking__button contact-booking__button--secondary">
         <span>お問い合わせ</span>
       </a>
     </div>
