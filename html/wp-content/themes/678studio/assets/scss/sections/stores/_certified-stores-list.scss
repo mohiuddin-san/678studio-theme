@@ -1,0 +1,506 @@
+// Certified Stores List Section
+// =================================================================
+
+@use '../../base/variables' as v;
+@use '../../base/mixins' as m;
+
+.certified-stores-list {
+	background: #fff;
+	padding: 0 0 m.vw(120);
+
+	@include m.mq(md) {
+		display: none; // SPは別セクションで実装予定
+	}
+
+	&__container {
+		width: 100%;
+		margin: 0 auto;
+		max-width: 1440px;
+		display: grid;
+		grid-template-columns: m.vw(160) 1fr;
+		gap: m.vw(40);
+
+		@include m.mq(md) {
+			display: block;
+			padding: 0 m.vw-sp(20);
+		}
+	}
+
+	// 縦書きタイトル（左カラム）
+	&__vertical-title {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: m.vw(16);
+		align-self: start;
+		transform: rotate(90deg);
+		transform-origin: left top;
+		margin-left: 50%;
+		margin-top: m.vw(10);
+		position: sticky;
+		top: 20vh;
+		z-index: 10;
+
+		@include m.mq(md) {
+			display: none;
+		}
+	}
+
+	&__circle {
+		font-size: m.vw(5);
+		color: #f39556;
+		font-weight: 400;
+	}
+
+	&__title {
+		color: #3F3F3F;
+		text-align: center;
+		font-family: "Noto Sans CJK JP", v.$ja;
+		font-size: m.vw(16);
+		font-style: normal;
+		font-weight: 500;
+		line-height: 200%; /* 32px */
+		letter-spacing: m.vw(1.6);
+		margin: 0;
+		white-space: nowrap;
+	}
+
+	// メインコンテンツエリア（右カラム）
+	&__main {
+		position: relative;
+
+		@include m.mq(md) {
+			display: flex;
+			flex-direction: column;
+		}
+	}
+
+	// ヘッダー部分
+	&__header {
+		position: relative;
+		margin-bottom: m.vw(60);
+
+		@include m.mq(md) {
+			margin-bottom: m.vw-sp(40);
+		}
+	}
+
+	// (1) タイトル上部のアイコン
+	&__top-icon {
+		margin-bottom: m.vw(26);
+
+		img {
+			width: m.vw(100);
+			height: m.vw(28);
+			flex-shrink: 0;
+		}
+
+		@include m.mq(md) {
+			margin-bottom: m.vw-sp(20);
+
+			img {
+				width: m.vw-sp(80);
+				height: m.vw-sp(22);
+			}
+		}
+	}
+
+	// (2) タイトル部分
+	&__title-wrapper {
+		margin-bottom: m.vw(40);
+
+		@include m.mq(md) {
+			margin-bottom: m.vw-sp(30);
+		}
+	}
+
+	&__main-title {
+		display: flex;
+		align-items: center;
+		gap: m.vw(12);
+		color: #3F3F3F;
+		font-family: "Noto Sans JP", v.$ja;
+		font-size: m.vw(31.25);
+		font-style: normal;
+		font-weight: 700;
+		line-height: m.vw(35); /* 112% */
+		letter-spacing: m.vw(1.563);
+		margin: 0;
+
+		@include m.mq(md) {
+			font-size: m.vw-sp(25);
+			line-height: m.vw-sp(28);
+			letter-spacing: m.vw-sp(1.25);
+			gap: m.vw-sp(8);
+		}
+	}
+
+	&__certification-badge {
+		flex-shrink: 0;
+		margin-top: m.vw(4);
+
+		@include m.mq(md) {
+			margin-top: m.vw-sp(3);
+		}
+	}
+
+	&__badge-icon {
+		width: m.vw(30);
+		height: m.vw(30);
+		aspect-ratio: 1/1;
+		flex-shrink: 0;
+
+		@include m.mq(md) {
+			width: m.vw-sp(24);
+			height: m.vw-sp(24);
+		}
+	}
+
+	// (3) サブタイトル
+	&__subtitle {
+		color: #579EFF;
+		font-family: "Noto Sans JP", v.$ja;
+		font-size: m.vw(16);
+		font-style: normal;
+		font-weight: 500;
+		line-height: 200%; /* 32px */
+		letter-spacing: m.vw(2.4);
+		margin: 0;
+
+		@include m.mq(md) {
+			font-size: m.vw-sp(14);
+			letter-spacing: m.vw-sp(1.8);
+			line-height: 180%;
+		}
+	}
+
+	// (4) 右端装飾要素
+	&__right-wave {
+		position: absolute;
+		bottom: 0;
+		right: 0;
+
+		img {
+			width: m.vw(215);
+			height: m.vw(76);
+			flex-shrink: 0;
+		}
+
+		@include m.mq(md) {
+			display: none;
+		}
+	}
+
+
+	// Store Cards
+	&__cards {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 0;
+
+		@include m.mq(md) {
+			grid-template-columns: 1fr;
+		}
+	}
+}
+
+// Certified Store Card Component
+.certified-store-card {
+	width: m.vw(360);
+	height: m.vw(565);
+	flex-shrink: 0;
+	border: 1px solid #F39556;
+	border-right: none; // 右側ボーダーを削除して重複を避ける
+	background: #FFF;
+	padding: m.vw(28) m.vw(23);
+	display: flex;
+	flex-direction: column;
+
+	// 4列目（4の倍数）または最後のカードには右ボーダーを追加
+	&:nth-child(4n),
+	&:last-child {
+		border-right: 1px solid #F39556;
+	}
+
+	@include m.mq(md) {
+		width: 100%;
+		height: auto;
+		padding: m.vw-sp(20) m.vw-sp(16);
+	}
+
+	&__image {
+		display: flex;
+		width: m.vw(314);
+		height: m.vw(182);
+		justify-content: center;
+		align-items: center;
+		margin-bottom: m.vw(16);
+		overflow: hidden; // はみ出た部分を隠す
+
+		@include m.mq(md) {
+			width: 100%;
+			height: m.vw-sp(150);
+			margin-bottom: m.vw-sp(12);
+		}
+
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			object-position: center; // 画像の中央部分を表示
+		}
+	}
+
+	&__content {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+	}
+
+	// バッジ + 店舗名（横並び）
+	&__badge {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: m.vw(8);
+		margin-bottom: m.vw(1);
+
+		@include m.mq(md) {
+			gap: m.vw-sp(6);
+			margin-bottom: m.vw-sp(1);
+		}
+	}
+
+	&__badge-icon {
+		width: m.vw(21);
+		height: m.vw(21);
+		flex-shrink: 0;
+		aspect-ratio: 1/1;
+
+		@include m.mq(md) {
+			width: m.vw-sp(16);
+			height: m.vw-sp(16);
+		}
+	}
+
+	&__badge-text {
+		color: #3F3F3F;
+		text-align: center;
+		font-feature-settings: 'palt' on;
+		font-family: "Noto Sans JP", v.$ja;
+		font-size: m.vw(18);
+		font-style: normal;
+		font-weight: 700;
+		line-height: 175%; /* 31.5px */
+		margin: 0;
+
+		@include m.mq(md) {
+			font-size: m.vw-sp(16);
+		}
+	}
+
+	// 支店名（下の行）
+	&__name {
+		margin-bottom: m.vw(36);
+		min-height: m.vw(28); // 175% line-height の16pxフォントサイズ分のスペースを確保
+
+		@include m.mq(md) {
+			margin-bottom: m.vw-sp(28);
+			min-height: m.vw-sp(24);
+		}
+	}
+
+	&__branch-name {
+		color: #3F3F3F;
+		text-align: center;
+		font-feature-settings: 'palt' on;
+		font-family: "Noto Sans JP", v.$ja;
+		font-size: m.vw(16);
+		font-style: normal;
+		font-weight: 400;
+		line-height: 175%; /* 28px */
+		margin: 0;
+
+		@include m.mq(md) {
+			font-size: m.vw-sp(14);
+		}
+	}
+
+	// 情報ボックス（所在地、料金、時間）
+	&__location {
+		display: flex;
+		align-items: center;
+		gap: m.vw(8);
+		margin-bottom: m.vw(12);
+
+		@include m.mq(md) {
+			gap: m.vw-sp(6);
+			margin-bottom: m.vw-sp(10);
+		}
+
+		img {
+			width: m.vw(16) !important;
+			height: m.vw(16) !important;
+			flex-shrink: 0;
+			object-fit: contain; // SVGを正確にフィット
+			display: block; // インライン要素のマージンを削除
+			max-width: m.vw(16);
+			max-height: m.vw(16);
+
+			@include m.mq(md) {
+				width: m.vw-sp(14) !important;
+				height: m.vw-sp(14) !important;
+				max-width: m.vw-sp(14);
+				max-height: m.vw-sp(14);
+			}
+		}
+
+		span {
+			color: #3F3F3F;
+			font-feature-settings: 'palt' on;
+			font-family: "Noto Sans JP", v.$ja;
+			font-size: m.vw(16);
+			font-style: normal;
+			font-weight: 300;
+			line-height: 175%; /* 28px */
+
+			@include m.mq(md) {
+				font-size: m.vw-sp(14);
+			}
+		}
+	}
+
+	&__info {
+		display: flex;
+		flex-direction: row;
+		gap: m.vw(16);
+		margin-bottom: m.vw(16);
+
+		@include m.mq(md) {
+			gap: m.vw-sp(12);
+			margin-bottom: m.vw-sp(12);
+		}
+	}
+
+	&__info-item {
+		display: flex;
+		align-items: center;
+		gap: m.vw(8);
+
+		@include m.mq(md) {
+			gap: m.vw-sp(6);
+		}
+
+		img {
+			width: m.vw(16) !important;
+			height: m.vw(16) !important;
+			flex-shrink: 0;
+			object-fit: contain; // SVGを正確にフィット
+			display: block; // インライン要素のマージンを削除
+			max-width: m.vw(16);
+			max-height: m.vw(16);
+
+			@include m.mq(md) {
+				width: m.vw-sp(14) !important;
+				height: m.vw-sp(14) !important;
+				max-width: m.vw-sp(14);
+				max-height: m.vw-sp(14);
+			}
+		}
+
+		span {
+			color: #3F3F3F;
+			font-feature-settings: 'palt' on;
+			font-family: "Noto Sans JP", v.$ja;
+			font-size: m.vw(16);
+			font-style: normal;
+			font-weight: 300;
+			line-height: 175%; /* 28px */
+
+			@include m.mq(md) {
+				font-size: m.vw-sp(14);
+			}
+		}
+	}
+
+	&__introduction {
+		color: #3F3F3F;
+		text-align: justify;
+		leading-trim: both;
+		text-edge: cap;
+		font-family: "Noto Sans JP", v.$ja;
+		font-size: m.vw(12.8);
+		font-style: normal;
+		font-weight: 300;
+		line-height: 175%; /* 22.4px */
+		margin-bottom: m.vw(20);
+
+		@include m.mq(md) {
+			font-size: m.vw-sp(12);
+			margin-bottom: m.vw-sp(16);
+		}
+	}
+
+	&__buttons {
+		display: flex;
+		gap: m.vw(8);
+
+		@include m.mq(md) {
+			gap: m.vw-sp(6);
+		}
+	}
+
+	&__button {
+		flex: 1;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: m.vw(12) m.vw(16);
+		border-radius: m.vw(8);
+		font-family: v.$ja;
+		font-size: m.vw(14);
+		font-weight: 500;
+		text-decoration: none;
+		// transition: all 0.3s ease; // Hover animation removed per user request
+		text-align: center;
+
+		@include m.mq(md) {
+			padding: m.vw-sp(10) m.vw-sp(12);
+			border-radius: m.vw-sp(6);
+			font-size: m.vw-sp(12);
+		}
+
+		&--primary {
+			background: #f39556;
+			color: #fff;
+			border: 2px solid #f39556;
+
+			&:hover {
+				background: #e5844a;
+				border-color: #e5844a;
+
+				@include m.mq(md) {
+					background: #f39556;
+					border-color: #f39556;
+				}
+			}
+		}
+
+		&--secondary {
+			background: #fff;
+			color: #f39556;
+			border: 2px solid #f39556;
+
+			&:hover {
+				background: #f39556;
+				color: #fff;
+
+				@include m.mq(md) {
+					background: #fff;
+					color: #f39556;
+				}
+			}
+		}
+	}
+}
+
