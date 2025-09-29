@@ -5,6 +5,11 @@
 	background: #fff;
 	padding: m.vw(145) m.vw(218) m.vw(189);
 
+	// SP用スタイル
+	@include m.mq(md) {
+		padding: m.vw-sp(80) 0 m.vw-sp(100); // 全幅、左右パディングなし
+	}
+
 	&__container {
 		display: flex;
 		flex-direction: column;
@@ -21,6 +26,15 @@
 		width: 100%;
 		margin-bottom: m.vw(35);
 		gap: 0 m.vw(19);
+
+		@include m.mq(md) {
+			display: flex;
+			flex-direction: column;
+			gap: m.vw-sp(30);
+			margin-bottom: m.vw-sp(50);
+			padding: 0 m.vw-sp(20); // コンテンツに少しパディング
+			position: relative; // 波線の絶対位置の基準
+		}
 	}
 
 	// 左側の波線
@@ -31,10 +45,23 @@
 		justify-content: flex-end;
 		align-items: center;
 
-		svg {
+		img {
 			width: m.vw(298);
 			height: m.vw(38);
 			flex-shrink: 0;
+		}
+
+		@include m.mq(md) {
+			position: absolute;
+			left: 0;
+			top: 50%;
+			transform: translateY(-50%);
+			order: 1; // flexでの順序制御
+
+			img {
+				width: m.vw-sp(40); // SP用SVGの実際のサイズ
+				height: m.vw-sp(35); // SP用SVGの実際のサイズ
+			}
 		}
 	}
 
@@ -46,6 +73,13 @@
 		flex-direction: column;
 		align-items: center;
 		gap: m.vw(20);
+
+		@include m.mq(md) {
+			position: relative;
+			z-index: 2; // 波線の上に表示
+			order: 2; // flexでの順序制御（波線の間に配置）
+			gap: m.vw-sp(15);
+		}
 	}
 
 	// 右側の波線
@@ -56,10 +90,23 @@
 		justify-content: flex-start;
 		align-items: center;
 
-		svg {
+		img {
 			width: m.vw(298);
 			height: m.vw(38);
 			flex-shrink: 0;
+		}
+
+		@include m.mq(md) {
+			position: absolute;
+			right: 0;
+			top: 50%;
+			transform: translateY(-50%) scaleX(-1); // 左右反転
+			order: 3; // flexでの順序制御
+
+			img {
+				width: m.vw-sp(40); // SP用SVGの実際のサイズ
+				height: m.vw-sp(35); // SP用SVGの実際のサイズ
+			}
 		}
 	}
 
@@ -75,6 +122,13 @@
 		margin: 0;
 		text-align: center;
 		white-space: nowrap;
+
+		@include m.mq(md) {
+			font-size: m.vw-sp(25); // Figma仕様: 25px
+			line-height: m.vw-sp(35); // Figma仕様: 35px (140%)
+			letter-spacing: m.vw-sp(1.25); // Figma仕様: 1.25px
+			white-space: normal; // SP では改行許可
+		}
 	}
 
 	// サブタイトル
@@ -89,6 +143,13 @@
 		margin: 0;
 		text-align: center;
 		white-space: nowrap;
+
+		@include m.mq(md) {
+			font-size: m.vw-sp(12.8); // Figma仕様: 12.8px
+			line-height: m.vw-sp(24); // Figma仕様: 24px (187.5%)
+			letter-spacing: m.vw-sp(0.64); // Figma仕様: 0.64px
+			white-space: normal; // SP では改行許可
+		}
 	}
 
 	// 検索フォームラッパー
@@ -96,6 +157,12 @@
 		width: m.vw(790);
 		margin-top: m.vw(92);
 		margin-bottom: m.vw(35);
+
+		@include m.mq(md) {
+			width: calc(100% - m.vw-sp(40)); // 左右20pxずつのマージン
+			margin-top: m.vw-sp(60);
+			margin-bottom: m.vw-sp(30);
+		}
 	}
 
 	// 検索フォーム
@@ -113,6 +180,11 @@
 		border: 2px solid #f39556;
 		width: 100%;
 		box-sizing: border-box;
+
+		@include m.mq(md) {
+			padding: m.vw-sp(12) m.vw-sp(60) m.vw-sp(12) m.vw-sp(20);
+			gap: m.vw-sp(12);
+		}
 	}
 
 	// 検索アイコン
@@ -128,6 +200,11 @@
 		svg {
 			width: 100%;
 			height: 100%;
+		}
+
+		@include m.mq(md) {
+			width: m.vw-sp(22);
+			height: m.vw-sp(22);
 		}
 	}
 
@@ -149,13 +226,22 @@
 		&::placeholder {
 			color: #d6d6d6;
 		}
+
+		@include m.mq(md) {
+			font-size: m.vw-sp(14);
+			letter-spacing: m.vw-sp(2.8);
+		}
 	}
 
 	// 都道府県プルダウンラッパー
 	&__prefecture-wrapper {
-		width: m.vw(790);
+		width: 100%; // 検索フォームと同じ幅
 		position: relative;
 		margin-top: m.vw(35);
+
+		@include m.mq(md) {
+			margin-top: m.vw-sp(25);
+		}
 	}
 
 	// 都道府県セレクト
@@ -182,6 +268,14 @@
 		&:focus {
 			outline: none;
 		}
+
+		@include m.mq(md) {
+			height: m.vw-sp(45);
+			padding: m.vw-sp(12) m.vw-sp(35) m.vw-sp(12) m.vw-sp(18);
+			border-radius: m.vw-sp(25);
+			font-size: m.vw-sp(14);
+			letter-spacing: m.vw-sp(2.8);
+		}
 	}
 
 	// プルダウン矢印
@@ -201,14 +295,29 @@
 			width: m.vw(6);
 			height: m.vw(12);
 		}
+
+		@include m.mq(md) {
+			right: m.vw-sp(18);
+			width: m.vw-sp(10);
+			height: m.vw-sp(10);
+
+			svg {
+				width: m.vw-sp(5);
+				height: m.vw-sp(10);
+			}
+		}
 	}
 
 	// 検索ボタンラッパー
 	&__button-wrapper {
-		width: m.vw(790);
+		width: 100%; // 画面全幅
 		margin-top: m.vw(50);
 		display: flex;
 		justify-content: center;
+
+		@include m.mq(md) {
+			margin-top: m.vw-sp(40);
+		}
 	}
 
 	// 検索ボタン
@@ -240,6 +349,12 @@
 		&:focus {
 			outline: none;
 			box-shadow: 0 0 0 3px rgba(243, 149, 86, 0.3);
+		}
+
+		@include m.mq(md) {
+			width: m.vw-sp(200); // SP用サイズ調整
+			padding: m.vw-sp(13) m.vw-sp(40);
+			font-size: m.vw-sp(16);
 		}
 	}
 }
