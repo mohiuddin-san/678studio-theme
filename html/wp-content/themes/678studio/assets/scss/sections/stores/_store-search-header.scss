@@ -1,0 +1,245 @@
+@use '../../base/variables' as v;
+@use '../../base/mixins' as m;
+
+.store-search-header {
+	background: #fff;
+	padding: m.vw(145) m.vw(218) m.vw(189);
+
+	&__container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		width: 100%;
+	}
+
+	// タイトル部分のグリッド
+	&__title-section {
+		display: grid;
+		grid-template-columns: 1fr m.vw(369) 1fr;
+		grid-template-rows: 1fr;
+		align-items: center;
+		width: 100%;
+		margin-bottom: m.vw(35);
+		gap: 0 m.vw(19);
+	}
+
+	// 左側の波線
+	&__wave-left {
+		grid-column: 1;
+		grid-row: 1;
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+
+		svg {
+			width: m.vw(298);
+			height: m.vw(38);
+			flex-shrink: 0;
+		}
+	}
+
+	// テキストコンテンツ
+	&__text-content {
+		grid-column: 2;
+		grid-row: 1;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: m.vw(20);
+	}
+
+	// 右側の波線
+	&__wave-right {
+		grid-column: 3;
+		grid-row: 1;
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+
+		svg {
+			width: m.vw(298);
+			height: m.vw(38);
+			flex-shrink: 0;
+		}
+	}
+
+	// メインタイトル
+	&__title {
+		color: #3f3f3f;
+		font-family: 'Noto Sans JP', sans-serif;
+		font-size: m.vw(31.25);
+		font-style: normal;
+		font-weight: 700;
+		line-height: m.vw(35);
+		letter-spacing: m.vw(1.563);
+		margin: 0;
+		text-align: center;
+		white-space: nowrap;
+	}
+
+	// サブタイトル
+	&__subtitle {
+		color: #f39556;
+		font-family: 'Noto Sans JP', sans-serif;
+		font-size: m.vw(16);
+		font-style: normal;
+		font-weight: 500;
+		line-height: m.vw(35);
+		letter-spacing: m.vw(0.8);
+		margin: 0;
+		text-align: center;
+		white-space: nowrap;
+	}
+
+	// 検索フォームラッパー
+	&__search-wrapper {
+		width: m.vw(790);
+		margin-top: m.vw(92);
+		margin-bottom: m.vw(35);
+	}
+
+	// 検索フォーム
+	&__search-form {
+		width: 100%;
+	}
+
+	// 検索入力フィールドラッパー
+	&__search-input-wrapper {
+		display: inline-flex;
+		padding: m.vw(10) m.vw(87) m.vw(10) m.vw(23);
+		align-items: center;
+		gap: m.vw(14);
+		border-radius: 9999px;
+		border: 2px solid #f39556;
+		width: 100%;
+		box-sizing: border-box;
+	}
+
+	// 検索アイコン
+	&__search-icon {
+		width: m.vw(26);
+		height: m.vw(26);
+		background: none;
+		border: none;
+		padding: 0;
+		cursor: pointer;
+		flex-shrink: 0;
+
+		svg {
+			width: 100%;
+			height: 100%;
+		}
+	}
+
+	// 検索入力フィールド
+	&__search-input {
+		color: #f39556;
+		font-family: 'Noto Sans JP', sans-serif;
+		font-size: m.vw(16);
+		font-style: normal;
+		font-weight: 500;
+		line-height: 250%;
+		letter-spacing: m.vw(3.2);
+		border: none;
+		outline: none;
+		background: transparent;
+		flex: 1;
+		align-self: stretch;
+
+		&::placeholder {
+			color: #d6d6d6;
+		}
+	}
+
+	// 都道府県プルダウンラッパー
+	&__prefecture-wrapper {
+		width: m.vw(790);
+		position: relative;
+		margin-top: m.vw(35);
+	}
+
+	// 都道府県セレクト
+	&__prefecture-select {
+		display: block;
+		height: m.vw(53);
+		padding: m.vw(10) m.vw(40) m.vw(10) m.vw(19);
+		border-radius: m.vw(30);
+		border: 2px solid #D6D6D6;
+		width: 100%;
+		box-sizing: border-box;
+		background: transparent;
+		appearance: none;
+		cursor: pointer;
+
+		color: #3F3F3F;
+		font-family: "Noto Sans JP", sans-serif;
+		font-size: m.vw(16);
+		font-style: normal;
+		font-weight: 500;
+		line-height: 1.5;
+		letter-spacing: m.vw(3.2);
+
+		&:focus {
+			outline: none;
+		}
+	}
+
+	// プルダウン矢印
+	&__prefecture-arrow {
+		position: absolute;
+		top: 50%;
+		right: m.vw(20);
+		transform: translateY(-50%);
+		pointer-events: none;
+		width: m.vw(12);
+		height: m.vw(12);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		svg {
+			width: m.vw(6);
+			height: m.vw(12);
+		}
+	}
+
+	// 検索ボタンラッパー
+	&__button-wrapper {
+		width: m.vw(790);
+		margin-top: m.vw(50);
+		display: flex;
+		justify-content: center;
+	}
+
+	// 検索ボタン
+	&__search-button {
+		display: inline-flex;
+		width: m.vw(254);
+		padding: m.vw(15) m.vw(50);
+		justify-content: center;
+		align-items: center;
+		border-radius: 9999px;
+		background: #f39556;
+		border: 2px solid #f39556;
+		cursor: pointer;
+		transition: all 0.3s ease;
+
+		color: #fff;
+		font-family: "Noto Sans JP", sans-serif;
+		font-size: m.vw(18);
+		font-style: normal;
+		font-weight: 700;
+		line-height: 1.5;
+		letter-spacing: 0.15em;
+
+		&:hover {
+			background: #fff;
+			color: #f39556;
+		}
+
+		&:focus {
+			outline: none;
+			box-shadow: 0 0 0 3px rgba(243, 149, 86, 0.3);
+		}
+	}
+}
