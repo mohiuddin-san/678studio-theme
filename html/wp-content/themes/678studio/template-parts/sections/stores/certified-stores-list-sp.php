@@ -128,10 +128,12 @@ function get_minimum_plan_duration_certified_sp($shop) {
 
 <section class="certified-stores-list-sp">
     <div class="certified-stores-list-sp__container">
-        <!-- 縦書きタイトル（左カラム） -->
-        <div class="certified-stores-list-sp__vertical-title">
-            <span class="certified-stores-list-sp__circle">●</span>
-            <h2 class="certified-stores-list-sp__title">認定店舗 Certified Stores</h2>
+        <!-- 縦書きタイトル（左カラム）- ラッパーでstickyを制御 -->
+        <div class="certified-stores-list-sp__vertical-title-wrapper">
+            <div class="certified-stores-list-sp__vertical-title">
+                <span class="certified-stores-list-sp__circle">●</span>
+                <h2 class="certified-stores-list-sp__title">認定店舗 Certified Stores</h2>
+            </div>
         </div>
 
         <!-- メインコンテンツエリア（中央カラム） -->

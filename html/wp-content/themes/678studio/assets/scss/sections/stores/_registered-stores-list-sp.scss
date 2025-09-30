@@ -22,20 +22,26 @@
 		}
 	}
 
-	// 縦書きタイトル（左カラム）
+	// 縦書きタイトルラッパー（左カラム） - stickyはここに設定
+	&__vertical-title-wrapper {
+		position: sticky;
+		top: 20vh;
+		align-self: start;
+		height: fit-content;
+		max-height: 80vh; // セクション内に収まるように制限
+		z-index: 10;
+	}
+
+	// 縦書きタイトル本体
 	&__vertical-title {
 		display: flex;
 		flex-direction: row;
 		align-items: center;
 		gap: m.vw-sp(12);
-		align-self: start;
 		transform: rotate(90deg);
 		transform-origin: left top;
 		margin-left: m.vw-sp(25);
 		margin-top: m.vw-sp(10);
-		position: sticky;
-		top: 20vh;
-		z-index: 10;
 	}
 
 	&__circle {
@@ -47,7 +53,7 @@
 	&__title {
 		color: #3F3F3F;
 		text-align: center;
-		font-family: "Noto Sans CJK JP", v.$ja;
+		font-family: "Noto Sans JP", v.$ja;
 		font-size: m.vw-sp(10.24);
 		font-style: normal;
 		font-weight: 500;
@@ -74,7 +80,7 @@
 		color: #3F3F3F;
 		leading-trim: both;
 		text-edge: cap;
-		font-family: "Noto Sans CJK JP", v.$ja;
+		font-family: "Noto Sans JP", v.$ja;
 		font-size: m.vw-sp(20);
 		font-style: normal;
 		font-weight: 700;

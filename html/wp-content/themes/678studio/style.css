@@ -7862,7 +7862,7 @@ a.helpful-info__article + .helpful-info__article,
 .certified-stores-list__title {
   color: #3F3F3F;
   text-align: center;
-  font-family: "Noto Sans CJK JP", "Noto Serif JP", serif;
+  font-family: "Noto Sans JP", "Noto Serif JP", serif;
   font-size: 1.1111111111vw;
   font-style: normal;
   font-weight: 500;
@@ -8202,12 +8202,12 @@ a.helpful-info__article + .helpful-info__article,
 }
 .certified-store-card__name {
   margin-bottom: 0.5555555556vw;
-  min-height: 3.8888888889vw;
+  min-height: 2.6388888889vw;
 }
 @media (max-width: 767px) {
   .certified-store-card__name {
     margin-bottom: calc(6px * 100vw / 380px);
-    min-height: calc(48px * 100vw / 380px);
+    min-height: calc(38px * 100vw / 380px);
   }
 }
 .certified-store-card__branch-name {
@@ -8449,7 +8449,7 @@ a.helpful-info__article + .helpful-info__article,
   .certified-stores-list-sp {
     display: block;
     background: #fff;
-    padding: calc(100px * 100vw / 380px) 0 calc(100px * 100vw / 380px);
+    padding: 0 0 calc(100px * 100vw / 380px);
   }
 }
 @media (max-width: 767px) {
@@ -8459,6 +8459,17 @@ a.helpful-info__article + .helpful-info__article,
     gap: 0;
     width: 100%;
   }
+}
+.certified-stores-list-sp__vertical-title-wrapper {
+  position: sticky;
+  top: 20vh;
+  -ms-flex-item-align: start;
+  align-self: start;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  max-height: 80vh;
+  z-index: 10;
 }
 .certified-stores-list-sp__vertical-title {
   display: -webkit-box;
@@ -8472,17 +8483,12 @@ a.helpful-info__article + .helpful-info__article,
   -ms-flex-align: center;
   align-items: center;
   gap: calc(12px * 100vw / 380px);
-  -ms-flex-item-align: start;
-  align-self: start;
   -webkit-transform: rotate(90deg);
   transform: rotate(90deg);
   -webkit-transform-origin: left top;
   transform-origin: left top;
   margin-left: calc(25px * 100vw / 380px);
   margin-top: calc(10px * 100vw / 380px);
-  position: sticky;
-  top: 20vh;
-  z-index: 10;
 }
 .certified-stores-list-sp__circle {
   font-size: calc(4px * 100vw / 380px);
@@ -8492,7 +8498,7 @@ a.helpful-info__article + .helpful-info__article,
 .certified-stores-list-sp__title {
   color: #3F3F3F;
   text-align: center;
-  font-family: "Noto Sans CJK JP", "Noto Serif JP", serif;
+  font-family: "Noto Sans JP", "Noto Serif JP", serif;
   font-size: calc(10.24px * 100vw / 380px);
   font-style: normal;
   font-weight: 500;
@@ -8538,7 +8544,7 @@ a.helpful-info__article + .helpful-info__article,
   color: #3F3F3F;
   leading-trim: both;
   text-edge: cap;
-  font-family: "Noto Sans CJK JP", "Noto Serif JP", serif;
+  font-family: "Noto Sans JP", "Noto Serif JP", serif;
   font-size: calc(20px * 100vw / 380px);
   font-style: normal;
   font-weight: 700;
@@ -8730,7 +8736,7 @@ a.helpful-info__article + .helpful-info__article,
 }
 .certified-store-card-sp__name {
   margin-bottom: calc(6px * 100vw / 380px);
-  min-height: calc(48px * 100vw / 380px);
+  min-height: calc(38px * 100vw / 380px);
 }
 .certified-store-card-sp__branch-name {
   color: #3F3F3F;
@@ -8948,7 +8954,7 @@ a.helpful-info__article + .helpful-info__article,
 .registered-stores-list__title {
   color: #3F3F3F;
   text-align: center;
-  font-family: "Noto Sans CJK JP", "Noto Serif JP", serif;
+  font-family: "Noto Sans JP", "Noto Serif JP", serif;
   font-size: 1.1111111111vw;
   font-style: normal;
   font-weight: 500;
@@ -9411,6 +9417,17 @@ a.helpful-info__article + .helpful-info__article,
     width: 100%;
   }
 }
+.registered-stores-list-sp__vertical-title-wrapper {
+  position: sticky;
+  top: 20vh;
+  -ms-flex-item-align: start;
+  align-self: start;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  max-height: 80vh;
+  z-index: 10;
+}
 .registered-stores-list-sp__vertical-title {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -9423,17 +9440,12 @@ a.helpful-info__article + .helpful-info__article,
   -ms-flex-align: center;
   align-items: center;
   gap: calc(12px * 100vw / 380px);
-  -ms-flex-item-align: start;
-  align-self: start;
   -webkit-transform: rotate(90deg);
   transform: rotate(90deg);
   -webkit-transform-origin: left top;
   transform-origin: left top;
   margin-left: calc(25px * 100vw / 380px);
   margin-top: calc(10px * 100vw / 380px);
-  position: sticky;
-  top: 20vh;
-  z-index: 10;
 }
 .registered-stores-list-sp__circle {
   font-size: calc(4px * 100vw / 380px);
@@ -9443,7 +9455,7 @@ a.helpful-info__article + .helpful-info__article,
 .registered-stores-list-sp__title {
   color: #3F3F3F;
   text-align: center;
-  font-family: "Noto Sans CJK JP", "Noto Serif JP", serif;
+  font-family: "Noto Sans JP", "Noto Serif JP", serif;
   font-size: calc(10.24px * 100vw / 380px);
   font-style: normal;
   font-weight: 500;
@@ -9470,7 +9482,7 @@ a.helpful-info__article + .helpful-info__article,
   color: #3F3F3F;
   leading-trim: both;
   text-edge: cap;
-  font-family: "Noto Sans CJK JP", "Noto Serif JP", serif;
+  font-family: "Noto Sans JP", "Noto Serif JP", serif;
   font-size: calc(20px * 100vw / 380px);
   font-style: normal;
   font-weight: 700;

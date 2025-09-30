@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
         pagination: false,     // ページネーション非表示
 
         // Interaction
-        drag: false,           // PCではドラッグ無効（ボタンのみ）
+        drag: true,            // PCでもドラッグスクロール有効
         keyboard: true,        // キーボード操作有効
 
         // Animation

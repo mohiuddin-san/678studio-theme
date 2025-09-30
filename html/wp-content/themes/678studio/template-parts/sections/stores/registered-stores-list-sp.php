@@ -128,10 +128,12 @@ function get_minimum_plan_duration_registered_sp($shop) {
 
 <section class="registered-stores-list-sp">
     <div class="registered-stores-list-sp__container">
-        <!-- 縦書きタイトル（左カラム） -->
-        <div class="registered-stores-list-sp__vertical-title">
-            <span class="registered-stores-list-sp__circle">●</span>
-            <h2 class="registered-stores-list-sp__title">登録店舗 Registered Store</h2>
+        <!-- 縦書きタイトル（左カラム）- ラッパーでstickyを制御 -->
+        <div class="registered-stores-list-sp__vertical-title-wrapper">
+            <div class="registered-stores-list-sp__vertical-title">
+                <span class="registered-stores-list-sp__circle">●</span>
+                <h2 class="registered-stores-list-sp__title">登録店舗 Registered Store</h2>
+            </div>
         </div>
 
         <!-- メインコンテンツエリア（中央カラム） -->

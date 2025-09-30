@@ -54,7 +54,7 @@
 	&__title {
 		color: #3F3F3F;
 		text-align: center;
-		font-family: "Noto Sans CJK JP", v.$ja;
+		font-family: "Noto Sans JP", v.$ja;
 		font-size: m.vw(16);
 		font-style: normal;
 		font-weight: 500;
@@ -380,11 +380,11 @@
 	// 支店名（下の行）
 	&__name {
 		margin-bottom: m.vw(8);
-		min-height: m.vw(56); // 2行分の高さを確保（バッジ1行 + 支店名1行）
+		min-height: m.vw(38);
 
 		@include m.mq(md) {
 			margin-bottom: m.vw-sp(6);
-			min-height: m.vw-sp(48);
+			min-height: m.vw-sp(38);
 		}
 	}
 
