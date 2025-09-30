@@ -344,7 +344,7 @@
 	background: #fff;
 	padding: m.vw-sp(60) 0 m.vw-sp(180);
 	padding-left: m.vw-sp(20);
-	max-width: 100vw;
+	max-width: 100%;
 	// overflow-x: hidden; // sticky動作のためコメントアウト（body要素で制御）
 
 	@include m.mq(md) {
@@ -494,7 +494,7 @@
 	// Plan Image Area (Full Width Wrapper)
 	&__image-area {
 		position: relative;
-		width: calc(100vw - m.vw-sp(20)); // セクションの左パディング分だけ引く
+		width: 100%; // 親要素の幅に制限
 		margin-left: calc(-1 * m.vw-sp(40)); // コンテナーの左右パディングを相殺
 		overflow-x: hidden; // この要素のみoverflowを制御
 	}

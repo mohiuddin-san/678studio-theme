@@ -70,10 +70,11 @@ document.addEventListener('DOMContentLoaded', function() {
         // Responsive settings matching nii-photo.com
         breakpoints: {
             768: {
-                padding: '5%', // 左右に余白を追加
+                padding: '0', // paddingをリセット
                 gap: '16px', // 写真間にギャップを追加
                 focus: 'center', // Center the current slide
                 perPage: 1, // Show one slide at a time
+                fixedWidth: '85%', // スライドの固定幅を85%に設定
                 perMove: 1, // Move one slide at a time
                 width: '100%', // Ensure full width for swipe detection
                 // Mobile touch optimization

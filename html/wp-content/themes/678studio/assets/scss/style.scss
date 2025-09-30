@@ -39,6 +39,9 @@
 @use 'sections/home/plan';
 @use 'sections/home/plan-mobile';
 @use 'sections/stores/store-search-results';
+@use 'sections/stores/store-search-header';
+@use 'sections/stores/certified-stores-list';
+@use 'sections/stores/certified-stores-list-sp';
 @use 'sections/studio/hero-slider';
 @use 'sections/studio/studio-info-header';
 @use 'sections/studio/store-basic-info';

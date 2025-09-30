@@ -35,6 +35,15 @@ get_header();
     ]
   ]); ?>
 
+  <!-- Store Search Header Section (New) -->
+  <?php get_template_part('template-parts/sections/stores/store-search-header'); ?>
+
+  <!-- Certified Stores List Section (PC) -->
+  <?php get_template_part('template-parts/sections/stores/certified-stores-list-simple'); ?>
+
+  <!-- Certified Stores List Section (SP) -->
+  <?php get_template_part('template-parts/sections/stores/certified-stores-list-sp'); ?>
+
   <!-- Store Search Results Section -->
   <?php get_template_part('template-parts/sections/stores/store-search-results'); ?>
 

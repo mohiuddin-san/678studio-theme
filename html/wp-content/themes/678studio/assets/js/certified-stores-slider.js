@@ -158,29 +158,44 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Function to update border on last visible card
-    function updateLastCardBorder() {
-        // すべてのカードから右ボーダーを削除
-        const allCards = sliderElement.querySelectorAll('.certified-store-card');
-        allCards.forEach(card => {
-            card.style.borderRight = 'none';
+    // Function to update borders on cards
+    function updateCardBorders() {
+        // すべてのスライドからボーダーを削除
+        const allSlides = sliderElement.querySelectorAll('.splide__slide');
+        allSlides.forEach(slide => {
+            const card = slide.querySelector('.certified-store-card');
+            if (card) {
+                card.style.borderLeft = 'none';
+                card.style.borderRight = 'none';
+            }
         });
 
-        // 4店舗以上の場合は4番目のカード、それ以外は最後のカードに右ボーダー
-        let targetIndex;
-        if (storeCount >= 4) {
-            targetIndex = 3; // 4番目（index 3）
-        } else {
-            targetIndex = storeCount - 1; // 最後のカード
-        }
+        // オリジナルのスライドのみにボーダーを設定
+        // ループモードでは、最初のstoreCount個がオリジナル
+        let originalCount = 0;
+        allSlides.forEach((slide, index) => {
+            if (originalCount >= storeCount) return; // オリジナル分を処理したら終了
 
-        const targetSlide = slides[targetIndex];
-        if (targetSlide) {
-            const targetCard = targetSlide.querySelector('.certified-store-card');
-            if (targetCard) {
-                targetCard.style.borderRight = '1px solid #F39556';
+            const card = slide.querySelector('.certified-store-card');
+            if (!card) return;
+
+            // 最初のカードに左ボーダー
+            if (originalCount === 0) {
+                card.style.setProperty('border-left', '1px solid #F39556', 'important');
+                console.log('Added left border to first card');
             }
-        }
+
+            // 4枚目（index 3）または最後のカードに右ボーダー
+            const rightBorderIndex = storeCount >= 4 ? 3 : storeCount - 1;
+            if (originalCount === rightBorderIndex) {
+                card.style.setProperty('border-right', '1px solid #F39556', 'important');
+                console.log('Added right border to card at position', rightBorderIndex);
+            }
+
+            originalCount++;
+        });
+
+        console.log('Processed', originalCount, 'original cards out of', allSlides.length, 'total slides');
     }
 
     // Handle slider events
@@ -199,8 +214,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Set initial arrow states
         updateArrowStates(0);
 
-        // Set border on last visible card
-        updateLastCardBorder();
+        // Set borders on cards
+        updateCardBorders();
     });
 
     slider.on('moved', function(newIndex, prevIndex, destIndex) {

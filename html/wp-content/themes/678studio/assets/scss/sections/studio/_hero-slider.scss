@@ -92,11 +92,11 @@
 
             @include m.mq(md) {
                 height: 64vh; // Mobile height adjusted for 80vh container
-                border-radius: m.vw-sp(20); // より小さい角丸でかわいく
+                border-radius: m.vw-sp(60); // PCの比率に合わせて調整
                 // 余白を考慮したサイズ
-                width: calc(100% - 32px); // 左右に16pxずつ余白
+                width: calc(100% - 60px); // 左右に30pxずつ余白
                 margin: 0 auto; // 中央配置
-                max-width: calc(100vw - 10%); // ビューポート幅から余白を引く
+                max-width: 100%; // 親要素の幅を超えないように修正
             }
         }
     }

@@ -1,0 +1,364 @@
+// Certified Stores List Section - SP版
+// =================================================================
+
+@use '../../base/variables' as v;
+@use '../../base/mixins' as m;
+
+.certified-stores-list-sp {
+	display: none; // デフォルトで非表示
+
+	@include m.mq(md) {
+		display: block; // SPで表示
+		background: #fff;
+		padding: m.vw-sp(60) 0 m.vw-sp(80);
+	}
+
+	&__container {
+		@include m.mq(md) {
+			display: grid;
+			grid-template-columns: m.vw-sp(40) calc(100% - m.vw-sp(80)) m.vw-sp(40);
+			gap: 0;
+			width: 100%;
+		}
+	}
+
+	// 縦書きタイトル（左カラム）
+	&__vertical-title {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: m.vw-sp(12);
+		align-self: start;
+		transform: rotate(90deg);
+		transform-origin: left top;
+		margin-left: m.vw-sp(25);
+		margin-top: m.vw-sp(10);
+		position: sticky;
+		top: 20vh;
+		z-index: 10;
+	}
+
+	&__circle {
+		font-size: m.vw-sp(4);
+		color: #f39556;
+		font-weight: 400;
+	}
+
+	&__title {
+		color: #3F3F3F;
+		text-align: center;
+		font-family: "Noto Sans CJK JP", v.$ja;
+		font-size: m.vw-sp(10.24);
+		font-style: normal;
+		font-weight: 500;
+		line-height: 200%;
+		letter-spacing: m.vw-sp(1.2);
+		margin: 0;
+		white-space: nowrap;
+	}
+
+	// メインコンテンツエリア（中央カラム）
+	&__main {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+	}
+
+	// ヘッダー部分
+	&__header {
+		position: relative;
+		margin-bottom: m.vw-sp(40);
+	}
+
+	&__top-icon {
+		margin-bottom: m.vw-sp(20);
+
+		img {
+			width: m.vw-sp(81);
+			height: m.vw-sp(21);
+			flex-shrink: 0;
+		}
+	}
+
+	&__title-wrapper {
+		margin-bottom: m.vw-sp(24);
+	}
+
+	&__main-title {
+		display: flex;
+		align-items: center;
+		gap: m.vw-sp(8);
+		color: #3F3F3F;
+		leading-trim: both;
+		text-edge: cap;
+		font-family: "Noto Sans CJK JP", v.$ja;
+		font-size: m.vw-sp(20);
+		font-style: normal;
+		font-weight: 700;
+		line-height: m.vw-sp(35);
+		letter-spacing: m.vw-sp(1);
+		margin: 0;
+	}
+
+	&__certification-badge {
+		flex-shrink: 0;
+		margin-top: m.vw-sp(3);
+	}
+
+	&__badge-icon {
+		width: m.vw-sp(20);
+		height: m.vw-sp(20);
+		aspect-ratio: 1/1;
+		flex-shrink: 0;
+	}
+
+	&__subtitle {
+		color: #579EFF;
+		leading-trim: both;
+		text-edge: cap;
+		font-family: "Noto Sans JP", v.$ja;
+		font-size: m.vw-sp(12.8);
+		font-style: normal;
+		font-weight: 500;
+		line-height: 200%;
+		letter-spacing: m.vw-sp(1.92);
+		margin: 0;
+	}
+
+	// カード一覧エリア
+	&__cards {
+		display: flex;
+		flex-direction: column;
+		gap: m.vw-sp(24);
+	}
+
+	&__no-stores {
+		padding: m.vw-sp(40) m.vw-sp(20);
+		text-align: center;
+		color: #3F3F3F;
+		font-family: "Noto Sans JP", v.$ja;
+		font-size: m.vw-sp(14);
+		line-height: 180%;
+
+		p {
+			margin: 0;
+		}
+	}
+
+	// 右側のpadding用カラム（空）
+	&__padding {
+		// 空のカラム、paddingとして機能
+	}
+}
+
+// Certified Store Card Component - SP版
+.certified-store-card-sp {
+	width: 100%;
+	border: 1px solid #F39556;
+	background: #FFF;
+	padding: m.vw-sp(20) m.vw-sp(16);
+	display: flex;
+	flex-direction: column;
+
+	&__image {
+		display: flex;
+		width: 100%;
+		height: m.vw-sp(150);
+		justify-content: center;
+		align-items: center;
+		margin-bottom: m.vw-sp(12);
+		overflow: hidden;
+
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			object-position: center;
+		}
+	}
+
+	&__content {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		justify-content: space-between;
+	}
+
+	// バッジ + 店舗名（横並び）
+	&__badge {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: m.vw-sp(6);
+		margin-bottom: m.vw-sp(1);
+	}
+
+	&__badge-icon {
+		width: m.vw-sp(16);
+		height: m.vw-sp(16);
+		flex-shrink: 0;
+		aspect-ratio: 1/1;
+	}
+
+	&__badge-text {
+		color: #3F3F3F;
+		text-align: center;
+		font-feature-settings: 'palt' on;
+		font-family: "Noto Sans JP", v.$ja;
+		font-size: m.vw-sp(16);
+		font-style: normal;
+		font-weight: 700;
+		line-height: 175%;
+		margin: 0;
+	}
+
+	// 支店名（下の行）
+	&__name {
+		margin-bottom: m.vw-sp(6);
+		min-height: m.vw-sp(48);
+	}
+
+	&__branch-name {
+		color: #3F3F3F;
+		text-align: center;
+		font-feature-settings: 'palt' on;
+		font-family: "Noto Sans JP", v.$ja;
+		font-size: m.vw-sp(14);
+		font-style: normal;
+		font-weight: 400;
+		line-height: 175%;
+		margin: 0;
+	}
+
+	// 情報ボックス（所在地、料金、時間）
+	&__location {
+		display: flex;
+		align-items: center;
+		gap: m.vw-sp(6);
+		margin-bottom: m.vw-sp(10);
+
+		img {
+			width: m.vw-sp(14) !important;
+			height: m.vw-sp(14) !important;
+			flex-shrink: 0;
+			object-fit: contain;
+			display: block;
+			max-width: m.vw-sp(14);
+			max-height: m.vw-sp(14);
+		}
+
+		span {
+			color: #3F3F3F;
+			font-feature-settings: 'palt' on;
+			font-family: "Noto Sans JP", v.$ja;
+			font-size: m.vw-sp(14);
+			font-style: normal;
+			font-weight: 300;
+			line-height: 175%;
+		}
+	}
+
+	&__info {
+		display: flex;
+		flex-direction: row;
+		gap: m.vw-sp(12);
+		margin-bottom: m.vw-sp(12);
+	}
+
+	&__info-item {
+		display: flex;
+		align-items: center;
+		gap: m.vw-sp(6);
+
+		img {
+			width: m.vw-sp(14) !important;
+			height: m.vw-sp(14) !important;
+			flex-shrink: 0;
+			object-fit: contain;
+			display: block;
+			max-width: m.vw-sp(14);
+			max-height: m.vw-sp(14);
+		}
+
+		span {
+			color: #3F3F3F;
+			font-feature-settings: 'palt' on;
+			font-family: "Noto Sans JP", v.$ja;
+			font-size: m.vw-sp(14);
+			font-style: normal;
+			font-weight: 300;
+			line-height: 175%;
+		}
+	}
+
+	&__introduction {
+		color: #3F3F3F;
+		text-align: justify;
+		leading-trim: both;
+		text-edge: cap;
+		font-family: "Noto Sans JP", v.$ja;
+		font-size: m.vw-sp(12);
+		font-style: normal;
+		font-weight: 300;
+		line-height: 175%;
+		margin-bottom: m.vw-sp(16);
+
+		// 3行に制限
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 3;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	&__buttons {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	&__button {
+		display: flex;
+		width: m.vw-sp(145);
+		height: m.vw-sp(40);
+		justify-content: center;
+		align-items: center;
+		flex-shrink: 0;
+		border-radius: m.vw-sp(20);
+		font-family: "Noto Sans JP", v.$ja;
+		font-size: m.vw-sp(14);
+		font-style: normal;
+		font-weight: 500;
+		line-height: 160%;
+		letter-spacing: m.vw-sp(1.4);
+		text-decoration: none;
+		text-align: center;
+
+		&--primary {
+			background: #F39556;
+			color: #FFF;
+			border: 1.5px solid #F39556;
+
+			&:hover {
+				@include m.mq(md) {
+					// SPではhover効果なし
+					background: #F39556;
+					color: #FFF;
+				}
+			}
+		}
+
+		&--secondary {
+			background: transparent;
+			color: #F39556;
+			border: 1.5px solid #F39556;
+
+			&:hover {
+				@include m.mq(md) {
+					// SPではhover効果なし
+					background: transparent;
+					color: #F39556;
+				}
+			}
+		}
+	}
+}

@@ -4,6 +4,7 @@
  * Used on /stores/ page to show all stores or search results
  */
 
+
 // ヘルパー関数: 最小価格を取得
 function get_minimum_plan_price($shop) {
     if (empty($shop['photo_plans'])) {
@@ -48,27 +49,43 @@ function fetch_studio_shops($search_query = '', $prefecture = '', $page = 1, $pe
     if (isset($data['error'])) {
         return ['certified_shops' => [], 'regular_shops' => [], 'total' => 0, 'error' => $data['error']];
     }
-    
-    $filtered_shops = $data['shops'];
-    
+
+    $all_shops = $data['shops'] ?? [];
+
+    // データ構造の確認
+    if (!empty($all_shops)) {
+        $first_shop = $all_shops[0];
+    }
+
+    $filtered_shops = $all_shops;
+
     // テキスト検索
     if (!empty($search_query)) {
+        $before_count = count($filtered_shops);
         $filtered_shops = array_filter($filtered_shops, function($shop) use ($search_query) {
             $name_match = stripos($shop['name'] ?? '', $search_query) !== false;
             $station_match = stripos($shop['nearest_station'] ?? '', $search_query) !== false;
             $address_match = stripos($shop['address'] ?? '', $search_query) !== false;
-            return $name_match || $station_match || $address_match;
+
+            $result = $name_match || $station_match || $address_match;
+            if ($result) {
+            }
+            return $result;
         });
     }
-    
+
     // 都道府県検索
     if (!empty($prefecture)) {
+        $before_count = count($filtered_shops);
         $filtered_shops = array_filter($filtered_shops, function($shop) use ($prefecture) {
             $address = $shop['address'] ?? '';
 
             // 直接的なマッチ（住所に都道府県名が含まれている場合）
             $address_match = stripos($address, $prefecture) !== false;
-            
+
+            if ($address_match) {
+            }
+
             // 東京都の特別区のマッピング（東京都が住所に含まれている場合のみ）
             if (!$address_match && $prefecture === '東京都' && stripos($address, '東京都') !== false) {
                 $tokyo_wards = [
@@ -92,7 +109,7 @@ function fetch_studio_shops($search_query = '', $prefecture = '', $page = 1, $pe
     // 認定店と登録店舗に分割
     $certified_shops = [];
     $regular_shops = [];
-    
+
     foreach ($filtered_shops as $shop) {
         if (!empty($shop['is_certified_store'])) {
             $certified_shops[] = $shop;
@@ -100,10 +117,11 @@ function fetch_studio_shops($search_query = '', $prefecture = '', $page = 1, $pe
             $regular_shops[] = $shop;
         }
     }
-    
+
     $total_shops = count($filtered_shops);
     $total_pages = max(1, ceil($total_shops / $per_page));
     $page = min($page, $total_pages);
+
 
     return [
         'certified_shops' => $certified_shops,
@@ -119,8 +137,11 @@ $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $search_query = isset($_GET['search']) ? sanitize_text_field($_GET['search']) : '';
 $prefecture = isset($_GET['prefecture']) ? sanitize_text_field($_GET['prefecture']) : '';
 
+// デバッグ：検索パラメータの確認
+
 
 $shop_data = fetch_studio_shops($search_query, $prefecture, $page);
+
 $certified_shops = $shop_data['certified_shops'];
 $regular_shops = $shop_data['regular_shops'];
 $total_pages = $shop_data['total_pages'];
@@ -141,14 +162,20 @@ $current_page = $shop_data['current_page'];
         ]); ?>
       </div>
       <h1 class="store-search-results__title">
-        <?php if (!empty($search_query)): ?>
-        「<?php echo esc_html($search_query); ?>」の検索結果
+        <?php if (!empty($search_query) || !empty($prefecture)): ?>
+          <?php if (!empty($search_query) && !empty($prefecture)): ?>
+            「<?php echo esc_html($search_query); ?>」×「<?php echo esc_html($prefecture); ?>」の検索結果
+          <?php elseif (!empty($search_query)): ?>
+            「<?php echo esc_html($search_query); ?>」の検索結果
+          <?php elseif (!empty($prefecture)): ?>
+            「<?php echo esc_html($prefecture); ?>」の検索結果
+          <?php endif; ?>
         <?php else: ?>
         お近くの写真館を探す
         <?php endif; ?>
       </h1>
       <p class="store-search-results__subtitle">
-        <?php if (!empty($search_query)): ?>
+        <?php if (!empty($search_query) || !empty($prefecture)): ?>
         <?php echo $shop_data['total']; ?>件の写真館が見つかりました
         <?php else: ?>
         全国の写真館でロクナナハチ撮影が受けられます
@@ -229,6 +256,7 @@ $current_page = $shop_data['current_page'];
           <button type="submit" class="store-search-results__search-btn">検索</button>
         </div>
       </form>
+
     </div>
 
 
@@ -305,11 +333,18 @@ $current_page = $shop_data['current_page'];
             <div class="studio-card__name">
               <?php
               $names = get_shop_display_name($shop, 'separated');
-              if (!empty($names['store'])) {
+
+              // 店舗名が空の場合のフォールバック処理
+              if (empty($names['store']) && !empty($names['branch'])) {
+                // 店舗名が空で支店名にデータが入っている場合は、支店名を店舗名として扱う
+                echo '<div class="studio-card__store-name">' . esc_html($names['branch']) . '</div>';
+              } elseif (!empty($names['branch'])) {
+                // 正常に分離されている場合：店舗名 + 支店名
                 echo '<div class="studio-card__store-name">' . esc_html($names['store']) . '</div>';
-              }
-              if (!empty($names['branch'])) {
                 echo '<div class="studio-card__branch-name">' . esc_html($names['branch']) . '</div>';
+              } else {
+                // 支店名がない場合：店舗名のみ
+                echo '<div class="studio-card__store-name">' . esc_html($names['store']) . '</div>';
               }
               ?>
             </div>
@@ -456,11 +491,18 @@ $current_page = $shop_data['current_page'];
             <div class="studio-card__name">
               <?php
               $names = get_shop_display_name($shop, 'separated');
-              if (!empty($names['store'])) {
+
+              // 店舗名が空の場合のフォールバック処理
+              if (empty($names['store']) && !empty($names['branch'])) {
+                // 店舗名が空で支店名にデータが入っている場合は、支店名を店舗名として扱う
+                echo '<div class="studio-card__store-name">' . esc_html($names['branch']) . '</div>';
+              } elseif (!empty($names['branch'])) {
+                // 正常に分離されている場合：店舗名 + 支店名
                 echo '<div class="studio-card__store-name">' . esc_html($names['store']) . '</div>';
-              }
-              if (!empty($names['branch'])) {
                 echo '<div class="studio-card__branch-name">' . esc_html($names['branch']) . '</div>';
+              } else {
+                // 支店名がない場合：店舗名のみ
+                echo '<div class="studio-card__store-name">' . esc_html($names['store']) . '</div>';
               }
               ?>
             </div>
@@ -571,8 +613,12 @@ $current_page = $shop_data['current_page'];
     <?php if (empty($certified_shops) && empty($regular_shops)): ?>
     <div class="store-search-results__no-results">
       <p class="no-results">
-        <?php if (!empty($search_query)): ?>
+        <?php if (!empty($search_query) && !empty($prefecture)): ?>
+        「<?php echo esc_html($search_query); ?>」×「<?php echo esc_html($prefecture); ?>」に一致する店舗が見つかりませんでした。
+        <?php elseif (!empty($search_query)): ?>
         「<?php echo esc_html($search_query); ?>」に一致する店舗が見つかりませんでした。
+        <?php elseif (!empty($prefecture)): ?>
+        「<?php echo esc_html($prefecture); ?>」に一致する店舗が見つかりませんでした。
         <?php else: ?>
         現在、表示できる店舗がありません。
         <?php endif; ?>
@@ -583,7 +629,18 @@ $current_page = $shop_data['current_page'];
     <!-- ページネーション -->
     <?php if ($total_pages > 1): ?>
     <div class="store-search-results__pagination">
-      <a href="?page=<?php echo max(1, $current_page - 1); ?><?php echo $search_query ? '&search=' . urlencode($search_query) : ''; ?>"
+      <?php
+      // URLパラメータを構築
+      $url_params = [];
+      if (!empty($search_query)) {
+          $url_params[] = 'search=' . urlencode($search_query);
+      }
+      if (!empty($prefecture)) {
+          $url_params[] = 'prefecture=' . urlencode($prefecture);
+      }
+      $params_string = !empty($url_params) ? '&' . implode('&', $url_params) : '';
+      ?>
+      <a href="?page=<?php echo max(1, $current_page - 1); ?><?php echo $params_string; ?>"
         class="pagination-btn pagination-btn--prev <?php echo $current_page == 1 ? 'disabled' : ''; ?>">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -592,11 +649,11 @@ $current_page = $shop_data['current_page'];
       </a>
       <div class="pagination-numbers">
         <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-        <a href="?page=<?php echo $i; ?><?php echo $search_query ? '&search=' . urlencode($search_query) : ''; ?>"
+        <a href="?page=<?php echo $i; ?><?php echo $params_string; ?>"
           class="<?php echo $i == $current_page ? 'active' : ''; ?>"><?php echo $i; ?></a>
         <?php endfor; ?>
       </div>
-      <a href="?page=<?php echo min($total_pages, $current_page + 1); ?><?php echo $search_query ? '&search=' . urlencode($search_query) : ''; ?>"
+      <a href="?page=<?php echo min($total_pages, $current_page + 1); ?><?php echo $params_string; ?>"
         class="pagination-btn pagination-btn--next <?php echo $current_page == $total_pages ? 'disabled' : ''; ?>">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"

@@ -549,9 +549,9 @@
 .store-basic-info-section-mobile {
 	display: none;
 	background: #fff;
-	padding: m.vw-sp(60) 0 m.vw-sp(120);
+	padding: m.vw-sp(60) 0 m.vw-sp(120); // 元に戻す
 	padding-left: m.vw-sp(20); // 画面左からのパディング
-	max-width: 100vw;
+	max-width: 100%;
 	// overflow-x: hidden; // 横スクロール強制的に防止 - stickyのため一時的にコメントアウト
 
 	// Sticky動作のために必要
@@ -677,7 +677,9 @@
 	&__image-area {
 		position: relative;
 		left: calc(-53vw + 50%); // breakout-bgの仕組みを応用
-		width: 100vw; // 画面全幅
+		width: 100vw; // 画面全幅（必要）
+		max-width: 100vw; // 最大幅制限
+		overflow-x: hidden; // 横スクロール防止
 		margin-bottom: m.vw-sp(72); // 下の詳細セクションとの間隔
 
 		// 高さ調整
@@ -693,7 +695,7 @@
 		justify-content: center;
 		align-items: center;
 		position: relative;
-		overflow: visible; // 明示的にvisible指定
+		overflow: hidden; // 縦スクロールを防ぐ
 	}
 
 	&__image {
@@ -775,10 +777,11 @@
 
 	&__wave-2 {
 		position: absolute;
-		bottom: m.vw-sp(-400);
+		bottom: m.vw-sp(-380); // 少し上に調整してバランスを取る
 		right: m.vw-sp(0);
 		width: m.vw-sp(120);
 		height: auto;
+		// overflow設定を削除
 
 		// とりあえず全体的なゆらゆらアニメーション
 		animation: wave-float 8s ease-in-out infinite;
