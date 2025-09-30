@@ -193,7 +193,14 @@ function get_minimum_plan_duration_certified_sp($shop) {
                                         <?php
                                         if (function_exists('get_shop_display_name')) {
                                             $names = get_shop_display_name($shop, 'separated');
-                                            echo esc_html($names['store'] ?? '認定店舗');
+                                            // 店舗名がある場合は店舗名、なければ支店名を表示
+                                            if (!empty($names['store'])) {
+                                                echo esc_html($names['store']);
+                                            } elseif (!empty($names['branch'])) {
+                                                echo esc_html($names['branch']);
+                                            } else {
+                                                echo '認定店舗';
+                                            }
                                         } else {
                                             echo esc_html($shop['name'] ?? '認定店舗');
                                         }
@@ -204,13 +211,10 @@ function get_minimum_plan_duration_certified_sp($shop) {
                                     <?php
                                     if (function_exists('get_shop_display_name')) {
                                         $names = get_shop_display_name($shop, 'separated');
-                                        if (!empty($names['branch'])) {
+                                        // 店舗名と支店名の両方がある場合のみ支店名を表示
+                                        if (!empty($names['store']) && !empty($names['branch'])) {
                                             echo '<div class="certified-store-card-sp__branch-name">' . esc_html($names['branch']) . '</div>';
-                                        } else {
-                                            echo '<div class="certified-store-card-sp__branch-name">' . esc_html($names['store'] ?? $shop['name']) . '</div>';
                                         }
-                                    } else {
-                                        echo '<div class="certified-store-card-sp__branch-name">' . esc_html($shop['name'] ?? '店舗名') . '</div>';
                                     }
                                     ?>
                                 </div>
@@ -275,6 +279,12 @@ function get_minimum_plan_duration_certified_sp($shop) {
                                     <?php
                                     $introduction = $shop['store_introduction'] ?? '';
                                     if (!empty($introduction)) {
+                                        // brタグと改行を削除してスペースに置き換え
+                                        $introduction = str_replace(['<br>', '<br/>', '<br />', "\n", "\r"], ' ', $introduction);
+                                        // 連続するスペースを1つにまとめる
+                                        $introduction = preg_replace('/\s+/', ' ', $introduction);
+                                        $introduction = trim($introduction);
+
                                         if (mb_strlen($introduction) > 60) {
                                             echo esc_html(mb_substr($introduction, 0, 60) . '...');
                                         } else {

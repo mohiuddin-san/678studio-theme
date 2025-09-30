@@ -8572,12 +8572,10 @@ select:active {
   -ms-flex-align: center;
   align-items: center;
   gap: 0.5555555556vw;
-  margin-bottom: 0.8333333333vw;
 }
 @media (max-width: 767px) {
   .certified-store-card__location {
     gap: calc(6px * 100vw / 380px);
-    margin-bottom: calc(10px * 100vw / 380px);
   }
 }
 .certified-store-card__location img {
@@ -8788,7 +8786,7 @@ select:active {
   .certified-stores-list-sp {
     display: block;
     background: #fff;
-    padding: calc(60px * 100vw / 380px) 0 calc(80px * 100vw / 380px);
+    padding: 0 0 calc(80px * 100vw / 380px);
   }
 }
 @media (max-width: 767px) {
@@ -9037,7 +9035,6 @@ select:active {
   -ms-flex-align: center;
   align-items: center;
   gap: calc(6px * 100vw / 380px);
-  margin-bottom: calc(10px * 100vw / 380px);
 }
 .certified-store-card-sp__location img {
   width: calc(14px * 100vw / 380px) !important;
@@ -9125,12 +9122,16 @@ select:active {
   -webkit-box-pack: justify;
   -ms-flex-pack: justify;
   justify-content: space-between;
+  gap: calc(12px * 100vw / 380px);
 }
 .certified-store-card-sp__button {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  width: calc(145px * 100vw / 380px);
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  max-width: calc(50% - 6px * 100vw / 380px);
   height: calc(40px * 100vw / 380px);
   -webkit-box-pack: center;
   -ms-flex-pack: center;
@@ -9138,15 +9139,13 @@ select:active {
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
-  -ms-flex-negative: 0;
-  flex-shrink: 0;
   border-radius: calc(20px * 100vw / 380px);
   font-family: "Noto Sans JP", "Noto Serif JP", serif;
-  font-size: calc(14px * 100vw / 380px);
+  font-size: calc(13px * 100vw / 380px);
   font-style: normal;
   font-weight: 500;
   line-height: 160%;
-  letter-spacing: calc(1.4px * 100vw / 380px);
+  letter-spacing: calc(1.2px * 100vw / 380px);
   text-decoration: none;
   text-align: center;
 }

@@ -10,7 +10,7 @@
 	@include m.mq(md) {
 		display: block; // SPで表示
 		background: #fff;
-		padding: m.vw-sp(60) 0 m.vw-sp(80);
+		padding: 0 0 m.vw-sp(80);
 	}
 
 	&__container {
@@ -235,7 +235,6 @@
 		display: flex;
 		align-items: center;
 		gap: m.vw-sp(6);
-		margin-bottom: m.vw-sp(10);
 
 		img {
 			width: m.vw-sp(14) !important;
@@ -314,22 +313,23 @@
 	&__buttons {
 		display: flex;
 		justify-content: space-between;
+		gap: m.vw-sp(12);
 	}
 
 	&__button {
 		display: flex;
-		width: m.vw-sp(145);
+		flex: 1; // 均等に幅を分配
+		max-width: calc(50% - m.vw-sp(6)); // 2つのボタンでgap分を考慮
 		height: m.vw-sp(40);
 		justify-content: center;
 		align-items: center;
-		flex-shrink: 0;
 		border-radius: m.vw-sp(20);
 		font-family: "Noto Sans JP", v.$ja;
-		font-size: m.vw-sp(14);
+		font-size: m.vw-sp(13);
 		font-style: normal;
 		font-weight: 500;
 		line-height: 160%;
-		letter-spacing: m.vw-sp(1.4);
+		letter-spacing: m.vw-sp(1.2);
 		text-decoration: none;
 		text-align: center;
 

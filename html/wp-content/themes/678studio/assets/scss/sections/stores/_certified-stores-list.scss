@@ -391,11 +391,9 @@
 		display: flex;
 		align-items: center;
 		gap: m.vw(8);
-		margin-bottom: m.vw(12);
 
 		@include m.mq(md) {
 			gap: m.vw-sp(6);
-			margin-bottom: m.vw-sp(10);
 		}
 
 		img {
