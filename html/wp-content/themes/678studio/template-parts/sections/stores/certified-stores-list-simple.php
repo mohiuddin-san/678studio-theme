@@ -34,8 +34,20 @@ function get_certified_shops_only() {
 
         // キーワード検索のフィルタリング
         if (!empty($search_keyword)) {
+            // 店舗名を正しく取得（get_shop_display_name関数を使用）
+            $shop_name = '';
+            if (function_exists('get_shop_display_name')) {
+                $shop_name = get_shop_display_name($shop, 'full');
+            } else {
+                $shop_name = $shop['name'] ?? '';
+            }
+
+            // 検索対象フィールド
             $search_targets = [
+                $shop_name,
                 $shop['name'] ?? '',
+                $shop['store_name'] ?? '',
+                $shop['branch_name'] ?? '',
                 $shop['address'] ?? '',
                 $shop['store_introduction'] ?? '',
                 $shop['prefecture'] ?? ''
