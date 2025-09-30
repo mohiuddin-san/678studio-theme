@@ -44,6 +44,12 @@ get_header();
   <!-- Certified Stores List Section (SP) -->
   <?php get_template_part('template-parts/sections/stores/certified-stores-list-sp'); ?>
 
+  <!-- Registered Stores List Section (PC) -->
+  <?php get_template_part('template-parts/sections/stores/registered-stores-list-simple'); ?>
+
+  <!-- Registered Stores List Section (SP) -->
+  <?php get_template_part('template-parts/sections/stores/registered-stores-list-sp'); ?>
+
   <!-- Store Search Results Section -->
   <?php get_template_part('template-parts/sections/stores/store-search-results'); ?>
 

@@ -835,6 +835,24 @@ function theme_678studio_styles() {
                 $js_version,
                 true
             );
+
+            // Registered stores slider initialization
+            wp_enqueue_script(
+                'registered-stores-slider-js',
+                get_template_directory_uri() . '/assets/js/registered-stores-slider.js',
+                array('splide-js'),
+                $js_version,
+                true
+            );
+
+            // Registered stores load more functionality (SP only)
+            wp_enqueue_script(
+                'registered-stores-load-more-js',
+                get_template_directory_uri() . '/assets/js/registered-stores-load-more.js',
+                array(),
+                $js_version,
+                true
+            );
         }
     }
 

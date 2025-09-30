@@ -1,12 +1,12 @@
-// Certified Stores List Section
+// Registered Stores List Section
 // =================================================================
 
 @use '../../base/variables' as v;
 @use '../../base/mixins' as m;
 
-.certified-stores-list {
+.registered-stores-list {
 	background: #fff;
-	padding: 0 0 m.vw(120);
+	padding: m.vw(200) 0 m.vw(120); // 上部に大きなpaddingを追加
 
 	@include m.mq(md) {
 		display: none; // SPは別セクションで実装予定
@@ -84,39 +84,8 @@
 		}
 	}
 
-	// (1) タイトル上部のアイコン
-	&__top-icon {
-		margin-bottom: m.vw(26);
-
-		img {
-			width: m.vw(100);
-			height: m.vw(28);
-			flex-shrink: 0;
-		}
-
-		@include m.mq(md) {
-			margin-bottom: m.vw-sp(20);
-
-			img {
-				width: m.vw-sp(80);
-				height: m.vw-sp(22);
-			}
-		}
-	}
-
-	// (2) タイトル部分
-	&__title-wrapper {
-		margin-bottom: m.vw(40);
-
-		@include m.mq(md) {
-			margin-bottom: m.vw-sp(30);
-		}
-	}
-
+	// (1) タイトル
 	&__main-title {
-		display: flex;
-		align-items: center;
-		gap: m.vw(12);
 		color: #3F3F3F;
 		font-family: "Noto Sans JP", v.$ja;
 		font-size: m.vw(31.25);
@@ -124,56 +93,17 @@
 		font-weight: 700;
 		line-height: m.vw(35); /* 112% */
 		letter-spacing: m.vw(1.563);
-		margin: 0;
+		margin: 0 0 m.vw(40) 0;
 
 		@include m.mq(md) {
 			font-size: m.vw-sp(25);
 			line-height: m.vw-sp(28);
 			letter-spacing: m.vw-sp(1.25);
-			gap: m.vw-sp(8);
+			margin: 0 0 m.vw-sp(30) 0;
 		}
 	}
 
-	&__certification-badge {
-		flex-shrink: 0;
-		margin-top: m.vw(4);
-
-		@include m.mq(md) {
-			margin-top: m.vw-sp(3);
-		}
-	}
-
-	&__badge-icon {
-		width: m.vw(30);
-		height: m.vw(30);
-		aspect-ratio: 1/1;
-		flex-shrink: 0;
-
-		@include m.mq(md) {
-			width: m.vw-sp(24);
-			height: m.vw-sp(24);
-		}
-	}
-
-	// (3) サブタイトル
-	&__subtitle {
-		color: #579EFF;
-		font-family: "Noto Sans JP", v.$ja;
-		font-size: m.vw(16);
-		font-style: normal;
-		font-weight: 500;
-		line-height: 200%; /* 32px */
-		letter-spacing: m.vw(2.4);
-		margin: 0;
-
-		@include m.mq(md) {
-			font-size: m.vw-sp(14);
-			letter-spacing: m.vw-sp(1.8);
-			line-height: 180%;
-		}
-	}
-
-	// (4) 右端装飾要素
+	// (2) 右端装飾要素
 	&__right-wave {
 		position: absolute;
 		bottom: 0;
@@ -287,10 +217,10 @@
 	}
 }
 
-// Certified Store Card Component
-.certified-store-card {
+// Registered Store Card Component (No Image Version)
+.registered-store-card {
 	width: m.vw(360);
-	height: m.vw(565);
+	height: m.vw(383); // 画像がない分、高さを調整（565 - 182 = 383）
 	flex-shrink: 0;
 	border: 1px solid #F39556; // 全方向にボーダー
 	background: #FFF;
@@ -305,29 +235,6 @@
 		border-right: 1px solid #F39556; // SPでは全てのカードに右ボーダー
 	}
 
-	&__image {
-		display: flex;
-		width: m.vw(314);
-		height: m.vw(182);
-		justify-content: center;
-		align-items: center;
-		margin-bottom: m.vw(16);
-		overflow: hidden; // はみ出た部分を隠す
-
-		@include m.mq(md) {
-			width: 100%;
-			height: m.vw-sp(150);
-			margin-bottom: m.vw-sp(12);
-		}
-
-		img {
-			width: 100%;
-			height: 100%;
-			object-fit: cover;
-			object-position: center; // 画像の中央部分を表示
-		}
-	}
-
 	&__content {
 		display: flex;
 		flex-direction: column;
@@ -335,33 +242,17 @@
 		justify-content: space-between;
 	}
 
-	// バッジ + 店舗名（横並び）
-	&__badge {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: m.vw(8);
-		margin-bottom: m.vw(1);
+	// 店舗名（上部）
+	&__name-wrapper {
+		text-align: center;
+		margin-bottom: m.vw(16);
 
 		@include m.mq(md) {
-			gap: m.vw-sp(6);
-			margin-bottom: m.vw-sp(1);
+			margin-bottom: m.vw-sp(12);
 		}
 	}
 
-	&__badge-icon {
-		width: m.vw(21);
-		height: m.vw(21);
-		flex-shrink: 0;
-		aspect-ratio: 1/1;
-
-		@include m.mq(md) {
-			width: m.vw-sp(16);
-			height: m.vw-sp(16);
-		}
-	}
-
-	&__badge-text {
+	&__name {
 		color: #3F3F3F;
 		text-align: center;
 		font-feature-settings: 'palt' on;
@@ -370,24 +261,15 @@
 		font-style: normal;
 		font-weight: 700;
 		line-height: 175%; /* 31.5px */
-		margin: 0;
+		margin: 0 0 m.vw(4) 0;
 
 		@include m.mq(md) {
 			font-size: m.vw-sp(16);
+			margin: 0 0 m.vw-sp(3) 0;
 		}
 	}
 
-	// 支店名（下の行）
-	&__name {
-		margin-bottom: m.vw(8);
-		min-height: m.vw(56); // 2行分の高さを確保（バッジ1行 + 支店名1行）
-
-		@include m.mq(md) {
-			margin-bottom: m.vw-sp(6);
-			min-height: m.vw-sp(48);
-		}
-	}
-
+	// 支店名
 	&__branch-name {
 		color: #3F3F3F;
 		text-align: center;
@@ -418,8 +300,8 @@
 			width: m.vw(16) !important;
 			height: m.vw(16) !important;
 			flex-shrink: 0;
-			object-fit: contain; // SVGを正確にフィット
-			display: block; // インライン要素のマージンを削除
+			object-fit: contain;
+			display: block;
 			max-width: m.vw(16);
 			max-height: m.vw(16);
 
@@ -471,8 +353,8 @@
 			width: m.vw(16) !important;
 			height: m.vw(16) !important;
 			flex-shrink: 0;
-			object-fit: contain; // SVGを正確にフィット
-			display: block; // インライン要素のマージンを削除
+			object-fit: contain;
+			display: block;
 			max-width: m.vw(16);
 			max-height: m.vw(16);
 
@@ -591,4 +473,3 @@
 		}
 	}
 }
-

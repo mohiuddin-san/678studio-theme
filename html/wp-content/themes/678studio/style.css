@@ -8418,6 +8418,22 @@ select:active {
 .certified-stores-list__arrow:hover {
   opacity: 0.7;
 }
+.certified-stores-list__no-stores {
+  padding: 2.7777777778vw 1.3888888889vw;
+  text-align: center;
+  color: #3F3F3F;
+  font-family: "Noto Sans JP", "Noto Serif JP", serif;
+  font-size: 1.1111111111vw;
+  line-height: 180%;
+}
+@media (max-width: 767px) {
+  .certified-stores-list__no-stores {
+    font-size: calc(14px * 100vw / 380px);
+  }
+}
+.certified-stores-list__no-stores p {
+  margin: 0;
+}
 
 .certified-store-card {
   width: 25vw;
@@ -9221,6 +9237,871 @@ select:active {
 }
 @media (max-width: 767px) {
   .certified-store-card-sp__button--secondary:hover {
+    background: transparent;
+    color: #F39556;
+  }
+}
+
+.registered-stores-list {
+  background: #fff;
+  padding: 13.8888888889vw 0 8.3333333333vw;
+}
+@media (max-width: 767px) {
+  .registered-stores-list {
+    display: none;
+  }
+}
+.registered-stores-list__container {
+  width: 100%;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 11.1111111111vw calc(100% - 11.1111111111vw);
+  gap: 0;
+}
+@media (max-width: 767px) {
+  .registered-stores-list__container {
+    display: block;
+    padding: 0 calc(20px * 100vw / 380px);
+  }
+}
+.registered-stores-list__vertical-title {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  gap: 1.1111111111vw;
+  -ms-flex-item-align: start;
+  align-self: start;
+  -webkit-transform: rotate(90deg);
+  transform: rotate(90deg);
+  -webkit-transform-origin: left top;
+  transform-origin: left top;
+  margin-left: 50%;
+  margin-top: 0.6944444444vw;
+  position: sticky;
+  top: 20vh;
+  z-index: 10;
+}
+@media (max-width: 767px) {
+  .registered-stores-list__vertical-title {
+    display: none;
+  }
+}
+.registered-stores-list__circle {
+  font-size: 0.3472222222vw;
+  color: #f39556;
+  font-weight: 400;
+}
+.registered-stores-list__title {
+  color: #3F3F3F;
+  text-align: center;
+  font-family: "Noto Sans CJK JP", "Noto Serif JP", serif;
+  font-size: 1.1111111111vw;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 200%; /* 32px */
+  letter-spacing: 0.1111111111vw;
+  margin: 0;
+  white-space: nowrap;
+}
+.registered-stores-list__main {
+  position: relative;
+}
+@media (max-width: 767px) {
+  .registered-stores-list__main {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+  }
+}
+.registered-stores-list__header {
+  position: relative;
+  margin-bottom: 4.1666666667vw;
+}
+@media (max-width: 767px) {
+  .registered-stores-list__header {
+    margin-bottom: calc(40px * 100vw / 380px);
+  }
+}
+.registered-stores-list__main-title {
+  color: #3F3F3F;
+  font-family: "Noto Sans JP", "Noto Serif JP", serif;
+  font-size: 2.1701388889vw;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 2.4305555556vw; /* 112% */
+  letter-spacing: 0.1085416667vw;
+  margin: 0 0 2.7777777778vw 0;
+}
+@media (max-width: 767px) {
+  .registered-stores-list__main-title {
+    font-size: calc(25px * 100vw / 380px);
+    line-height: calc(28px * 100vw / 380px);
+    letter-spacing: calc(1.25px * 100vw / 380px);
+    margin: 0 0 calc(30px * 100vw / 380px) 0;
+  }
+}
+.registered-stores-list__right-wave {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+.registered-stores-list__right-wave img {
+  width: 14.9305555556vw;
+  height: 5.2777777778vw;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+}
+@media (max-width: 767px) {
+  .registered-stores-list__right-wave {
+    display: none;
+  }
+}
+.registered-stores-list__cards {
+  position: relative;
+  margin-bottom: 2.7777777778vw;
+  overflow: hidden;
+}
+@media (max-width: 767px) {
+  .registered-stores-list__cards {
+    margin-bottom: 0;
+  }
+}
+.registered-stores-list__cards .splide__track {
+  overflow: visible;
+}
+.registered-stores-list__cards .splide__list {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: stretch;
+  -ms-flex-align: stretch;
+  align-items: stretch;
+}
+.registered-stores-list__cards .splide__slide {
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+}
+.registered-stores-list__arrows {
+  position: relative;
+  width: 100%;
+  height: 2.0833333333vw;
+  margin-top: 2.7777777778vw;
+}
+@media (max-width: 767px) {
+  .registered-stores-list__arrows {
+    display: none;
+  }
+}
+.registered-stores-list__arrow {
+  position: absolute;
+  top: 0;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  z-index: 10;
+}
+@media (max-width: 767px) {
+  .registered-stores-list__arrow {
+    display: none;
+  }
+}
+.registered-stores-list__arrow img {
+  width: 4.0625vw;
+  height: 1.0416666667vw;
+  display: block;
+}
+.registered-stores-list__arrow--left {
+  left: 0;
+}
+.registered-stores-list__arrow--right {
+  right: 5.5555555556vw;
+}
+.registered-stores-list__arrow:hover {
+  opacity: 0.7;
+}
+.registered-stores-list__no-stores {
+  padding: 2.7777777778vw 1.3888888889vw;
+  text-align: center;
+  color: #3F3F3F;
+  font-family: "Noto Sans JP", "Noto Serif JP", serif;
+  font-size: 1.1111111111vw;
+  line-height: 180%;
+}
+@media (max-width: 767px) {
+  .registered-stores-list__no-stores {
+    font-size: calc(14px * 100vw / 380px);
+  }
+}
+.registered-stores-list__no-stores p {
+  margin: 0;
+}
+
+.registered-store-card {
+  width: 25vw;
+  height: 26.5972222222vw;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  border: 1px solid #F39556;
+  background: #FFF;
+  padding: 1.9444444444vw 1.5972222222vw;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+@media (max-width: 767px) {
+  .registered-store-card {
+    width: 100%;
+    height: auto;
+    padding: calc(20px * 100vw / 380px) calc(16px * 100vw / 380px);
+    border-right: 1px solid #F39556;
+  }
+}
+.registered-store-card__content {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+}
+.registered-store-card__name-wrapper {
+  text-align: center;
+  margin-bottom: 1.1111111111vw;
+}
+@media (max-width: 767px) {
+  .registered-store-card__name-wrapper {
+    margin-bottom: calc(12px * 100vw / 380px);
+  }
+}
+.registered-store-card__name {
+  color: #3F3F3F;
+  text-align: center;
+  -webkit-font-feature-settings: "palt" on;
+  font-feature-settings: "palt" on;
+  font-family: "Noto Sans JP", "Noto Serif JP", serif;
+  font-size: 1.25vw;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 175%; /* 31.5px */
+  margin: 0 0 0.2777777778vw 0;
+}
+@media (max-width: 767px) {
+  .registered-store-card__name {
+    font-size: calc(16px * 100vw / 380px);
+    margin: 0 0 calc(3px * 100vw / 380px) 0;
+  }
+}
+.registered-store-card__branch-name {
+  color: #3F3F3F;
+  text-align: center;
+  -webkit-font-feature-settings: "palt" on;
+  font-feature-settings: "palt" on;
+  font-family: "Noto Sans JP", "Noto Serif JP", serif;
+  font-size: 1.1111111111vw;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 175%; /* 28px */
+  margin: 0;
+}
+@media (max-width: 767px) {
+  .registered-store-card__branch-name {
+    font-size: calc(14px * 100vw / 380px);
+  }
+}
+.registered-store-card__location {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  gap: 0.5555555556vw;
+}
+@media (max-width: 767px) {
+  .registered-store-card__location {
+    gap: calc(6px * 100vw / 380px);
+  }
+}
+.registered-store-card__location img {
+  width: 1.1111111111vw !important;
+  height: 1.1111111111vw !important;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  -o-object-fit: contain;
+  object-fit: contain;
+  display: block;
+  max-width: 1.1111111111vw;
+  max-height: 1.1111111111vw;
+}
+@media (max-width: 767px) {
+  .registered-store-card__location img {
+    width: calc(14px * 100vw / 380px) !important;
+    height: calc(14px * 100vw / 380px) !important;
+    max-width: calc(14px * 100vw / 380px);
+    max-height: calc(14px * 100vw / 380px);
+  }
+}
+.registered-store-card__location span {
+  color: #3F3F3F;
+  -webkit-font-feature-settings: "palt" on;
+  font-feature-settings: "palt" on;
+  font-family: "Noto Sans JP", "Noto Serif JP", serif;
+  font-size: 1.1111111111vw;
+  font-style: normal;
+  font-weight: 300;
+  line-height: 175%; /* 28px */
+}
+@media (max-width: 767px) {
+  .registered-store-card__location span {
+    font-size: calc(14px * 100vw / 380px);
+  }
+}
+.registered-store-card__info {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  gap: 1.1111111111vw;
+  margin-bottom: 1.1111111111vw;
+}
+@media (max-width: 767px) {
+  .registered-store-card__info {
+    gap: calc(12px * 100vw / 380px);
+    margin-bottom: calc(12px * 100vw / 380px);
+  }
+}
+.registered-store-card__info-item {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  gap: 0.5555555556vw;
+}
+@media (max-width: 767px) {
+  .registered-store-card__info-item {
+    gap: calc(6px * 100vw / 380px);
+  }
+}
+.registered-store-card__info-item img {
+  width: 1.1111111111vw !important;
+  height: 1.1111111111vw !important;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  -o-object-fit: contain;
+  object-fit: contain;
+  display: block;
+  max-width: 1.1111111111vw;
+  max-height: 1.1111111111vw;
+}
+@media (max-width: 767px) {
+  .registered-store-card__info-item img {
+    width: calc(14px * 100vw / 380px) !important;
+    height: calc(14px * 100vw / 380px) !important;
+    max-width: calc(14px * 100vw / 380px);
+    max-height: calc(14px * 100vw / 380px);
+  }
+}
+.registered-store-card__info-item span {
+  color: #3F3F3F;
+  -webkit-font-feature-settings: "palt" on;
+  font-feature-settings: "palt" on;
+  font-family: "Noto Sans JP", "Noto Serif JP", serif;
+  font-size: 1.1111111111vw;
+  font-style: normal;
+  font-weight: 300;
+  line-height: 175%; /* 28px */
+}
+@media (max-width: 767px) {
+  .registered-store-card__info-item span {
+    font-size: calc(14px * 100vw / 380px);
+  }
+}
+.registered-store-card__introduction {
+  color: #3F3F3F;
+  text-align: justify;
+  leading-trim: both;
+  text-edge: cap;
+  font-family: "Noto Sans JP", "Noto Serif JP", serif;
+  font-size: 0.8888888889vw;
+  font-style: normal;
+  font-weight: 300;
+  line-height: 175%; /* 22.4px */
+  margin-bottom: 1.3888888889vw;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (max-width: 767px) {
+  .registered-store-card__introduction {
+    font-size: calc(12px * 100vw / 380px);
+    margin-bottom: calc(16px * 100vw / 380px);
+  }
+}
+.registered-store-card__buttons {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+}
+@media (max-width: 767px) {
+  .registered-store-card__buttons {
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+  }
+}
+.registered-store-card__button {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  width: 10.0694444444vw;
+  height: 2.7777777778vw;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  border-radius: 1.3888888889vw;
+  font-family: "Noto Sans JP", "Noto Serif JP", serif;
+  font-size: 1.1111111111vw;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 160%; /* 25.6px */
+  letter-spacing: 0.1111111111vw;
+  text-decoration: none;
+  text-align: center;
+}
+@media (max-width: 767px) {
+  .registered-store-card__button {
+    width: calc(145px * 100vw / 380px);
+    height: calc(40px * 100vw / 380px);
+    border-radius: calc(20px * 100vw / 380px);
+    font-size: calc(14px * 100vw / 380px);
+    letter-spacing: calc(1.4px * 100vw / 380px);
+  }
+}
+.registered-store-card__button--primary {
+  background: #F39556;
+  color: #FFF;
+  border: 1.5px solid #F39556;
+}
+.registered-store-card__button--primary:hover {
+  background: #FFF;
+  color: #F39556;
+}
+@media (max-width: 767px) {
+  .registered-store-card__button--primary:hover {
+    background: #F39556;
+    color: #FFF;
+  }
+}
+.registered-store-card__button--secondary {
+  background: transparent;
+  color: #F39556;
+  border: 1.5px solid #F39556;
+}
+.registered-store-card__button--secondary:hover {
+  background: #F39556;
+  color: #FFF;
+}
+@media (max-width: 767px) {
+  .registered-store-card__button--secondary:hover {
+    background: transparent;
+    color: #F39556;
+  }
+}
+
+.registered-stores-list-sp {
+  display: none;
+}
+@media (max-width: 767px) {
+  .registered-stores-list-sp {
+    display: block;
+    background: #fff;
+    padding: 0 0 calc(80px * 100vw / 380px);
+  }
+}
+@media (max-width: 767px) {
+  .registered-stores-list-sp__container {
+    display: grid;
+    grid-template-columns: calc(40px * 100vw / 380px) calc(100% - 80px * 100vw / 380px) calc(40px * 100vw / 380px);
+    gap: 0;
+    width: 100%;
+  }
+}
+.registered-stores-list-sp__vertical-title {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  gap: calc(12px * 100vw / 380px);
+  -ms-flex-item-align: start;
+  align-self: start;
+  -webkit-transform: rotate(90deg);
+  transform: rotate(90deg);
+  -webkit-transform-origin: left top;
+  transform-origin: left top;
+  margin-left: calc(25px * 100vw / 380px);
+  margin-top: calc(10px * 100vw / 380px);
+  position: sticky;
+  top: 20vh;
+  z-index: 10;
+}
+.registered-stores-list-sp__circle {
+  font-size: calc(4px * 100vw / 380px);
+  color: #f39556;
+  font-weight: 400;
+}
+.registered-stores-list-sp__title {
+  color: #3F3F3F;
+  text-align: center;
+  font-family: "Noto Sans CJK JP", "Noto Serif JP", serif;
+  font-size: calc(10.24px * 100vw / 380px);
+  font-style: normal;
+  font-weight: 500;
+  line-height: 200%;
+  letter-spacing: calc(1.2px * 100vw / 380px);
+  margin: 0;
+  white-space: nowrap;
+}
+.registered-stores-list-sp__main {
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+.registered-stores-list-sp__header {
+  position: relative;
+  margin-bottom: calc(40px * 100vw / 380px);
+}
+.registered-stores-list-sp__main-title {
+  color: #3F3F3F;
+  leading-trim: both;
+  text-edge: cap;
+  font-family: "Noto Sans CJK JP", "Noto Serif JP", serif;
+  font-size: calc(20px * 100vw / 380px);
+  font-style: normal;
+  font-weight: 700;
+  line-height: calc(35px * 100vw / 380px);
+  letter-spacing: calc(1px * 100vw / 380px);
+  margin: 0;
+}
+.registered-stores-list-sp__cards {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  gap: calc(24px * 100vw / 380px);
+}
+.registered-stores-list-sp__no-stores {
+  padding: calc(40px * 100vw / 380px) calc(20px * 100vw / 380px);
+  text-align: center;
+  color: #3F3F3F;
+  font-family: "Noto Sans JP", "Noto Serif JP", serif;
+  font-size: calc(14px * 100vw / 380px);
+  line-height: 180%;
+}
+.registered-stores-list-sp__no-stores p {
+  margin: 0;
+}
+.registered-stores-list-sp__load-more-wrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  margin-top: calc(32px * 100vw / 380px);
+}
+.registered-stores-list-sp__load-more-btn {
+  color: #F39556;
+  leading-trim: both;
+  text-edge: cap;
+  font-family: "Noto Sans JP", "Noto Serif JP", serif;
+  font-size: calc(16px * 100vw / 380px);
+  font-style: normal;
+  font-weight: 500;
+  line-height: 160%;
+  letter-spacing: calc(1.6px * 100vw / 380px);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: calc(12px * 100vw / 380px) 0;
+  -webkit-transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease;
+}
+.registered-stores-list-sp__load-more-btn:hover {
+  opacity: 0.7;
+}
+.registered-stores-list-sp__load-more-btn.hidden {
+  display: none;
+}
+.registered-stores-list-sp__bottom-wave {
+  margin-top: calc(32px * 100vw / 380px);
+  position: relative;
+  left: 50%;
+  width: 100vw;
+  margin-left: -50vw;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
+}
+.registered-stores-list-sp__bottom-wave img {
+  width: calc(172px * 100vw / 380px);
+  height: calc(61px * 100vw / 380px);
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+}
+.registered-store-card-sp {
+  width: 100%;
+  border: 1px solid #F39556;
+  background: #FFF;
+  padding: calc(20px * 100vw / 380px) calc(16px * 100vw / 380px);
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+.registered-store-card-sp__content {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+}
+.registered-store-card-sp__name-wrapper {
+  text-align: center;
+  margin-bottom: calc(12px * 100vw / 380px);
+}
+.registered-store-card-sp__name {
+  color: #3F3F3F;
+  text-align: center;
+  -webkit-font-feature-settings: "palt" on;
+  font-feature-settings: "palt" on;
+  font-family: "Noto Sans JP", "Noto Serif JP", serif;
+  font-size: calc(16px * 100vw / 380px);
+  font-style: normal;
+  font-weight: 700;
+  line-height: 175%;
+  margin: 0 0 calc(3px * 100vw / 380px) 0;
+}
+.registered-store-card-sp__branch-name {
+  color: #3F3F3F;
+  text-align: center;
+  -webkit-font-feature-settings: "palt" on;
+  font-feature-settings: "palt" on;
+  font-family: "Noto Sans JP", "Noto Serif JP", serif;
+  font-size: calc(14px * 100vw / 380px);
+  font-style: normal;
+  font-weight: 400;
+  line-height: 175%;
+  margin: 0;
+}
+.registered-store-card-sp__location {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  gap: calc(6px * 100vw / 380px);
+}
+.registered-store-card-sp__location img {
+  width: calc(14px * 100vw / 380px) !important;
+  height: calc(14px * 100vw / 380px) !important;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  -o-object-fit: contain;
+  object-fit: contain;
+  display: block;
+  max-width: calc(14px * 100vw / 380px);
+  max-height: calc(14px * 100vw / 380px);
+}
+.registered-store-card-sp__location span {
+  color: #3F3F3F;
+  -webkit-font-feature-settings: "palt" on;
+  font-feature-settings: "palt" on;
+  font-family: "Noto Sans JP", "Noto Serif JP", serif;
+  font-size: calc(14px * 100vw / 380px);
+  font-style: normal;
+  font-weight: 300;
+  line-height: 175%;
+}
+.registered-store-card-sp__info {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  gap: calc(12px * 100vw / 380px);
+  margin-bottom: calc(12px * 100vw / 380px);
+}
+.registered-store-card-sp__info-item {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  gap: calc(6px * 100vw / 380px);
+}
+.registered-store-card-sp__info-item img {
+  width: calc(14px * 100vw / 380px) !important;
+  height: calc(14px * 100vw / 380px) !important;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  -o-object-fit: contain;
+  object-fit: contain;
+  display: block;
+  max-width: calc(14px * 100vw / 380px);
+  max-height: calc(14px * 100vw / 380px);
+}
+.registered-store-card-sp__info-item span {
+  color: #3F3F3F;
+  -webkit-font-feature-settings: "palt" on;
+  font-feature-settings: "palt" on;
+  font-family: "Noto Sans JP", "Noto Serif JP", serif;
+  font-size: calc(14px * 100vw / 380px);
+  font-style: normal;
+  font-weight: 300;
+  line-height: 175%;
+}
+.registered-store-card-sp__introduction {
+  color: #3F3F3F;
+  text-align: justify;
+  leading-trim: both;
+  text-edge: cap;
+  font-family: "Noto Sans JP", "Noto Serif JP", serif;
+  font-size: calc(12px * 100vw / 380px);
+  font-style: normal;
+  font-weight: 300;
+  line-height: 175%;
+  margin-bottom: calc(16px * 100vw / 380px);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.registered-store-card-sp__buttons {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  gap: calc(12px * 100vw / 380px);
+}
+.registered-store-card-sp__button {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  max-width: calc(50% - 6px * 100vw / 380px);
+  height: calc(40px * 100vw / 380px);
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  border-radius: calc(20px * 100vw / 380px);
+  font-family: "Noto Sans JP", "Noto Serif JP", serif;
+  font-size: calc(13px * 100vw / 380px);
+  font-style: normal;
+  font-weight: 500;
+  line-height: 160%;
+  letter-spacing: calc(1.2px * 100vw / 380px);
+  text-decoration: none;
+  text-align: center;
+}
+.registered-store-card-sp__button--primary {
+  background: #F39556;
+  color: #FFF;
+  border: 1.5px solid #F39556;
+}
+@media (max-width: 767px) {
+  .registered-store-card-sp__button--primary:hover {
+    background: #F39556;
+    color: #FFF;
+  }
+}
+.registered-store-card-sp__button--secondary {
+  background: transparent;
+  color: #F39556;
+  border: 1.5px solid #F39556;
+}
+@media (max-width: 767px) {
+  .registered-store-card-sp__button--secondary:hover {
     background: transparent;
     color: #F39556;
   }
