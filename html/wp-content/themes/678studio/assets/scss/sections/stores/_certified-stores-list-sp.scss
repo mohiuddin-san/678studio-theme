@@ -178,6 +178,23 @@
 		}
 	}
 
+	// 右端装飾要素（SP用）
+	&__bottom-wave {
+		margin-top: m.vw-sp(32);
+		position: relative;
+		left: 50%;
+		width: 100vw;
+		margin-left: -50vw;
+		display: flex;
+		justify-content: flex-end;
+
+		img {
+			width: m.vw-sp(172);
+			height: m.vw-sp(61);
+			flex-shrink: 0;
+		}
+	}
+
 	// 右側のpadding用カラム（空）
 	&__padding {
 		// 空のカラム、paddingとして機能

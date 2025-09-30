@@ -330,6 +330,11 @@ function get_minimum_plan_duration_certified_sp($shop) {
                     </button>
                 </div>
             <?php endif; ?>
+
+            <!-- 右端装飾要素（SP用） -->
+            <div class="certified-stores-list-sp__bottom-wave">
+                <img src="<?php echo get_template_directory_uri(); ?>/assets/images/certified-title-section-wave.svg" alt="装飾">
+            </div>
         </div>
 
         <!-- 右側のpadding用カラム（空） -->

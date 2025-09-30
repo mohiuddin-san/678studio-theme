@@ -8963,6 +8963,25 @@ select:active {
 .certified-stores-list-sp__load-more-btn.hidden {
   display: none;
 }
+.certified-stores-list-sp__bottom-wave {
+  margin-top: calc(32px * 100vw / 380px);
+  position: relative;
+  left: 50%;
+  width: 100vw;
+  margin-left: -50vw;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
+}
+.certified-stores-list-sp__bottom-wave img {
+  width: calc(172px * 100vw / 380px);
+  height: calc(61px * 100vw / 380px);
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+}
 .certified-store-card-sp {
   width: 100%;
   border: 1px solid #F39556;
