@@ -163,8 +163,8 @@ function get_minimum_plan_duration_certified_sp($shop) {
             <!-- 認定店舗カード一覧（縦スクロール） -->
             <div class="certified-stores-list-sp__cards">
                 <?php if (!empty($certified_shops)): ?>
-                    <?php foreach ($certified_shops as $shop): ?>
-                        <div class="certified-store-card-sp" onclick="location.href='<?php echo home_url('/studio-detail/?shop_id=' . $shop['id']); ?>'" style="cursor: pointer;">
+                    <?php foreach ($certified_shops as $index => $shop): ?>
+                        <div class="certified-store-card-sp" data-card-index="<?php echo $index; ?>" onclick="location.href='<?php echo home_url('/studio-detail/?shop_id=' . $shop['id']); ?>'" style="cursor: pointer;<?php echo $index >= 3 ? ' display: none;' : ''; ?>">
                             <div class="certified-store-card-sp__image">
                                 <?php
                                 $image_src = '';
@@ -321,6 +321,15 @@ function get_minimum_plan_duration_certified_sp($shop) {
                     </div>
                 <?php endif; ?>
             </div>
+
+            <!-- もっと見るボタン -->
+            <?php if (!empty($certified_shops) && count($certified_shops) > 3): ?>
+                <div class="certified-stores-list-sp__load-more-wrapper">
+                    <button class="certified-stores-list-sp__load-more-btn" data-total="<?php echo count($certified_shops); ?>">
+                        もっと見る＋
+                    </button>
+                </div>
+            <?php endif; ?>
         </div>
 
         <!-- 右側のpadding用カラム（空） -->

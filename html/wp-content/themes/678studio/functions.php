@@ -826,6 +826,15 @@ function theme_678studio_styles() {
                 $js_version,
                 true
             );
+
+            // Certified stores load more functionality (SP only)
+            wp_enqueue_script(
+                'certified-stores-load-more-js',
+                get_template_directory_uri() . '/assets/js/certified-stores-load-more.js',
+                array(),
+                $js_version,
+                true
+            );
         }
     }
 
