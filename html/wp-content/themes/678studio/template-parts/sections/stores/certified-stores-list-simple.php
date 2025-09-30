@@ -156,6 +156,16 @@ function get_minimum_plan_duration_certified($shop) {
 
             <!-- 認定店舗カード一覧 -->
             <div class="certified-stores-list__cards">
+                <!-- 左矢印ボタン -->
+                <button class="certified-stores-list__arrow certified-stores-list__arrow--left" aria-label="前のページ">
+                    <img src="<?php echo get_template_directory_uri(); ?>/assets/images/card-arrow-left.svg" alt="前へ">
+                </button>
+
+                <!-- 右矢印ボタン -->
+                <button class="certified-stores-list__arrow certified-stores-list__arrow--right" aria-label="次のページ">
+                    <img src="<?php echo get_template_directory_uri(); ?>/assets/images/card-arrow-right.svg" alt="次へ">
+                </button>
+
                 <?php if (!empty($certified_shops)): ?>
                     <?php foreach ($certified_shops as $shop): ?>
                         <div class="certified-store-card" onclick="location.href='<?php echo home_url('/studio-detail/?shop_id=' . $shop['id']); ?>'" style="cursor: pointer;">
