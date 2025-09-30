@@ -8424,10 +8424,7 @@ select:active {
   height: 39.2361111111vw;
   -ms-flex-negative: 0;
   flex-shrink: 0;
-  border-top: 1px solid #F39556;
-  border-bottom: 1px solid #F39556;
-  border-left: none;
-  border-right: none;
+  border: 1px solid #F39556;
   background: #FFF;
   padding: 1.9444444444vw 1.5972222222vw;
   display: -webkit-box;
@@ -20603,4 +20600,3 @@ body.single[class*=studio_features] .seo-article-title {
   height: auto;
   opacity: 1;
 }
-/*# sourceMappingURL=style.css.map */

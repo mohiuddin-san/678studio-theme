@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Layout
         fixedWidth: '25vw',    // 固定幅: 360px相当 (1440pxの25%)
         perMove: 1,            // 1枚ずつ移動
-        gap: 0,                // ボーダーで区切るので隙間なし
+        gap: '-1px',           // ボーダーを重ねる（負のマージン）
         focus: 0,              // 左寄せ（左端固定）
         autoWidth: false,      // 自動幅計算を無効化
 
@@ -158,45 +158,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Function to update borders on cards
-    function updateCardBorders() {
-        // すべてのスライドからボーダーを削除
-        const allSlides = sliderElement.querySelectorAll('.splide__slide');
-        allSlides.forEach(slide => {
-            const card = slide.querySelector('.certified-store-card');
-            if (card) {
-                card.style.borderLeft = 'none';
-                card.style.borderRight = 'none';
-            }
-        });
-
-        // オリジナルのスライドのみにボーダーを設定
-        // ループモードでは、最初のstoreCount個がオリジナル
-        let originalCount = 0;
-        allSlides.forEach((slide, index) => {
-            if (originalCount >= storeCount) return; // オリジナル分を処理したら終了
-
-            const card = slide.querySelector('.certified-store-card');
-            if (!card) return;
-
-            // 最初のカードに左ボーダー
-            if (originalCount === 0) {
-                card.style.setProperty('border-left', '1px solid #F39556', 'important');
-                console.log('Added left border to first card');
-            }
-
-            // 4枚目（index 3）または最後のカードに右ボーダー
-            const rightBorderIndex = storeCount >= 4 ? 3 : storeCount - 1;
-            if (originalCount === rightBorderIndex) {
-                card.style.setProperty('border-right', '1px solid #F39556', 'important');
-                console.log('Added right border to card at position', rightBorderIndex);
-            }
-
-            originalCount++;
-        });
-
-        console.log('Processed', originalCount, 'original cards out of', allSlides.length, 'total slides');
-    }
 
     // Handle slider events
     slider.on('mounted', function() {
@@ -213,9 +174,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Set initial arrow states
         updateArrowStates(0);
-
-        // Set borders on cards
-        updateCardBorders();
     });
 
     slider.on('moved', function(newIndex, prevIndex, destIndex) {

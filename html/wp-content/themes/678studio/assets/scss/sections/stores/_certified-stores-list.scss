@@ -274,16 +274,11 @@
 	width: m.vw(360);
 	height: m.vw(565);
 	flex-shrink: 0;
-	border-top: 1px solid #F39556;
-	border-bottom: 1px solid #F39556;
-	border-left: none;
-	border-right: none;
+	border: 1px solid #F39556; // 全方向にボーダー
 	background: #FFF;
 	padding: m.vw(28) m.vw(23);
 	display: flex;
 	flex-direction: column;
-
-	// 左右のボーダーはJavaScriptで動的に制御
 
 	@include m.mq(md) {
 		width: 100%;
