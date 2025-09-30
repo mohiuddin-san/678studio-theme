@@ -155,20 +155,13 @@ function get_minimum_plan_duration_certified($shop) {
 
 
             <!-- 認定店舗カード一覧 -->
-            <div class="certified-stores-list__cards">
-                <!-- 左矢印ボタン -->
-                <button class="certified-stores-list__arrow certified-stores-list__arrow--left" aria-label="前のページ">
-                    <img src="<?php echo get_template_directory_uri(); ?>/assets/images/card-arrow-left.svg" alt="前へ">
-                </button>
-
-                <!-- 右矢印ボタン -->
-                <button class="certified-stores-list__arrow certified-stores-list__arrow--right" aria-label="次のページ">
-                    <img src="<?php echo get_template_directory_uri(); ?>/assets/images/card-arrow-right.svg" alt="次へ">
-                </button>
-
-                <?php if (!empty($certified_shops)): ?>
-                    <?php foreach ($certified_shops as $shop): ?>
-                        <div class="certified-store-card" onclick="location.href='<?php echo home_url('/studio-detail/?shop_id=' . $shop['id']); ?>'" style="cursor: pointer;">
+            <div class="certified-stores-list__cards splide" id="certified-stores-slider">
+                <div class="splide__track">
+                    <ul class="splide__list">
+                        <?php if (!empty($certified_shops)): ?>
+                            <?php foreach ($certified_shops as $shop): ?>
+                                <li class="splide__slide">
+                                    <div class="certified-store-card" onclick="location.href='<?php echo home_url('/studio-detail/?shop_id=' . $shop['id']); ?>'" style="cursor: pointer;">
                             <div class="certified-store-card__image">
                                 <?php
                                 $image_src = '';
@@ -311,22 +304,37 @@ function get_minimum_plan_duration_certified($shop) {
                                        onclick="event.stopPropagation();">ご予約相談</a>
                                 </div>
                             </div>
-                        </div>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <div class="certified-stores-list__no-stores">
-                        <?php
-                        $search_keyword = isset($_GET['search']) ? sanitize_text_field($_GET['search']) : '';
-                        $search_prefecture = isset($_GET['prefecture']) ? sanitize_text_field($_GET['prefecture']) : '';
+                                    </div>
+                                </li>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <li class="splide__slide">
+                                <div class="certified-stores-list__no-stores">
+                                    <?php
+                                    $search_keyword = isset($_GET['search']) ? sanitize_text_field($_GET['search']) : '';
+                                    $search_prefecture = isset($_GET['prefecture']) ? sanitize_text_field($_GET['prefecture']) : '';
 
-                        if (!empty($search_keyword) || !empty($search_prefecture)) {
-                            echo '<p>検索条件に一致する認定店舗が見つかりませんでした。</p>';
-                        } else {
-                            echo '<p>現在、認定店舗はありません。</p>';
-                        }
-                        ?>
-                    </div>
-                <?php endif; ?>
+                                    if (!empty($search_keyword) || !empty($search_prefecture)) {
+                                        echo '<p>検索条件に一致する認定店舗が見つかりませんでした。</p>';
+                                    } else {
+                                        echo '<p>現在、認定店舗はありません。</p>';
+                                    }
+                                    ?>
+                                </div>
+                            </li>
+                        <?php endif; ?>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 左右矢印ボタン -->
+            <div class="certified-stores-list__arrows">
+                <button class="certified-stores-list__arrow certified-stores-list__arrow--left" aria-label="前のページ">
+                    <img src="<?php echo get_template_directory_uri(); ?>/assets/images/card-arrow-left.svg" alt="前へ">
+                </button>
+                <button class="certified-stores-list__arrow certified-stores-list__arrow--right" aria-label="次のページ">
+                    <img src="<?php echo get_template_directory_uri(); ?>/assets/images/card-arrow-right.svg" alt="次へ">
+                </button>
             </div>
         </div>
     </div>

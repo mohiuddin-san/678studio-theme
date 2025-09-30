@@ -786,8 +786,9 @@ function theme_678studio_styles() {
             [], $js_version, true);
     }
 
-    // Enqueue Splide.js for studio detail pages
-    if (is_page_template('page-studio-detail.php')) {
+    // Enqueue Splide.js for studio detail pages and stores page
+    $page_slug = get_post_field('post_name', get_post());
+    if (is_page_template('page-studio-detail.php') || is_page_template('page-stores.php') || $page_slug === 'stores') {
         // Splide CSS
         wp_enqueue_style(
             'splide-css',
@@ -805,14 +806,27 @@ function theme_678studio_styles() {
             true
         );
 
-        // Custom studio slider initialization
-        wp_enqueue_script(
-            'studio-slider-js',
-            get_template_directory_uri() . '/assets/js/studio-slider.js',
-            array('splide-js'),
-            $js_version,
-            true
-        );
+        // Custom studio slider initialization (studio detail page only)
+        if (is_page_template('page-studio-detail.php')) {
+            wp_enqueue_script(
+                'studio-slider-js',
+                get_template_directory_uri() . '/assets/js/studio-slider.js',
+                array('splide-js'),
+                $js_version,
+                true
+            );
+        }
+
+        // Certified stores slider initialization (stores page only)
+        if (is_page_template('page-stores.php') || $page_slug === 'stores') {
+            wp_enqueue_script(
+                'certified-stores-slider-js',
+                get_template_directory_uri() . '/assets/js/certified-stores-slider.js',
+                array('splide-js'),
+                $js_version,
+                true
+            );
+        }
     }
 
     // Enqueue GSAP and media slider on front page
@@ -2645,4 +2659,5 @@ add_action('wp_enqueue_scripts', 'enqueue_header_height_manager', 5);
 // // remove_action('wp_ajax_nopriv_siaes_submit_form', 'siaes_handle_form_submission');
 // // add_action('wp_ajax_siaes_submit_form', 'siaes_submit_form_handler', 20);
 // // add_action('wp_ajax_nopriv_siaes_submit_form', 'siaes_submit_form_handler', 20);
+
 

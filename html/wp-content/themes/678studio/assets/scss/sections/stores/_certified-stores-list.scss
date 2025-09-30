@@ -15,10 +15,9 @@
 	&__container {
 		width: 100%;
 		margin: 0 auto;
-		max-width: 1440px;
 		display: grid;
-		grid-template-columns: m.vw(160) 1fr;
-		gap: m.vw(40);
+		grid-template-columns: m.vw(160) calc(100% - m.vw(160));
+		gap: 0;
 
 		@include m.mq(md) {
 			display: block;
@@ -192,24 +191,54 @@
 	}
 
 
-	// Store Cards
+	// Store Cards (Splide Slider)
 	&__cards {
-		display: grid;
-		grid-template-columns: repeat(4, 1fr);
-		gap: 0;
 		position: relative;
-		margin-bottom: m.vw(23);
+		margin-bottom: m.vw(40);
+		overflow: hidden; // 左端より左側は表示しない
 
 		@include m.mq(md) {
-			grid-template-columns: 1fr;
 			margin-bottom: 0;
+		}
+
+		// Splide track
+		.splide__track {
+			overflow: visible; // スライド時の動きを見せる（ただし親でhidden）
+		}
+
+		// Splide list
+		.splide__list {
+			display: flex;
+			align-items: stretch;
+		}
+
+		// Splide slide
+		.splide__slide {
+			flex-shrink: 0;
+			// 幅はSplideのperPageオプションで自動計算
+
+			@include m.mq(md) {
+				// SP: Splideが自動で計算
+			}
+		}
+	}
+
+	// 矢印ボタンコンテナ
+	&__arrows {
+		position: relative;
+		width: 100%;
+		height: m.vw(30);
+		margin-top: m.vw(40);
+
+		@include m.mq(md) {
+			display: none;
 		}
 	}
 
 	// 矢印ボタン
 	&__arrow {
 		position: absolute;
-		bottom: m.vw(-46); // カードの下端から23px + 矢印の高さ15px + 余白8px
+		top: 0;
 		background: none;
 		border: none;
 		padding: 0;
@@ -231,7 +260,7 @@
 		}
 
 		&--right {
-			right: m.vw(360); // 4番目のカード分の幅（右端から3番目のカード右下）
+			right: m.vw(80);
 		}
 
 		&:hover {
@@ -248,14 +277,14 @@
 	border-top: 1px solid #F39556;
 	border-bottom: 1px solid #F39556;
 	border-left: 1px solid #F39556;
-	border-right: none; // デフォルトは右ボーダーなし
+	border-right: none; // 右側のボーダーは最後のカードのみ
 	background: #FFF;
 	padding: m.vw(28) m.vw(23);
 	display: flex;
 	flex-direction: column;
 
-	// 最後のカード（4番目）のみ右ボーダーを追加
-	&:last-child {
+	// オリジナルの最後のカード（4枚目）だけに右ボーダー
+	&:nth-child(4) {
 		border-right: 1px solid #F39556;
 	}
 
@@ -263,6 +292,7 @@
 		width: 100%;
 		height: auto;
 		padding: m.vw-sp(20) m.vw-sp(16);
+		border-right: 1px solid #F39556; // SPでは全てのカードに右ボーダー
 	}
 
 	&__image {
