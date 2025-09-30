@@ -6,7 +6,7 @@
 
 .registered-stores-list {
 	background: #fff;
-	padding: m.vw(200) 0 m.vw(120); // 上部に大きなpaddingを追加
+	padding: m.vw(200) 0 m.vw(200); // 上部・下部に大きなpaddingを追加
 
 	@include m.mq(md) {
 		display: none; // SPは別セクションで実装予定

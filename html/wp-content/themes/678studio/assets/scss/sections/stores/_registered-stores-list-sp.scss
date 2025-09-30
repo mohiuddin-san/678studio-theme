@@ -10,7 +10,7 @@
 	@include m.mq(md) {
 		display: block; // SPで表示
 		background: #fff;
-		padding: 0 0 m.vw-sp(80);
+		padding: m.vw-sp(100) 0 m.vw-sp(100);
 	}
 
 	&__container {

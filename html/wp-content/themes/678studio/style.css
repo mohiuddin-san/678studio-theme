@@ -8449,7 +8449,7 @@ a.helpful-info__article + .helpful-info__article,
   .certified-stores-list-sp {
     display: block;
     background: #fff;
-    padding: 0 0 calc(80px * 100vw / 380px);
+    padding: calc(100px * 100vw / 380px) 0 calc(100px * 100vw / 380px);
   }
 }
 @media (max-width: 767px) {
@@ -8891,7 +8891,7 @@ a.helpful-info__article + .helpful-info__article,
 
 .registered-stores-list {
   background: #fff;
-  padding: 13.8888888889vw 0 8.3333333333vw;
+  padding: 13.8888888889vw 0 13.8888888889vw;
 }
 @media (max-width: 767px) {
   .registered-stores-list {
@@ -9400,7 +9400,7 @@ a.helpful-info__article + .helpful-info__article,
   .registered-stores-list-sp {
     display: block;
     background: #fff;
-    padding: 0 0 calc(80px * 100vw / 380px);
+    padding: calc(100px * 100vw / 380px) 0 calc(100px * 100vw / 380px);
   }
 }
 @media (max-width: 767px) {
