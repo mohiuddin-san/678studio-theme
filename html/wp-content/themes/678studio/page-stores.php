@@ -50,9 +50,6 @@ get_header();
   <!-- Registered Stores List Section (SP) -->
   <?php get_template_part('template-parts/sections/stores/registered-stores-list-sp'); ?>
 
-  <!-- Store Search Results Section -->
-  <?php get_template_part('template-parts/sections/stores/store-search-results'); ?>
-
   <!-- Contact & Booking Section -->
   <?php get_template_part('template-parts/components/contact-booking'); ?>
 
